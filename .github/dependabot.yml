@@ -1,0 +1,12 @@
+# Keeps the pinned actions in .github/workflows/ current. The add-ons need no
+# Dependabot config of their own: their workflows only call Common-Core.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"
