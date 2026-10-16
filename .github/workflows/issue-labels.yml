@@ -1,0 +1,45 @@
+# Reusable workflow, called by each add-on's .github/workflows/issue-labels.yml
+# (a copy of addon-files/.github/workflows/issue-labels.yml) when an issue opens.
+#
+# Issue forms can only apply fixed labels, so the Defect form applies "Defect"
+# by itself and this adds the "Area: ..." label that matches its Issue Type
+# answer. "Not sure" or no answer adds nothing; the label is set during triage.
+#
+# No third-party actions: the runner's own gh CLI does the edit, and the issue
+# body is read from an environment variable, never pasted into the script.
+name: Issue labels
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  area:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Add Area label from Issue Type
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          # The form renders each answer as "### <field label>", a blank line,
+          # then the answer. Take the first non-blank line after the Issue Type
+          # heading.
+          type="$(printf '%s\n' "$BODY" | tr -d '\r' | awk '
+            /^### / { f = index($0, "### Issue Type") == 1; next }
+            f && NF { print; exit }
+          ')"
+          case "$type" in
+            Code | Copy | Data | "Interface Design" | Localization)
+              gh issue edit "$NUMBER" --add-label "Area: $type"
+              echo "Added Area: $type"
+              ;;
+            *)
+              echo "No Area label for Issue Type: ${type:-none}"
+              ;;
+          esac

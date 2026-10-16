@@ -1,6 +1,6 @@
 # Common Core
 
-Shared build, release and CI setup for every Gogo add-on: Come and Get It, Connoisseur Restocker, Control Freak, GogoLoot, Magic Eraser, Open Sesame, Play It Forward, Thanks for the Buff, Tracking Eye and Water Dispenser.
+Shared build, release, CI and issue setup for every Gogo add-on: Come and Get It, Connoisseur Restocker, Control Freak, GogoLoot, Magic Eraser, Open Sesame, Play It Forward, Thanks for the Buff, Tracking Eye and Water Dispenser.
 
 There is no Lua here and nothing in this repo ships to players.
 
@@ -14,6 +14,10 @@ Some files can be shared by reference and some can't, and that decides the layou
 | CI checks | `.github/workflows/ci.yml` here | Reusable workflow, same reason. |
 | Action version updates | `.github/dependabot.yml` here | The pinned actions are only referenced here, so only this repo needs Dependabot. |
 | Thin callers, `.gitignore`, `.gitattributes` | `addon-files/` here, **copied** into each add-on | GitHub only runs workflows and git only reads these two files from the add-on's own repo. CI fails if an add-on's copy differs from the one here. |
+| Issue forms (Defect, Request) and the issue-labels caller | `addon-files/` here, **copied** into each add-on | GitHub only reads issue forms and runs workflows from the add-on's own repo. Same CI check as above. |
+| Issue labeling logic | `.github/workflows/issue-labels.yml` here | Reusable workflow; each add-on calls it. |
+| Issue page links (`.github/ISSUE_TEMPLATE/config.yml`) | Each add-on, starting from `addon-starters/` here | Different in every add-on: its own CurseForge page. |
+| Issue labels | Each repo's labels, set by `scripts/sync-labels.sh` here | Labels aren't files, so the script is the source of truth. |
 | `.pkgmeta`, `.luacheckrc`, TOCs, `LICENSE` | Each add-on | Different in every add-on: package name, libraries, the WoW globals each one reads. CI still checks `.pkgmeta` against `Includes/Libraries/`. |
 
 ## What CI checks
@@ -42,7 +46,15 @@ The release workflow deliberately has no GitHub token; the comment in `package.y
 
 - **Release or CI logic:** edit `.github/workflows/` here. Every add-on picks it up on its next run, so try a dry run (and a CI run on any add-on) afterwards.
 - **A shared file** (`addon-files/`): edit it here, then copy it into every add-on and commit there. `scripts/sync-addon-files.sh ../Open-Sesame ../GogoLoot ...` does the copy. Until an add-on has the new copy, its CI fails the "Shared files match" check, which is the reminder.
-- **A new add-on:** run the sync script on it, add a `.luacheckrc`, and set the repo settings below.
+- **Issue labels:** edit the list in `scripts/sync-labels.sh`, then run `scripts/sync-labels.sh Gogo1951/Open-Sesame Gogo1951/GogoLoot ...`. It deletes every label not in the list, so a renamed label is a delete plus a create.
+- **A new add-on:** run the sync script on it, copy `addon-starters/.github/ISSUE_TEMPLATE/config.yml` in and fill in its name, CurseForge page and Discord invite, run `scripts/sync-labels.sh` on it, add a `.luacheckrc`, and set the repo settings below.
+
+## Issues
+
+Every add-on's "New issue" page offers two forms, plus a blank issue and links to Discord and the add-on's CurseForge page.
+
+- **Defect** (label `Defect`): Issue Description, Issue Type, Steps to Reproduce, Screenshots, Game Flavor, then four boxes for the add-on's Diagnostic Tools reports. Issue Type adds `Area: Code`, `Area: Copy`, `Area: Data`, `Area: Interface Design` or `Area: Localization` through the issue-labels workflow; "Not sure" adds nothing.
+- **Request** (label `Feedback`): Your Request and Why It Matters to You. Suggestions and feedback both go here.
 
 ## Repo settings every add-on uses
 
