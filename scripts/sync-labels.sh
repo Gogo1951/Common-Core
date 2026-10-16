@@ -19,6 +19,20 @@ LABELS=(
   "Area: Localization|D4C5F9|A translation is wrong or missing."
 )
 
+# Label names in a REST path need percent-encoding ("Area: Code" -> "Area%3A%20Code").
+urlencode() {
+  local s="$1" out="" c i
+  for ((i = 0; i < ${#s}; i++)); do
+    c="${s:i:1}"
+    case "$c" in
+      [a-zA-Z0-9.~_-]) out+="$c" ;;
+      *) out+="$(printf '%%%02X' "'$c")" ;;
+    esac
+  done
+  printf '%s' "$out"
+}
+
+# Uses the REST API (gh api) throughout rather than gh label list/delete.
 for repo in "$@"; do
   echo "== $repo"
   keep=()
@@ -28,11 +42,11 @@ for repo in "$@"; do
     echo "  set     $name"
     keep+=("$name")
   done
-  gh label list --repo "$repo" --limit 1000 --json name --jq '.[].name' | while IFS= read -r existing; do
+  gh api --paginate "repos/$repo/labels?per_page=100" --jq '.[].name' | while IFS= read -r existing; do
     for name in "${keep[@]}"; do
       [ "$existing" = "$name" ] && continue 2
     done
-    gh label delete "$existing" --repo "$repo" --yes >/dev/null
+    gh api --method DELETE "repos/$repo/labels/$(urlencode "$existing")" >/dev/null
     echo "  deleted $existing"
   done
 done
