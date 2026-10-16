@@ -1,6 +1,6 @@
 # Common Core
 
-Shared build, release, CI and issue setup for every Gogo add-on: Come and Get It, Connoisseur Restocker, Control Freak, GogoLoot, Magic Eraser, Open Sesame, Play It Forward, Thanks for the Buff, Tracking Eye and Water Dispenser.
+Shared build, release, CI and issue setup for every Gogo add-on: Come and Get It, Connoisseur Restocker, Control Freak, GogoLoot, Magic Eraser, Open Sesame, Play It Forward, Pretty Wide Quest Log, Thanks for the Buff, Tracking Eye and Water Dispenser.
 
 There is no Lua here and nothing in this repo ships to players.
 
@@ -10,7 +10,7 @@ Some files can be shared by reference and some can't, and that decides the layou
 
 | File | Where it lives | Why |
 |---|---|---|
-| Release logic | `.github/workflows/package.yml` here | Reusable workflow; each add-on calls it, so a fix here reaches all ten. |
+| Release logic | `.github/workflows/package.yml` here | Reusable workflow; each add-on calls it, so a fix here reaches all eleven. |
 | CI checks | `.github/workflows/ci.yml` here | Reusable workflow, same reason. |
 | Action version updates | `.github/dependabot.yml` here | The pinned actions are only referenced here, so only this repo needs Dependabot. |
 | Thin callers, `.gitignore`, `.gitattributes` | `addon-files/` here, **copied** into each add-on | GitHub only runs workflows and git only reads these two files from the add-on's own repo. CI fails if an add-on's copy differs from the one here. |
