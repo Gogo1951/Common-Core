@@ -46,6 +46,7 @@ The release workflow deliberately has no GitHub token; the comment in `package.y
 
 - **Release or CI logic:** edit `.github/workflows/` here. Every add-on picks it up on its next run, so try a dry run (and a CI run on any add-on) afterwards.
 - **A shared file** (`addon-files/`): edit it here, then copy it into every add-on and commit there. `scripts/sync-addon-files.sh ../Open-Sesame ../GogoLoot ...` does the copy. Until an add-on has the new copy, its CI fails the "Shared files match" check, which is the reminder.
+- **Issue forms:** edit them in `addon-files/.github/ISSUE_TEMPLATE/`, copy them into this repo's own `.github/ISSUE_TEMPLATE/` (which runs Common-Core's own "New issue" page), then sync the add-ons as above.
 - **Issue labels:** edit the list in `scripts/sync-labels.sh`, then run `scripts/sync-labels.sh Gogo1951/Open-Sesame Gogo1951/GogoLoot ...`. It deletes every label not in the list, so a renamed label is a delete plus a create.
 - **A new add-on:** run the sync script on it, copy `addon-starters/.github/ISSUE_TEMPLATE/config.yml` in and fill in its name, CurseForge page and Discord invite, run `scripts/sync-labels.sh` on it, add a `.luacheckrc`, and set the repo settings below.
 
