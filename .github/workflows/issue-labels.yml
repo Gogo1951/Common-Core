@@ -4,7 +4,7 @@
 #
 # Issue forms can only apply fixed labels, so the Defect form applies "Defect"
 # by itself and this adds the "Area: ..." label that matches its Issue Type
-# answer. "Not sure" or no answer adds nothing; the label is set during triage.
+# answer. No answer adds nothing; the label is set during triage.
 #
 # No third-party actions: the runner's own gh CLI does the edit, and the issue
 # body is read from an environment variable, never pasted into the script.

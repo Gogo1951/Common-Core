@@ -54,7 +54,7 @@ The release workflow deliberately has no GitHub token; the comment in `package.y
 
 Every add-on's "New issue" page offers two forms, plus a blank issue and links to Discord and the add-on's CurseForge page.
 
-- **Defect** (label `Defect`): Issue Description, Issue Type, Steps to Reproduce, Screenshots, Game Flavor, then four boxes for the add-on's Diagnostic Tools reports. Issue Type adds `Area: Code`, `Area: Copywriting`, `Area: Data`, `Area: Interface Design` or `Area: Localization` through the issue-labels workflow; "Not sure" adds nothing.
+- **Defect** (label `Defect`): Issue Description, Issue Type, Steps to Reproduce, Screenshots, Game Flavor, then four boxes for the add-on's Diagnostic Tools reports. Issue Type adds `Area: Code`, `Area: Copywriting`, `Area: Data`, `Area: Interface Design` or `Area: Localization` through the issue-labels workflow; leaving it blank adds nothing.
 - **Request** (label `Feedback`): Your Request and Why It Matters to You. Suggestions and feedback both go here.
 
 ## Repo settings every add-on uses
