@@ -10,13 +10,13 @@ set -euo pipefail
 
 # name|color|description
 LABELS=(
-  "Defect|B60205|Something is broken or not working the way it should."
-  "Feedback|1D76DB|A suggestion for something new or changed, or feedback on how things are working."
-  "Area: Code|D4C5F9|Something errors, freezes, or stops working."
-  "Area: Copy|D4C5F9|Text is wrong, unclear, or misspelled."
-  "Area: Data|D4C5F9|Wrong item, spell, NPC, or numbers."
-  "Area: Interface Design|D4C5F9|Something looks wrong or is hard to use."
-  "Area: Localization|D4C5F9|A translation is wrong or missing."
+  "Defect|FF0080|Something is broken or not working the way it should."
+  "Feedback|0080FF|A suggestion for something new or changed, or feedback on how things are working."
+  "Area: Code|8000FF|Something errors, freezes, or stops working."
+  "Area: Copywriting|8000FF|Text is wrong, unclear, or misspelled."
+  "Area: Data|8000FF|Wrong item, spell, NPC, or numbers."
+  "Area: Interface Design|8000FF|Something looks wrong or is hard to use."
+  "Area: Localization|8000FF|A translation is wrong or missing."
 )
 
 # Label names in a REST path need percent-encoding ("Area: Code" -> "Area%3A%20Code").

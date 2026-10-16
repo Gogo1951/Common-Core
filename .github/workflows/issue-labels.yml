@@ -35,7 +35,7 @@ jobs:
             f && NF { print; exit }
           ')"
           case "$type" in
-            Code | Copy | Data | "Interface Design" | Localization)
+            Code | Copywriting | Data | "Interface Design" | Localization)
               gh issue edit "$NUMBER" --add-label "Area: $type"
               echo "Added Area: $type"
               ;;
