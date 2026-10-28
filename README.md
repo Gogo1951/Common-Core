@@ -16,6 +16,7 @@ Some files can be shared by reference and some can't, and that decides the layou
 | Thin callers, `.gitignore`, `.gitattributes` | `addon-files/` here, **copied** into each add-on | GitHub only runs workflows and git only reads these two files from the add-on's own repo. CI fails if an add-on's copy differs from the one here. |
 | Issue forms (Defect, Request) and the issue-labels caller | `addon-files/` here, **copied** into each add-on | GitHub only reads issue forms and runs workflows from the add-on's own repo. Same CI check as above. |
 | Issue labeling logic | `.github/workflows/issue-labels.yml` here | Reusable workflow; each add-on calls it. |
+| Project board sweep | `.github/workflows/project-board.yml` here | One hourly run adds every add-on's new issues and PRs to the [project board](https://github.com/users/Gogo1951/projects/6). It needs a personal token, and a personal account can't share a secret across repos, so it runs only here. |
 | Issue page links (`.github/ISSUE_TEMPLATE/config.yml`) | Each add-on, starting from `addon-starters/` here | Different in every add-on: its own CurseForge page. |
 | Issue labels | Each repo's labels, set by `scripts/sync-labels.sh` here | Labels aren't files, so the script is the source of truth. |
 | `.pkgmeta`, `.luacheckrc`, TOCs, `LICENSE` | Each add-on | Different in every add-on: package name, libraries, the WoW globals each one reads. CI still checks `.pkgmeta` against `Includes/Libraries/`. |
@@ -56,6 +57,8 @@ Every add-on's "New issue" page offers two forms, plus a blank issue and links t
 
 - **Defect** (label `Defect`): Issue Description, Issue Type, Steps to Reproduce, Screenshots, Game Flavor, then four boxes for the add-on's Diagnostic Tools reports. Issue Type adds `Area: Code`, `Area: Copywriting`, `Area: Data`, `Area: Interface Design` or `Area: Localization` through the issue-labels workflow; leaving it blank adds nothing.
 - **Request** (label `Feedback`): Your Request and Why It Matters to You. Suggestions and feedback both go here.
+
+Every issue and pull request lands on the [project board](https://github.com/users/Gogo1951/projects/6). Both forms name it (`projects: ["Gogo1951/6"]`), which adds your own issues at once; GitHub ignores that key for anyone without write access to the board, so `project-board.yml` adds everything else, PRs included, within the hour. It needs the `PROJECT_TOKEN` secret on this repo: a classic personal access token with the `project` scope. To backfill, run "Project board" from the Actions tab with an early "since" date.
 
 ## Repo settings every add-on uses
 

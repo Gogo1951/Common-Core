@@ -1,0 +1,74 @@
+# Adds every new issue and pull request in every Gogo add-on to the project
+# board at github.com/users/Gogo1951/projects/6.
+#
+# Why a sweep here and not a caller in each add-on: a workflow's own token
+# can't write to a user-owned project, so this needs a personal token, and a
+# personal account can't share one secret across repos. One schedule here with
+# one secret covers every add-on, including PRs (which have no template that
+# can name a project) and issues from players (the issue forms' `projects:`
+# key only works for people with write access to the board).
+#
+# Each run adds whatever was created in the last three hours, so an hourly
+# schedule that runs late or skips a beat still catches everything. Adding an
+# item that is already on the board changes nothing. An item removed from the
+# board by hand stays removed once it is older than the window.
+#
+# It covers every repo of Gogo1951 that has the issue-labels caller from
+# addon-files/ (so every add-on built on Common-Core, and Common-Core itself);
+# a new add-on needs nothing here. Older add-ons without it are left alone.
+#
+# Backfill: Actions > "Project board" > Run workflow, with "since" set to an
+# early date such as 2015-01-01.
+#
+# Secret PROJECT_TOKEN: a classic personal access token with the `project`
+# scope. Until it is set, every run skips with a warning.
+name: Project board
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      since:
+        description: Add items created on or after this date (YYYY-MM-DD). Blank means the last three hours.
+        required: false
+
+permissions: {}
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add new issues and pull requests to the board
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          SINCE: ${{ inputs.since }}
+          OWNER: Gogo1951
+          PROJECT: "6"
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::PROJECT_TOKEN is not set, so nothing was added to the board."
+            exit 0
+          fi
+          since="${SINCE:-$(date -u -d '3 hours ago' +%Y-%m-%dT%H:%M:%SZ)}"
+          echo "Adding items created since $since"
+
+          # One search covers issues and PRs in every repo; it returns up to 1000.
+          gh api -X GET search/issues --paginate \
+            -f q="user:$OWNER archived:false created:>=$since" -f per_page=100 \
+            --jq '.items[] | [(.repository_url | sub(".*/repos/"; "")), .html_url] | @tsv' \
+            | sort > items.tsv
+
+          added=0
+          for repo in $(cut -f1 items.tsv | sort -u); do
+            if ! gh api "repos/$repo/contents/.github/workflows/issue-labels.yml" --silent 2>/dev/null; then
+              echo "Skipping $repo: not built on Common-Core"
+              continue
+            fi
+            for url in $(awk -F'\t' -v r="$repo" '$1 == r { print $2 }' items.tsv); do
+              gh project item-add "$PROJECT" --owner "$OWNER" --url "$url" > /dev/null
+              echo "Added $url"
+              added=$((added + 1))
+            done
+          done
+          echo "$added item(s) added or already on the board"
