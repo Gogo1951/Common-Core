@@ -8,10 +8,13 @@
 # can name a project) and issues from players (the issue forms' `projects:`
 # key only works for people with write access to the board).
 #
-# Each run adds whatever was created in the last three hours, so an hourly
-# schedule that runs late or skips a beat still catches everything. Adding an
-# item that is already on the board changes nothing. An item removed from the
-# board by hand stays removed once it is older than the window.
+# The schedule asks for hourly runs, but GitHub throttles scheduled workflows
+# hard: the first runs on record came 6-8 hours apart. So each run adds
+# whatever was created in the last two days, which survives long gaps and a
+# few skipped runs. Adding an item that is already on the board changes
+# nothing, so the wide window costs only API calls. The tradeoff: an item
+# removed from the board by hand comes back on the next run until it is two
+# days old, and stays removed after that.
 #
 # It covers every repo of Gogo1951 that has the issue-labels caller from
 # addon-files/ (so every add-on built on Common-Core, and Common-Core itself);
@@ -30,7 +33,7 @@ on:
   workflow_dispatch:
     inputs:
       since:
-        description: Add items created on or after this date (YYYY-MM-DD). Blank means the last three hours.
+        description: Add items created on or after this date (YYYY-MM-DD). Blank means the last two days.
         required: false
 
 permissions: {}
@@ -50,7 +53,7 @@ jobs:
             echo "::warning::PROJECT_TOKEN is not set, so nothing was added to the board."
             exit 0
           fi
-          since="${SINCE:-$(date -u -d '3 hours ago' +%Y-%m-%dT%H:%M:%SZ)}"
+          since="${SINCE:-$(date -u -d '2 days ago' +%Y-%m-%dT%H:%M:%SZ)}"
           echo "Adding items created since $since"
 
           # One search covers issues and PRs in every repo; it returns up to 1000.
