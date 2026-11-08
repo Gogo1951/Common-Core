@@ -17,7 +17,7 @@ git clone https://github.com/Gogo1951/Common-Core.git ~/Common-Core
 
 From then on, Session Prep step 0 pulls it at the start of every code session, so the guide is always the latest `main`. Every guide path in these files (`References/…`, `01 - Local Setup.md`) is relative to `~/Common-Core/Add-on Guide/`.
 
-To run a pass, launch Claude Code in the add-on's installed folder and paste the prompt's contents, or point the session at the file: `Run the pass in ~/Common-Core/Add-on Guide/02 - Code Review.md: read it and treat it as the request.`
+To run a pass, launch Claude Code in the add-on's installed folder and paste the prompt's contents, or point the session at the file: `Run the pass in ~/Common-Core/Add-on Guide/03 - Code Review.md: read it and treat it as the request.`
 
 ## Supported clients
 
@@ -35,10 +35,10 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 - **`00 - Optional GitHub Cleanup.md`** — Starts a new add-on, or checks an existing one. For a new add-on it builds a complete, loadable skeleton on Common-Core. For an existing one it checks GitHub for every scaffolding file and repo setting. *Changes:* the new add-on's folder; for an existing add-on nothing local, with missing settings given as Run-button commands and corrected files as blocks to paste into GitHub.
 - **`01 - Local Setup.md`** — **Run at the start of every code session you start yourself, before anything else** (step 0 needs only Session Prep step 0). Sessions a pass starts for you, and step 12, skip it. Refreshes the guide, sets the session's permissions, pulls the latest `main` and libraries down, and opens the folder in Sublime Text. *Changes:* the add-on's `.claude/settings.local.json`, its TOCs' version and interface lines, its READMEs and scaffolding files, its libraries, and its git wiring (no commits).
-- **`02 - Code Review.md`** — A full review of the code against the Style Guide and good judgment. You get a report of findings, each with a copy-and-run fix prompt, then you run the fixes you want. *Changes:* nothing itself; the fix prompts edit the code.
-- **`03 - Diagnostics Review.md`** — Brings the Diagnostic Tools panel in line with the code, so it captures everything that could explain a bug report, without asking. *Changes:* `Diagnostics/`, plus its TOC lines, `ns.EVENT_NAMES` and the dispatcher's logging call.
-- **`04 - Data Review.md`** — Optional, and only once step 3 is finished. Applies the Validate Data reports you upload from the game: strips IDs a client doesn't have, corrects values, and adds anything wago.tools shows it missed, using QuestieDB to leave out items players can't get, all without asking. *Changes:* the `Data/{Game}/` folders the reports name.
-- **`05 - UX Review.md`** — Reviews how the add-on looks and reads to a player. Asks a few broad questions, then draws a clickable wireframe of Current beside Proposed, and you approve each change on the page. *Changes:* nothing; approved changes come out as feature prompts.
+- **`02 - UX Review.md`** — Reviews how the add-on looks and reads to a player, and researches what competing add-ons offer. Asks at most four broad questions, then draws a clickable wireframe of Current beside Proposed, layout fixes and feature ideas alike, and you approve each change on the page. *Changes:* nothing itself; approved changes come out as feature prompts, which you run before step 3.
+- **`03 - Code Review.md`** — A full review of the code, step 2's features included, against the Style Guide and good judgment. You get a report of findings, each with a copy-and-run fix prompt, then you run the fixes you want. *Changes:* nothing itself; the fix prompts edit the code.
+- **`04 - Diagnostics Review.md`** — Brings the Diagnostic Tools panel in line with the code, so it captures everything that could explain a bug report, without asking. *Changes:* `Diagnostics/`, plus its TOC lines, `ns.EVENT_NAMES` and the dispatcher's logging call.
+- **`05 - Data Review.md`** — Optional, and only once step 4 is finished. Applies the Validate Data reports you upload from the game: strips IDs a client doesn't have, corrects values, and adds anything wago.tools shows it missed, using QuestieDB to leave out items players can't get, all without asking. *Changes:* the `Data/{Game}/` folders the reports name.
 - **`06 - Copy Review.md`** — Polishes the English in `enUS.lua`: typos, consistency, and strings to merge or split. Ends with a before-and-after table of every English string that changed. *Changes:* `Locales/enUS.lua`, plus code that uses a renamed key.
 - **`07 - Localization Review.md`** — Translates every other language to match the current English, without asking. *Changes:* every locale file except `enUS.lua`.
 - **`08 - Prelaunch Review.md`** — The last gate before tagging a release, run once manual testing is done. Checks release metadata, packaging, translations and leftovers, and gives a Ready to tag or Not ready verdict. *Changes:* nothing; master-list updates are proposed in Guide Feedback.
@@ -49,8 +49,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Optional, whenever wanted:**
 
-- **`Optional - Create UX Wireframes.md`** — Draws every window exactly as it is now, as a clickable private page to share with testers. Nothing is proposed. *Changes:* nothing.
-- **`Optional - Research & Feedback.md`** — Researches competing add-ons, asks at most four broad questions, then draws the ideas as a wireframe you approve from. Approved ideas come out as feature prompts that re-enter at step 2. *Changes:* nothing.
+- **`Optional - Create UX Wireframes.md`** — Draws every window exactly as it is now, as a clickable private page to share with testers, at step 2's link. Nothing is proposed. *Changes:* nothing.
 
 **In `References/`, run on demand:**
 
@@ -59,7 +58,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): a pass with fix prompts gives it after you've run them, never beside them. You mirror the working folder into the add-on's other installed clients, then test. Claude only ever edits the one folder it was launched in.
 
-**Each finished pass offers the next one in a new session** (Pass Preamble → Next Pass): 2 offers 3, 5 offers 6, 6 offers 7, 7 offers 8, and a Ready-to-tag 8 offers 9, 10 and 11, then 12 once they finish. Pick *New session* and they run side by side in this folder. Step 4 is never offered; start it yourself once step 3 is done and you have reports.
+**Each finished pass offers the next one in a new session** (Pass Preamble → Next Pass): 2 offers 3, 3 offers 4, 4 offers 6, 6 offers 7, 7 offers 8, and a Ready-to-tag 8 offers 9, 10 and 11, then 12 once they finish. Pick *New session* and they run side by side in this folder. Step 5 is never offered; start it yourself once step 4 is done and you have reports.
 
 **Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` A departure the maintainer keeps for one add-on goes in that add-on's `README-Notes.md`, never here. A pass that does propose a change ends with a copy-and-run line: paste it into a **new session launched in `~/Common-Core`** (Claude Code there, or Cowork with it connected), where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never back into the code session**, whose template denies guide writes.
 

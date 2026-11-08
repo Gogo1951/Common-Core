@@ -11,9 +11,9 @@ Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` 
 0. **Permissions** — per the preamble.
 
 1. **Audit — don't assume.** Before changing anything, list what needs translating:
-    - **Changed English.** Every `enUS.lua` key whose value differs from `main` (`git diff origin/main -- Locales/enUS.lua`), plus anything in a Copy Review before-and-after table in this session. Each of these is retranslated in every locale, whatever it holds now.
+    - **Changed English.** Every `enUS.lua` key whose value differs from `main` (`git diff origin/main -- Locales/enUS.lua`), the same set as the Copy Review's before-and-after table. Each of these is retranslated in every locale, whatever it holds now.
     - **Drift.** Per locale: keys missing, keys `enUS.lua` no longer has, values left in English that When a value may stay English (below) doesn't allow, and translations that no longer match the current English.
-    - **Game-name keys.** Any key a Copy Review or Code Review flagged as a game name keeps its current values in every locale; its fix retires the key, and a typed-in game name is the guess GAME NAMES forbids.
+    - **Game-name keys.** Any key the Code Review flagged as a game name keeps its current values in every locale; its fix retires the key, and a typed-in game name is the guess GAME NAMES forbids.
 
 2. **Translate every other locale file — the main event.** Reconcile each `Locales/*.lua` against the **full current** `enUS.lua`:
     - **Key set** — add every key `enUS.lua` has that this file lacks, and remove keys `enUS.lua` no longer has. When done, every locale carries exactly the same key set as `enUS.lua`.
@@ -21,7 +21,7 @@ Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` 
     - **Formatting and comments** — every locale file mirrors `enUS.lua`'s section structure, ordering, and instructional comments, so the files stay diffable against each other.
 
 3. **Verify — required.** Script it where possible:
-    - **Parse whole assignments, not physical lines.** StyLua legitimately wraps long values onto their own line and writes a value in single quotes when that avoids escaping — both are authoritative output; never re-flow or re-quote them. A line-by-line or double-quote-only script under-counts keys, throws false extra-key errors, and skips placeholder checks on exactly the wrapped strings. Match each assignment with a newline-spanning pattern — `L%["KEY"%]%s*=%s*` followed by a string literal in either delimiter.
+    - **Parse whole assignments, not physical lines** (Style Guide → LOCALIZATION → Reading Locale Files).
     - **Key parity** — every `Locales/*.lua` has an identical key set to `enUS.lua`: no missing keys, no orphans.
     - **Everything is translated** — no renamed key whose English changed kept the old key's value, and no value equals `enUS` except as When a value may stay English allows or a game-name flag exempts.
     - **Placeholder match** — count, type, and order per key against `enUS` (a mismatch crashes at runtime — highest-value check).

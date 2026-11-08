@@ -739,6 +739,10 @@ ns.L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 `NewLocale` spells the identity as a string literal — the one place it is written out, since locale files load before anything that could supply it — and `GetLocale` must resolve to the same string: `ADDON_NAME`, or the NAMING constant when the brand differs.
 
+### Reading Locale Files
+
+A script that checks locale files parses whole assignments, never physical lines. StyLua wraps a long value onto its own line and writes a value in single quotes when that avoids escaping; both are authoritative output, never re-flowed or re-quoted. A line-by-line or double-quote-only script under-counts keys, reports false extra keys, and skips placeholder checks on exactly the wrapped strings. Match each assignment with a newline-spanning pattern: `L%["KEY"%]%s*=%s*` followed by a string literal in either delimiter.
+
 -----
 
 ## GAME NAMES
@@ -1358,7 +1362,7 @@ On every PR and every push to `main`, Common-Core's CI checks that:
 
 ### Releases
 
-Push a tag. Common-Core's workflow refreshes `Includes/Libraries/` from `.pkgmeta`, commits that to `main`, moves the tag onto the commit, then uploads to CurseForge and Wago with the `CF_API_KEY` and `WAGO_API_TOKEN` secrets. Never add `GITHUB_OAUTH` or `GITHUB_API_TOKEN`; Common-Core's `package.yml` explains why. Release notes are written by hand on GitHub. A manual **Run workflow** on "Package and release" in the Actions tab is always a dry run: it builds the zip and uploads nothing.
+Push a tag. Common-Core's workflow refreshes `Includes/Libraries/` from `.pkgmeta`, commits that to `main`, moves the tag onto the commit, then uploads to CurseForge and Wago with the `CF_API_KEY` and `WAGO_API_TOKEN` secrets. Never add `GITHUB_OAUTH` or `GITHUB_API_TOKEN`; Common-Core's `package.yml` explains why. The GitHub release's notes are the ones `12 - Create Release Notes & PR.md` drafted, pasted in by hand when tagging. A manual **Run workflow** on "Package and release" in the Actions tab is always a dry run: it builds the zip and uploads nothing.
 
 ### Line Endings
 

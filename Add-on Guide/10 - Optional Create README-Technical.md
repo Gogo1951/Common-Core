@@ -89,5 +89,5 @@ Keep it short. Cover:
 
 - Player-facing "what does the add-on do" content — that's `README.md`.
 - Generic Lua or WoW add-on advice not specific to this codebase.
-- How the static data is chosen and sourced. That lives only in each `Data/{Game}/` file's `How We Got the Data` block, owned by `04 - Data Review.md`; the File Map just lists the folders.
+- How the static data is chosen and sourced. That lives only in each `Data/{Game}/` file's `How We Got the Data` block, owned by `05 - Data Review.md`; the File Map just lists the folders.
 - Long uninterrupted code blocks. Use small illustrative snippets; the code itself is in the repo.

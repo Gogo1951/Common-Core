@@ -1,14 +1,15 @@
-# WoW Add-on Code Review (Review-Only, 5-Phase)
+# WoW Add-on Code Review (Review-Only, 4-Phase)
 
-**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Code Review`. Write scope: **nothing — report only.** Do not create, edit, or delete any files, including scratch or temp files, beyond the preamble's `README-Notes.md` record. Your only output is the Phase 4 report, in this chat.
+**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Code Review`. Write scope: **nothing — report only.** Do not create, edit, or delete any files, including scratch or temp files, beyond the preamble's `README-Notes.md` record. Your only output is the Phase 3 report, in this chat.
 
-## Workflow — five phases (0–4), all required
+It runs after `02 - UX Review.md` and its feature prompts, so it reviews the whole add-on as it will ship.
+
+## Workflow — four phases (0–3), all required
 
 0. **Permissions** — per the preamble.
-1. **Review.** Read the preamble's read-first docs and `References/Style Guide - Build Reference.md`, then everything in scope (see Standards and Ignore): the add-on's code, which is the whole record (READMEs are skipped; see Ignore). Build a full picture of what the add-on does and how. No output yet.
-2. **Know where the reference implementations live** (you rarely need to fetch them). They are named at each rule's own site in the Style Guide. Fetch one only if a rule points to an implementation detail you can't resolve from the guide itself.
-3. **Clarify — required, before any findings.** Identify what you'd need to know to be confident in your findings, and ask per the preamble. Ask about things that bear on the review, not trivia: whether a frame is ever shown in combat, which client a behavior targets, whether a departure that looks deliberate is intentional (check `git status` and the recent `git log` first, per Style Guide → README-NOTES). No findings until you're confident and any answers are in.
-4. **Report.** Produce the report below.
+1. **Review.** Read the preamble's read-first docs and `References/Style Guide - Build Reference.md`, then everything in scope (see Standards and Ignore): the add-on's code, which is the whole record (READMEs are skipped; see Ignore). Build a full picture of what the add-on does and how. The reference implementations are named at each rule's own site in the Style Guide; fetch one only for the Reference check below or a detail the guide can't settle. No output yet.
+2. **Clarify — required, before any findings.** Identify what you'd need to know to be confident in your findings, and ask per the preamble. Ask about things that bear on the review, not trivia: whether a frame is ever shown in combat, which client a behavior targets, whether a departure that looks deliberate is intentional (check `git status` and the recent `git log` first, per Style Guide → README-NOTES). No findings until you're confident and any answers are in.
+3. **Report.** Produce the report below.
 
 ## Standards
 
@@ -17,7 +18,7 @@ Apply two standards together:
 2. **Your own judgment** on everything it doesn't cover — correctness, taint and secure-frame usage, event-registration efficiency, combat-time performance, in-combat reads that go secret on WoW Forever's Retail engine (Style Guide → COMPATIBILITY), frame and memory leaks, SavedVariables hygiene, deprecated/removed API for the target client, and localization patterns.
 The guide is the floor: catch everything it catches, then catch more. If your judgment conflicts with the guide on a style matter, follow the guide but flag the disagreement.
 
-**Reference check — required before any finding that changes what players see.** Fetch the rule's Live reference from GitHub `main` and confirm it does what the rule says. If it does the opposite, that's not a finding against this add-on. Ask about it in Phase 3, quoting the rule and the reference's code, and leave the add-on as it is until the maintainer rules (Style Guide, opening rules).
+**Reference check — required before any finding that changes what players see** (Style Guide, opening rules). A Live reference that does the opposite of its rule is a Phase 2 question, never a finding.
 
 Always run one explicit sweep: search every reviewed file (including TOCs) for `MIGRATION` tags. A migration past its tagged remove-after date is deleted on sight: tag, migration branch, and legacy TOC entry. A migration still inside its 30-day window stays (Style Guide → SAVED VARIABLES → Migration Windows); one missing its remove-after tag gets the tag added, never deleted.
 
@@ -65,18 +66,19 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 ## Ignore
 
 - **`.pkgmeta`, `.github/` (workflows), and `LICENSE`** — packaging and release wiring are reviewed by the Prelaunch Review, not here. Don't review their contents and don't flag their absence.
-- **`Diagnostics/`** — `03 - Diagnostics Review.md` owns it. Only its load-time wiring (TOC entries, the dispatcher's one logging call) is reviewed here.
+- **The Spacing Scale** — `02 - UX Review.md` moves sizes and gaps onto it through its Build choices, never a sweep (Style Guide → SPACING SCALE), so an off-scale value is never a finding here.
+- **`Diagnostics/`** — `04 - Diagnostics Review.md` owns it. Only its load-time wiring (TOC entries, the dispatcher's one logging call) is reviewed here.
 - **Includes folder** — don't review its contents. Separately, do verify its files are correctly referenced (in every TOC and any XML), and that every file a TOC references exists.
 - Any **.tga** files.
 - **Locales folder** — except enUS.lua, which should be reviewed.
-- **Every README** (`README.md`, `README-Technical.md`, `README-Testing.md`) — skip entirely. Each describes the last release until steps 9–11 rewrite it from the code (Pass Preamble → Standing scope), so one that disagrees with the code is never a finding or a question. `README-Notes.md` is the exceptions record and is read as the preamble says.
+- **Every README** (`README.md`, `README-Technical.md`, `README-Testing.md`) — skip entirely (Pass Preamble → Standing scope). `README-Notes.md` is the exceptions record and is read as the preamble says.
 
 ## Report format
 
 Open with a 2–3 sentence summary. Then list the issues, most worth fixing first — no severity labels except **Blocker** where the Pass Preamble names one (a missing target TOC), listed first; no category groupings. Keep the report tight: the description and the fix prompt are the whole issue; no padding, no restating the obvious.
 Skip trivial style observations the guide doesn't address; within scope, report everything it does address regardless of triviality.
 
-**Trim `README-Notes.md` first.** Before Phase 3, delete every entry in it that doesn't matter (Style Guide → README-NOTES → Only what matters), in `## Exceptions` and `## Decisions` alike, without asking. What they covered becomes ordinary findings, and the report says in one line which labels went.
+**Trim `README-Notes.md` first.** Before Phase 2, delete every entry in it that doesn't matter (Style Guide → README-NOTES → Only what matters), in `## Exceptions` and `## Decisions` alike, without asking. What they covered becomes ordinary findings, and the report says in one line which labels went.
 
 **Legacy decisions.** If `README-Notes.md` still has a `## Decisions` section after that trim, the report's last issue is one fix prompt that empties what it can. For each entry about code, it adds a comment at that code per Style Guide → COMMENTS, reads it back, and deletes the entry once the comment is confirmed. It deletes UI copy, layout and `Declined:` entries outright, leaves entries about rows kept out of a data table for the Data Review, deletes the heading if nothing is left, and lists each comment it added as `file: comment`.
 

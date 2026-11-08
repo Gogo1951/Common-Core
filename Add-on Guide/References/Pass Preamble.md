@@ -6,7 +6,7 @@ Governs every pass prompt in this guide — numbered, optional, and Code Comment
 
 ## Permissions
 
-Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edit any settings file, and never write anything to `~/Common-Core`. Whatever its write scope, a pass may write the add-on's `README-Notes.md` to record an exception the maintainer keeps (Style Guide → README-NOTES); whatever writes it then says in one line what it added or changed, and never prints the file. The local copy keeps it across sessions (Session Prep leaves `README-Notes.md` alone), and step 12 commits it with the release like any other change. Never set the Bash tool's `dangerouslyDisableSandbox`: the template runs the sandbox in strict mode, which ignores it. Reads and `git diff`/`status`/`log` work inside the sandbox, and a call made only of `git` or `gh` commands runs outside it on its own — but a `cd`, a pipe, a redirect, or a `$(...)` or heredoc anywhere in the call keeps all of it sandboxed, where `git config` can't write and `gh` fails TLS. Run those as bare calls. A command the sandbox blocks gets reported, never worked around. If an approval prompt appears mid-pass, stop and follow `01 - Local Setup.md` → What a prompt means now. A pass whose write scope is "nothing" denies any write prompt outright.
+Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edit any settings file, and never write anything to `~/Common-Core`. Whatever its write scope, a pass may write the add-on's `README-Notes.md` as Style Guide → README-NOTES directs: to record an exception the maintainer keeps, or to trim or drain entries; whatever writes it then says in one line what it added or changed, and never prints the file. The local copy keeps it across sessions (Session Prep leaves `README-Notes.md` alone), and step 12 commits it with the release like any other change. Never set the Bash tool's `dangerouslyDisableSandbox`: the template runs the sandbox in strict mode, which ignores it. Reads and `git diff`/`status`/`log` work inside the sandbox, and a call made only of `git` or `gh` commands runs outside it on its own — but a `cd`, a pipe, a redirect, or a `$(...)` or heredoc anywhere in the call keeps all of it sandboxed, where `git config` can't write and `gh` fails TLS. Run those as bare calls. A command the sandbox blocks gets reported, never worked around. If an approval prompt appears mid-pass, stop and follow `01 - Local Setup.md` → What a prompt means now. A pass whose write scope is "nothing" denies any write prompt outright.
 
 ## Read first
 
@@ -32,7 +32,7 @@ Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal
 - **Every current target has its own flavor TOC, declaring the number `01 - Local Setup.md` Session Prep step 1 gives it.** Every pass that reads the TOCs checks this. A missing TOC is a **Blocker**, since that client never sees the add-on, and so is an unsuffixed one, since the rule is one TOC per flavor (Style Guide → TOC FILE FORMAT → Flavor TOCs). Never look the numbers up externally.
 - **The flavor set is every current target** (Classic Era with Season of Discovery, WoW Forever, TBC Anniversary) **plus any other flavor the add-on ships a TOC for.** Fewer TOCs is the Blocker above, not a narrower scope. When a finding is client-specific, say which flavor.
 - **Line endings are a closed subject** — never inspected, measured, restored, or reported, in any form. Common-Core's CI owns them (Style Guide → COMMON-CORE → Line Endings).
-- **Optional passes (steps 0, 9, 10, 11 and the `Optional - …` prompts) are never launch gates.**
+- **Optional passes (steps 0, 5, 9, 10, 11 and the `Optional - …` prompts) are never launch gates.**
 
 ## Report format — fix prompts
 
@@ -74,14 +74,15 @@ When a pass's work is done, it offers the next pass in a new session, so the mai
 
 | Pass done | Offer |
 |---|---|
-| `02 - Code Review.md` | `03 - Diagnostics Review.md` |
-| `05 - UX Review.md` | `06 - Copy Review.md` |
+| `02 - UX Review.md` | `03 - Code Review.md` |
+| `03 - Code Review.md` | `04 - Diagnostics Review.md` |
+| `04 - Diagnostics Review.md` | `06 - Copy Review.md` |
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md` |
 | The sessions step 8 started, once all have finished | `12 - Create Release Notes & PR.md`, offered by the step 8 session |
 
-**`04 - Data Review.md` is never offered.** It is optional and needs Validate Data reports, which exist only once step 3 is finished and tested in game, so the maintainer starts it by hand.
+**`05 - Data Review.md` is never offered.** It is optional and needs Validate Data reports, which exist only once step 4 is finished and tested in game, so the maintainer starts it by hand; its write scope never meets Copy Review's, so the two can run side by side.
 
 In the Claude desktop app, offer each one with the app's start-session tool, as an offer (its card asks *New session* or *Do it here*): one card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The brief is exactly this line, with the prompt's file name filled in. Anywhere else, print the same line in a fenced block, to paste into a new session launched in this folder.
 

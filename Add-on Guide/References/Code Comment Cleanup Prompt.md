@@ -8,7 +8,7 @@ Slim and sharpen the comments across every Lua file in this add-on. The house st
 
 ## What to do
 
-Go file by file through every Lua file. Skip `Includes/`, which is vendored and never touched, and the `Data/{Game}/` folders, whose comments belong to `04 - Data Review.md` (Style Guide → DATA → Data File Layout):
+Go file by file through every Lua file. Skip `Includes/`, which is vendored and never touched, and the `Data/{Game}/` folders, whose comments belong to `05 - Data Review.md` (Style Guide → DATA → Data File Layout):
 
 - **Apply Style Guide → COMMENTS as written** — delete what doesn't earn its place (the default is *no* comment), keep only the non-obvious *why* that section defines, and shorten what stays: one line where one line does the job, multi-line preambles and ceremony cut to the essential point.
 - **Keep the durable *why*, short.** When a comment explains a whole subsystem or design rather than the line it sits on, cut it to its essential point and leave it in place: step 10 writes it up in `README-Technical.md` from the code, and this pass never edits a README (Pass Preamble → Standing scope).
