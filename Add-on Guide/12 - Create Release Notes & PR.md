@@ -77,8 +77,6 @@ The version line is the tag the maintainer will push, in the house `YYYY.MM.DD.A
 
 When the last tag is from the same day (the letter advances), start from that release's notes (`gh release view <tag>`) and fold this release's changes into them, so the notes cover the whole day; update any earlier bullet the new work changes.
 
-**WoW Forever support is preliminary, and every release says so.** Put this line, verbatim, as its own paragraph right after the summary: `Support for WoW Forever is preliminary and will continue to improve as more game data becomes available.` Drop it when the add-on ships no Forever TOC; once Forever support is no longer preliminary, delete this paragraph.
-
 **Written for players, not developers.** Every bullet says what the user will notice, in plain language — never function names, file names, APIs, or internals. Developer detail goes in commit messages, not release notes. Keep it short and human: one line per bullet, the whole thing readable at a glance. The no-em-dash and straight-quotes rules bind this copy (Style Guide → TONE AND COPY → In-Game Rendering Rules).
 
 **README changes never appear in the release notes. Never.** Leave out every change to any `README*` file (`README.md`, `README-Notes.md`, `README-Technical.md`, `README-Testing.md`, or any other): no bullet, no mention in the summary, not folded into another item, and not reworded as a documentation or description update.
