@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="564" viewBox="0 0 1600 564">
+  <!--
+    README infographic house style. Canvas 1600 x 564 (shown at width="800").
+    Three step cards: number badge + title, a picture, then a caption box (chat line or result).
+    Keep the <style> tokens, card frames, badges, arrows and caption boxes as they are;
+    swap only the titles, the pictures, and the caption text.
+    Captions: one centered <text> per line at the caption box's center x; a literal space
+    between tspans on the same line (adjacent tspans render with no gap); 31px between lines.
+  -->
+  <style>
+    .canvas   { fill: #16161b; }
+    .card     { fill: #1e1f27; stroke: #2c2d38; stroke-width: 2; }
+    .caption  { fill: #0c0c10; stroke: #2c2d38; stroke-width: 2; }
+    .slot     { fill: #2a2b36; stroke: #3a3b48; stroke-width: 2; }
+    .badge    { fill: #a78bfa; }
+    .arrow    { fill: none; stroke: #a78bfa; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    text      { font-family: "Noto Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+    .num      { fill: #1b1530; font-size: 24px; font-weight: 700; text-anchor: middle; }
+    .title    { fill: #f4f4f7; font-size: 30px; font-weight: 700; }
+    .chat     { font-size: 20px; text-anchor: middle; }
+    .addon    { fill: #00bbff; }   /* ns.PALETTE.INFO: the add-on name in a print */
+    .sep      { fill: #aaaaaa; }   /* ns.PALETTE.SEPARATOR */
+    .item     { fill: #ffffff; }   /* item link in its quality color: common is white */
+    .spell    { fill: #71d5ff; }   /* spell link blue */
+    .msg      { fill: #ffffff; }   /* ns.PALETTE.TEXT: a print's body; a sent line takes its channel color */
+    .result   { fill: #3dd68c; font-size: 38px; font-weight: 700; text-anchor: middle; }
+    .sub      { fill: #9b9ba6; font-size: 20px; text-anchor: middle; }
+    .gold     { fill: #e8b84a; }
+    .spark    { fill: #a78bfa; }
+    .pick     { fill: none; stroke: #f0c75e; stroke-width: 4; }
+    .freed    { fill: none; stroke: #3dd68c; stroke-width: 3; stroke-dasharray: 8 6; }
+  </style>
+
+  <defs>
+    <path id="sparkle" d="M0,-12 C2,-3 3,-2 12,0 C3,2 2,3 0,12 C-2,3 -3,2 -12,0 C-3,-2 -2,-3 0,-12 Z"/>
+    <path id="tusk" d="M-14,16 C-16,-4 -4,-18 16,-20 C2,-12 -4,0 -2,16 Z" fill="#efe3c6" stroke="#b9a77d" stroke-width="2"/>
+    <g id="bag">
+      <rect class="slot" x="0"   y="0"  width="60" height="60" rx="10"/>
+      <rect class="slot" x="70"  y="0"  width="60" height="60" rx="10"/>
+      <rect class="slot" x="140" y="0"  width="60" height="60" rx="10"/>
+      <rect class="slot" x="210" y="0"  width="60" height="60" rx="10"/>
+      <rect class="slot" x="280" y="0"  width="60" height="60" rx="10"/>
+      <rect class="slot" x="0"   y="70" width="60" height="60" rx="10"/>
+      <rect class="slot" x="70"  y="70" width="60" height="60" rx="10"/>
+      <rect class="slot" x="140" y="70" width="60" height="60" rx="10"/>
+      <rect class="slot" x="210" y="70" width="60" height="60" rx="10"/>
+      <rect class="slot" x="280" y="70" width="60" height="60" rx="10"/>
+      <!-- slot icons: simple flat shapes, one per slot (the middle top slot is left to each card) -->
+      <circle cx="30" cy="34" r="14" fill="#e0474c"/><rect x="26" y="12" width="8" height="10" rx="2" fill="#9a9aa5"/>
+      <ellipse cx="100" cy="30" rx="20" ry="13" fill="#d4934a"/>
+      <polygon points="222,22 246,14 258,34 236,46" fill="#8a8d99"/>
+      <polygon points="310,10 330,30 310,50 290,30" fill="#3dd68c"/>
+      <rect x="18" y="82" width="24" height="34" rx="3" fill="#e6d3a3"/>
+      <path d="M78,120 L114,84 M86,124 L120,90 M94,126 L124,98" stroke="#c8954f" stroke-width="4" stroke-linecap="round"/>
+      <path d="M148,86 C162,92 178,92 192,86 L188,114 C176,118 164,118 152,114 Z" fill="#6c7ee8"/>
+      <path d="M240,124 L240,98 M240,100 C228,88 222,96 232,104 M240,98 C252,86 258,94 248,102" stroke="#3dd68c" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="306" cy="100" rx="18" ry="11" fill="#6cc4e8"/><polygon points="322,100 336,90 336,110" fill="#6cc4e8"/>
+    </g>
+  </defs>
+
+  <rect class="canvas" width="1600" height="564" rx="36"/>
+
+  <!-- Step 1 -->
+  <rect class="card" x="40" y="40" width="464" height="484" rx="28"/>
+  <circle class="badge" cx="92" cy="96" r="23"/><text class="num" x="92" y="104">1</text>
+  <text class="title" x="134" y="107">Finish a Quest</text>
+  <use href="#bag" x="102" y="162"/>
+  <use href="#tusk" x="272" y="192"/>
+  <rect class="pick" x="241" y="161" width="62" height="62" rx="11"/>
+  <rect class="caption" x="64" y="336" width="416" height="164" rx="18"/>
+  <text class="chat" x="272" y="378"><tspan class="addon">Magic Eraser</tspan> <tspan class="sep">//</tspan></text>
+  <text class="chat" x="272" y="409"><tspan class="item">[Bristleback Quilboar Tusk]</tspan> <tspan class="msg">x2</tspan></text>
+  <text class="chat msg" x="272" y="440">can now be safely erased. It's left over</text>
+  <text class="chat msg" x="272" y="471">from a quest you have completed.</text>
+
+  <path class="arrow" d="M518,282 L552,282 M540,270 L552,282 L540,294"/>
+
+  <!-- Step 2 -->
+  <rect class="card" x="568" y="40" width="464" height="484" rx="28"/>
+  <circle class="badge" cx="620" cy="96" r="23"/><text class="num" x="620" y="104">2</text>
+  <text class="title" x="662" y="107">Click Mini-map Button</text>
+  <circle cx="800" cy="226" r="56" fill="#1a1620" stroke="#e8b84a" stroke-width="8"/>
+  <use href="#tusk" x="800" y="226" transform="translate(800 226) scale(1.6) translate(-800 -226)"/>
+  <circle cx="828" cy="246" r="14" fill="none" stroke="#9a9aa5" stroke-width="2"/>
+  <path d="M832,250 L832,290 L842,280 L852,298 L858,295 L848,277 L862,276 Z" fill="#ffffff" stroke="#16161b" stroke-width="2"/>
+  <use href="#sparkle" class="gold" x="716" y="182"/>
+  <use href="#sparkle" class="spark" transform="translate(880 170) scale(0.7)"/>
+  <use href="#sparkle" class="spark" transform="translate(727 275) scale(0.55)"/>
+  <rect class="caption" x="592" y="336" width="416" height="164" rx="18"/>
+  <text class="chat" x="800" y="410"><tspan class="addon">Magic Eraser</tspan> <tspan class="sep">//</tspan> <tspan class="msg">Erased</tspan></text>
+  <text class="chat" x="800" y="441"><tspan class="item">[Bristleback Quilboar Tusk]</tspan> <tspan class="msg">x2.</tspan></text>
+
+  <path class="arrow" d="M1046,282 L1080,282 M1068,270 L1080,282 L1068,294"/>
+
+  <!-- Step 3 -->
+  <rect class="card" x="1096" y="40" width="464" height="484" rx="28"/>
+  <circle class="badge" cx="1148" cy="96" r="23"/><text class="num" x="1148" y="104">3</text>
+  <text class="title" x="1190" y="107">Clean Bags!</text>
+  <use href="#bag" x="1158" y="162"/>
+  <rect x="1298" y="162" width="60" height="60" rx="10" fill="#1e1f27"/>
+  <rect class="freed" x="1298" y="162" width="60" height="60" rx="10"/>
+  <use href="#sparkle" fill="#3dd68c" x="1328" y="192"/>
+  <use href="#sparkle" class="gold" transform="translate(1364 152) scale(0.7)"/>
+  <use href="#sparkle" class="spark" transform="translate(1294 156) scale(0.5)"/>
+  <rect class="caption" x="1120" y="336" width="416" height="164" rx="18"/>
+  <text class="result" x="1328" y="408">+1 Free Bag Slot</text>
+  <text class="sub" x="1328" y="456">Everything you need stays put.</text>
+</svg>

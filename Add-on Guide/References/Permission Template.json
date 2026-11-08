@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "additionalDirectories": [
+      "/Applications/World of Warcraft/_classic_era_/Interface/AddOns/{{ADDON}}",
+      "/Applications/World of Warcraft/_classic_era_/WTF",
+      "/Applications/World of Warcraft/_anniversary_/Interface/AddOns/{{ADDON}}",
+      "/Applications/World of Warcraft/_anniversary_/WTF",
+      "/Applications/World of Warcraft/_forever_/Interface/AddOns/{{ADDON}}",
+      "/Applications/World of Warcraft/_forever_/WTF"
+    ],
+    "allow": [
+      "Read(//**)",
+      "Read(~/**)",
+      "Edit(//Applications/World of Warcraft/*/Interface/AddOns/{{ADDON}}/**)",
+      "Write(//Applications/World of Warcraft/*/Interface/AddOns/{{ADDON}}/**)",
+      "Bash",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "deny": [
+      "Edit(~/Common-Core/**)",
+      "Write(~/Common-Core/**)",
+      "Edit(//Applications/World of Warcraft/**/WTF/**)",
+      "Write(//Applications/World of Warcraft/**/WTF/**)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "excludedCommands": [
+      "git *",
+      "gh *",
+      "open *"
+    ],
+    "network": {
+      "allowedDomains": [
+        "github.com",
+        "api.github.com",
+        "raw.githubusercontent.com",
+        "codeload.github.com",
+        "objects.githubusercontent.com",
+        "www.githubstatus.com",
+        "wago.tools",
+        "addons.wago.io",
+        "curseforge.com",
+        "www.curseforge.com",
+        "api.cfwidget.com",
+        "repos.curseforge.com",
+        "repos.wowace.com",
+        "www.wowace.com",
+        "warcraft.wiki.gg",
+        "www.wowinterface.com"
+      ]
+    }
+  }
+}
