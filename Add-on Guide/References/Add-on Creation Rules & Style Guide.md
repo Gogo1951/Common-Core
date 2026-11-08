@@ -1292,7 +1292,7 @@ Reading CVars is unrestricted. Writing one changes a game-wide setting the user 
 
 - Feature code may write a user CVar only when the CVar is core to the add-on's function (a loot add-on enforcing `autoLootDefault`), or momentarily to silence its own automated action: written around that action and restored within a second to the exact value read. Never as a convenience side effect.
 - Write only on an actual change: read the current value first and skip the write when it already matches.
-- Every lasting write prints a notice via `PrintMessage` naming the setting and its new state; a momentary one prints nothing. `README.md` discloses both.
+- Every lasting write prints a notice via `PrintMessage` naming the setting and its new state, and `README.md` discloses it. A momentary one prints nothing and gets no README line.
 - Every write has an options toggle so the user can opt out, unless the feature it serves cannot work with the CVar left alone.
 - Diagnostics' `taintLog` button is user-initiated, not an enforcement, and follows Build Reference → DIAGNOSTIC TOOLS → Taint Log.
 
