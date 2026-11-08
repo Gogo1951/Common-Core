@@ -7,7 +7,7 @@ It runs after `02 - UX Review.md` and its feature prompts, so it reviews the who
 ## Workflow — four phases (0–3), all required
 
 0. **Permissions** — per the preamble.
-1. **Review.** Read the preamble's read-first docs and `References/Style Guide - Build Reference.md`, then everything in scope (see Standards and Ignore): the add-on's code, which is the whole record (READMEs are skipped; see Ignore). Build a full picture of what the add-on does and how. The reference implementations are named at each rule's own site in the Style Guide; fetch one only for the Reference check below or a detail the guide can't settle. No output yet.
+1. **Review.** Read the preamble's read-first docs and `References/Style Guide - Build Reference.md`, then everything in scope (see Standards and Ignore): the add-on's code, which is the whole record (READMEs other than the `README-Technical.md` map are skipped; see Ignore). Build a full picture of what the add-on does and how. The reference implementations are named at each rule's own site in the Style Guide; fetch one only for the Reference check below or a detail the guide can't settle. No output yet.
 2. **Clarify — required, before any findings.** Identify what you'd need to know to be confident in your findings, and ask per the preamble. Ask about things that bear on the review, not trivia: whether a frame is ever shown in combat, which client a behavior targets, whether a departure that looks deliberate is intentional (check `git status` and the recent `git log` first, per Style Guide → README-NOTES). No findings until you're confident and any answers are in.
 3. **Report.** Produce the report below.
 
@@ -71,7 +71,7 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 - **Includes folder** — don't review its contents. Separately, do verify its files are correctly referenced (in every TOC and any XML), and that every file a TOC references exists.
 - Any **.tga** files.
 - **Locales folder** — except enUS.lua, which should be reviewed.
-- **Every README** (`README.md`, `README-Technical.md`, `README-Testing.md`) — skip entirely (Pass Preamble → Standing scope). `README-Notes.md` is the exceptions record and is read as the preamble says.
+- **`README.md` and `README-Testing.md`** — skip entirely (Pass Preamble → Standing scope). `README-Technical.md` is read only as the map and `README-Notes.md` as the exceptions record, both as the preamble says.
 
 ## Report format
 

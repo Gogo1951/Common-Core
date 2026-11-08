@@ -9,7 +9,7 @@ Run this when manual testing is **complete** and the add-on is believed to be wo
 ## Workflow — five phases (0–4), all required
 
 0. **Permissions** — per the preamble.
-1. **Review.** Read the preamble's read-first docs, plus every file in `Locales/`, which the Code Review skips. **README files are out of scope — skip `README.md`, `README-Technical.md`, and `README-Testing.md` entirely**; they're owned by steps 9–11. The `Includes/` folder stays vendored — verify its wiring, don't review its contents.
+1. **Review.** Read the preamble's read-first docs, plus every file in `Locales/`, which the Code Review skips. **README files are out of scope — skip `README.md` and `README-Testing.md` entirely, and read `README-Technical.md` only as the map the preamble describes**; they're owned by steps 9–11. The `Includes/` folder stays vendored — verify its wiring, don't review its contents.
 2. **Study the targets.** Fetch the live reference files from GitHub and use them as the target state:
     - [Thanks-for-the-Buff](https://github.com/Gogo1951/Thanks-for-the-Buff) — `.pkgmeta`, which the packaging check validates against (see Packaging below).
     - [Addon Categories](https://warcraft.wiki.gg/wiki/Addon_Categories) — the canonical category list and its per-locale strings, the live source of truth for the Category check below. It is deliberately never copied into this guide, and it always wins.

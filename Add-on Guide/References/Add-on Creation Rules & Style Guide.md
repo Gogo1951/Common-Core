@@ -74,7 +74,7 @@ Repo-Name/
 ├── LICENSE                         MIT
 ├── README.md                       End-user documentation
 ├── README-Notes.md                 The add-on's exceptions to this guide — see README-NOTES
-├── README-Technical.md             Developer documentation
+├── README-Technical.md             Code map Claude reads first — step 10
 └── README-Testing.md               Optional — manual test plan; never a finding either way
 ```
 

@@ -18,7 +18,7 @@ The user-facing companion to `README-Technical.md`: description, TL;DR, features
 
 **A sales document.** Written for a player browsing CurseForge or GitHub who is deciding whether to install. Say what makes the sale, then stop. Nothing about how it works under the hood, and nothing they don't need to make that call. Friendly, direct, lightly playful. WoW slang welcome.
 
-**High level, and short.** Say what it does for the player, never how or when: "Cleans trash out of your bags," not the thresholds and conditions behind it. Leave out edge cases, settings and exceptions; the options' tooltips and `README-Technical.md` carry those. Sell the outcome, and what a player misses out on without it. Write the draft, then cut about a third before showing it.
+**High level, and short.** Say what it does for the player, never how or when: "Cleans trash out of your bags," not the thresholds and conditions behind it. Leave out edge cases, settings and exceptions; the options' tooltips carry those. Sell the outcome, and what a player misses out on without it. Write the draft, then cut about a third before showing it.
 
 **Trivial never earns a line.** Plumbing a player never weighs, like muting an error sound: it doesn't sell, so it doesn't appear, Tips & Tricks included. A quick way to control a core feature is not trivial (Good to Go's "Hold Shift while opening the bank to skip restocking that time" stays). Test every line by asking whether a player deciding to install would miss it. If not, delete it. A line flagged as technical or trivial is cut, never reworded and put back.
 
@@ -253,5 +253,5 @@ This list also feeds the SEO step for the pitch summary — once candidates are 
 
 ## What Doesn't Belong Here
 
-- Technical details — SavedVariables, APIs, architecture, file maps, character limits, contributing rules. All of that lives in `README-Technical.md`.
+- Technical details — SavedVariables, APIs, architecture, file maps, character limits, contributing rules.
 - Speculation, "TODO" notes, or upcoming features that aren't shipped. This document describes what the add-on does today.
