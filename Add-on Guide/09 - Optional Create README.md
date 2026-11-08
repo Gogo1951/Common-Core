@@ -12,7 +12,7 @@ The user-facing companion to `README-Technical.md`: description, TL;DR, features
 1. **Research** — the Related Add-ons candidates (section 9), and from them the search vocabulary for the pitch.
 2. **Clarify** — only what the record doesn't answer (Style Guide → ASKING THE MAINTAINER). A better pitch over an already-synced one is asked here, as a proposal (Sync duty). An empty phase is normal.
 3. **Write** — `README.md` in the section order below, the pitch last; an infographic for each feature block without an image; every copy of the pitch when it changed.
-4. **Report** — a few lines in chat: what changed, any infographic to convert and upload, and the pitch surfaces rewritten, if any. Then Guide Feedback.
+4. **Report** — a few lines in chat: what changed, any infographic to convert and upload, the pitch surfaces rewritten, if any, and any clones the research found (Clones of Gogo1951's Add-ons). Then Guide Feedback.
 
 ## Voice & Tone
 
@@ -218,6 +218,8 @@ Research add-ons that overlap with this one. Search broadly — aim to surface *
 2. **Then highest usage.** Read the Total Downloads figure off each candidate's CurseForge listing and keep the biggest. Downloads are the tiebreaker — not your read of which is the closest competitor, and not a desire to cover one of each feature. A candidate with no CurseForge listing has no figure to read and ranks below every candidate that has one.
 3. **Fewer than five is fine.** A color with three honest entries stays at three; never pad to the cap.
 
+**Overlaps and Alternatives need at least 10,000 Total Downloads** on the candidate's CurseForge listing, which keeps the flood of new, AI-generated add-ons out of the list. A candidate below the floor, or with no CurseForge listing, is dropped, however close a match it is. Only two kinds of add-on skip the floor: Gogo1951's own, and one the maintainer names for the list. Pairs With has no floor.
+
 **Don't list anything that already appears in History.** History is the ancestry chain (forks, predecessors); Related Add-ons is the current competitive landscape. Different lists, no overlap.
 
 **Where to look:**
@@ -250,6 +252,22 @@ This list also feeds the SEO step for the pitch summary — once candidates are 
 > ### 🔴 Alternatives
 >
 > * ollidiemaus's [Auto Potion](https://www.curseforge.com/wow/addons/auto-potion)
+
+### Clones of Gogo1951's Add-ons
+
+The research turns up clones too: new add-ons, usually AI-generated, that rebuild one of Gogo1951's add-ons instead of sending it a PR. **A clone never goes in the README, whatever its downloads; it goes in the Phase 4 report**, so the maintainer can decide whether to leave a comment. Report a clone of this add-on, and of any other Gogo1951 add-on that turns up along the way. Never post, comment or contact anyone yourself.
+
+**What makes a clone:** it does the same job as one of Gogo1951's add-ons, feature for feature, and it appeared after ours. Most also show a name that plays on ours, a small download count, an AI-written description (emoji headers, stacked dashes, generic feature lists), or a new author with nothing else published. A long-standing competitor with its own approach is not a clone, however close it is.
+
+**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste. The middle paragraph goes in only when the copied add-on is one Gogo1951 took over from another author (its README's History says so); drop it otherwise.
+
+> Hey mate, imitation is the sincerest form of flattery, and everyone has to learn somewhere. If you've got feature ideas or changes, you're more than welcome to send a PR to {Short Name}: {GitHub URL}
+>
+> Why spend your time rebuilding something that already exists? Spinning up another AI slop copy that won't be maintained doesn't do anyone any good -- let's improve the original together. I'm always happy to sit down with anyone and talk WoW add-ons, so come find me on Discord: https://discord.gg/eh8hKq992Q (=
+>
+> For context, I didn't create {Short Name}. I stepped in to maintain it after the original author stopped updating it, and only after my PRs to them went unanswered. That's not the case here: you haven't sent a PR or reached out, and {Short Name} is still very much in active development.
+>
+> {CurseForge URL}
 
 ## What Doesn't Belong Here
 
