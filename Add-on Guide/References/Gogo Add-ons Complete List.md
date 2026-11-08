@@ -103,6 +103,7 @@ Anything else does not belong here. Where one add-on departs from the Style Guid
 - **CurseForge:** <https://www.curseforge.com/wow/addons/thanks-for-the-buff-revisited>
 - **Wago:** <https://addons.wago.io/addons/thanks-for-the-buff>
 - **Identity note:** repo `Thanks-for-the-Buff`, folder `TFTB`, CurseForge slug `thanks-for-the-buff-revisited`, Wago slug `thanks-for-the-buff` — all four differ, so never derive one from another.
+- **Extra TOCs:** Mists
 
 ### Tracking Eye
 - **GitHub:** <https://github.com/Gogo1951/Tracking-Eye>
