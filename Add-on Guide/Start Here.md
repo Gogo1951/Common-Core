@@ -33,29 +33,7 @@ To run a pass, launch Claude Code in the add-on's installed folder and paste the
 
 Each step is one laser-focused job. Run them in order, and skip an optional one when it has nothing to do. Each entry says what the step is for, then what it changes.
 
-```mermaid
-flowchart TD
-    S01["01 Local Setup<br/>Session Prep, once"] --> S02["02 UX Review"]
-    S02 --> S03["03 Code Review"]
-    S03 --> S04["04 Diagnostics Review"]
-    S03 --> S06["06 Copy Review"]
-    S04 -.->|"after in-game test"| S05["05 Data Review<br/>optional"]
-    S06 --> S07["07 Localization Review"]
-    S05 -.-> S08["08 Prelaunch Review<br/>after both branches"]
-    S07 --> S08
-    S08 -->|"Ready to tag"| S09["09 README"]
-    S08 -->|"Ready to tag"| S10["10 README-Technical"]
-    S08 -->|"Ready to tag"| S11["11 README-Testing"]
-    S09 --> S12["12 Release Notes & PR"]
-    S10 --> S12
-    S11 --> S12
-    classDef review fill:#EEEDFE,stroke:#534AB7,color:#26215C
-    classDef docs fill:#E1F5EE,stroke:#0F6E56,color:#04342C
-    classDef optional fill:#EEEDFE,stroke:#534AB7,color:#26215C,stroke-dasharray:4 4
-    class S02,S03,S04,S06,S07,S08 review
-    class S05 optional
-    class S09,S10,S11,S12 docs
-```
+![The pass workflow: 01 to 03 in a line, then 04 → 05 beside 06 → 07, meeting at 08, then 09–11 and 12](References/Pass%20Workflow.svg)
 
 - **`00 - Optional GitHub Cleanup.md`** — Starts a new add-on, or checks an existing one. For a new add-on it builds a complete, loadable skeleton on Common-Core. For an existing one it checks GitHub for every scaffolding file and repo setting. *Changes:* the new add-on's folder; for an existing add-on nothing local, with missing settings given as Run-button commands and corrected files as blocks to paste into GitHub.
 - **`01 - Local Setup.md`** — **Run at the start of every code session you start yourself, before anything else** (step 0 needs only Session Prep step 0). Sessions a pass starts for you, and step 12, skip it. Refreshes the guide, sets the session's permissions, pulls the latest `main` and libraries down, and opens the folder in Sublime Text. *Changes:* the add-on's `.claude/settings.local.json`, its TOCs' version and interface lines, its READMEs and scaffolding files, its libraries, and its git wiring (no commits).
