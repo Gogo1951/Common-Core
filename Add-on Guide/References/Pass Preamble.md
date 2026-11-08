@@ -75,14 +75,14 @@ When a pass's work is done, it offers the next pass in a new session, so the mai
 | Pass done | Offer |
 |---|---|
 | `02 - UX Review.md` | `03 - Code Review.md` |
-| `03 - Code Review.md` | `04 - Diagnostics Review.md` |
-| `04 - Diagnostics Review.md` | `06 - Copy Review.md` |
+| `03 - Code Review.md` | `04 - Diagnostics Review.md` and `06 - Copy Review.md`, side by side |
+| `04 - Diagnostics Review.md` | `05 - Data Review.md` |
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md` |
 | The sessions step 8 started, once all have finished | `12 - Create Release Notes & PR.md`, offered by the step 8 session |
 
-**`05 - Data Review.md` is never offered.** It is optional and needs Validate Data reports, which exist only once step 4 is finished and tested in game, so the maintainer starts it by hand; its write scope never meets Copy Review's, so the two can run side by side.
+**After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` needs Validate Data reports, which exist only once step 4 is tested in game, so the maintainer starts its card after that test; it is optional and ends its branch with no offer. Step 7's offer of step 8 adds one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
 
 In the Claude desktop app, offer each one with the app's start-session tool, as an offer (its card asks *New session* or *Do it here*): one card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The brief is exactly this line, with the prompt's file name filled in. Anywhere else, print the same line in a fenced block, to paste into a new session launched in this folder.
 

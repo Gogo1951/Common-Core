@@ -58,7 +58,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): a pass with fix prompts gives it after you've run them, never beside them. You mirror the working folder into the add-on's other installed clients, then test. Claude only ever edits the one folder it was launched in.
 
-**Each finished pass offers the next one in a new session** (Pass Preamble → Next Pass): 2 offers 3, 3 offers 4, 4 offers 6, 6 offers 7, 7 offers 8, and a Ready-to-tag 8 offers 9, 10 and 11, then 12 once they finish. Pick *New session* and they run side by side in this folder. Step 5 is never offered; start it yourself once step 4 is done and you have reports.
+**Each finished pass offers the next one in a new session** (Pass Preamble → Next Pass): 2 offers 3, then 3 offers 4 and 6 side by side. From there two branches run in this folder: 4 offers 5 (start it once you've tested step 4 in game and have its reports), and 6 offers 7. 7 offers 8; start it once both branches are done. A Ready-to-tag 8 offers 9, 10 and 11, then 12 once they finish.
 
 **Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` A departure the maintainer keeps for one add-on goes in that add-on's `README-Notes.md`, never here. A pass that does propose a change ends with a copy-and-run line: paste it into a **new session launched in `~/Common-Core`** (Claude Code there, or Cowork with it connected), where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never back into the code session**, whose template denies guide writes.
 
