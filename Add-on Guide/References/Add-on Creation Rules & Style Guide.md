@@ -833,7 +833,7 @@ Two output contexts: prints to the player carry no target marker and use branded
 
 ### Target Marker
 
-The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing so two add-ons never collide. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `. **WoW Forever blocks raid-marker tokens in chat**, so `ns:BuildAnnounceMessage` leaves the marker off there and keeps the rest of the format.
+The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing so two add-ons never collide. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
 
 ### Print Outs (Player Only)
 
@@ -855,7 +855,7 @@ Slash commands inside printed messages are wrapped in `C_INFO`.
 
 All cross-player chat routes through one entry point so the marker, name, and separator are handled in one place.
 
-- `ns:BuildAnnounceMessage(formatKey, ...)` formats `ns.L[formatKey]` and returns the finished line **without sending**, so callers can measure length first: the sent format above, with the marker left off on WoW Forever, or the bare body for a line drafted for the player to send (both per Target Marker).
+- `ns:BuildAnnounceMessage(formatKey, ...)` formats `ns.L[formatKey]` and returns the finished line **without sending**, so callers can measure length first: the sent format above, or the bare body for a line drafted for the player to send (both per Target Marker).
 - `ns:Announce(channel, target, formatKey, ...)` builds and calls `SendChatMessage`. It no-ops on a nil channel **and on a nil message**.
 - `ns:GetGroupChatChannel()` resolves `IsInGroup(LE_PARTY_CATEGORY_INSTANCE)` → `IsInRaid()` → `IsInGroup()`, returning `INSTANCE_CHAT` / `RAID` / `PARTY` in that order, and **returns nil when the player is not grouped** — `ns:Announce` then no-ops, so a caller whose message must still land falls back (for example, whispering the relevant player). Pass the channel explicitly for `SAY` or `YELL`.
 - **`SAY`, `YELL` and numbered channels need a click or key press behind the send** outside instances. From an event, a timer or login the send is blocked as `ADDON_ACTION_BLOCKED`, which `pcall` doesn't see, so these sends only ever run from the player's own input.

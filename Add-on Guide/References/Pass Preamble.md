@@ -10,7 +10,7 @@ Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edi
 
 ## Read first
 
-- `References/Add-on Creation Rules & Style Guide.md` — the rules. Authoritative wherever it speaks.
+- `References/Add-on Creation Rules & Style Guide.md` — the rules. Authoritative wherever it speaks. Read all of it, unless your prompt names the sections to read.
 - `References/Style Guide - Build Reference.md` — the same rules for building options rows and diagnostics; read it when your prompt names it.
 - `References/Gogo Add-ons Complete List.md` — per-add-on facts (names, IDs, links, categories, markers, slash commands). Note the add-on's row.
 - The add-on's `README-Notes.md` — where it departs from the guide; Style Guide → README-NOTES says how it binds the pass. An add-on without one has no exceptions.
