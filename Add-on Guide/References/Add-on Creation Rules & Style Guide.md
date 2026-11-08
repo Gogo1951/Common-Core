@@ -897,6 +897,8 @@ Live reference: **Magic Eraser** — `L["CHAT_LOADED"]` in `Locales/enUS.lua`.
 
 Live reference: [Magic-Eraser/Features/Minimap-Button.lua](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Button.lua).
 
+**Being replaced by a menu.** The UX Review turns this tooltip into a menu, and its click hints and modifier clicks into rows (`02 - UX Review.md` → Menus, Not Tooltips). Once an add-on's menu is built, it follows that section, and the Code Review doesn't flag Tooltip Structure or Click Handlers differences for it.
+
 ### Tooltip Structure
 
 ```

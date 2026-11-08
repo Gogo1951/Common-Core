@@ -4,7 +4,7 @@
 
 The first review of the cycle: how the add-on looks and reads to a player, and what it could do next. Map every surface, research what similar add-ons offer, then **show it rather than describe it**: a clickable wireframe of every window, **Current** beside **Proposed**, with each change's reason written on the page and its **Build** / **Try first** / **Drop** buttons beside it. The maintainer approves from the wireframe, each Build comes out as a feature prompt, and `03 - Code Review.md` then reviews the code with them in.
 
-**A rule the Style Guide already sets is the Code Review's, never a change here** — except the Spacing Scale, which moves only through this pass's Build choices.
+**A rule the Style Guide already sets is the Code Review's, never a change here** — except the Spacing Scale and Menus, Not Tooltips (below), which move only through this pass's Build choices.
 
 ## Workflow: six phases (0–5), all required
 
@@ -23,9 +23,20 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 3. **Find the last wireframe, then ask a few broad questions.** List the maintainer's artifacts and look for the title `{Add-on Name} UX Wireframes`. If one exists, read it and any comments on it: it keeps its link across reruns, tester feedback in its comments counts as a candidate below, and a change the last run marked **Try first** comes back as a candidate with whatever testers said about it. Then ask **at most four broad questions, in one round**, about direction, never one per change: who the add-on is mostly for, what players trip over, how bold the redesign may be, how far its scope may grow, anything off-limits. Skip any the record already answers; zero questions is fine.
 
-4. **Review and draw.** Walk each job a player comes to the add-on for, screen by screen. Look for what a new player can't work out, names that differ for the same thing, controls that don't say what they do, dead ends, empty states that don't point anywhere, copy that explains mechanics instead of outcomes, and spacing off the Spacing Scale. Off-scale values become one *layout* change per window, listing each value and the step it moves to. Then add the feature ideas: **gap features** from phase 2, saying which add-on has each and how popular it looks, and **original ideas** no competitor ships (quality of life, options, messaging, scope extensions; be creative here), each fitting the flavors the add-on ships. Rank everything by impact, then build and publish the wireframe per Wireframe Build below, titled `{Add-on Name} UX Wireframes`, with every change drawn into Proposed. Give the maintainer the link, say it stays private until they share it from the page's Share menu, and wait for them to say they've made their choices.
+4. **Review and draw.** Walk each job a player comes to the add-on for, screen by screen. Look for what a new player can't work out, names that differ for the same thing, controls that don't say what they do, dead ends, empty states that don't point anywhere, copy that explains mechanics instead of outcomes, and spacing off the Spacing Scale. Off-scale values become one *layout* change per window, listing each value and the step it moves to. Each tooltip the add-on draws for its own button or frame becomes one *layout* change to a menu (Menus, Not Tooltips below). Then add the feature ideas: **gap features** from phase 2, saying which add-on has each and how popular it looks, and **original ideas** no competitor ships (quality of life, options, messaging, scope extensions; be creative here), each fitting the flavors the add-on ships. Rank everything by impact, then build and publish the wireframe per Wireframe Build below, titled `{Add-on Name} UX Wireframes`, with every change drawn into Proposed. Give the maintainer the link, say it stays private until they share it from the page's Share menu, and wait for them to say they've made their choices.
 
 5. **Read the choices and output.** Read the approvals back (Wireframe Build → Approvals). Each **Build** gets a feature prompt (below). **Try first** gets nothing yet: the page keeps it as an *idea* for testers, and the next run brings it back. Each **Drop** is left alone and not recorded; a later run may suggest it again. A change with no choice is listed in one line and left alone. A note the maintainer wrote on a card changes that change: apply their version.
+
+## Menus, Not Tooltips
+
+A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu, drawn like Pretty Wide Quest Log's Quest Arrow menu: [Pretty-Wide-Quest-Log/Features/Routes/Routes-Arrow-Menu.lua](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu.lua), with its plate art `Includes/Images/Route-Menu.tga`. The look comes from WIM's mini-map whisper list, which players already know: look at it in game for the feel, never at its code. WIM still lists its clicks (`Right-Click`, `Shift + Middle-Click`); ours makes each one a row.
+
+- **The plate:** dark, with angled corners and a soft shadow, nine-sliced from the art at half size so the edges stay sharp.
+- **The header:** the menu's name in the title color on the left, the Short Name muted on the right, then a divider.
+- **Rows, never instructions.** Everything the player can do is a row they click: a setting is a toggle row, its name on the left and On or Off on the right; an action is a row named for what it does, such as `Ignore Rude Awakening Turn-In` or `Options`. Rows highlight on hover, and dividers group them. No click-hint lines (`Middle-Click`, `Shift + Middle-Click`, `Drag`) and no modifier clicks: what a hint explained becomes a row, or moves to the Options panel. Dragging a frame to move it can stay, with no hint line.
+- **Opening and closing:** opens on hover, stays while the mouse is on the button or the menu, closes a moment after it leaves both, and closes on Escape.
+
+Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 
 ## Wireframe Build
 
