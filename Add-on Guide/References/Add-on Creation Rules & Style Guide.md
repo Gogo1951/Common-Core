@@ -1139,11 +1139,15 @@ Every add-on registers a **Feedback & Support** child panel, between Profiles an
 ```
 Help [Add-on Name] Level Up (the group name, drawn as the page title)
 Seven paragraphs: intro, ways, four bullets (Share Feedback, Tell a Friend, Favorite on CurseForge, Star on GitHub), thanks
+Spacer
 Feedback & Support Links (header)
-Discord, CurseForge, Wago, GitHub (TITLE-colored label beside a read-only URL box, in that order)
+Spacer, then Discord; spacer, then CurseForge; spacer, then Wago; spacer, then GitHub (TITLE-colored label beside a read-only URL box, in that order)
+Spacer
 Copy caption (C_HELP)
 Version (C_INFO, order 999, after a full-width blank spacer)
 ```
+
+Every link row and the copy caption has an `ns.OptionsSpacer` before it. Without them the four URL boxes sit flush against each other and the caption touches the GitHub box. The spacer before the first row is also the one under the header, so the header doesn't get a second one.
 
 **Its copy is mandated, identical in every add-on** apart from the Full Name, baked in literally as in WELCOME MESSAGE. Each paragraph is its own `ns.OptionsDesc` on its own key, separated by an `ns.OptionsSpacer`, never joined with `"\n"`; the bullets are part of the strings:
 
