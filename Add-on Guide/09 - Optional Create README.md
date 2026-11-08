@@ -20,7 +20,7 @@ The user-facing companion to `README-Technical.md`: description, TL;DR, features
 
 **High level, and short.** Say what it does for the player, never how or when: "Cleans trash out of your bags," not the thresholds and conditions behind it. Leave out edge cases, settings and exceptions; the options' tooltips and `README-Technical.md` carry those. Sell the outcome, and what a player misses out on without it. Write the draft, then cut about a third before showing it.
 
-**Trivial never earns a line.** A sound toggle, a hold-a-key option, a setting a player notices only when it bugs them: none of it sells, so none of it appears, Tips & Tricks included. Test every line by asking whether a player deciding to install would miss it. If not, delete it. A line flagged as technical or trivial is cut, never reworded and put back.
+**Trivial never earns a line.** Plumbing a player never weighs, like muting an error sound: it doesn't sell, so it doesn't appear, Tips & Tricks included. A quick way to control a core feature is not trivial (Good to Go's "Hold Shift while opening the bank to skip restocking that time" stays). Test every line by asking whether a player deciding to install would miss it. If not, delete it. A line flagged as technical or trivial is cut, never reworded and put back.
 
 **Show, don't tell.** Players skim. Anything an image, a table, or a screenshot already says gets no prose of its own.
 
@@ -79,7 +79,7 @@ Each block, in this order:
 
 1. **`### Feature Name`** — the name the player sees in the add-on, in Title Case.
 2. **One image** — a screenshot (Image Handling) or an infographic (below).
-3. **Up to five bullets, a hard cap.** Fewer is better; don't make five when three would do. `* **Bullet Title** // ` and a benefit of one short sentence, two at most, never a run-on. Bullet titles in Title Case, no emojis, **250 characters at most per line** as written (`wc -m`). Every bullet is a reason to install, in the player's words: never a setting, a key combination, or how it works.
+3. **Up to five bullets, a hard cap.** Fewer is better; don't make five when three would do. `* **Bullet Title** // ` and a benefit of one short sentence, two at most, never a run-on. Bullet titles in Title Case, no emojis, **250 characters at most per line** as written (`wc -m`). Every bullet is a reason to install, in the player's words, never how it works.
 4. **A table**, only when it says something faster than bullets can (Good to Go's list of consumable macros).
 
 ```markdown
