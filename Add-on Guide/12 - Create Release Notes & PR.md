@@ -30,13 +30,15 @@ In Phase 0, `WebFetch` `https://www.githubstatus.com/api/v2/summary.json`. If an
     2. Add the original as `upstream` if it's missing (`git remote add upstream https://github.com/{Owner}/{Repo}.git`), `git fetch -q upstream --tags`, and branch from `upstream/{default branch}`.
     3. Push the branch to the fork (`git push -u https://github.com/Gogo1951/{Repo}.git release/<slug>`) and open the PR with `gh pr create --repo {Owner}/{Repo} --head Gogo1951:release/<slug>`.
 
-## Workflow — five phases (0–4), all required
+## Workflow — six phases (0–5), all required
 
 0. **Identity gate** above, the GitHub status check, plus permissions per the preamble.
 1. **Gather the changes: everything since the last release, never just this session.** The notes cover every change a player gets between the previous release and this one, including work merged in earlier sessions or edited on GitHub and never tagged. Fetch the base per Always Start From the Latest `main`, then `git describe --tags --abbrev=0 {base}` for the last release tag (no tag means a first release: everything counts). Sources, all of them: `git log --oneline <tag>..{base}` and `git diff <tag> {base}` for what already landed since that tag; this session's Code Review issues and fixes and its working-copy diff for what this pass commits. Build the change list from what the player experiences, never from the code's shape.
-2. **Draft and confirm — one gate for everything.** Draft the release notes (format below), the PR title and the branch slug. Present them together per Style Guide → ASKING THE MAINTAINER, naming the last release tag the notes run from, the version line, and which base the branch comes from (own repo or someone else's); ask for Special Thanks, and **wait for the yes**. A modification is an approval of the modified version. Nothing is pushed or created on GitHub before approval.
-3. **Execute.** Branch from the freshly fetched base (`git switch --no-track -c release/<slug> {base}`); commit the session's changes — developer-level detail belongs in commit messages, concisely. **Before pushing, run `git grep -n '^## Interface:' HEAD -- '*.toc'` and confirm every target TOC in `01 - Local Setup.md` is there with its number. If one is missing, stop: commit it if the working copy has it, otherwise report it as a Blocker. Never push or hand off for tagging otherwise.** Session Prep edits only the working copy, so this checks what actually ships. Then push, and open the PR with `gh pr create`, the approved title, and the approved release notes as the body, passed as one quoted `--body` argument, never through `$(...)` or a heredoc. If a bare `git config` or `gh` call still fails in the sandbox, stop and hand the maintainer the exact command to run in Terminal.
-4. **Report.** The PR link, the base it was built on, and the Phase 0/3 identity verification plus each committed TOC's `## Interface:` value in one line. Then the approved notes in one fenced block, ready for the GitHub release.
+   **Then match the change list to GitHub issues, every time, unasked.** Run `gh issue list --repo {Owner}/{Repo} --state open --limit 100 --json number,title,body` against the repo the PR goes to, and also take every `#N` named in the commits since the tag. Each open issue the release fully fixes is **Fixed**; one it only partly addresses is **Related**. Judge by what the issue reports, not by its title alone.
+2. **Draft and confirm — one gate for everything.** Draft the release notes (format below), the PR title and the branch slug. Present them together per Style Guide → ASKING THE MAINTAINER, naming the last release tag the notes run from, the version line, which base the branch comes from (own repo or someone else's), and the Fixed and Related issues by number and title (or `No linked issues.`); ask for Special Thanks, and **wait for the yes**. A modification is an approval of the modified version. Nothing is pushed or created on GitHub before approval.
+3. **Execute.** Branch from the freshly fetched base (`git switch --no-track -c release/<slug> {base}`); commit the session's changes — developer-level detail belongs in commit messages, concisely. **Before pushing, run `git grep -n '^## Interface:' HEAD -- '*.toc'` and confirm every target TOC in `01 - Local Setup.md` is there with its number. If one is missing, stop: commit it if the working copy has it, otherwise report it as a Blocker. Never push or hand off for tagging otherwise.** Session Prep edits only the working copy, so this checks what actually ships. Then push, and open the PR with `gh pr create`, the approved title, and as the body the approved release notes followed by the Linked Issues block (below), passed as one quoted `--body` argument, never through `$(...)` or a heredoc. If a bare `git config` or `gh` call still fails in the sandbox, stop and hand the maintainer the exact command to run in Terminal.
+4. **Verify the links, then report.** Run `gh pr view {PR} --repo {Owner}/{Repo} --json closingIssuesReferences` and confirm every Fixed issue is listed; if one is missing, fix the PR body with `gh pr edit --body` and check again. Report the PR link, the base it was built on, the Phase 0/3 identity verification plus each committed TOC's `## Interface:` value in one line, and the Fixed issues as links, saying they close when the PR merges. Then the approved notes in one fenced block, ready for the GitHub release (without the Linked Issues block).
+5. **Close out after the merge.** When the maintainer says the PR is merged (in this session or a later one), check each Fixed issue with `gh issue view {N} --json state`. Close any still open with `gh issue close {N} --repo {Owner}/{Repo} --comment "Fixed in #{PR}."`, and report each issue's final state in one line. On someone else's repo, closing is the owner's: report any still open instead of closing it.
 
 ## Release Notes format
 
@@ -80,6 +82,19 @@ When the last tag is from the same day (the letter advances), start from that re
 **Written for players, not developers.** Every bullet says what the user will notice, in plain language — never function names, file names, APIs, or internals. Developer detail goes in commit messages, not release notes. Keep it short and human: one line per bullet, the whole thing readable at a glance. The no-em-dash and straight-quotes rules bind this copy (Style Guide → TONE AND COPY → In-Game Rendering Rules).
 
 **README changes never appear in the release notes. Never.** Leave out every change to any `README*` file (`README.md`, `README-Notes.md`, `README-Technical.md`, `README-Testing.md`, or any other): no bullet, no mention in the summary, not folded into another item, and not reworded as a documentation or description update.
+
+## Linked Issues block
+
+Every Fixed and Related issue goes in the PR body, after the release notes, so GitHub links them to the PR and closes the Fixed ones when it merges into `main`. One closing keyword per issue, never a comma list (GitHub reads only the first number). Drop the block only when there are no linked issues; drop either line group when it is empty:
+
+```
+### Linked Issues
+
+* Fixes #{N} // {Issue title}
+* Related to #{N} // {Issue title}
+```
+
+For a PR to someone else's repo, the numbers are that repo's issues. The block stays out of the GitHub release text.
 
 ## Rules
 
