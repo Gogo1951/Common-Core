@@ -2,9 +2,14 @@
 # (a copy of addon-files/.github/workflows/issue-labels.yml) when an issue opens.
 # It also runs directly on Common-Core's own new issues.
 #
-# Issue forms can only apply fixed labels, so the Defect form applies "Defect"
-# by itself and this adds the "Area: ..." label that matches its Issue Type
-# answer. No answer adds nothing; the label is set during triage.
+# Every issue carries at least one Area, one Priority and one Type label
+# (scripts/sync-labels.sh has the list). Issue forms can only apply fixed
+# labels, so the Defect form applies "Type: Defect" and the Request form
+# "Type: Enhancement"; this fills in whichever group a new issue still lacks:
+#   Area      from the Defect form's Issue Type answer, else "Area: Features"
+#   Priority  "Priority: 2 Normal"
+#   Type      "Type: Question" (a blank issue opened with no labels)
+# Triage corrects the defaults by hand.
 #
 # No third-party actions: the runner's own gh CLI does the edit, and the issue
 # body is read from an environment variable, never pasted into the script.
@@ -19,18 +24,21 @@ on:
 permissions: {}
 
 jobs:
-  area:
+  label:
     runs-on: ubuntu-latest
     permissions:
       issues: write
     steps:
-      - name: Add Area label from Issue Type
+      - name: Fill in missing Area, Priority and Type labels
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.issue.number }}
           BODY: ${{ github.event.issue.body }}
         run: |
+          labels="$(gh issue view "$NUMBER" --json labels --jq '.labels[].name')"
+          has() { printf '%s\n' "$labels" | grep -q "^$1"; }
+
           # The form renders each answer as "### <field label>", a blank line,
           # then the answer. Take the first non-blank line after the Issue Type
           # heading.
@@ -38,12 +46,20 @@ jobs:
             /^### / { f = index($0, "### Issue Type") == 1; next }
             f && NF { print; exit }
           ')"
-          case "$type" in
-            Code | Copywriting | Data | "Interface Design" | Localization)
-              gh issue edit "$NUMBER" --add-label "Area: $type"
-              echo "Added Area: $type"
-              ;;
-            *)
-              echo "No Area label for Issue Type: ${type:-none}"
-              ;;
-          esac
+
+          add=()
+          if ! has "Area: "; then
+            case "$type" in
+              Data) add+=("Area: Data") ;;
+              Copywriting | Localization) add+=("Area: Localization") ;;
+              *) add+=("Area: Features") ;;
+            esac
+          fi
+          has "Priority: " || add+=("Priority: 2 Normal")
+          has "Type: " || add+=("Type: Question")
+
+          for label in "${add[@]}"; do
+            gh issue edit "$NUMBER" --add-label "$label"
+            echo "Added $label"
+          done
+          [ ${#add[@]} -gt 0 ] || echo "Area, Priority and Type already set"
