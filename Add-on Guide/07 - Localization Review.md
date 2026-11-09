@@ -24,7 +24,7 @@ Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` 
     - **Parse whole assignments, not physical lines** (Style Guide → LOCALIZATION → Reading Locale Files).
     - **Key parity** — every `Locales/*.lua` has an identical key set to `enUS.lua`: no missing keys, no orphans.
     - **Everything is translated** — no renamed key whose English changed kept the old key's value, and no value equals `enUS` except as When a value may stay English allows or a game-name flag exempts.
-    - **Placeholder match** — count, type, and order per key against `enUS` (a mismatch crashes at runtime — highest-value check).
+    - **Placeholder match** — count and type per key against `enUS`, in the same order unless numbered (`%2$s`, which translators use to reorder words), where each number must point at an `enUS` placeholder of the same type (a mismatch crashes at runtime — highest-value check).
     - **Rendering** — no em-dashes or curly quotes in any locale's values, per Style Guide → TONE AND COPY → In-Game Rendering Rules.
     - **Parse** — every touched file still parses and registers the correct locale code.
     If anything fails, fix it before finishing.
