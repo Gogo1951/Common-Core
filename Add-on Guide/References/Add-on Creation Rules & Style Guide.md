@@ -1080,6 +1080,7 @@ descCommands = ns.OptionsDesc(
 - Text descriptions: `fontSize = "medium"`; spacers carry none, as `ns.OptionsSpacer` shows. Never `"small"`. Never `SetFont()`.
 - **List every class's spells, grouped by class.** One profile can serve every character, so a panel of spells never hides a row behind `IsPlayerSpell`.
 - **When every gated section on a panel hides on the same condition, define a local builder that bakes the condition in** rather than repeating the predicate on each widget.
+- **A switch that gates tab or tree children leaves them out of the table while off, never hidden.** AceConfigDialog decides whether to draw the frame from `hidden` as inherited off the parent, not each child's own, so hidden children leave an empty bordered box. Register the panel as its builder function, which adds the children only while the switch is on, so every repaint rebuilds it.
 
 Live reference: **Control Freak** — dropdowns and toggles throughout its panels.
 
@@ -1279,7 +1280,7 @@ A single toggle gates the whole panel, and it is **runtime-only**. It lives in a
 
 **Off means off.** When disabled, no event log is allocated, and the dispatcher's logging branch is skipped behind a single boolean check before any allocation or string work. `ns:SetDiagnosticsEnabled(false)` stops logging, stops any run, and clears every report.
 
-When off, only the warning text and the enable toggle show. The tabs are **left out of the table, never hidden**. AceConfigDialog decides whether to draw a tab frame from `hidden` as inherited off the parent, not each tab's own, so hidden tabs leave an empty bordered frame. Register the panel as its builder function, which adds the tabs only while the gate is on, so every repaint rebuilds it.
+When off, only the warning text and the enable toggle show, and the tabs are left out of the table (OPTIONS PANEL → Widget Conventions).
 
 ### Hard Rules
 
