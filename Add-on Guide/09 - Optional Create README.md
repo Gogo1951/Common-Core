@@ -81,6 +81,7 @@ Each block, in this order:
 2. **One image** — a screenshot (Image Handling) or an infographic (below).
 3. **Up to five bullets, a hard cap.** Fewer is better; don't make five when three would do. `* **Bullet Title** // ` and a benefit of one short sentence, two at most, never a run-on. Bullet titles in Title Case, no emojis, **250 characters at most per line** as written (`wc -m`). Every bullet is a reason to install, in the player's words, never how it works.
 4. **A table**, only when it says something faster than bullets can (Good to Go's list of consumable macros).
+5. **`#### Example Messages`**, only when this feature prints or sends chat lines (below).
 
 ```markdown
 ### Restocker
@@ -102,10 +103,16 @@ Common bloat, cut on sight:
 
 > * **Safety First** // Never touches quest items, BoP gear, recipes, mounts, pets, or legendaries.
 
-**Example Messages.** When the add-on prints or sends chat lines, an `### Example Messages` block follows the last feature block: its best few lines, five at most, each its own blockquote with a blank line between them. The bold label names what triggers the line, a comma, then where it lands: `**Self:**` is a print to the player's own window, `**Party:**` or `**Raid:**` a group announcement, `**Message To {Name}:**` a whisper; prefix `🔊 & ` when the line also plays a sound. The text is the line as the game shows it, with links as `[Name]` and names from the house roster (Style Guide → Example Lines):
+**Example Messages.** A feature that prints or sends chat lines ends its own block with `#### Example Messages`, after its bullets (and table): that feature's best few lines, five at most, each its own blockquote with a blank line between them. Never a separate section after the features, and never one feature's lines under another's block. The bold label names what triggers the line, a comma, then where it lands: `**Self:**` is a print to the player's own window, `**Party:**` or `**Raid:**` a group announcement, `**Message To {Name}:**` a whisper; prefix `🔊 & ` when the line also plays a sound. The text is the line as the game shows it, with links as `[Name]` and names from the house roster (Style Guide → Example Lines), minus the target marker: a sent line starts at its first word, never `{rtN}`:
 
 ```markdown
-### Example Messages
+### Restocker
+
+<img width="800" src="https://github.com/user-attachments/assets/fa63db86-8638-4483-9f18-f47765ba8a8f" />
+
+* **Pick Your Staples Once** // Every merchant and bank visit tops up your food, water, ammo, and reagents.
+
+#### Example Messages
 
 > **Hearth Home After Raid, 🔊 & Self:** Connoisseur & Restocker // Don't forget to restock while you're in town!
 
