@@ -268,10 +268,13 @@ The research turns up clones too: new add-ons, usually AI-generated, that rebuil
 
 **Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste.
 
-> Hey mate, I see quite a bit of overlap between this and my add-on {Short Name}.
+> Hey mate! I noticed quite a bit of overlap between your add-on and {Full Name}. I've already built a lot of that functionality, and I'd love to hear what you have in mind for yours.
+>
 > {CurseForge URL}
 >
-> How about we work together instead of building the same thing twice? I always welcome PRs! And always happy to talk WoW add-ons, so come say hi on Discord: https://discord.gg/eh8hKq992Q (=
+> Want to work on it together? I'm happy to show you around the code and help you get your ideas into {Full Name}. PRs are always welcome! Come say hi on Discord sometime. I'm always up for talking WoW add-ons or software development. Cheers! (=
+>
+> https://discord.gg/eh8hKq992Q
 
 ## What Doesn't Belong Here
 
