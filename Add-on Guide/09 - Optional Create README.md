@@ -81,7 +81,7 @@ Each block, in this order:
 2. **One image** — a screenshot (Image Handling) or an infographic (below).
 3. **Up to five bullets, a hard cap.** Fewer is better; don't make five when three would do. `* **Bullet Title** // ` and a benefit of one short sentence, two at most, never a run-on. Bullet titles in Title Case, no emojis, **250 characters at most per line** as written (`wc -m`). Every bullet is a reason to install, in the player's words, never how it works.
 4. **A table**, only when it says something faster than bullets can (Good to Go's list of consumable macros).
-5. **`#### Example Messages`**, only when this feature prints or sends chat lines (below).
+5. **`> Sample Messages`**, only when this feature prints or sends chat lines (below).
 
 ```markdown
 ### Restocker
@@ -103,7 +103,7 @@ Common bloat, cut on sight:
 
 > * **Safety First** // Never touches quest items, BoP gear, recipes, mounts, pets, or legendaries.
 
-**Example Messages.** A feature that prints or sends chat lines ends its own block with `#### Example Messages`, after its bullets (and table): that feature's best few lines, five at most, each its own blockquote with a blank line between them. Never a separate section after the features, and never one feature's lines under another's block. The bold label names what triggers the line, a comma, then where it lands: `**Self:**` is a print to the player's own window, `**Party:**` or `**Raid:**` a group announcement, `**Message To {Name}:**` a whisper; prefix `🔊 & ` when the line also plays a sound. The text is the line as the game shows it, with links as `[Name]` and names from the house roster (Style Guide → Example Lines), minus the target marker: a sent line starts at its first word, never `{rtN}`:
+**Sample Messages.** A feature that prints or sends chat lines ends its own block with a blockquote reading `> Sample Messages`, after its bullets (and table), never a `####` header: Markdown draws `###` and `####` too close in size to tell apart, and the quote bar ties the title to its lines. Then that feature's best few lines, five at most, each its own blockquote with a blank line between them. Never a separate section after the features, and never one feature's lines under another's block. The bold label names what triggers the line, a comma, then where it lands: `**Self:**` is a print to the player's own window, `**Party:**` or `**Raid:**` a group announcement, `**Message To {Name}:**` a whisper; prefix `🔊 & ` when the line also plays a sound. The text is the line as the game shows it, with links as `[Name]` and names from the house roster (Style Guide → Example Lines), minus the target marker: a sent line starts at its first word, never `{rtN}`:
 
 ```markdown
 ### Restocker
@@ -112,7 +112,7 @@ Common bloat, cut on sight:
 
 * **Pick Your Staples Once** // Every merchant and bank visit tops up your food, water, ammo, and reagents.
 
-#### Example Messages
+> Sample Messages
 
 > **Hearth Home After Raid, 🔊 & Self:** Connoisseur & Restocker // Don't forget to restock while you're in town!
 
@@ -266,15 +266,15 @@ The research turns up clones too: new add-ons, usually AI-generated, that rebuil
 
 **What makes a clone:** it does the same job as one of Gogo1951's add-ons, feature for feature, and it appeared after ours. Most also show a name that plays on ours, a small download count, an AI-written description (emoji headers, stacked dashes, generic feature lists), or a new author with nothing else published. A long-standing competitor with its own approach is not a clone, however close it is.
 
-**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste. The middle paragraph goes in only when the copied add-on is one Gogo1951 took over from another author (its README's History says so); drop it otherwise.
+**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste.
 
-> Hey mate, imitation is the sincerest form of flattery, and everyone has to learn somewhere. If you've got feature ideas or changes, you're more than welcome to send a PR to {Short Name}: {GitHub URL}
->
-> Why spend your time rebuilding something that already exists? Spinning up another AI slop copy that won't be maintained doesn't do anyone any good -- let's improve the original together. I'm always happy to sit down with anyone and talk WoW add-ons, so come find me on Discord: https://discord.gg/eh8hKq992Q (=
->
-> For context, I didn't create {Short Name}. I stepped in to maintain it after the original author stopped updating it, and only after my PRs to them went unanswered. That's not the case here: you haven't sent a PR or reached out, and {Short Name} is still very much in active development.
+> Hey mate! I noticed quite a bit of overlap between your add-on and {Full Name}. I've already built a lot of that functionality, and I'd love to hear what you have in mind for yours.
 >
 > {CurseForge URL}
+>
+> Want to work on it together? I'm happy to show you around the code and help you get your ideas into {Full Name}. PRs are always welcome! Come say hi on Discord sometime. I'm always up for talking WoW add-ons or software development. Cheers! (=
+>
+> https://discord.gg/eh8hKq992Q
 
 ## What Doesn't Belong Here
 

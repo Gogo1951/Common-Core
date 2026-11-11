@@ -91,6 +91,7 @@ Anything else does not belong here. Where one add-on departs from the Style Guid
 - **GitHub:** <https://github.com/Gogo1951/Play-It-Forward>
 - **CurseForge:** <https://www.curseforge.com/wow/addons/play-it-forward>
 - **Wago:** <https://addons.wago.io/addons/play-it-forward>
+- **Extra TOCs:** Mists
 
 ### Pretty Wide Quest Log
 - **GitHub:** <https://github.com/Gogo1951/Pretty-Wide-Quest-Log>
