@@ -266,15 +266,12 @@ The research turns up clones too: new add-ons, usually AI-generated, that rebuil
 
 **What makes a clone:** it does the same job as one of Gogo1951's add-ons, feature for feature, and it appeared after ours. Most also show a name that plays on ours, a small download count, an AI-written description (emoji headers, stacked dashes, generic feature lists), or a new author with nothing else published. A long-standing competitor with its own approach is not a clone, however close it is.
 
-**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste. The middle paragraph goes in only when the copied add-on is one Gogo1951 took over from another author (its README's History says so); drop it otherwise.
+**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste.
 
-> Hey mate, imitation is the sincerest form of flattery, and everyone has to learn somewhere. If you've got feature ideas or changes, you're more than welcome to send a PR to {Short Name}: {GitHub URL}
->
-> Why spend your time rebuilding something that already exists? Spinning up another AI slop copy that won't be maintained doesn't do anyone any good -- let's improve the original together. I'm always happy to sit down with anyone and talk WoW add-ons, so come find me on Discord: https://discord.gg/eh8hKq992Q (=
->
-> For context, I didn't create {Short Name}. I stepped in to maintain it after the original author stopped updating it, and only after my PRs to them went unanswered. That's not the case here: you haven't sent a PR or reached out, and {Short Name} is still very much in active development.
->
+> Hey mate, I see quite a bit of overlap between this and my add-on {Short Name}.
 > {CurseForge URL}
+>
+> How about we work together instead of building the same thing twice? I always welcome PRs! And always happy to talk WoW add-ons, so come say hi on Discord: https://discord.gg/eh8hKq992Q (=
 
 ## What Doesn't Belong Here
 
