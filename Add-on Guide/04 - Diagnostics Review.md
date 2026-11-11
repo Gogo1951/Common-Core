@@ -6,12 +6,13 @@ The Diagnostic Tools panel is what a player pastes into a bug report, so it shou
 
 **This pass asks nothing and hands back nothing to apply.** The code is the evidence: every change the checklist calls for, it makes, and it says what it did.
 
-## Workflow — four phases (0–3), all required
+## Workflow — five phases (0–4), all required
 
 0. **Permissions** — per the preamble.
 1. **Review.** Read Style Guide → DIAGNOSTIC TOOLS and `References/Style Guide - Build Reference.md` → DIAGNOSTIC TOOLS, then the add-on's `Diagnostics/` folder and everything it probes: the dispatcher in `Features/Core.lua`, every feature file, the data folders, the options, and the saved-variables defaults. Fetch Magic Eraser's live [`Diagnostics/`](https://github.com/Gogo1951/Magic-Eraser/tree/main/Diagnostics) folder for comparison (and Pretty Wide Quest Log's Message Length report when the add-on sends chat or writes macros). Build a full picture of every way a feature can silently fail to fire.
 2. **Apply.** Make every change the checklist below finds, one checklist area at a time. After each, run the changed files through `stylua --syntax lua51`, `luac -p` and luacheck, fix what they flag, and give one status line, for example: `Manifests: added 3 events, 2 API checks and the Bags data row; probe now reads the combat and level gates.`
 3. **Report.** A 2–3 sentence summary, then the status lines in order, then one line per rule Magic Eraser's folder breaks (Framework current). Never claim the panel works in-game: end by telling the maintainer to open it and run every report on every flavor, then give the Copy to Other Flavors command. A clean run changes nothing and says so.
+4. **Worth Running Data Review?** Last, just before the Next Pass offer, one line: yes or no, and why. **Yes** when a file under `Data/` or a TOC's data lines changed since the last release tag (`git diff --stat $(git describe --tags --abbrev=0) -- Data/ '*.toc'`), when this pass added a data-source row, or when the maintainer mentioned a new game patch or build. **No** when the release left the data alone, as a small fix or a settings change does. An add-on with no data files says no and gets no step 5 offer. Either way, a Validate Data report that flags a bad or missing ID in the in-game test makes it worth running. On no, the step 5 offer says it can be skipped.
 
 ## Checklist
 
