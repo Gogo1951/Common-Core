@@ -1,6 +1,6 @@
 # WoW Add-on Localization Review (Editing, 5-Phase)
 
-**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Localization Review`. Write scope: **every `Locales/*.lua` except `enUS.lua`.**
+**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Localization Review`. Write scope: **every `Locales/*.lua` except `enUS.lua`, and every non-English row of `Data.MESSAGE_LANGUAGES` in `Data/Message-Languages.lua`.**
 
 Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` has just made right. When this pass finishes, every locale carries a correct, idiomatic translation of every `enUS.lua` key. This pass does the translating: it never defers the work to a later human pass or leaves `TODO` markers behind. **It asks nothing.** Every wording, register, loanword and stay-English call is its own to make, so it makes it and moves on.
 
@@ -18,6 +18,7 @@ Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` 
 2. **Translate every other locale file — the main event.** Reconcile each `Locales/*.lua` against the **full current** `enUS.lua`:
     - **Key set** — add every key `enUS.lua` has that this file lacks, and remove keys `enUS.lua` no longer has. When done, every locale carries exactly the same key set as `enUS.lua`.
     - **Translate every value into the target language.** New keys are translated fresh from the current English; a renamed key keeps the old key's value only when its English is unchanged. Changed English and drifted values get a fresh translation of the current source. Leave English only where When a value may stay English allows; everything else gets translated, loanwords included.
+    - **Message languages** — when the add-on has `Data/Message-Languages.lua`, every row carries a translation of each default the `enUS` row has, with every `{token}` kept verbatim (Style Guide → MESSAGES → Editable Messages). A default is a line another player reads, so it is written as a player would say it. The language names are already written in their own language and never change.
     - **Formatting and comments** — every locale file mirrors `enUS.lua`'s section structure, ordering, and instructional comments, so the files stay diffable against each other.
 
 3. **Verify — required.** Script it where possible:
@@ -25,6 +26,7 @@ Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` 
     - **Key parity** — every `Locales/*.lua` has an identical key set to `enUS.lua`: no missing keys, no orphans.
     - **Everything is translated** — no renamed key whose English changed kept the old key's value, and no value equals `enUS` except as When a value may stay English allows or a game-name flag exempts.
     - **Placeholder match** — count and type per key against `enUS`, in the same order unless numbered (`%2$s`, which translators use to reorder words), where each number must point at an `enUS` placeholder of the same type (a mismatch crashes at runtime — highest-value check).
+    - **Message languages** — every `Data.MESSAGE_LANGUAGES` row has the same defaults as the `enUS` row, each holding the same `{tokens}`.
     - **Rendering** — no em-dashes or curly quotes in any locale's values, per Style Guide → TONE AND COPY → In-Game Rendering Rules.
     - **Parse** — every touched file still parses and registers the correct locale code.
     If anything fails, fix it before finishing.

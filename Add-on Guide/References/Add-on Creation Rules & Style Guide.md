@@ -716,6 +716,7 @@ Existing add-ons move onto the scale through the UX Review's Build choices, neve
 - **Locale files other than `enUS.lua` are written only by the Localization Review (`07 - Localization Review.md`), the new-add-on scaffold (`00 - Optional GitHub Cleanup.md`), and a pitch change in `09 - Optional Create README.md`, which retranslates `OPTIONS_DESCRIPTION` alone, and read only by the Prelaunch Review for its own checks.** Every other pass edits and flags `enUS.lua` alone.
 - Always localize, even when the only language is English. All user-facing strings go through `L["KEY"]`, never hardcoded.
 - **Only our own words are localized.** A game name (a spell, item, skill, zone, class or Blizzard UI label) comes from the client by ID and never enters `Locales/` — see GAME NAMES.
+- **An editable message's default text lives in `Data/Message-Languages.lua`, not `Locales/`.** The player picks the language they send in, and AceLocale loads only the client's own file, so every language's default has to load everywhere (MESSAGES → Editable Messages).
 - **Every add-on ships the full supported locale set**, one file per locale code — `esES.lua` and `esMX.lua` are separate files even though the strings are usually identical. The set and order are the master list's Shared constants (`References/Gogo Add-ons Complete List.md`).
 - **Keep `enUS.lua` perfect:** every key it defines is referenced by code, every key code references is defined. Rename enUS and every call site together.
 - **Never reuse a retired key name.** Other locales keep the old key until the next Localization Review, and AceLocale falls back to enUS only for keys a locale does not define, so the stale translation would silently win.
@@ -824,7 +825,7 @@ Read the version from TOC metadata via `C_AddOns.GetAddOnMetadata`, and store it
 
 ## MESSAGES
 
-Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]`, and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing period. Bodies always come from `L["KEY"]` — the helpers apply the marker, name, and separator so locale strings stay clean.
+Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]`, and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing period. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way the helpers apply the marker, name, and separator so the body stays clean.
 
 | Context | Channel | Format | Example |
 |---|---|---|---|
@@ -859,6 +860,34 @@ All cross-player chat routes through one entry point so the marker, name, and se
 - `ns:Announce(channel, target, formatKey, ...)` builds and calls `SendChatMessage`. It no-ops on a nil channel **and on a nil message**.
 - `ns:GetGroupChatChannel()` resolves `IsInGroup(LE_PARTY_CATEGORY_INSTANCE)` → `IsInRaid()` → `IsInGroup()`, returning `INSTANCE_CHAT` / `RAID` / `PARTY` in that order, and **returns nil when the player is not grouped** — `ns:Announce` then no-ops, so a caller whose message must still land falls back (for example, whispering the relevant player). Pass the channel explicitly for `SAY` or `YELL`.
 - **`SAY`, `YELL` and numbered channels need a click or key press behind the send** outside instances. From an event, a timer or login the send is blocked as `ADDON_ACTION_BLOCKED`, which `pcall` doesn't see, so these sends only ever run from the player's own input.
+
+### Editable Messages
+
+**A message sent straight to one player is the player's to word.** A whisper gets a box the player types in, a default they can Reset to, and the add-on sends whatever is saved. It stays fixed text only when its body is data the add-on assembles, such as links packed across several messages, which no template can hold.
+
+- **The wire format doesn't change.** It is still `{rtN} Message // Short Name`. The marker and sign-off are added to whatever the player typed and are never part of the saved text, so they can't be deleted. The same trim applies: closing `!`, `.` and `?` (full-width ones included) and a leading `¡` or `¿` drop off, matched as whole UTF-8 sequences.
+- **Tokens are `{word}` placeholders**, replaced with `gsub`, never format codes, so a player can't crash the send with a stray `%`. An add-on fills only the tokens it lists on the panel. `{name}` is always the recipient's short name (`Ambiguate(name, "short")`); a spell or item token becomes its link.
+- **Empty saved text sends nothing.** When the filled message runs past `ns.CHAT_MESSAGE_MAX_LENGTH`, the add-on sends the default text in the player's chosen language instead of being rejected, and keeps what they typed.
+- **Two builders, both in `Features/Announcements.lua`.** A fill function builds the message as typed, however long, for measuring. A build function is what sends: nil for empty text, and the default text when it's too long. The Example line, the Room Left count, Send Test to Me and the real send all go through them.
+
+**Send Messages In** is the language other players read, separate from the UI's locale.
+
+- **One profile-wide setting**, `messageLanguage`, holding a locale code. It defaults to `enUS` on every client. Read it through `ns.GetMessageLanguage()`, which treats a code the add-on no longer lists as English.
+- **`Data.MESSAGE_LANGUAGES`** in `Data/Message-Languages.lua` has one row per supported locale, in the master list's order. Each row has the locale code, the language's name written in that language (`Deutsch`, `Русский`; these are never translated), and the default text of every editable message. Defaults keep their tokens verbatim.
+- **Changing the language swaps the text only while it still equals the old language's default.** Text the player wrote is never replaced. Reset writes the current language's default.
+- **Spell and item names in links come from the sender's client.** No add-on can translate them, so nothing tries.
+- **Players who were already whispering keep their language.** An add-on that adds this to an existing whisper migrates (SAVED VARIABLES → Migration Windows): each profile that had the whisper on gets the client's locale, when the add-on lists it, plus that language's default where no text was saved. It reads the raw saved table before `AceDB:New` and runs once per account, so a later pick of English sticks.
+
+**On the panel, the composer** sits under the toggle that sends the message, hidden with it, in this order:
+
+1. **Send Messages In**: a label row (Build Reference → Label-Beside-Control Rows) with a `select` of the native names, and its own tooltip.
+2. **The message row**: the label, the marker drawn as its texture, the box, `// Short Name` in `C_SEPARATOR`, and Reset. The cells total `ns.OPTIONS_ROW_WIDTH`. Each of the two captions is a row label whose tooltip says it's added to every message the add-on sends.
+3. **Room Left and tokens**, on the line under the message row: Room Left in the label column, under the caption, and the tokens line under the box, so neither crowds the other. Room Left goes blank, not hidden, while the box is empty, so the tokens line stays put. The tokens line lists each token in `C_INFO` with what it becomes. Room Left is `ns.CHAT_MESSAGE_MAX_LENGTH` minus the bytes of the filled message, filled with the Example's own sample parts. It turns `C_OFF` below zero. Bytes, not letters, because ruRU and the CJK locales spend two or three per letter.
+4. **A Too Long line**, in `C_OFF`, shown only while Room Left is below zero, saying the default text goes out instead.
+5. **The Example line** (OPTIONS PANEL → Example Lines), drawn from the build function.
+6. **Send Test to Me**, an `execute` that sends the built message as a real whisper to the current character, so the player sees the marker and links drawn by real chat.
+
+Live reference: **Thanks for the Buff** — `DefineWhisperComposer` in `Options/Options-Give-Thanks.lua`, `ns.FillThanksWhisper` and `ns:BuildThanksWhisper` in `Features/Announcements.lua`, `Data/Message-Languages.lua`, and `MigrateMessageLanguage` in `Features/Core.lua`.
 
 ### Pipe Escapes in Sent Chat
 
@@ -1086,7 +1115,7 @@ Live reference: **Control Freak** — dropdowns and toggles throughout its panel
 
 ### Helper Text Lives in the Tooltip
 
-**A control explains itself once: in its mouseover tooltip, or on the panel only where the hover already shows an item or spell.** Every toggle and control carries exactly two strings — its label and that one explanation, normally `desc`, which AceConfig renders as the tooltip. Never add a second description line under a control: it multiplies the strings every locale must carry and clutters the panel. Section-level `Desc` blocks (Widget Conventions) and row captions (Build Reference → Label-Beside-Control Rows, Sub-Option Rows) are layout, not helper text. Three on-panel lines aren't helper text either: a key binding row's line saying what the key does (its only control opens the game's Key Bindings list), an Example line showing what a chat-printing feature prints (Example Lines, below), and a status line shown only while the current settings change what a feature does.
+**A control explains itself once: in its mouseover tooltip, or on the panel only where the hover already shows an item or spell.** Every toggle and control carries exactly two strings — its label and that one explanation, normally `desc`, which AceConfig renders as the tooltip. Never add a second description line under a control: it multiplies the strings every locale must carry and clutters the panel. Section-level `Desc` blocks (Widget Conventions) and row captions (Build Reference → Label-Beside-Control Rows, Sub-Option Rows) are layout, not helper text. Four kinds of on-panel line aren't helper text either: a key binding row's line saying what the key does (its only control opens the game's Key Bindings list), an Example line showing what a chat-printing feature prints (Example Lines, below), a status line shown only while the current settings change what a feature does, and an editable message's tokens line and Room Left count (MESSAGES → Editable Messages).
 
 Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks for the Buff** — the Thank You Button panel's on-panel lines; **Magic Eraser** — its Key Bindings and status lines (`ns.OptionsStatusLine`).
 
