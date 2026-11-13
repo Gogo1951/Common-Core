@@ -63,7 +63,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 
 **Localization — all files, not just enUS:**
 - Every `Locales/*.lua` parses, registers the correct locale code for its filename, and uses the same identity literal/constant as `enUS.lua`.
-- `enUS.lua` is complete: every key referenced in code is defined, every defined key is referenced.
+- `enUS.lua` is complete: every key referenced in code is defined, every defined key is referenced except `ADDON_SHORT_NAME` (Style Guide → LOCALIZATION).
 - **Format placeholders match enUS in count and type in every locale, in the same order unless numbered (`%2$s`), where each number must point at an enUS placeholder of the same type** — a `%s`/`%d` mismatch crashes at runtime.
 - An `enUS.lua` key missing from a locale is a finding (players see English); orphans are harmless, one-line count per file.
 - No locale value is itself the name of a spell, item, skill, zone, class or Blizzard UI label (Style Guide → GAME NAMES). One that does is a finding: the name must come from the client by ID.

@@ -718,7 +718,7 @@ Existing add-ons move onto the scale through the UX Review's Build choices, neve
 - **Only our own words are localized.** A game name (a spell, item, skill, zone, class or Blizzard UI label) comes from the client by ID and never enters `Locales/` — see GAME NAMES.
 - **An editable message's default text lives in `Data/Message-Languages.lua`, not `Locales/`.** The player picks the language they send in, and AceLocale loads only the client's own file, so every language's default has to load everywhere (MESSAGES → Editable Messages).
 - **Every add-on ships the full supported locale set**, one file per locale code — `esES.lua` and `esMX.lua` are separate files even though the strings are usually identical. The set and order are the master list's Shared constants (`References/Gogo Add-ons Complete List.md`).
-- **Keep `enUS.lua` perfect:** every key it defines is referenced by code, every key code references is defined. Rename enUS and every call site together.
+- **Keep `enUS.lua` perfect:** every key it defines is referenced by code (except `ADDON_SHORT_NAME`, which ADD-ON NAMES requires even when no code reads it), every key code references is defined. Rename enUS and every call site together.
 - **Never reuse a retired key name.** Other locales keep the old key until the next Localization Review, and AceLocale falls back to enUS only for keys a locale does not define, so the stale translation would silently win.
 - Which values may stay English: `07 - Localization Review.md` → When a value may stay English.
 

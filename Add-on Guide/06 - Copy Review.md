@@ -19,7 +19,7 @@ Do not touch code before Phase 3, and do not begin Phase 3 until the Phase 2 ans
     - **Consistency** (make it checkable, not vibes): one term per concept (don't call the same thing "config" in one string and "settings" in another); consistent capitalization for buttons and option names; consistent trailing punctuation; and a consistent placeholder format (`%s`, `%d`, `%1$s` — flag any mixing of styles or any placeholder whose type doesn't match how the code uses it).
     - **Rendering** — Style Guide → TONE AND COPY → In-Game Rendering Rules: no em-dashes, straight quotes, no markdown or emojis.
     - **Comment and formatting hygiene** — the instructional comments and section structure that organize the file are present, accurate, and consistently applied.
-    - **Key parity with the code** — every key defined is referenced, every key referenced is defined (Style Guide → LOCALIZATION).
+    - **Key parity with the code** — every key defined is referenced except `ADDON_SHORT_NAME`, every key referenced is defined (Style Guide → LOCALIZATION).
     No edits yet — collect findings for Phase 2.
 
 2. **Ask about the choices, and only those.** A fix a rule settles (typos and grammar, EN-US, Title Case, rendering, key parity, placeholder style) needs no approval and goes straight to Phase 3 (Style Guide → ASKING THE MAINTAINER). Ask about the rest:
