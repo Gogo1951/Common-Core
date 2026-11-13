@@ -56,7 +56,9 @@ Repo-Name/
 │   ├── Utilities.lua
 │   ├── Announcements.lua
 │   ├── {Feature-Name}.lua          Optional — one per feature; a single-feature add-on may stay in Core.lua
-│   └── Minimap-Button.lua          Optional — only with a mini-map button (MINIMAP BUTTON)
+│   ├── Minimap-Button.lua          Optional — only with a mini-map button (MINIMAP BUTTON)
+│   ├── Menu-Kit.lua                With the button — the menu renderer, copied unchanged (MINIMAP MENU)
+│   └── Minimap-Menu.lua            With the button — what goes in the menu (MINIMAP MENU)
 ├── Includes/
 │   ├── Images/                     The icon and other art
 │   ├── Libraries/                  Vendored libraries — see REQUIRED LIBRARIES
@@ -98,7 +100,9 @@ Live reference: **Connoisseur** — the folder layout, end to end.
 |`Features/Utilities.lua`|Stateless functions used by multiple files: API shims, color accessors, tooltip helpers, parsing, small game-state predicates.|
 |`Features/Announcements.lua`|The single home for all messaging: `PrintMessage`, `BuildAnnounceMessage` / `Announce`, `GetGroupChatChannel`.|
 |`Features/{Feature-Name}.lua`|Self-contained feature module. Owns its logic, timers, caches. Exposes only what other modules need via the namespace.|
-|`Features/Minimap-Button.lua`|Optional. LDB object, button, tooltip, click handlers.|
+|`Features/Minimap-Button.lua`|Optional. LDB object and button; hover and left-click open the menu.|
+|`Features/Menu-Kit.lua`|With the button. The menu renderer, copied unchanged from the live reference; reads only `ns.PALETTE`.|
+|`Features/Minimap-Menu.lua`|With the button. What goes in the menu: its feature blocks, flyouts and Options row.|
 |`Diagnostics/`|The Diagnostic Tools framework and panel, with the add-on's own manifests and context probe in `Manifests.lua` — see DIAGNOSTIC TOOLS. Self-contained English strings. No gameplay logic.|
 |`Options/Options.lua`|AceConfig registration, Blizzard panel wiring, panel navigation, slash commands. Nothing else.|
 |`Options/Options-Utilities.lua`|Shared options infrastructure: widget helpers, shared list builders, custom AceGUI widgets, item-cache warming.|
@@ -617,7 +621,7 @@ Optional. The entry point is `Tests/Run.lua`, run from the add-on root with `lua
 
 |Name|Where it goes|Example|
 |---|---|---|
-|**Full Name**|Window titles, shaped `Title // Full Name`; the TOC `## Title`; the Options category and root panel; the mini-map tooltip's header; the front of every chat print; anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Restock List // Connoisseur & Restocker`, `Connoisseur & Restocker // Some Message.`|
+|**Full Name**|Window titles, shaped `Title // Full Name`; the TOC `## Title`; the Options category and root panel; the mini-map menu's header; the front of every chat print; anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Restock List // Connoisseur & Restocker`, `Connoisseur & Restocker // Some Message.`|
 |**Short Name**|Every other tooltip line that names the add-on, including the header of a block it adds to someone else's tooltip (`Short Name // Title`); the end of every message sent to another player|`{rtN} Some Message // C&R`, `C&R // Inventory Report`|
 |**Both**|The README's H1, `Full Name (Short Name)`; the Full Name alone when the two are the same|`# Connoisseur & Restocker (C&R)`, `# Tracking Eye`|
 
@@ -668,7 +672,7 @@ ns.PALETTE = {
 	HELP = "CCCCCC", -- Silver: Pro Tips, Helper Text
 	TEXT = "FFFFFF", -- White: Messages, Values, Spell Names
 	ON = "33CC33", -- Green: On
-	OFF = "CC3333", -- Red: Off
+	OFF = "CC3333", -- Red: Off (menus show Off in MUTED, never red)
 	SEPARATOR = "AAAAAA", -- Gray: Separators, Dividers
 	MUTED = "808080", -- Dark Gray: Meta-data, Version Numbers
 }
@@ -797,7 +801,7 @@ When code compares a looked-up name with something the client shows, check that 
 
 - Concise, helpful, slightly RPG-flavored but clear. Active voice: "Cycles between…" not "This feature will cycle between…"
 - Don't reword existing copy for voice unless specifically asked.
-- A mini-map tooltip's feature description leads with what the feature does; a control's `desc` leads with what the control changes. A further sentence or line is only for what the player cannot see for themselves, never a restatement; length alone is never a finding.
+- A mini-map menu's feature description leads with what the feature does; a control's `desc` leads with what the control changes. A further sentence or line is only for what the player cannot see for themselves, never a restatement; length alone is never a finding.
 
 ### English
 
@@ -924,28 +928,9 @@ Live reference: **Magic Eraser** — `L["CHAT_LOADED"]` in `Locales/enUS.lua`.
 
 ## MINIMAP BUTTON
 
-Live reference: [Magic-Eraser/Features/Minimap-Button.lua](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Button.lua).
+Live reference: [Tracking-Eye/Features/Minimap-Button.lua](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua).
 
-**Being replaced by a menu.** The UX Review turns this tooltip into a menu, and its click hints and modifier clicks into rows (`02 - UX Review.md` → Menus, Not Tooltips). Once an add-on's menu is built, it follows that section, and the Code Review doesn't flag Tooltip Structure or Click Handlers differences for it.
-
-### Tooltip Structure
-
-```
-[TITLE] Full Name (C_TITLE, left)           Version (C_MUTED, right)
-[BLANK LINE]
-[BLANK LINE]
-
--- Per feature block: --
-[FEATURE NAME] (C_TITLE, left)              [STATE] (C_ON/C_OFF, right)
-[DESCRIPTION] (C_BODY, word-wrap, one or more lines)
-[KEYBIND] (C_INFO, left)                    [ACTION] (C_INFO, right)
-[BLANK LINE]
-
-[Short Name] Options (C_TITLE)
-Shift + Middle-Click (C_INFO)
-```
-
-The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES). Pairs are `AddDoubleLine`; descriptions pass `true` as `AddLine`'s wrap argument; a blank line is `tooltip:AddLine(" ")`. The options block is always last, with no hint line below it. Never show slash commands in the tooltip.
+**The button opens a menu, never a tooltip** (MINIMAP MENU, below).
 
 ### Icon Fit
 
@@ -968,11 +953,142 @@ end
 
 Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()`, which errors when another add-on has replaced the button's icon.
 
-### Click Handlers
+-----
 
-- **Shift + Middle-Click always opens the options panel** (`ns:OpenOptionsPanel()`). This check runs first in `OnClick`, before any feature buttons.
-- Left-Click and Right-Click are the add-on's primary feature interactions — **toggles** for launcher-style buttons (one toggle per tooltip feature block), or **actions** for action-button add-ons (left-click performs the main action, right-click the secondary one). Both shapes are correct; match the add-on's design.
-- After a toggle click, re-render the tooltip in place when `GameTooltip:GetOwner()` is still the button, so On/Off state updates live.
+## MINIMAP MENU
+
+Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer) and [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it).
+
+**The mini-map button opens a menu, never a tooltip.** Every action is a row the player clicks: no click hints, no modifier keys, no right or middle button. A controller's virtual cursor then reaches everything a mouse does. An action button, whose left-click does the add-on's main job, keeps that one plain click, and the job is a row in the menu too. The UX Review's Menus, Not Tooltips points here for the build; MINIMAP BUTTON → Icon Fit still applies.
+
+### Two Homes for Every Setting
+
+- **The options panel is complete.** It shows every setting for every class, race and profession. Profiles are shared across characters, so nothing ever hides there for being the wrong class.
+- **The menu is smart.** It shows only what this character can use, for what a player changes mid-session. A hunter sees what a hunter sees; a druid sees what a druid sees.
+
+**Gate on the character, never the moment.** Class, race, known spells and professions decide what shows. The current form, mount, zone, combat state or equipped gear never do: a menu that shifts while you play reads as broken. Test with `IsPlayerSpell(spellId)` for the spell the row acts on, through small helpers (`IsKnown`, `ns.KnowsMovementState`, `ns.KnowsHuntAbility` in the reference).
+
+- **Hiding a row never changes its saved value.** A hidden switch keeps working as set.
+- **A whole feature can hide.** Tracking Eye drops the Target Tracking block on a character with no ability a hunt can cast.
+- **The add-on's own state may hide rows.** A feature switched off hides its settings, as the options panel does.
+- **Long pickers stay in options.** A choice of more than a handful of values (Tracking Eye's 17 Cycle Speeds) is a dropdown, not a menu.
+- **Set-and-forget settings stay in options.** Tracking Eye's Free Placement Mode, Come & Get It and display toggles aren't changed mid-session, so they get no block.
+
+### Layout
+
+```
+[Full Name] (C_TITLE, left)                     [Version] (C_MUTED, right)
+[SPACER]
+
+-- Per feature block: --
+[Feature Name] (C_TITLE, left)          [STATE] (C_ON / C_MUTED, right) [>]
+[Description] (C_BODY, wraps)
+    [Pick list] (choice rows, only if the feature has one)
+[Toggle] (C_INFO)
+[Follow-up action] (C_INFO, only while it applies)
+[SPACER, added by the kit]
+
+-- After the last block: --
+[SPACER]
+[SEPARATOR]
+[Short Name] Options (C_INFO, left)                     Open (C_INFO, right)
+```
+
+- **One type size.** Every row is the same font size; kinds differ by color only, never by a smaller font.
+- **Every heading is gold.** A feature title, a section label inside a flyout, and a plain status line all read C_TITLE.
+- **A spacer above every heading.** The kit inserts it, unless the heading opens the panel or already follows a spacer. Never add one by hand before a heading.
+- **State on the right.** On is C_ON. Off is C_MUTED, never red: an off feature sits back, it isn't an error. A feature with more than two states uses short words (Active in C_ON, Paused or Off in C_MUTED).
+- **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering. Descriptions wrap at 320, notes at 260.
+- **The Toggle row** is blue, says only Toggle, and flips the feature's Enable switch. Its tooltip is that Enable option's name and description.
+- **The arrow.** Blizzard's submenu arrow (`ChatFrameExpandArrow`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
+- **Options last.** A spacer, a separator, then the blue `[Short Name] Options` / `Open` row. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
+
+### Flyouts
+
+A flyout holds a feature's secondary settings and opens beside its title, on the side away from the screen edge, its first row level with the title.
+
+```
+[Section] (C_TITLE, left)                         [STATE] (C_ON / C_MUTED)
+[Note] (C_MUTED, wraps — why, while it matters)
+[SPACER, added by the kit]
+[Section] (C_TITLE)
+    [Setting] (toggle)                                       On / Off
+    [Setting] (toggle)                                       On / Off
+[SEPARATOR]
+    [Setting] (toggle)                                       On / Off
+```
+
+- **No switch row for the feature itself.** The block's Toggle row already does that.
+- **Empty while the feature is off.** The flyout's settings mean nothing then, as on the options panel, so the arrow goes too.
+- **A live status goes at the top, as a section.** Farm Mode's flyout opens with a gold Farm Mode Status heading, Active or Paused on the right, and while paused, a gray note saying why. The main block only carries the short state word.
+- **Sections group, separators set apart.** A gold section label over a list; a thin line before a few unrelated extras.
+
+### Row Kinds
+
+| Kind | Left | Right | Use |
+|------|------|-------|-----|
+| `header` | Full Name, C_TITLE | Version, C_MUTED | First row, always |
+| `submenu` | Title, C_TITLE | State, then the arrow | A feature title whose flyout has settings |
+| `status` | Title, C_TITLE | State | A feature title with no flyout, or a heading with nothing to click |
+| `section` | Label, C_TITLE | Optional state | A group's heading inside a flyout |
+| `description` | C_BODY, wraps at 320 | — | What a feature does |
+| `note` | C_MUTED, wraps at 260 | — | A short reason or helper line |
+| `toggle` | Name; C_MUTED while off | On in C_ON, Off in C_MUTED | A setting's switch |
+| `choice` | Name; white when picked, C_MUTED otherwise | Check mark when picked | One of a set |
+| `action` | Label, set `leftColor = "INFO"` | — | Toggle, Clear, and other one-shot clicks |
+| `hint` | C_INFO | C_INFO | The Options / Open row |
+| `separator` | — | — | A thin line |
+| `spacer` | — | — | A line's room |
+
+**Choice and toggle rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry `tooltip`, a `function(GameTooltip)`, shown beside it under the cursor.
+
+### The Pick-List Exception
+
+When picking from a set is the feature's main job, the list lives in the block, between the description and the Toggle row, so the first pick is one click, not two menus deep. Tracking Eye's Persistent Tracking lists the abilities this character knows as choice rows, with a blue Clear Tracking row after Toggle only while something is picked. The list shows even while the feature is off, since a pick still casts the ability now; the feature only decides whether it comes back. Its flyout keeps only the class-gated overrides, so on most characters it's empty and the title has no arrow.
+
+### Behavior
+
+- **Hover or left-click opens it.** Hovering the button opens the menu the way the tooltip did. It closes 0.4 seconds after the cursor leaves the button, the menu and the flyout; after a click, 1.0 seconds. On an action button, left-click does the main job instead, and hover alone opens the menu.
+- **Escape closes it.** Name the menu frame and add it to `UISpecialFrames`.
+- **Hovering a title opens its flyout**, and clicking it does too. Hovering any other clickable row closes the flyout.
+- **A pick closes the menu; a switch keeps it open.** Choosing from a set is done; flipping switches often comes in runs.
+- **A change redraws in place.** After any change, redraw the open options panel and the menu, so both show the new value.
+- **Read the cursor from `GetCursorPosition`**, not `IsMouseOver`, so a controller's virtual cursor counts (`Kit.IsCursorOver`).
+- **Tooltips reuse the option's strings.** A switch's tooltip is its option's name and description; a spell row's is the spell.
+
+### The Look
+
+- **The plate is Pretty Wide Quest Log's Quest Arrow menu:** `Menu-Plate.tga`, nine-sliced at half size so the angled corners stay sharp, at 80% alpha.
+- **No boxes.** Blocks are separated by spacing and gold headings, never borders, backgrounds or `common-dropdown-bg`.
+- **Stock art only.** The submenu arrow is `Interface\ChatFrame\ChatFrameExpandArrow`, the check is `Interface\Buttons\UI-CheckBox-Check`.
+- **Spacing is on the scale** (SPACING SCALE): rows are a line plus 4 above and below, a spacer is 16, a separator is 8, text sits 8 in from its row, rows 4 in from the plate.
+- **The row highlight is gold** at 16%, shown only on rows you can click.
+
+### Moving a Tooltip to a Menu
+
+1. **Copy `Features/Menu-Kit.lua` unchanged** into `Features/`, after `Features/Utilities.lua` in the TOC. Copy `Includes/Images/Menu-Plate.tga`. The kit knows nothing about the add-on; it reads only `ns.PALETTE`.
+2. **Write `Features/Minimap-Menu.lua`** from Tracking Eye's: `Kit.SetToggleText(L["MENU_ON"], L["MENU_OFF"])` once at load, one `AddFeature` call per feature a player turns on and off mid-session, a `FLYOUTS[key]` builder for each feature with settings, and the Options row last.
+3. **Map the old tooltip lines:**
+
+   | Old tooltip | Menu |
+   |-------------|------|
+   | Title / Version | `header` row |
+   | Feature name + state | `submenu` or `status` title, same state words |
+   | Description line | `description` row, same string |
+   | Keybind / action hint ("Left-Click … Toggle") | Blue Toggle `action` row |
+   | Other click hints (Right-Click, Shift-Click) | An `action` row each, or a flyout row |
+   | `[Short Name] Options` + Shift + Middle-Click | Blue `[Short Name] Options` / `Open` `hint` row |
+
+4. **Keep the translations.** Bring the old tooltip strings back from git as `MENU_*` keys (`MENU_[FEATURE]_DESCRIPTION`, `MENU_TOGGLE`, `MENU_ON`, `MENU_OFF`) with every locale's translation, rather than writing new copy. Option rows reuse the options' own keys.
+5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `ns.ShowMenu(self, nil, "hover")`, and `OnLeave` does nothing, since the menu closes itself. `OnClick` calls `ns.ShowMenu(self, nil, "click")` for `LeftButton` only, or on an action button does the main job. Remove the tooltip code, the modifier-click branches and the right and middle buttons.
+6. **Gate the rows.** For each class, race or profession row, add an `IsPlayerSpell` check in the menu only. Leave the options panel alone.
+7. **Check it in game** on at least three classes, one of which can't use any gated row, and with a controller:
+   - Each class sees only its own rows; the options panel still shows all of them.
+   - Every feature can be turned on and off from its Toggle row, and the state word follows.
+   - A title with nothing to show has no arrow.
+   - The menu opens left of the button on the right half of the screen and below it on the top half.
+   - Escape closes it; a pick closes it; a switch doesn't.
+   - The controller's cursor opens, hovers and clicks every row.
 
 -----
 
@@ -1020,7 +1136,7 @@ Every section header is a real AceConfig `header` — no panel draws its own fro
 
 ### Opening the Panel
 
-One entry point opens the add-on's settings **inside the Blizzard Options/Settings interface**, backing both the slash command and the mini-map button's Shift + Middle-Click.
+One entry point opens the add-on's settings **inside the Blizzard Options/Settings interface**, backing both the slash command and the mini-map menu's Options row.
 
 **Route by captured handles, never by name.** `AddToBlizOptions` returns `(frame, categoryID)`. Capture **both** at the root panel's registration and route with captured handles end-to-end: combat gate first, then `Settings.OpenToCategory(<captured categoryID>)`, then `AceConfigDialog:Open` as a genuine last resort that a correctly-routed add-on never reaches. A title lookup — `Settings.GetCategory(<title>)`, or the title passed to `Settings.OpenToCategory` — fails wherever the category ID is a number assigned at registration: execution falls through to `AceConfigDialog:Open` and the panel opens as a standalone floating window instead of docking. It breaks on TBC Anniversary while still working on Classic Era, so it survives testing on one flavor.
 

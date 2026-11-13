@@ -2,7 +2,7 @@
 
 **Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the UX Review`. Write scope: **nothing, unless the maintainer says to build (phase 5). The wireframe is an Artifact, never a file in the add-on folder, and feature prompts go in chat.**
 
-**Style Guide sections:** read only GLOSSARY, ADD-ON NAMES, SPACING SCALE, TONE AND COPY, MESSAGES, MINIMAP BUTTON, OPTIONS PANEL, ASKING THE MAINTAINER and GUIDE FEEDBACK, not the whole file.
+**Style Guide sections:** read only GLOSSARY, ADD-ON NAMES, SPACING SCALE, TONE AND COPY, MESSAGES, MINIMAP BUTTON, MINIMAP MENU, OPTIONS PANEL, ASKING THE MAINTAINER and GUIDE FEEDBACK, not the whole file.
 
 The first review of the cycle: how the add-on looks and reads to a player, and what it could do next. Map every surface, research what similar add-ons offer when asked, then **show it rather than describe it**: a clickable wireframe of every window a change touches, **Current** beside **Proposed**, with each change's reason written on the page and its **Build** / **Try first** / **Drop** buttons beside it. The maintainer approves from the wireframe or in chat, each Build comes out as a feature prompt or is built in this session when the maintainer says to build, and `03 - Code Review.md` then reviews the code with them in.
 
@@ -16,7 +16,7 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 1. **Map every surface.** Read the code that draws or prints anything, along with the enUS locale and the `README.md`, until you can say what the add-on does, for whom, and what it deliberately doesn't do. The map covers all of it, and never leaves these out:
     - **The Options interface, every panel and sub-panel**, row by row.
-    - **The mini-map button's tooltip**, in each state it can show.
+    - **The mini-map button's menu**, or the tooltip it replaces, in each state it can show.
     - **Every window of the add-on's own**, such as a list editor, a picker that opens over it, or a window that opens at a mailbox, bank or merchant.
     - **Every tooltip the add-on adds to or changes**, on players, NPCs, items, spells or anything else, drawn on a realistic example of each with the game's own lines around the add-on's.
     - Every menu, popup, chat line, Example line, and first-run or empty state.
@@ -33,12 +33,7 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 ## Menus, Not Tooltips
 
-A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu, drawn like Pretty Wide Quest Log's Quest Arrow menu: [Pretty-Wide-Quest-Log/Features/Routes/Routes-Arrow-Menu.lua](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu.lua), with its plate art `Includes/Images/Route-Menu.tga`. The look comes from WIM's mini-map whisper list, which players already know: look at it in game for the feel, never at its code. WIM still lists its clicks (`Right-Click`, `Shift + Middle-Click`); ours makes each one a row.
-
-- **The plate:** dark, with angled corners and a soft shadow, nine-sliced from the art at half size so the edges stay sharp.
-- **The header:** the menu's name in the title color on the left, the Short Name muted on the right, then a divider.
-- **Rows, never instructions.** Everything the player can do is a row they click: a setting is a toggle row, its name on the left and On or Off on the right; an action is a row named for what it does, such as `Ignore Rude Awakening Turn-In` or `Options`. Rows highlight on hover, and dividers group them. No click-hint lines (`Middle-Click`, `Shift + Middle-Click`, `Drag`) and no modifier clicks: what a hint explained becomes a row, or moves to the Options panel. Dragging a frame to move it can stay, with no hint line.
-- **Opening and closing:** opens on hover, stays while the mouse is on the button or the menu, closes a moment after it leaves both, and closes on Escape.
+A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint and modifier click becomes a row the player clicks, so a controller reaches everything. Build it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 

@@ -141,7 +141,7 @@ Every README has at least one feature block; a README without one is broken.
 Numbered list, 4-6 steps.
 
 - Step 1 is always Install (plain text, not bolded) with **both** the CurseForge and Wago links inline — e.g. *Install the add-on, ideally using [CurseForge](URL) or [Wago](URL).* Pull both URLs from the master list (`References/Gogo Add-ons Complete List.md`).
-- When the add-on has options, step 2 opens them: the slash command, and the mini-map click when there is a button (Control Freak: *Type `/freak`, or Shift + Middle-Click the mini-map button, to open the Options Interface.*). This is the README's one mention of a slash command.
+- When the add-on has options, step 2 opens them: the slash command, and the mini-map menu when there is a button (Tracking Eye: *Type `/te`, or pick Tracking Eye Options in the mini-map menu, to open the Options Interface.*). This is the README's one mention of a slash command.
 - Last step is a short, funny outcome line in the user's voice, italicised with underscores and in straight quotes (`_"..."_`): a play on a movie line or meme, themed to what the add-on actually does. Examples:
   - GogoLoot // _"Zug zug your way to record Naxx clears."_
   - Magic Eraser // _"But wait, there's more bag space!"_
@@ -154,7 +154,7 @@ Numbered list, 4-6 steps.
 
 The smaller, non-core things a player is glad to have read after installing, and nothing else. Short, with tables and bullets over paragraphs. Never a repeat of anything a feature block says, never a trivial option (Voice & Tone), and no Options panel list, settings inventory or slash command list (the options' tooltips carry those).
 
-- **`### Mini-Map Button`** (whenever the add-on has one) — the click-action table, plus one line on what hovering it shows, if anything.
+- **`### Mini-Map Button`** (whenever the add-on has one) — a one-row table, `Hover or Left-Click | Opens the Mini-map Menu` (an action button: `Hover | Opens the Mini-map Menu` and `Left-Click | [its main job]`), plus one line on what the menu holds.
 - **A game setting the add-on changes and leaves changed** (a lasting CVar write) — always disclosed here, so then the section is never skipped (Style Guide → WRITING USER CVARS). A setting muted for a moment and put back gets no line.
 - Beyond those, **at most two** sub-sections worth a player's time: a why-it-works-this-way story (Control Freak's "Every Alert Works the Same Way"), or a `### Good to Know` list of small non-core features and class-specific callouts, in the feature bullet format, five at most.
 
