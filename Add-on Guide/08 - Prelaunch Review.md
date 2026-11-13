@@ -4,12 +4,12 @@
 
 Run this when manual testing is **complete** and the add-on is believed to be working — the last gate before tagging a release. Functionality is presumed correct; this pass checks everything else: release metadata, packaging, localization, ship-cleanliness, and the master-list row. Your output is the Phase 4 report, in this chat.
 
-**The local dev copy is the source of truth, and it runs ahead of GitHub `main` on purpose.** The maintainer builds and tests locally, then pushes everything to `main` *after* this gate passes — so `main` legitimately lacks this session's fixes, and the local copy will differ from `main`, often by many files. **Never treat that as a problem:** don't flag that `main` is missing this session's work, that the local copy differs from `main`, or that `main` "isn't ready to tag." The only things this pass checks on GitHub are the repo-only packaging files listed under **Packaging** below; everything else is reviewed here, in the local copy.
+**The local dev copy is the source of truth, and it runs ahead of GitHub `main` on purpose:** the maintainer pushes everything after this gate passes. Never flag that the local copy differs from `main` or that `main` isn't ready to tag. The only files this pass checks on GitHub are the repo-only packaging files under **Packaging** below.
 
 ## Workflow — five phases (0–4), all required
 
 0. **Permissions** — per the preamble.
-1. **Review.** Read the preamble's read-first docs, plus every file in `Locales/`, which the Code Review skips. **README files are out of scope — skip `README.md` and `README-Testing.md` entirely, and read `README-Technical.md` only as the map the preamble describes**; they're owned by steps 9–11. The `Includes/` folder stays vendored — verify its wiring, don't review its contents.
+1. **Review.** Read the preamble's read-first docs, plus every file in `Locales/`, which the Code Review skips. Skip `README.md` and `README-Testing.md`; `README-Technical.md` is only the map (Pass Preamble → Standing scope). Verify `Includes/`'s wiring, never its contents.
 2. **Study the targets.** Fetch the live reference files from GitHub and use them as the target state:
     - [Thanks-for-the-Buff](https://github.com/Gogo1951/Thanks-for-the-Buff) — `.pkgmeta`, which the packaging check validates against (see Packaging below).
     - [Addon Categories](https://warcraft.wiki.gg/wiki/Addon_Categories) — the canonical category list and its per-locale strings, the live source of truth for the Category check below. It is deliberately never copied into this guide, and it always wins.
@@ -22,7 +22,7 @@ Run this when manual testing is **complete** and the add-on is believed to be wo
 
 ## Presumption of working code
 
-Manual testing is done. Do **not** review feature logic or hunt behavioral bugs — that is what's out of scope, and no finding may come from it. **Reading code to establish a fact you need is allowed** — if answering your own question means opening a file and looking, do that rather than spending a blocking question round on it; only ask in Phase 3 when the answer isn't recorded anywhere and can't be read off the code either. Code is in scope for findings on exactly two things: **load-time integrity** and **ship cleanliness**, as defined in the checklist.
+Manual testing is done. Never review feature logic or hunt behavioral bugs; no finding may come from it. **Reading code to establish a fact is allowed**, and beats spending a question round on it: ask in Phase 3 only what neither the code nor the record answers. Code is in scope for findings on exactly two things: **load-time integrity** and **ship cleanliness**, as defined in the checklist.
 
 ## Master list refresh
 
@@ -55,7 +55,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 - Every Lua file parses — no syntax errors. No feature-logic review beyond this.
 - `luacheck .` runs clean (Style Guide → LINTING); a warning here is a finding like any other.
 
-**Packaging** (this pass is the sole owner of these checks — the Code Review ignores `.pkgmeta`, `.github/`, and `LICENSE` entirely). Review these files as they exist on the **`main` branch of the add-on's GitHub repo** (the repo URL from the TOC footer / master-list row), **not** the local working copy — fetch them from GitHub and check those versions. If a file can't be fetched from `main`, say so and mark the affected findings reduced-confidence rather than falling back to the local copy.
+**Packaging** (this pass alone owns these checks). Fetch these files from the **`main` branch of the add-on's GitHub repo** (the URL in the TOC footer), **not** the local copy. If one can't be fetched, say so and mark its findings reduced-confidence rather than falling back to the local copy.
 - `.pkgmeta` is validated against **the live `Thanks-for-the-Buff` `.pkgmeta`**, which carries the two load-bearing AceDB externals (`AceDB-3.0`, `AceDBOptions-3.0`). The checks: trailing slashes on CurseForge URLs, `package-as` matches the master list's Folder column (the installed folder — not the repo name or CurseForge slug), externals match the TOC Includes block exactly, and mini-map libraries only when there's a mini-map button, matching the live `Magic-Eraser` `.pkgmeta`'s. `enable-toc-creation` is not used — don't flag its absence.
 - `LICENSE` matches `References/Canonical Files/LICENSE.txt`, with `{{YEAR}}` as the add-on's first year; the `.pkgmeta` ignore list is correct (Style Guide → REQUIRED LIBRARIES → .pkgmeta).
 - `.luacheckrc` present on `main`.
@@ -81,7 +81,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 
 ## Report format
 
-**Never offer to create a PR, branch, or commit — don't ask, don't suggest it.** That is the job of `12 - Create Release Notes & PR.md`, run only after this gate passes. It offers step 12 only as Pass Preamble → Next Pass says, once the README sessions it started have all finished. This pass edits nothing in the add-on beyond the preamble's `README-Notes.md` record (see intro); its fix prompts edit the working copy, which step 12 commits. The exception is a Packaging file, checked on `main`: print its complete corrected contents in its own fenced code block, ready for the maintainer to paste into GitHub themselves.
+**Never offer to create a PR, branch, or commit.** That is `12 - Create Release Notes & PR.md`'s job, offered only as Pass Preamble → Next Pass says. Fix prompts edit the working copy, which step 12 commits; a Packaging file, checked on `main`, gets its complete corrected contents in its own fenced code block instead, for the maintainer to paste into GitHub.
 
 Open with the verdict — **Ready to tag** or **Not ready: N blocker(s)** — and a 2–3 sentence summary. Then list issues grouped by checklist area, Blockers first. Include a short **Master list** line stating whether the master-list row was already current or what updates are proposed (when there are updates, the exact edits ride in Guide Feedback as routine data items). Keep prose lean.
 

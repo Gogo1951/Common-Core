@@ -465,6 +465,8 @@ Features/Core.lua
 Features/Utilities.lua
 Features/Announcements.lua
 Features/{Feature-Name}.lua
+Features/Menu-Kit.lua
+Features/Minimap-Menu.lua
 Features/Minimap-Button.lua
 
 # Diagnostics
@@ -572,8 +574,6 @@ tr -d '\r' < FILE | stylua --syntax lua51 --check -
 
 StyLua expands single-line guards and one-line function bodies to full blocks and strips manual alignment everywhere — **never hand-align columns**.
 
-Data arrays carry a column-header comment naming each field on the line above the table, and each row ends with a trailing comment naming its item or spell (shape: DATA → Data File Layout).
-
 -----
 
 ## LINTING
@@ -622,7 +622,7 @@ Optional. The entry point is `Tests/Run.lua`, run from the add-on root with `lua
 |Name|Where it goes|Example|
 |---|---|---|
 |**Full Name**|Window titles, shaped `Title // Full Name`; the TOC `## Title`; the Options category and root panel; the mini-map menu's header; the front of every chat print; anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Restock List // Connoisseur & Restocker`, `Connoisseur & Restocker // Some Message.`|
-|**Short Name**|Every other tooltip line that names the add-on, including the header of a block it adds to someone else's tooltip (`Short Name // Title`); the end of every message sent to another player|`{rtN} Some Message // C&R`, `C&R // Inventory Report`|
+|**Short Name**|Every other tooltip or menu line that names the add-on, including the header of a block it adds to someone else's tooltip (`Short Name // Title`); the end of every message sent to another player|`{rtN} Some Message // C&R`, `C&R // Inventory Report`|
 |**Both**|The README's H1, `Full Name (Short Name)`; the Full Name alone when the two are the same|`# Connoisseur & Restocker (C&R)`, `# Tracking Eye`|
 
 **They live in two locale keys, and nowhere else in code:**
@@ -634,7 +634,7 @@ L["ADDON_SHORT_NAME"] = "C&R" -- Short Name
 ```
 
 - **Both keys ship in every locale, as written.** The names are proper nouns, never translated, and an add-on whose two names match still defines both.
-- **Code never types either name.** Window titles, prints, sent messages and tooltip headers read the key. A window title's key holds only the title part, and the code joins the two: `title:SetText(L["RESTOCK_LIST_TITLE"] .. " // " .. L["ADDON_TITLE"])`. A locale string that names the add-on inside a sentence or label writes the name its slot calls for, as written in every locale: the welcome message's Options path carries the Full Name, a tooltip's `Short Name Options` line the Short Name.
+- **Code never types either name.** Window titles, prints, sent messages and tooltip headers read the key. A window title's key holds only the title part, and the code joins the two: `title:SetText(L["RESTOCK_LIST_TITLE"] .. " // " .. L["ADDON_TITLE"])`. A locale string that names the add-on inside a sentence or label writes the name its slot calls for, as written in every locale: the welcome message's Options path carries the Full Name, the mini-map menu's `Short Name Options` row the Short Name.
 - **Internal identifiers are not names.** The AceLocale name, `ADDON_NAME`, SavedVariables, registry names, the LibDBIcon key and global function and frame names follow NAMING, never either display name.
 - **In this guide's templates, `Add-on Name` and `[Add-on Name]` stand for the Full Name.** The Short Name is spelled out wherever it goes.
 
@@ -959,7 +959,7 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer) and [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it).
 
-**The mini-map button opens a menu, never a tooltip.** Every action is a row the player clicks: no click hints, no modifier keys, no right or middle button. A controller's virtual cursor then reaches everything a mouse does. An action button, whose left-click does the add-on's main job, keeps that one plain click, and the job is a row in the menu too. The UX Review's Menus, Not Tooltips points here for the build; MINIMAP BUTTON → Icon Fit still applies.
+**Every action is a row the player clicks:** no click hints, no modifier keys, no right or middle button. A controller's virtual cursor then reaches everything a mouse does. An action button, whose left-click does the add-on's main job, keeps that one plain click, and the job is a row in the menu too. Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
 ### Two Homes for Every Setting
 
@@ -998,7 +998,7 @@ Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.co
 - **Every heading is gold.** A feature title, a section label inside a flyout, and a plain status line all read C_TITLE.
 - **A spacer above every heading.** The kit inserts it, unless the heading opens the panel or already follows a spacer. Never add one by hand before a heading.
 - **State on the right.** On is C_ON. Off is C_MUTED, never red: an off feature sits back, it isn't an error. A feature with more than two states uses short words (Active in C_ON, Paused or Off in C_MUTED).
-- **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering. Descriptions wrap at 320, notes at 260.
+- **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering.
 - **The Toggle row** is blue, says only Toggle, and flips the feature's Enable switch. Its tooltip is that Enable option's name and description.
 - **The arrow.** Blizzard's submenu arrow (`ChatFrameExpandArrow`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
 - **Options last.** A spacer, a separator, then the blue `[Short Name] Options` / `Open` row. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
@@ -1165,7 +1165,7 @@ Live reference: **GogoLoot** — `Options/Options.lua`.
 
 ### Combat Guard
 
-**`ns:OpenOptionsPanel` refuses to open during combat and tells the player why.** `InCombatLockdown()` is the function's first statement — one gate in front of the whole routing chain, never inside a single route and never at a call site (the slash handler, the mini-map click). Blizzard's Settings panel is protected in combat; without the gate the player gets an `ADDON_ACTION_BLOCKED` error naming the add-on. The gate prints and returns every time the player asks: it never queues, retries, or registers `PLAYER_REGEN_ENABLED`, because a silent refusal reads as a broken command.
+**`ns:OpenOptionsPanel` refuses to open during combat and tells the player why.** `InCombatLockdown()` is the function's first statement — one gate in front of the whole routing chain, never inside a single route and never at a call site (the slash handler, the menu's Options row). Blizzard's Settings panel is protected in combat; without the gate the player gets an `ADDON_ACTION_BLOCKED` error naming the add-on. The gate prints and returns every time the player asks: it never queues, retries, or registers `PLAYER_REGEN_ENABLED`, because a silent refusal reads as a broken command.
 
 The refusal is a player-only print whose copy is **mandated, identical in every add-on**, used here and nowhere else:
 
@@ -1381,7 +1381,7 @@ A standard `Options > [Add-on Name] > Diagnostic Tools` panel **ships in every a
 - **Name lookups** — every game record the add-on names by ID (GAME NAMES) gets a row in `ns.DIAGNOSTIC_NAME_LOOKUPS`, so the Localization tab checks every name a player sees.
 - **Plus** whatever spells (`ns.DIAGNOSTIC_SPELLS`), CVars, and bespoke context the add-on actually depends on.
 
-These are not unit tests — WoW's sandboxed Lua has no test framework, so everything here is environment probing and state capture for bug reports. Real logic tests live in the dev toolchain and are documented in `README-Technical.md`.
+These are environment probes and state capture for bug reports, not tests; logic tests live in `Tests/` (LUA 5.1 → Offline Tests).
 
 Report sections, Event Log and Validate Data: `References/Style Guide - Build Reference.md` → DIAGNOSTIC TOOLS.
 

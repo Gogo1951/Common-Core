@@ -4,8 +4,6 @@
 
 **This prompt is the request.** Pasted on its own, it means: run the whole pass now and regenerate the launch folder's `README.md` by the rules below. Never ask whether to run it or how much of it; the only questions are Phase 2's.
 
-The user-facing companion to `README-Technical.md`: description, TL;DR, features, setup, and tips & tricks. This is what someone reads on CurseForge or GitHub before installing; technical detail stays out (What Doesn't Belong Here).
-
 ## Workflow — five phases (0–4), all required
 
 0. **Read** — the preamble's Read first list, then the add-on's `README.md` (the local file is the raw source; Session Prep pulled it from `main`), its TOCs, `Locales/enUS.lua`, and enough of the code to know what a player gets.
@@ -32,21 +30,9 @@ The user-facing companion to `README-Technical.md`: description, TL;DR, features
 
 ## Image Handling
 
-**Images live in the feature blocks, one per block, and nowhere else.** Copy each tag from the existing README **verbatim**. Each tag is an opaque string — paste it character for character, no rewriting. URL, alt text, width, height, align, and every other attribute stay exactly as they appear. When a block has no image, move in the existing screenshot that best shows that feature at work; any tag left over, an Options screenshot included, is dropped. You never rewrite *what* the tag says.
+**Images live in the feature blocks, one per block, and nowhere else.** Copy each tag from the local `README.md` **verbatim**, character for character: URL, alt text, width, height, align and every other attribute. When a block has no image, move in the existing screenshot that best shows that feature at work; any tag left over, an Options screenshot included, is dropped.
 
-**Don't translate between formats.** `<img>` stays `<img>`. `![alt](url)` stays `![alt](url)`. Going from `<img>` to markdown silently drops width, height, and align attributes, so the image renders at full size and the README looks broken — that's a bug, not a cleanup. The rule applies even when the source has no size attributes, even when the URL looks weird, tokenized, or expired.
-
-**Concrete example.** If the existing README has this line:
-
-```html
-<img width="360" src="https://github.com/user-attachments/assets/48e86839-798f-4086-82d1-bcf9c23dc1eb" />
-```
-
-Then the new README has the same line. Not paraphrased, not re-flowed, not "cleaned up," not converted to markdown.
-
-**Always work from raw source.** GitHub's rendered preview shows JWT-proxied URLs that look totally different from the markdown source — longer paths, expiring tokens, the works. Use the "Raw" button on GitHub or `raw.githubusercontent.com/<user>/<repo>/main/README.md`. If only the rendered version is available, ask for the raw file — don't reconstruct the tag from what's visible.
-
-**If no media URL is provided in the input, omit the image line entirely.** Don't fabricate URLs, don't leave placeholder stubs, don't invent alt text for an image that doesn't exist.
+**Never change a tag's format.** `<img>` stays `<img>` and `![alt](url)` stays `![alt](url)`: going from `<img>` to Markdown drops the width, so the image renders full size. This holds even when the URL looks tokenized or expired. Never take a tag from GitHub's rendered page, whose image URLs are proxied, and never invent a URL, alt text or placeholder: a block with no tag goes without one until the maintainer pastes one back (Infographic, below).
 
 ## Required Sections (in order)
 
@@ -58,7 +44,7 @@ H1, `Full Name (Short Name)`: `# Connoisseur & Restocker (C&R)`. When the two na
 
 One to three sentences, **255 characters max**, written to be found in CurseForge search: lead with what the add-on is, in the words players type into the search box, then list what it covers (Control Freak: "Combat announcer for taunts, interrupts, fears, tank deaths, bad pets..."). Never names the add-on; selling the *why* is the TL;DR's job. Plain prose only — no markdown (no bold, no links, no headers) and no em-dashes (use a comma, period, or ` // `): this summary syncs to the in-game `OPTIONS_DESCRIPTION` and every TOC's `## Notes`, where the Style Guide's In-Game Rendering Rules bind it and symbols leak through as literal characters.
 
-**Build this last.** The pitch is the #1 discovery surface — most users find the add-on through CurseForge or Google search, so this slot has to earn its keep on SEO. It's the most important 255 characters in the whole README.
+**Build this last.** Most players find the add-on through CurseForge or Google search, so these are the README's most important 255 characters.
 
 **TL;DR line.** Directly under the pitch, a `**TL;DR:**` label (colon inside the bold) and one or two short sentences: the elevator pitch of *why* you'd use it, in benefits to the player. No BS, no fluff. README-only (it syncs nowhere), written fresh rather than restating the pitch, free of the add-on's name, and bound only by the no-em-dash and straight-quotes rules.
 
@@ -154,7 +140,7 @@ Numbered list, 4-6 steps.
 
 The smaller, non-core things a player is glad to have read after installing, and nothing else. Short, with tables and bullets over paragraphs. Never a repeat of anything a feature block says, never a trivial option (Voice & Tone), and no Options panel list, settings inventory or slash command list (the options' tooltips carry those).
 
-- **`### Mini-Map Button`** (whenever the add-on has one) — a one-row table, `Hover or Left-Click | Opens the Mini-map Menu` (an action button: `Hover | Opens the Mini-map Menu` and `Left-Click | [its main job]`), plus one line on what the menu holds.
+- **`### Mini-map Button`** (whenever the add-on has one) — a one-row table, `Hover or Left-Click | Opens the mini-map menu` (an action button: `Hover | Opens the mini-map menu` and `Left-Click | [its main job]`), plus one line on what the menu holds.
 - **A game setting the add-on changes and leaves changed** (a lasting CVar write) — always disclosed here, so then the section is never skipped (Style Guide → WRITING USER CVARS). A setting muted for a moment and put back gets no line.
 - Beyond those, **at most two** sub-sections worth a player's time: a why-it-works-this-way story (Control Freak's "Every Alert Works the Same Way"), or a `### Good to Know` list of small non-core features and class-specific callouts, in the feature bullet format, five at most.
 
@@ -233,7 +219,7 @@ Research add-ons that overlap with this one. Search broadly — aim to surface *
 
 **Overlaps and Alternatives need at least 10,000 Total Downloads** on the candidate's CurseForge listing, which keeps the flood of new, AI-generated add-ons out of the list. A candidate below the floor, or with no CurseForge listing, is dropped, however close a match it is. Only two kinds of add-on skip the floor: Gogo1951's own, and one the maintainer names for the list. Pairs With has no floor.
 
-**Don't list anything that already appears in History.** History is the ancestry chain (forks, predecessors); Related Add-ons is the current competitive landscape. Different lists, no overlap.
+**Nothing in History appears here too.** History is the ancestry; this is the current landscape.
 
 **Where to look:**
 
@@ -244,13 +230,9 @@ Research add-ons that overlap with this one. Search broadly — aim to surface *
 
 **Search broadly.** Don't just search the add-on's name. For each distinct thing the add-on does, run a *separate* search using user-facing terms — synonyms, slang, item types it touches, pain points it solves. An auto-clam-opener should turn up under "clam," "auto open," "lockbox," "container," and any well-known competitor name in that niche (e.g., "clam pulp"). If you can think of an obvious competitor and it's not in your results, search for it directly by name. **Missing the biggest competitor is the most common failure mode in this section.**
 
-**Filter to flavors the add-on actually supports.** Every entry must run on at least one client the add-on ships a TOC for; add-ons for other clients are noise, not research. Read each candidate's supported clients before adding it.
+**Filter to live add-ons on our flavors.** Every entry runs on at least one client the add-on ships a TOC for and was updated within the last 12 months, both read off its listing. An abandoned competitor, however famous, belongs in History if it's an ancestor, or nowhere.
 
-**Filter to add-ons still alive: updated within the last 12 months.** Read the Updated date and supported game versions straight off each candidate's CurseForge listing before adding it. An add-on last touched years ago isn't part of the current landscape — recommending it sends readers to something likely broken. If a famous-but-abandoned competitor feels essential context, it belongs in History (if it's an ancestor) or nowhere.
-
-This list also feeds the SEO step for the pitch summary — once candidates are surfaced, scan their titles and descriptions for the vocabulary the pitch should adopt.
-
-**Take each URL from the listing's canonical link or address bar, never from the add-on's current title.** CurseForge slugs freeze at the original title and often no longer resemble it — a guessed slug that happens to render today (via a redirect) is a link that breaks silently later. Copy the real slug from the page you are actually on.
+**Take each URL from the listing's address bar, never from the add-on's title.** CurseForge slugs freeze at the original title, and a guessed slug that works today through a redirect breaks silently later.
 
 **Format:** one `###` sub-section per color in the order below, skipping any color with no entries. Inside each, one `*` bullet per add-on, alphabetical by add-on name. Escape Markdown characters in author names (`enshadowed\_`).
 

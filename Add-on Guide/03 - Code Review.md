@@ -38,7 +38,7 @@ Its fix prompt copies the reference code word for word, adds both tests where th
 
 Always run **luacheck** over the add-on in Phase 1 (`Includes/` excluded, per the repo's `.luacheckrc` — Style Guide → LINTING). Its warnings are ordinary findings; a missing `.luacheckrc` is one too.
 
-Always run one explicit **comment-accuracy sweep**. Every comment must describe what the code actually does now; a comment that contradicts current behavior is a finding. The fix corrects or deletes the comment, never the code (Style Guide → COMMENTS). Also flag the obvious noise — commented-out code, decorative banners, and comments that only restate the code — per Style Guide → COMMENTS. Sanctioned `TODO:` markers are exempt; leave them. The `Data/{Game}/` files' comments belong to the Data Review, so this sweep skips them. This sweep keeps comments *true* and catches egregious clutter; the wholesale volume trim is its own pass (`References/Code Comment Cleanup Prompt.md`), so don't flood the report with every borderline comment — flag what's wrong or clearly noise, and let the cleanup pass do the rest.
+Always run one explicit **comment-accuracy sweep**. Every comment must describe what the code actually does now; a comment that contradicts current behavior is a finding. The fix corrects or deletes the comment, never the code (Style Guide → COMMENTS). Also flag the obvious noise — commented-out code, decorative banners, and comments that only restate the code — per Style Guide → COMMENTS. Sanctioned `TODO:` markers are exempt; leave them. The `Data/{Game}/` files' comments belong to the Data Review, so this sweep skips them. The volume trim is its own pass (`References/Code Comment Cleanup Prompt.md`), so flag only what's wrong or clearly noise.
 
 Always run one explicit **game-name sweep** against Style Guide → GAME NAMES, which is the full specification. Two parts:
 
@@ -59,7 +59,7 @@ Always run one explicit **Options-panel-open sweep**. Find the routing with:
 grep -rn "OpenToCategory\|AddToBlizOptions\|SlashCmdList\|InCombatLockdown" --include="*.lua" . | grep -v Includes/
 ```
 
-Then check it against Style Guide → OPTIONS PANEL → Opening the Panel, Combat Guard, and Slash Commands, which are the full specification. A missing opener or missing options command is itself a finding; the recurring defect is the name/title lookup that section forbids. Any fix prompt for this must direct that the changed file be run through `stylua --syntax lua51` and verified with `luac -p` and luacheck, and must **not** claim it works in-game — it needs a `/reload` and a manual test on every flavor.
+Then check it against Style Guide → OPTIONS PANEL → Opening the Panel, Combat Guard, and Slash Commands, which are the full specification. A missing opener or missing options command is itself a finding; the recurring defect is the name/title lookup that section forbids. Its fix prompt must **not** claim it works in-game: it needs a `/reload` and a manual test on every flavor.
 
 Always run one **mandated-copy sweep**, so the strings are in place before Copy Review and Localization run. Check `L["CHAT_LOADED"]` against Style Guide → WELCOME MESSAGE, and that `PrintWelcome` prints at every login while `showWelcome` is on, with no version or first-login gate, and check the Feedback & Support panel against OPTIONS PANEL → Feedback & Support Panel: the Help [Add-on Name] Level Up paragraphs, the link order, the copy caption and the version line. Old Help [Add-on Name] Grow copy and links still on the General panel count as a difference. Every difference is one finding, and its fix prompt writes the mandated `enUS.lua` values and the panel code, with the Full Name filled in.
 
@@ -67,6 +67,7 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 
 - **`.pkgmeta`, `.github/` (workflows), and `LICENSE`** — packaging and release wiring are reviewed by the Prelaunch Review, not here. Don't review their contents and don't flag their absence.
 - **The Spacing Scale** — `02 - UX Review.md` moves sizes and gaps onto it through its Build choices, never a sweep (Style Guide → SPACING SCALE), so an off-scale value is never a finding here.
+- **A mini-map tooltip not yet turned into a menu** — `02 - UX Review.md` moves it through its Build choices (Menus, Not Tooltips), never a sweep, so a button still on a tooltip is never a finding here. A built menu is reviewed against Style Guide → MINIMAP MENU.
 - **`Diagnostics/`** — `04 - Diagnostics Review.md` owns it. Only its load-time wiring (TOC entries, the dispatcher's one logging call) is reviewed here.
 - **Includes folder** — don't review its contents. Separately, do verify its files are correctly referenced (in every TOC and any XML), and that every file a TOC references exists.
 - Any **.tga** files.

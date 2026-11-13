@@ -58,11 +58,11 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 - **`Code Comment Cleanup Prompt.md`** — Slims the code's comments, never its behavior. Because it edits source, run it **before** step 8. *Changes:* Lua comments outside `Data/{Game}/`.
 - **`Guide Feedback Triage Prompt.md`** — Folds approved Guide Feedback into these docs, in a session launched in `~/Common-Core`. *Changes:* the guide docs, approved changes only, committed and pushed to Common-Core `main`.
 
-**Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): a pass with fix prompts gives it after you've run them, never beside them. You mirror the working folder into the add-on's other installed clients, then test. Claude only ever edits the one folder it was launched in.
+**Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass offers the next one in a new session** (Pass Preamble → Next Pass): 2 offers 3, then 3 offers 4 and 6 side by side. From there two branches run in this folder: 4 offers 5 (start it once you've tested step 4 in game and have its reports), and 6 offers 7. 7 offers 8; start it once both branches are done. A Ready-to-tag 8 offers 9, 10 and 11, then 12 once they finish.
+**Each finished pass offers the next one in a new session**, in the order the diagram shows (Pass Preamble → Next Pass). Start step 5 once you've tested step 4 in game and have its reports, and step 8 once both branches are done.
 
-**Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` A departure the maintainer keeps for one add-on goes in that add-on's `README-Notes.md`, never here. A pass that does propose a change ends with a copy-and-run line: paste it into a **new session launched in `~/Common-Core`** (Claude Code there, or Cowork with it connected), where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never back into the code session**, whose template denies guide writes.
+**Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 
 ## Ground rules
 
