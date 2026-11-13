@@ -111,6 +111,7 @@ Anything else does not belong here. Where one add-on departs from the Style Guid
 - **CurseForge:** <https://www.curseforge.com/wow/addons/tracking-eye-revisited>
 - **Wago:** <https://addons.wago.io/addons/tracking-eye>
 - **Identity note:** brand `Tracking Eye`, repo `Tracking-Eye`, folder `TrackingEye`, CurseForge slug `tracking-eye-revisited`, Wago slug `tracking-eye` — never derive one from another. The bare `tracking-eye` CurseForge slug belongs to LindenRyuujin's abandoned predecessor, which is still live, so a guessed slug resolves to a different add-on rather than 404ing.
+- **Extra TOCs:** Mists
 
 ### Water Dispenser
 - **GitHub:** <https://github.com/Gogo1951/Water-Dispenser>
