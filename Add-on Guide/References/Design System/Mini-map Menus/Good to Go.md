@@ -3,6 +3,7 @@
 **State:** tooltip. The tallest, and the last to convert.
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
+**Issue:** [Gogo1951/Good-to-Go#18](https://github.com/Gogo1951/Good-to-Go/issues/18). Close it with the PR that builds this.
 
 ## Today
 

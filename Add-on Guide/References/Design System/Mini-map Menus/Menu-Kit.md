@@ -2,6 +2,7 @@
 
 The shared renderer every mini-map menu is built on, moved into Common-Core so all six add-ons copy one file. **Do this first:** every add-on spec in this folder builds on it.
 
+- **Issue:** [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3).
 - **Rules:** Style Guide → MINIMAP MENU.
 - **Pieces:** `../README.md` → Components, Patterns, Proposed Kit Changes.
 - **Drawn:** `../Mini-map Menus.html`.

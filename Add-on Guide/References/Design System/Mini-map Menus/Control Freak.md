@@ -3,6 +3,7 @@
 **State:** tooltip.
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
+**Issue:** [Gogo1951/Control-Freak#25](https://github.com/Gogo1951/Control-Freak/issues/25). Close it with the PR that builds this.
 
 ## Today
 

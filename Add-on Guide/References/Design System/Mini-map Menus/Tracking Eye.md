@@ -3,6 +3,7 @@
 **State:** converted to a menu; the conversion dropped the button's four clicks. This brings them back and moves the menu onto Menu-Kit v2.
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
+**Issue:** [Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31). Close it with the PR that builds this.
 
 ## Today
 

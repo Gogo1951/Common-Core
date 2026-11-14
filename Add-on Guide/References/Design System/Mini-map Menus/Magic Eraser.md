@@ -3,6 +3,7 @@
 **State:** tooltip. An action button: Left-Click erases.
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
+**Issue:** [Gogo1951/Magic-Eraser#51](https://github.com/Gogo1951/Magic-Eraser/issues/51). Close it with the PR that builds this.
 
 ## Today
 

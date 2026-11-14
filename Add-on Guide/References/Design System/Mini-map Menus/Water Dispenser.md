@@ -3,6 +3,7 @@
 **State:** tooltip. The smallest conversion, so it goes first after Tracking Eye.
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
+**Issue:** [Gogo1951/Water-Dispenser#25](https://github.com/Gogo1951/Water-Dispenser/issues/25). Close it with the PR that builds this.
 
 ## Today
 

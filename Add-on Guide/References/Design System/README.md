@@ -107,15 +107,15 @@ Built from the components, in the order a menu runs top to bottom.
 
 Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. Build in this order: the kit, then Tracking Eye (which proves it), then smallest to largest.
 
-| Order | Spec | Repo for its issue |
+| Order | Spec | Issue |
 |---|---|---|
-| 1 | [Menu-Kit v2](Mini-map%20Menus/Menu-Kit.md) | Common-Core |
-| 2 | [Tracking Eye](Mini-map%20Menus/Tracking%20Eye.md) | Tracking-Eye |
-| 3 | [Water Dispenser](Mini-map%20Menus/Water%20Dispenser.md) | Water-Dispenser |
-| 4 | [Control Freak](Mini-map%20Menus/Control%20Freak.md) | Control-Freak |
-| 5 | [GogoLoot](Mini-map%20Menus/GogoLoot.md) | GogoLoot |
-| 6 | [Magic Eraser](Mini-map%20Menus/Magic%20Eraser.md) | Magic-Eraser |
-| 7 | [Good to Go](Mini-map%20Menus/Good%20to%20Go.md) | Good-to-Go |
+| 1 | [Menu-Kit v2](Mini-map%20Menus/Menu-Kit.md) | [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3) |
+| 2 | [Tracking Eye](Mini-map%20Menus/Tracking%20Eye.md) | [Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31) |
+| 3 | [Water Dispenser](Mini-map%20Menus/Water%20Dispenser.md) | [Gogo1951/Water-Dispenser#25](https://github.com/Gogo1951/Water-Dispenser/issues/25) |
+| 4 | [Control Freak](Mini-map%20Menus/Control%20Freak.md) | [Gogo1951/Control-Freak#25](https://github.com/Gogo1951/Control-Freak/issues/25) |
+| 5 | [GogoLoot](Mini-map%20Menus/GogoLoot.md) | [Gogo1951/GogoLoot#149](https://github.com/Gogo1951/GogoLoot/issues/149) |
+| 6 | [Magic Eraser](Mini-map%20Menus/Magic%20Eraser.md) | [Gogo1951/Magic-Eraser#51](https://github.com/Gogo1951/Magic-Eraser/issues/51) |
+| 7 | [Good to Go](Mini-map%20Menus/Good%20to%20Go.md) | [Gogo1951/Good-to-Go#18](https://github.com/Gogo1951/Good-to-Go/issues/18) |
 
 | Add-on | Today | In the menu |
 |---|---|---|

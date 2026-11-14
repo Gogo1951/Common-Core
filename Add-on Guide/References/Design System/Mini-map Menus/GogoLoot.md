@@ -3,6 +3,7 @@
 **State:** tooltip.
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
+**Issue:** [Gogo1951/GogoLoot#149](https://github.com/Gogo1951/GogoLoot/issues/149). Close it with the PR that builds this.
 
 ## Today
 
