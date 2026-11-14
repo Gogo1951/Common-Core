@@ -59,6 +59,9 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 - **`Kit.List(entries, rows, max)`** appends up to `max` (8) rows, then a `note` saying how many more.
 - **Colors** take a palette key or a six-digit hex (class colors, quality colors).
 - **Defaults:** `action` is INFO left and MUTED right. The `hint` kind goes; nothing uses it once the Options row is an action row.
+- **`Kit.MoreFeatures(entries, features)`** appends the gold More Features heading and one compact toggle per set-and-forget feature from the add-on's `ns.FEATURES`, gated and confirmed as its switch is (Features Mirror).
+- **`afterChange`** is the add-on's `ns.RefreshSettings` in every add-on (One Refresh).
+- **Placement** is the kit's (Placement): corner to opposite corner, 2 points apart, by screen halves, flyout and row tooltips on the same side.
 - **Any LDB display works.** The anchor is whatever frame called `OnEnter`: the mini-map button, or a Titan Panel or ChocolateBar plugin.
 
 ## Distribution

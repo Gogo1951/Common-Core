@@ -58,9 +58,19 @@ Hover opens the menu. Left-Click has a job, so it doesn't open it.
 - `Features/Minimap-Button.lua`: remove `ShowTooltip` and `AddDispenseReport`; the LDB object's `OnEnter` / `OnLeave` / `OnClick` go to the kit. Keep `ns.ToggleMinimapButton` and `ns.InitMinimap`.
 - Every Dispense change (button, row, options) redraws the open menu.
 
+## Features, Refresh and Button
+
+Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
+
+- **Features mirror.** Root panel order stays Dispense, then Announcement Macro, Inventory in Player Tooltips, Bag Tooltips for Dispensed Items, now built from `ns.FEATURES`. The menu gains **More Features** with those three as compact rows (each labeled by its panel's name, or its caption without Enable), their switches' captions and descriptions as tooltips.
+- **One refresh.** Every `NotifyChange` in `Features/Dispenser.lua`, `Features/Announcements.lua` and the options panels becomes `ns.RefreshSettings()`, which `ns:ApplyProfile` calls too.
+- **Button:** a launcher keyed `ns.LOCALE_NAME`, Simple so `ns.db.profile.minimap`: right. Rename `ns.ToggleMinimapButton` → `ns:ApplyMinimapButton()`, a plain `Refresh` with the current subtable.
+
 ## Check in Game
 
 - [ ] Hover opens the menu; Left-Click on the button flips Dispense and the state word follows; the Toggle row does the same.
 - [ ] Dispense Report shows only while Dispense is on and something's carried, with counts where they belong.
 - [ ] Shift + Middle-Click and the Options row both open options.
 - [ ] A controller's cursor reaches every row.
+- [ ] Flip each Features switch in options with the menu open: the menu follows. Flip each in the menu with options open: options follow. Same after a profile switch.
+- [ ] The menu opens from the button's corner in all four screen quadrants, and from an LDB display bar if one is installed.

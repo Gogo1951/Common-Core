@@ -74,6 +74,19 @@ Left-Click has a job, so **hover alone opens the menu**. With clean bags, Left-C
 - New `Features/Minimap-Menu.lua`: the rows above.
 - `Features/Minimap-Button.lua`: remove `RefreshTooltip` and the click branches; keep `ns:RefreshDisplay` (the icon follows the next item), which now redraws the open menu where it redrew the tooltip. `OnClick` goes to the kit.
 
+## Features, Refresh and Button
+
+Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
+
+- **Features mirror.** The root panel's order already leads with Auto-Vend, the one block. The menu gains **More Features**: Bank Retrieval, Maximum Value to Erase, Manual Delete Assistance, Erase Confirmation, Junk Item Tint, Quest Item Alerts, Bag-Space Warnings, in that order, each with its switch's caption and description as the tooltip. `FEATURE_TOGGLES` in `Options/Options-General.lua` becomes `ns.FEATURES`, and keeps each `onSet` (`ns.OnValueCapToggled`, `ns.OnTintJunkChanged`).
+- **One refresh.** The `NotifyChange` calls in the click handler and options become `ns.RefreshSettings()`; `ns:RefreshDisplay` keeps the bag tints and calls it.
+- **Button: three fixes.**
+  - A **launcher**, not a `"data source"`.
+  - Magic Eraser is Simple, so its position moves from `ns.db.global.minimap` to `ns.db.profile.minimap`, copied once in a migration.
+  - The next item's icon is set by assigning `ns.dataBrokerObject.icon` alone, not also `SetTexture` on the button.
+
+Magic Eraser is the guide's Simple reference, so these land before another add-on copies it.
+
 ## Check in Game
 
 - [ ] Hover opens the menu; Left-Click on the button erases and the menu shows the next item; so does the Erase row.
@@ -82,3 +95,5 @@ Left-Click has a job, so **hover alone opens the menu**. With clean bags, Left-C
 - [ ] Shift + Right-Click and the Toggle row both flip Auto-Vend.
 - [ ] With clean bags: the green congratulation and the Clutter Report hint, no Erase or Protect rows.
 - [ ] A controller's cursor reaches every row.
+- [ ] Flip each Features switch in options with the menu open: the menu follows. Flip each in the menu with options open: options follow. Same after a profile switch.
+- [ ] The menu opens from the button's corner in all four screen quadrants, and from an LDB display bar if one is installed.

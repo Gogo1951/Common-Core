@@ -74,9 +74,19 @@ While All Alerts is off, the three clicks do nothing, as today, since their rows
 - New `Features/Minimap-Menu.lua` builds the rows from the same `BLOCKS` table, each block given its `click` key.
 - `Features/Minimap-Button.lua`: remove `RefreshTooltip` and the click loop; the LDB object goes to the kit. Keep registration and `ns:ApplyMinimapButton`.
 
+## Features, Refresh and Button
+
+Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
+
+- **Features mirror.** The root panel already draws All Alerts (the master switch), then Monitoring, Naughty List and Tanking Tools with their tool switches under each. The menu matches it, and **each block gains a flyout of its tool switches**, the same rows in the same order from `ns.FEATURE_GROUPS`: Monitoring (Taunts, Interrupts, Fears, Incapacitated, Tank Deaths, Peer Pressure), Naughty List (Bad Mages, Bad Parry Monkeys, Bad Pets, Bad Priests), Tanking Tools (Cold Openers, Armor Debuffs). Captions and tooltips are the options' own. A flyout is empty, and its arrow gone, while its block is off. No More Features: every feature is a block.
+- **One refresh.** `ns:ApplyProfile` already notifies every panel and re-tests the combat-log registration; `ns.RefreshSettings()` wraps that redraw plus the menu, and every switch, row and click ends in it.
+- **Button:** a launcher keyed `ns.LOCALE_NAME`, Simple so `ns.db.profile.minimap`, shown through `ns:ApplyMinimapButton()`: already the standard.
+
 ## Check in Game
 
 - [ ] All Alerts' Toggle turns it off: the three blocks hide and the note shows. Turned back on, they return with their own states unchanged.
 - [ ] Left, Right and Shift + Left-Click on the button each flip their block, and the state word follows, with the menu open and closed.
 - [ ] A switched-off feature stops firing (combat-log registration follows).
 - [ ] A controller's cursor reaches every row.
+- [ ] Flip each Features switch in options with the menu open: the menu follows. Flip each in the menu with options open: options follow. Same after a profile switch.
+- [ ] The menu opens from the button's corner in all four screen quadrants, and from an LDB display bar if one is installed.

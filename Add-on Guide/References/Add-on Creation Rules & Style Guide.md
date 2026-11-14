@@ -932,6 +932,18 @@ Live reference: [Tracking-Eye/Features/Minimap-Button.lua](https://github.com/Go
 
 **The button opens a menu, never a tooltip** (MINIMAP MENU, below).
 
+### Building the Button
+
+One recipe in every add-on's `Features/Minimap-Button.lua`, so every button behaves the same in LibDBIcon and every LDB display (Titan Panel, ChocolateBar):
+
+- **A launcher.** `LibDataBroker:NewDataObject(key, { type = "launcher", label = L["ADDON_TITLE"], icon = … })`, never `"data source"`: the object carries no text, only the icon and the clicks.
+- **One key.** The LDB object and `LibDBIcon:Register` both take `ADDON_NAME`, or NAMING's pinned `ns.LOCALE_NAME` when the brand differs from the folder, and so does every later `GetMinimapButton` and `Refresh`.
+- **Its position in the save model's presentation scope** (SAVED VARIABLES → The Two Models): `ns.db.profile.minimap` under Simple, `ns.db.global.minimap` under Per-Character, passed straight to LibDBIcon. Moving it from the wrong scope copies the old table over once, inside a migration (Migration Windows), so nobody's button jumps.
+- **Registered once, at the SavedVariables init point**, after `ns.db` exists, then fitted (Icon Fit, below).
+- **Shown or hidden in one place.** `ns:ApplyMinimapButton()` calls `LibDBIcon:Refresh(key, subtable)` with the current subtable, which applies `hide` and re-points the button after Reset Profile replaces the table. The Enable Mini-map Button toggle and `ns:ApplyProfile` both call it; nothing calls `Show` or `Hide`.
+- **A live icon** (GogoLoot's Automated Rolls, Magic Eraser's next item, Good to Go's food) is set by assigning the LDB object's `icon` field in `ns.UpdateMinimapIcon()`; LibDBIcon and every display redraw from it. Never `SetTexture` on the button, never `SetButtonIcon`. `ns.RefreshSettings()` calls it (MINIMAP MENU → One Refresh).
+- **Three handlers, all the kit's:** `OnEnter` opens the menu, `OnLeave` does nothing, `OnClick` goes to the click table (MINIMAP MENU → Button Clicks). No `OnTooltipShow`.
+
 ### Icon Fit
 
 On Camelot and Mainline, LibDBIcon leaves the square icon off-center in its ring; fit it right after `LibDBIcon:Register`, passing `GetMinimapButton` the same key `Register` took (NAMING's pinned constant when the brand differs from the folder):
@@ -974,7 +986,7 @@ Drawn: `References/Design System/Mini-map Menus.html`, every row kind and patter
 - **A whole feature can hide.** Tracking Eye drops the Target Tracking block on a character with no ability a hunt can cast.
 - **The add-on's own state may hide rows.** A feature switched off hides its settings, as the options panel does.
 - **Long pickers stay in options.** A choice of more than a handful of values (Tracking Eye's 17 Cycle Speeds) is a dropdown, not a menu.
-- **Set-and-forget settings stay in options.** Tracking Eye's Free Placement Mode, Come & Get It and display toggles aren't changed mid-session, so they get no block.
+- **Set-and-forget features get a compact row, not a block.** Tracking Eye's Free Placement Mode and Come & Get It aren't changed mid-session, so each is one On/Off row under More Features (Features Mirror, below). Settings inside a feature that aren't changed mid-session, such as display toggles, stay in options.
 
 ### Button Clicks
 
@@ -1002,6 +1014,8 @@ Drawn: `References/Design System/Mini-map Menus.html`, every row kind and patter
 [SPACER, added by the kit]
 
 -- After the last block: --
+More Features (C_TITLE, only if the add-on has set-and-forget features)
+    [Feature Name] (toggle)                                  On / Off
 [SPACER]
 [SEPARATOR]
 [Short Name] Options (C_INFO, left)            Shift + Middle-Click (C_MUTED, right)
@@ -1015,6 +1029,45 @@ Drawn: `References/Design System/Mini-map Menus.html`, every row kind and patter
 - **The Toggle row** is blue, says only Toggle, flips the feature's Enable switch, and names the button click that does the same on its right. Its tooltip is that Enable option's name and description.
 - **The arrow.** Blizzard's submenu arrow (`ChatFrameExpandArrow`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
 - **Options last.** A spacer, a separator, then the `[Short Name] Options` action row, naming Shift + Middle-Click. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
+
+### Features Mirror
+
+**The menu and the options panel's Features section are one list.** Every switch in the root panel's Features section (OPTIONS PANEL → Main Page Layout) is in the menu, under the same name, and every feature in the menu has a switch there. One table in the add-on (`ns.FEATURES`, in `Options/Options-Utilities.lua`) names each feature's setting, switch caption and description, whether it's a block, and its click; the Features section and the menu both build from it, so they can't drift.
+
+- **A block or a compact row.** A feature players turn on and off mid-session is a full block. Every other feature is a compact `toggle` row under a gold **More Features** heading, last before Options: the feature's name on the left, On or Off on the right, its switch's caption and description as the tooltip.
+- **Same order.** The Features section lists the block features first, in the menu's order, then the More Features ones, in the menu's order. Two to a line, left to right.
+- **Same name.** The menu's title or row label is the feature's name, the switch's caption without its leading Enable (Enable Auto-Vend → Auto-Vend). A feature with its own panel uses the panel's name.
+- **A feature's tools are its flyout.** The tool switches the root panel draws under a feature (`[Feature Name]` rows in Main Page Layout) are that block's flyout, the same switches in the same order.
+- **Gated the same way.** A More Features row for a class, race or profession feature shows only to a character who can use it, like a block; the options panel still lists it.
+- **A confirm is kept.** A switch that asks before turning off on the options panel asks the same from its menu row.
+- **Not everything in the menu is a feature.** Item highlights, live reports, and a setting inside a feature that players flip mid-session (Good to Go's Buff Food & Scrolls) can be blocks with no Features switch of their own. A master switch (Blocks Beyond Features) mirrors whatever the root panel draws for it.
+
+### One Refresh
+
+**Every change shows everywhere at once.** One function, `ns.RefreshSettings()` in `Features/Utilities.lua`, calls `AceConfigRegistry:NotifyChange` for every panel in `ns.OPTIONS_REGISTRY`, redraws the open menu (`ns.RefreshMenu()`, a no-op while it's closed) and updates the button's icon (`ns.UpdateMinimapIcon()`, where the add-on has a live one). Every writer ends in it, and none notifies a single panel by hand:
+
+- every options `set`, through the shared option helpers;
+- every menu row and every button click (the kit's `afterChange`);
+- slash commands and key bindings that change a setting;
+- `ns:ApplyProfile`, after a profile switch, reset or copy.
+
+A change that also has side effects (registering events, a chat line) does them first, then refreshes.
+
+### Placement
+
+**The menu hangs off the button's corner.** Its corner meets the button's opposite corner, 2 points apart:
+
+| Button on the screen | Menu opens | Menu point → button point |
+|---|---|---|
+| Top right | Below, to the left | `TOPRIGHT` → `BOTTOMLEFT` |
+| Top left | Below, to the right | `TOPLEFT` → `BOTTOMRIGHT` |
+| Bottom right | Above, to the left | `BOTTOMRIGHT` → `TOPLEFT` |
+| Bottom left | Above, to the right | `BOTTOMLEFT` → `TOPRIGHT` |
+
+- **Halves decide it**, measured from the button's center against `UIParent` at its effective scale, once when the menu opens; it doesn't jump while open.
+- **The flyout opens on the same side** the menu opened toward, 12 points away (`Kit.FLYOUT_GAP`), rising 8 so its first row meets its title.
+- **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
+- **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
 
 ### Flyouts
 
@@ -1079,7 +1132,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 - **Escape closes it.** Name the menu frame and add it to `UISpecialFrames`.
 - **Hovering a title opens its flyout**, and clicking it does too. Hovering any other clickable row closes the flyout.
 - **A pick closes the menu; a switch keeps it open.** Choosing from a set is done; flipping switches often comes in runs.
-- **A change redraws in place.** After any change, redraw the open options panel and the menu, so both show the new value.
+- **A change redraws in place.** Every change, from anywhere, ends in `ns.RefreshSettings()` (One Refresh), so the open options panel, the menu and the button all show the new value.
 - **Read the cursor from `GetCursorPosition`**, not `IsMouseOver`, so a controller's virtual cursor counts (`Kit.IsCursorOver`).
 - **Tooltips reuse the option's strings.** A switch's tooltip is its option's name and description; a spell row's is the spell.
 
@@ -1299,7 +1352,7 @@ Full Name (AceConfig group name = L["ADDON_TITLE"])
 Brief Description (L["OPTIONS_DESCRIPTION"] — the pitch-synced string; the key name is house-standard, never abbreviated)
 Enable Welcome Message (toggle, default on)
 Enable Mini-map Button (toggle, default on — only when the add-on has a mini-map button)
-Features (every feature's on/off switch, two to a line, if any)
+Features (every feature's on/off switch, two to a line, if any — the mini-map menu's features in its order: blocks first, then More Features; MINIMAP MENU → Features Mirror)
 [Feature Name] (one per feature split into tool sub-panels: each tool's on/off switch, two to a line, hidden while the feature is off)
 Key Bindings (if any: one row per binding with its caption, bound key and a Set Key button, then one line saying what the key does)
 /Commands (always)

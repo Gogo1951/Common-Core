@@ -88,6 +88,14 @@ Each toggle keeps its current side effects (`ToggleAutomatedRolls` and the other
 - New `Features/Minimap-Menu.lua`: the rows above.
 - `Features/Minimap-Button.lua`: remove `ShowTooltip`, `AddFeatureBlock`, `RollSettingLine` and the click tables; keep the toggles, `ns:UpdateMinimapIcon`, the loot-window helpers and the icon fit. `OnClick` goes to the kit.
 
+## Features, Refresh and Button
+
+Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
+
+- **Features mirror: the root panel reorders.** Today it reads Speedy Loot, Automated Rolls, Automated Opening, Loot Toasts, Loot Sounds, Loot Announcements, Automated Master Looting, Roll Macro. It becomes the four blocks in menu order (Automated Rolls, Automated Opening, Loot Announcements, Automated Master Looting), then Speedy Loot, Loot Toasts, Loot Sounds and Roll Macro. The menu gains **More Features** with those four as compact rows (`TAB_SPEEDY_LOOT`, `TAB_LOOT_TOASTS`, `TAB_LOOT_SOUNDS`, `TAB_ROLL_MACRO`), their switches' captions and descriptions as tooltips. `FEATURE_SWITCHES` in `Options/Options-General.lua` becomes `ns.FEATURES`.
+- **One refresh.** Each toggle's hand-listed `NotifyChange` calls (its own panel, General, the master-looter pop-ups) become its side effects, then `ns.RefreshSettings()`.
+- **Button: two fixes.** GogoLoot is Simple, so its position moves from `ns.db.global.minimap` to `ns.db.profile.minimap`, copied over once in a migration so no button jumps. `ns:UpdateMinimapIcon` stops calling `LibDBIcon:Refresh`: assigning `brokerObject.icon` is enough. Icon Fit runs on Camelot and Mainline, as the rule says, not Camelot alone.
+
 ## Check in Game
 
 - [ ] Each click in Button Clicks does its job with the menu open and closed, the state word follows, and the icon swaps with Automated Rolls.
@@ -95,3 +103,5 @@ Each toggle keeps its current side effects (`ToggleAutomatedRolls` and the other
 - [ ] Locked Items shows only with locked boxes in bags; a Rogue sees the Pick Lock line.
 - [ ] Party and Raid read back each setting, Manual included.
 - [ ] A controller's cursor reaches every row.
+- [ ] Flip each Features switch in options with the menu open: the menu follows. Flip each in the menu with options open: options follow. Same after a profile switch.
+- [ ] The menu opens from the button's corner in all four screen quadrants, and from an LDB display bar if one is installed.

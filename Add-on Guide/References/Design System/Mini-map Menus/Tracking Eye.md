@@ -62,6 +62,16 @@ Flyouts (Persistent Tracking's class overrides, Farm Mode's status, abilities, c
 - `Features/Minimap-Button.lua`: `OnClick` calls `menu:HandleClick(self, button)`.
 - README-Technical → Mini-map Menu: say the clicks are back and name them.
 
+## Features, Refresh and Button
+
+Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
+
+- **Features mirror: the root panel has no Features section yet.** Add one, built from a new `ns.FEATURES`: Persistent Tracking, Farm Mode, Automatic Target Tracking (the three blocks, in menu order), then Come & Get It and Free Placement Mode. Each switch binds the same setting as its panel's enable toggle.
+- **The menu gains More Features:** Come & Get It and Free Placement Mode as compact rows, each with its switch's caption and description (`OPTIONS_ENABLE_COME_AND_GET_IT`, `OPTIONS_ENABLE_FREE` and their descriptions) as the tooltip.
+- **One refresh.** `ns.RefreshOptionsPanels` and `ns.RefreshMenu` become `ns.RefreshSettings()`, called by every options `set`, every menu and button click, the Cycle Farm Mode Ability binding and slash commands that change a setting, and `ns:ApplyProfile`.
+- **Button:** already right (a launcher keyed `ADDON_NAME`, Per-Character so `ns.db.global.minimap`). Its show/hide function is renamed `ns:ApplyMinimapButton()`.
+- **Placement:** already right; it's the reference the kit takes.
+
 ## Check in Game
 
 On a hunter, a druid and a warrior, with a mouse and with a controller:
@@ -69,3 +79,5 @@ On a hunter, a druid and a warrior, with a mouse and with a controller:
 - [ ] Each click in Button Clicks does its job with the menu open and closed, and the open menu redraws.
 - [ ] Each row names its click; Persistent Tracking's Toggle names none.
 - [ ] Everything in the old menu still works, flyouts included.
+- [ ] Flip each Features switch in options with the menu open: the menu follows. Flip each in the menu with options open: options follow. Same after a profile switch.
+- [ ] The menu opens from the button's corner in all four screen quadrants, and from an LDB display bar if one is installed.

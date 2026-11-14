@@ -45,6 +45,9 @@ A tooltip the add-on draws on hover over its own mini-map button, arrow or frame
 - Item highlights, live reports, long lists, message lines, a master switch and reference notes take their shapes from Style Guide → MINIMAP MENU → Blocks Beyond Features.
 - Only this character's rows show; the options panel still shows every setting.
 - A controller's cursor reaches every row and flyout.
+- The menu and the root panel's Features section are one list: same features, same order, same names, the rest under More Features (Features Mirror).
+- A change made in the menu, on the button, in the options panel, by a slash command or by a profile switch shows in all of them at once (One Refresh).
+- The button follows Style Guide → MINIMAP BUTTON → Building the Button, and the menu opens from its corner per MINIMAP MENU → Placement.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 

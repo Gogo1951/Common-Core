@@ -105,6 +105,16 @@ Left-Click has a job, so hover alone opens the menu. Every click ends in `ns.Upd
 - `CLASS_NOTES`, its builders and `ns.AddConsumableMacroNotes` move to their own file, read by both the menu and the Spellbook page.
 - `Features/Minimap-Button.lua`: remove `UpdateTooltip` and the click branches; keep registration, `ns.UpdateMinimapIcon` (it redraws the open menu where it redrew the tooltip) and `ns.ToggleMinimapButton`. `OnClick` goes to the kit.
 
+## Features, Refresh and Button
+
+Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
+
+- **Features mirror.** The root panel already reads Buff Duty, Restocker (the two blocks), then Enhanced Spellbook, Consumable Macros, Rank Watch (not on Mists), Inventory Report, Readiness Report. The menu gains **More Features** with those five as compact rows, their switches' captions and descriptions as tooltips; Enhanced Spellbook and Consumable Macros ask before turning off, as their switches do (`confirmOff`). `FEATURE_SWITCHES` and `ns.FEATURE_GROUPS` become `ns.FEATURES`.
+- **Restock List's block is titled Restocker**, the feature's name on the root panel; its Open row still opens the Restock List window.
+- **Buff Food & Scrolls** is a setting inside Consumable Macros that players flip mid-session, so it keeps a block of its own with no Features switch.
+- **One refresh.** `ns.SetBuffDutyOn`, `ns.SetRestockerEnabled` and the rest end in `ns.RefreshSettings()` in place of their own repaints, and it calls `ns.UpdateMinimapIcon()`.
+- **Button: two fixes.** A **launcher**, not a `"data source"`; the food icon is set by assigning `ns.dataBrokerObject.icon` alone, not also `SetTexture` on the button. Rename `ns.ToggleMinimapButton` → `ns:ApplyMinimapButton()`. Per-Character, so `ns.db.global.minimap` is right.
+
 ## Check in Game
 
 On a mage, a rogue, a hunter and a warrior:
@@ -115,3 +125,5 @@ On a mage, a rogue, a hunter and a warrior:
 - [ ] Each class sees its own macro flyout and items; a warrior sees neither.
 - [ ] The Spellbook page's macro tooltips still show their notes.
 - [ ] A controller's cursor reaches every row and the flyout.
+- [ ] Flip each Features switch in options with the menu open: the menu follows. Flip each in the menu with options open: options follow. Same after a profile switch.
+- [ ] The menu opens from the button's corner in all four screen quadrants, and from an LDB display bar if one is installed.
