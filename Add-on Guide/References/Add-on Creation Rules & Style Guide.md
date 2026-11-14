@@ -413,7 +413,7 @@ Live reference: **GogoLoot** — `Features/Core.lua`.
 
 ### Reset
 
-**Canonical rule. Profile reset lives on the Profiles panel and nowhere else:** the General panel carries no reset control, and the Profiles panel adds no separate account-wide reset button. **Reset Profile** is the stock AceDBOptions-3.0 control and resets only the active profile (`ns.db:ResetProfile()`) — what that clears follows from the model, per the table above. Don't hand-roll a profile reset, and don't nil the SavedVariables global directly. Beyond Reset Profile, a panel may carry a **Reset** for any setting that takes real effort to put back by hand — a text input's default, an emote or ability checklist, or an item list's defaults (**Restore defaults**, Build Reference → Item Lists) — and for keys Reset Profile cannot reach. Each is an `execute` on the panel that owns the setting, writes that setting's `ns.DATABASE_DEFAULTS` values back and nothing else, and sets `confirm = true` when it discards more than one value. Every player-editable text input carries its Reset on its own row; any other is added only when requested, and one already present was requested.
+**Canonical rule. Profile reset lives on the Profiles panel and nowhere else:** the General panel carries no reset control, and the Profiles panel adds no separate account-wide reset button. **Reset Profile** is the stock AceDBOptions-3.0 control and resets only the active profile (`ns.db:ResetProfile()`) — what that clears follows from the model, per the table above. Don't hand-roll a profile reset, and don't nil the SavedVariables global directly. Beyond Reset Profile, a panel may carry a **Reset** for any setting that takes real effort to put back by hand — a text input's default, an emote or ability checklist, or an item list's defaults (**Restore defaults**, Build Reference → Item Lists) — and for keys Reset Profile cannot reach. Each is an `execute` on the panel that owns the setting, writes that setting's `ns.DATABASE_DEFAULTS` values back and nothing else, and sets `confirm = true` when it discards more than one value. It is drawn as a Reset row (OPTIONS PANEL → Widget Conventions). Every player-editable text input carries its Reset on its own row; any other is added only when requested, and one already present was requested.
 
 -----
 
@@ -1244,6 +1244,8 @@ Every section header is a real AceConfig `header` — no panel draws its own fro
 - **On the kit, each panel registers through `Kit.RegisterPanel(key, builder, displayName, parentKey)`:** its builder function (never a built table, so every repaint rebuilds it), nested under the root, or under `parentKey`'s captured category ID for a sub-panel. Every panel's frame and category ID are kept, so `ns:OpenOptionsPanel(key)` opens any panel. Nothing reaches around `AddToBlizOptions` to build a canvas or write into `AceConfigDialog.BlizOptions` by hand.
 - **Registration is deferred, never file-scope.** The Profiles builder calls `AceDBOptions:GetOptionsTable(ns.db)`, and `ns.db` doesn't exist until the SavedVariables init point, so file-scope registration crashes on load. Wrap all registration in `ns.RegisterOptionsPanels()` and call it from `Features/Core.lua` immediately after `AceDB:New`.
 - **Lists and separate tools get sub-panels.** A list of abilities or items moves off its feature's panel onto a sub-panel of its own, registered with that panel's category ID (the second value its own `AddToBlizOptions` returned) as the parent, since only the root panel resolves by display name; the feature panel keeps the feature's own settings, such as its sound and Example line. A panel holding several separate tools gives each tool a sub-panel, leaving only the settings the tools share on the parent.
+- **A sub-panel's page title names its parent:** `Kit.SubPanelTitle(parentName, name)`, "Farm Mode > Abilities", so it's always clear where you are. The tree shows the plain name it was registered with; only the page title carries the parent.
+- **A sub-panel stays in the tree while its feature is off, and opens with a silver status line naming the switch** (`Kit.StatusLine`): the feature's name in C_TITLE, the rest in C_HELP, saying its settings aren't being used and which page holds the switch ("Automated Rolls is off, so these settings aren't being used. Its switch is on the GogoLoot page."). The line shows only while the feature is off. The sub-panel's own settings stay visible and editable, so a player can set them up before switching it on.
 - **Child-panel order is fixed:** General (root) → feature panels, each followed by its sub-panels → Profiles → Feedback & Support → Diagnostic Tools last. That order is the order of `AddToBlizOptions` calls.
 
 ### Opening the Panel
@@ -1332,6 +1334,11 @@ descCommands = ns.OptionsDesc(
 - Multi-select groups: `group` with `inline = true` containing toggle children.
 - Read-only URLs: a label row — `ns.OptionsRowLabel` for the service name, then an `input` with `name = ""`, the remaining row width, and a no-op `set`.
 - Destructive actions: `execute`, with `confirm = true` and `confirmText` when what it destroys takes real effort to rebuild (Build Reference → Item Lists has the worked cases).
+- **Reset rows** (`Kit.ResetRow`): a Reset sits on a row of its own under the controls it resets, its caption in the label column and the button, reading Reset, in the control column. It is grayed while there is nothing to reset and asks first when it discards more than one value. One shape everywhere: never a right-aligned button of its own width, a lone button at its default width, or a double-width one. Whether a panel has a Reset at all is SAVED VARIABLES → Reset.
+- **Sound previews** (`Kit.SoundPreview`): the client's voice-chat speaker at 16 points, past the row's end after the sound's setting, playing whether or not the sound is switched on. Its tooltip is `OPTIONS_SOUND_PREVIEW_DESCRIPTION`, "Play this sound now, whether or not the sound is turned on."
+- **Tree groups:** a 176-point sidebar (`Kit.PrepareTree`, Spacing Scale: past 128, a multiple of 16), rows at `ns.OPTIONS_TREE_ROW_WIDTH`, the description above the tree, and the pane reopening on the current character (or the scope's home) every time the panel closes.
+- **Hidden or disabled.** A setting that belongs to a switch that's off is hidden, never grayed. `disabled` is only for a control the player can't change here and now: not the group leader, a reload pending, nothing to pick, already the default.
+- **Lines on a panel take one color each.** A status line, shown only while something elsewhere changes what the page does, is C_HELP (`Kit.StatusLine`). A warning line, shown only while the settings mean nothing will happen (every box in a must-pick set unticked, a message too long to send), is C_OFF (`Kit.WarningLine`). Nothing else on a panel is red.
 - Player-managed item lists: the shared builder — see Build Reference → Item Lists.
 - Spell rows with icons: toggle, `name = "|T" .. texture .. ":16|t " .. name`.
 - Text descriptions: `fontSize = "medium"`; spacers carry none, as `ns.OptionsSpacer` shows. Never `"small"`. Never `SetFont()`.
@@ -1351,6 +1358,7 @@ Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks f
 
 **Every feature that prints or sends a chat line shows one Example line on its panel, drawn exactly as the line will arrive with the settings the player has chosen.** An Example is one sample line, even when the feature prints several: pick the kind of line the player will see most often, such as a typical line from the body of a longer report, never its title or header. The player should see the finished line, colors, links and marks included, before it happens.
 
+- **It sits under the control it shows, indented like a sub-option** (`Kit.Example`): the indent cell, then the line across the rest of the row. It closes that control's group, after any sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows.
 - **The Example follows the selected option.** It is drawn in the form the current setting picks: a Print setting shows the print, an Announce setting shows party chat, and nothing shows a destination the player hasn't chosen. Give it a function `name` so it redraws the moment the dropdown changes. When a feature has several rows with their own dropdowns, the Example follows the row its line belongs to: a line about the player's own cast follows the player's row, a line about someone else's follows the others' row.
 - **The label is silver, the line is not.** `L["SAMPLE_EXAMPLE"] = "Example: %s"`, with the label in `C_HELP`. The line inside it carries its own colors. Open `C_HELP` again after the line, for a locale whose label continues past `%s`.
 - **Draw the line in the colors of where it goes:**
@@ -1382,11 +1390,13 @@ Full Name (AceConfig group name = L["ADDON_TITLE"])
 Brief Description (L["OPTIONS_DESCRIPTION"] — the pitch-synced string; the key name is house-standard, never abbreviated)
 Enable Welcome Message (toggle, default on)
 Enable Mini-map Button (toggle, default on — only when the add-on has a mini-map button)
-Features (every feature's on/off switch, two to a line, if any — the mini-map menu's features in its order: blocks first, then More Features; MINIMAP MENU → Features Mirror)
+Features (every feature's on/off switch from ns.FEATURES, two to a line at 1.6, if any — the mini-map menu's features in its order: blocks first, then More Features; MINIMAP MENU → Features Mirror)
 [Feature Name] (one per feature split into tool sub-panels: each tool's on/off switch, two to a line, hidden while the feature is off)
-Key Bindings (if any: one row per binding with its caption, bound key and a Set Key button, then one line saying what the key does)
+Key Bindings (if any: one row per binding — its caption in C_INFO at 2.1, the bound key at 0.75 (C_TEXT, or Not Bound in C_MUTED), a Set Key button at 0.55 — then one C_HELP line saying what the key does)
 /Commands (always)
 ```
+
+**Features holds only the switches** (`Kit.FeatureSwitches`): each caption is Enable and the feature's name, in the order above, two to a line. No description line, status line, icon, colored or gold switch, group heading or blank line sits inside it; a line about one feature goes on that feature's panel.
 
 **Features never holds a switch for the whole add-on**, such as Enable [Add-on Name]: the game's AddOns list already turns it off. A tool's switch on the root panel binds the same key as the enable toggle on its sub-panel.
 

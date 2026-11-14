@@ -7,7 +7,7 @@ It grows in waves, one surface at a time:
 | Wave | Surface | State |
 |---|---|---|
 | 1 | Mini-map menus | **This folder.** Six add-ons drawn and specced, decisions made, issues filed. |
-| 2 | Options panels | **This folder** (Wave 2: Options Panels, below). Nine add-ons surveyed, drawn and specced; Options-Kit built in `addon-kits/Options-Kit/`; decisions proposed, awaiting the maintainer. |
+| 2 | Options panels | **This folder** (Wave 2: Options Panels, below). Nine add-ons surveyed, drawn and specced; Options-Kit built in `addon-kits/Options-Kit/`; decisions made; issues not filed yet. |
 | 3 | The add-ons' own windows | Later. |
 | 4 | Lines added to the game's tooltips | Later. |
 | 5 | Chat prints and sent messages | Later. |
@@ -288,13 +288,13 @@ Each add-on's spec in `Options Panels/` is the maintainer's work order, as Wave 
 
 ### Decisions
 
-**Proposed, awaiting the maintainer.** 1–4 and 14–16 change nothing a player sees; the rest do, so each takes the maintainer's yes before any spec that cites it is built (Style Guide: a rule that changes what players see).
+All decided by the maintainer; the Style Guide's OPTIONS PANEL (and SAVED VARIABLES → Reset, MINIMAP MENU → One Refresh and Features Mirror, COMMON-CORE) says each one now. 1–4 and 14–16 change only code; 5–13 change what players see.
 
 1. **One Options-Kit in Common-Core,** copied unchanged into `Options/Options-Kit.lua` and checked byte for byte by CI. *Built.*
 2. **`ns.FEATURES` in every add-on with a Features section,** in the kit's record shape; the root page, each panel's Enable switch and the menu build from it.
 3. **One Refresh in every add-on,** menu or not: the kit's `ns.RefreshSettings`. Today Style Guide → One Refresh binds only add-ons with a menu.
 4. **Every panel registers through `Kit.RegisterPanel`** as its builder function; sub-panels nest by category ID; every ID is captured, so `ns:OpenOptionsPanel(key)` opens any panel.
-5. **The Features section holds only the switches:** `ns.FEATURES`, two to a line, Enable captions. No description, status line, icon, group heading or blank line.
+5. **The Features section holds only the switches:** `ns.FEATURES`, two to a line, Enable captions. No description, status line, icon, group heading or blank line. Control Freak's holds its three blocks (Monitoring, Naughty List, Tanking Tools); each child keeps its switch on its own tab. Play It Forward's three captions take feature names the maintainer words.
 6. **An Example sits under the control it shows, indented, and leaves while that control is off.**
 7. **A sub-panel whose feature is off stays in the tree and opens with a silver status line naming the switch.**
 8. **Sub-panel page titles read "Parent > Child"** in every add-on.

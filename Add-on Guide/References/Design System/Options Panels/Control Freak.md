@@ -15,8 +15,7 @@ Unchanged, under README-Notes "Group pages in the settings tree" and "Sub-panels
 Description, Enable Welcome Message, Enable Mini-map Button, Master Switch (README-Notes), Features, /Commands.
 
 - **Master Switch:** Enable Control Freak becomes a full-width `Kit.FeatureSwitch`-style toggle (today drawn through the pair helper at 1.6, alone on its line).
-- **Features** (Decision 5): today three gold block switches, each over its children in indented pairs, the child captions bare names with spell icons, the children grayed while their block is off. Proposed: `Kit.FeatureSwitches` over `ns.FEATURES`, which holds what the menu holds, **the three blocks**: Enable Monitoring, Enable Naughty List, Enable Tanking Tools, two to a line. Each child feature's switch stays on its own tab (and its group page lists them), so nothing is lost from options; the root page stops carrying sixteen switches and their icons.
-  - The maintainer may prefer the children listed too. Then they follow as pairs under the three, with Enable captions, and the menu's spec carries them as More Features rows (Features Mirror: same list both places).
+- **Features** (Decision 5, decided: three blocks only): today three gold block switches, each over its children in indented pairs, the child captions bare names with spell icons, the children grayed while their block is off. Proposed: `Kit.FeatureSwitches` over `ns.FEATURES`, which holds what the menu holds, **the three blocks**: Enable Monitoring, Enable Naughty List, Enable Tanking Tools, two to a line. Each child feature's switch stays on its own tab (and its group page lists them), so nothing is lost from options; the root page stops carrying sixteen switches and their icons.
 
 ## Features
 
