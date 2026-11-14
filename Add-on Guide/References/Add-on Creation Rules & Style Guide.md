@@ -1067,7 +1067,7 @@ A change that also has side effects (registering events, a chat line) does them 
 | Bottom left | Above, to the right | `BOTTOMLEFT` → `TOPRIGHT` |
 
 - **Halves decide it**, measured from the button's center against `UIParent` at its effective scale, once when the menu opens; it doesn't jump while open.
-- **The flyout opens on the same side** the menu opened toward, 12 points away (`Kit.FLYOUT_GAP`), rising 8 so its first row meets its title.
+- **The flyout opens on the same side** the menu opened toward, 16 points away (`Kit.FLYOUT_GAP`), rising 8 so its first row meets its title.
 - **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
 - **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
 
@@ -1100,7 +1100,7 @@ A flyout holds a feature's secondary settings and opens beside its title, on the
 | `status` | Title, C_TITLE | State | A feature title with no flyout, or a heading with nothing to click |
 | `section` | Label, C_TITLE | Optional state | A group's heading inside a flyout |
 | `description` | C_BODY, wraps at 320 | — | What a feature does |
-| `note` | C_MUTED, wraps at 260 | — | A short reason or helper line |
+| `note` | C_MUTED, wraps at 256 | — | A short reason or helper line |
 | `toggle` | Name; C_MUTED while off | On in C_ON, Off in C_MUTED | A setting's switch |
 | `choice` | Name; white when picked, C_MUTED otherwise | Check mark when picked | One of a set |
 | `action` | Label, set `leftColor = "INFO"` | The button click that does the same, set `rightColor = "MUTED"` | Toggle, Clear, Options, and other one-shot clicks |

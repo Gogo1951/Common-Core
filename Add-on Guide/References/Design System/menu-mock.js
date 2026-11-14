@@ -50,11 +50,11 @@
 	// Menu-Kit's constants (Features/Menu-Kit.lua).
 	var KIT = {
 		MIN_WIDTH: 128,
-		NOTE_MAX_WIDTH: 260,
+		NOTE_MAX_WIDTH: 256,
 		DESCRIPTION_MAX_WIDTH: 320,
 		MAX_WIDTH: 320, // no row widens the menu past this; a long left side wraps
 		INSETS: 2 * (8 + 4), // TEXT_INSET + ROW_INSET, both sides
-		FLYOUT_GAP: 4 + 8, // ROW_INSET + SPACE.NEAR
+		FLYOUT_GAP: 16, // SPACE.GROUP
 		FLYOUT_RISE: 8, // SPACE.NEAR
 	};
 

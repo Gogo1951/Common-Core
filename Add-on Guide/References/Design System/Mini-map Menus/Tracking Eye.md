@@ -60,7 +60,6 @@ Flyouts (Persistent Tracking's class overrides, Farm Mode's status, abilities, c
 - `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`: replaced by Common-Core's copy.
 - `Features/Minimap-Menu.lua`: drop the machinery the kit now owns (`Menu-Kit.md` → What Moves Where); build with `Kit.CreateMenu`, `Kit.FeatureBlock` and `Kit.OptionsRow`; add `click` to the three actions above.
 - `Features/Minimap-Button.lua`: `OnClick` calls `menu:HandleClick(self, button)`.
-- README-Technical → Mini-map Menu: say the clicks are back and name them.
 
 ## Features, Refresh and Button
 

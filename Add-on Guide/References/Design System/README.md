@@ -57,9 +57,9 @@ On the Spacing Scale (Style Guide → SPACING SCALE). Menu-Kit's constants:
 | `TEXT_INSET` | 8 | A row's edge to its text |
 | `ROW_INSET` | 4 | The plate's edge to a row |
 | `OPTION_INDENT` | 4 | Choice, toggle, item and value rows sit this much further in |
-| Flyout gap | 12 | `ROW_INSET + SPACE.NEAR`; the flyout rises 8 so its first row meets the title |
+| Flyout gap | 16 | `SPACE.GROUP`; the flyout rises 8 so its first row meets the title |
 | `MIN_WIDTH` | 128 | |
-| Wrap caps | 320 / 260 | A description / a note, before it would widen the menu |
+| Wrap caps | 320 / 256 | A description / a note, before it would widen the menu |
 
 ### The Plate and Art
 
@@ -78,7 +78,7 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus two this 
 | `submenu` | Title, TITLE | State, then the arrow | A feature whose flyout has something to show |
 | `section` | Label, TITLE | Optional state | A group's heading inside a flyout |
 | `description` | BODY, wraps at 320 | — | What a feature does. With `leftColor = "ON"`, a success line. |
-| `note` | MUTED, wraps at 260 | — | A reason, an empty list, *N more* |
+| `note` | MUTED, wraps at 256 | — | A reason, an empty list, *N more* |
 | `action` | Label, INFO | The button click that does the same job, MUTED | Toggle, Open, Erase, Clear, Options: one click, one job |
 | `toggle` | Name; MUTED while off | On ON / Off MUTED | A setting's switch |
 | `choice` | Name; MUTED unless picked | Check when picked | One of a set |
