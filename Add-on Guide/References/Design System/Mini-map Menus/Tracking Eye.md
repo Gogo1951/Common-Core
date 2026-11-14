@@ -60,12 +60,13 @@ Flyouts (Persistent Tracking's class overrides, Farm Mode's status, abilities, c
 - `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`: replaced by Common-Core's copy.
 - `Features/Minimap-Menu.lua`: drop the machinery the kit now owns (`Menu-Kit.md` → What Moves Where); build with `Kit.CreateMenu`, `Kit.FeatureBlock` and `Kit.OptionsRow`; add `click` to the three actions above.
 - `Features/Minimap-Button.lua`: `OnClick` calls `menu:HandleClick(self, button)`.
+- `README-Notes.md`: delete the "Feature switches with their features" exception (Features, Refresh and Button).
 
 ## Features, Refresh and Button
 
 Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
 
-- **Features mirror: the root panel has no Features section yet.** Add one, built from a new `ns.FEATURES`: Persistent Tracking, Farm Mode, Automatic Target Tracking (the three blocks, in menu order), then Come & Get It and Free Placement Mode. Each switch binds the same setting as its panel's enable toggle.
+- **Features mirror: the root panel has no Features section yet.** Add one, built from a new `ns.FEATURES`: Persistent Tracking, Farm Mode, Automatic Target Tracking (the three blocks, in menu order), then Come & Get It and Free Placement Mode. Each switch binds the same setting as its panel's enable toggle. **The README-Notes exception "Feature switches with their features" is withdrawn:** Tracking Eye follows Features Mirror like every other add-on, so the PR deletes that entry along with adding the section.
 - **The menu gains More Features:** Come & Get It and Free Placement Mode as compact rows, each with its switch's caption and description (`OPTIONS_ENABLE_COME_AND_GET_IT`, `OPTIONS_ENABLE_FREE` and their descriptions) as the tooltip.
 - **One refresh.** `ns.RefreshOptionsPanels` and `ns.RefreshMenu` become `ns.RefreshSettings()`, called by every options `set`, every menu and button click, the Cycle Farm Mode Ability binding and slash commands that change a setting, and `ns:ApplyProfile`.
 - **Button:** already right (a launcher keyed `ADDON_NAME`, Per-Character so `ns.db.global.minimap`). Its show/hide function is renamed `ns:ApplyMinimapButton()`.
