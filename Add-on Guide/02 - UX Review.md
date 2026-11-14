@@ -19,6 +19,7 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
     - **The mini-map button's menu**, or the tooltip it replaces, in each state it can show.
     - **Every window of the add-on's own**, such as a list editor, a picker that opens over it, or a window that opens at a mailbox, bank or merchant.
     - **Every tooltip the add-on adds to or changes**, on players, NPCs, items, spells or anything else, drawn on a realistic example of each with the game's own lines around the add-on's.
+    - **Every message sent to another player**, with the box the player words it in (Style Guide → MESSAGES → Editable Messages), or why it stays fixed text.
     - Every menu, popup, chat line, Example line, and first-run or empty state.
 
     For each, note its layout in game points and every size or gap that is off the Style Guide's Spacing Scale (2, 4, 8, 16, 32, 64, 128), its colors and fonts, its strings in the locale's exact words, and what each control does.
