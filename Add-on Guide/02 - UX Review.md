@@ -6,7 +6,7 @@
 
 The first review of the cycle: how the add-on looks and reads to a player, and what it could do next. Map every surface, research what similar add-ons offer when asked, then **show it rather than describe it**: a clickable wireframe of every window a change touches, **Current** beside **Proposed**, with each change's reason written on the page and its **Build** / **Try first** / **Drop** buttons beside it. The maintainer approves from the wireframe or in chat, each Build comes out as a feature prompt the maintainer pastes back to run, and `03 - Code Review.md` then reviews the code with them in.
 
-**A rule the Style Guide already sets is the Code Review's, never a change here** — except the Spacing Scale and Menus, Not Tooltips (below), which move only through this pass's Build choices.
+**A rule the Style Guide already sets is the Code Review's, never a change here** — except the Spacing Scale, Menus, Not Tooltips and Options Panels (below), which move only through this pass's Build choices.
 
 ## Workflow: six phases (0–5)
 
@@ -28,7 +28,7 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 3. **Find the last wireframe, then ask a few broad questions.** List the maintainer's artifacts and look for the title `{Add-on Name} UX Wireframes`. If one exists, read it and any comments on it: it keeps its link across reruns, tester feedback in its comments counts as a candidate below, and a change the last run marked **Try first** comes back as a candidate with whatever testers said about it. Then ask **at most four broad questions, in one round**, about direction, never one per change: who the add-on is mostly for, what players trip over, how bold the redesign may be, how far its scope may grow, anything off-limits. Skip any the record already answers; zero questions is fine.
 
-4. **Review and draw.** Walk each job a player comes to the add-on for, screen by screen. Look for what a new player can't work out, names that differ for the same thing, controls that don't say what they do, dead ends, empty states that don't point anywhere, copy that explains mechanics instead of outcomes, and spacing off the Spacing Scale. Off-scale values become one *layout* change per window, listing each value and the step it moves to. Each tooltip the add-on draws for its own button or frame becomes one *layout* change to a menu (Menus, Not Tooltips below). Then add the feature ideas: **gap features** from phase 2 when it ran, saying which add-on has each and how popular it looks, and **original ideas** no competitor ships (quality of life, options, messaging, scope extensions; be creative here), each fitting the flavors the add-on ships. Rank everything by impact, then build and publish the wireframe per Wireframe Build below, titled `{Add-on Name} UX Wireframes`, with every change drawn into Proposed. Draw only the windows a change touches, and name the rest in the list of what works and stays. Give the maintainer the link, say it stays private until they share it from the page's Share menu, and wait for them to say they've made their choices.
+4. **Review and draw.** Walk each job a player comes to the add-on for, screen by screen. Look for what a new player can't work out, names that differ for the same thing, controls that don't say what they do, dead ends, empty states that don't point anywhere, copy that explains mechanics instead of outcomes, and spacing off the Spacing Scale. Off-scale values become one *layout* change per window, listing each value and the step it moves to. Each tooltip the add-on draws for its own button or frame becomes one *layout* change to a menu (Menus, Not Tooltips below). Each options panel that misses a check in Options Panels (below) becomes one *layout* change per panel, listing every miss. Then add the feature ideas: **gap features** from phase 2 when it ran, saying which add-on has each and how popular it looks, and **original ideas** no competitor ships (quality of life, options, messaging, scope extensions; be creative here), each fitting the flavors the add-on ships. Rank everything by impact, then build and publish the wireframe per Wireframe Build below, titled `{Add-on Name} UX Wireframes`, with every change drawn into Proposed. Draw only the windows a change touches, and name the rest in the list of what works and stays. Give the maintainer the link, say it stays private until they share it from the page's Share menu, and wait for them to say they've made their choices.
 
 5. **Read the choices and output.** Read the approvals back (Wireframe Build → Approvals). Each **Build** gets a feature prompt (below). **Try first** gets nothing yet: the page keeps it as an *idea* for testers, and the next run brings it back. Each **Drop** is left alone and not recorded; a later run may suggest it again. A change with no choice is listed in one line and left alone. A note the maintainer wrote on a card changes that change: write their version into its feature prompt. Choices the maintainer gives in chat count the same as the page's buttons: write each one to `approvals` so a rerun shows it. **A Build is an approval, never a go-ahead to code:** this pass ends with the feature prompts, and nothing is built until the maintainer pastes them back.
 
@@ -50,6 +50,41 @@ A tooltip the add-on draws on hover over its own mini-map button, arrow or frame
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 
+## Options Panels
+
+Every options panel is built from Options-Kit, the shared kit in Common-Core's `addon-kits/Options-Kit/`, and laid out per Style Guide → OPTIONS PANEL, which holds the root page, the section and field-set layout, Example lines, sub-panels, Reset rows and the kit itself. Its pieces and patterns are drawn in `References/Design System/Options Panels.html` and named in the Design System README → Wave 2: Options Panels.
+
+**When the add-on has a spec** in `References/Design System/Options Panels/{Add-on Name}.md`, that spec is the Proposed panels, and its GitHub issue, once filed, is the change: draw it as written, give it one *layout* card that names the spec, and don't redesign it. Report anything the code has gained since the spec was written as a finding in Guide Feedback, so the spec is updated. The add-on's move onto the kit is part of that change; a Build never asks for a helper the kit already has.
+
+**Every UX Review checks the panels**, on the kit or not, against these, and each miss is a change. They are what a player sees; how the code behind it is built (Options-Kit, One Refresh, registration, `ns.FEATURES`) is the Code Review's.
+
+- **Root page:** description, Enable Welcome Message, Enable Mini-map Button (with a button), Features, any tool rows, Key Bindings, /Commands, nothing else.
+- **Features** holds only the switches: every feature's, two to a line, each caption Enable and the feature's name, in the menu's order (blocks, then More Features). No description, status line, icon, gold switch, heading or blank line inside it.
+- **Sections and field sets:** a section is its header, its summary, then its field sets, with a spacer between every field set and the next. A field set is one control with what belongs to it, sitting tight: one setting on the switch's line, a helper line under the field only where a player needs it before they'd hover, its sub-rows. Every caption sits in the label column and every control in the control column, so dropdowns line up down the page.
+
+  ```
+  Section Header
+  Summary copy
+  -- spacer
+  Question Label                      Field
+                                      Helper text
+  -- spacer
+  Question Label                      Field
+  -- spacer
+  Example:
+      Message
+      Message, line 2
+  ```
+
+- **Examples** close their field set: a spacer, `Example:` on its own line in silver, the message line or lines indented under it, drawn as they'll arrive with real names and links. Each leaves while its control is off.
+- **Hidden or gray:** a setting under a switch that's off is hidden; gray only means the player can't change it here and now.
+- **Sub-panels:** the page title names the parent ("Farm Mode > Abilities"). While the parent feature is off, the sub-panel stays and opens with a silver line naming the switch.
+- **Colors:** status lines silver; red only for a warning that nothing will happen; headers gold, captions white.
+- **Reset rows:** one shape, on a row of their own with the button in the control column, gray while there's nothing to reset, asking first when they discard more than one value.
+- **Sizes:** sound previews a 16-point speaker past the row's end; tree sidebars 176 points; key binding rows a caption, the bound key and Set Key filling the row.
+
+Profiles (inherited), Feedback & Support (templated) and Diagnostic Tools (its own pass) are checked only for being in the tree, in order; their pages are never a change here.
+
 ## Wireframe Build
 
 Shared by this pass and `Optional - Create UX Wireframes.md`. Load the artifact-design skill first, then write one self-contained HTML page in the session's scratchpad directory, never in the add-on folder:
@@ -57,6 +92,7 @@ Shared by this pass and `Optional - Create UX Wireframes.md`. Load the artifact-
 - **Title** as the calling pass names it, written for the testers, who are players: plain language, with no file paths, symbols or code. Material only the maintainer needs stays in chat.
 - **Views.** **Current** is what the code does today, and nothing else. **Proposed**, when the pass has changes, is Current plus every change, each numbered on the mock, and a change carried over as Try first wears an *idea* badge. Add a view for each state worth testing on its own, such as an empty list or a first login.
 - **Mini-map menus and tooltips** are drawn with `References/Design System/menu-mock.css` and `menu-mock.js`, published as the Artifact's supporting files, with the add-on's real rows written as the Lua writes them, and a mini-map button beside each menu that runs the same clicks (as `Mini-map Menus.html` does).
+- **Options panels** are drawn with `References/Design System/options-mock.css` and `options-mock.js`, loaded after the menu mock files and published beside them: the Settings window with the add-on's whole tree (`GO.settings`), each page written as the Lua writes it, through `GO.kit`, which mirrors Options-Kit's calls (as `Options Panels.html` does). Its confirms are drawn in the page, since the viewer refuses `confirm()`.
 - **Faithful and clickable.** Draw each window in the game's look: dark panels, gold headings, and quality and class colors, at the sizes the code gives, keeping that dark look in both page themes. Use the locale's strings word for word. Every control does what the code does: toggles, menus, fields, sorting, popups and chat lines in a mock chat box. Hovering shows each tooltip in the add-on's own words. Icons are drawn stand-ins; never copy or hotlink the game's art.
 - **On the Spacing Scale.** Proposed draws every size and gap on the Style Guide's Spacing Scale, and the page's own layout uses it too: every padding, margin, gap and radius is 2, 4, 8, 16, 32, 64 or 128 px.
 - **Realistic mock data.** Fill every window the way a real player's would look: real item, spell and zone names from the add-on's own data files, in believable amounts for a believable character. Invent the counts and the character names.
@@ -69,6 +105,6 @@ Publish to the existing link if the calling pass found one, otherwise as a new p
 
 ## Feature prompts
 
-For each **Build**, output one copy-and-run prompt per the preamble's fix-prompt block rules, beginning with `Feature N: short title` on its own line. Each says which files it touches (Style Guide → FILE STRUCTURE), the enUS locale keys it adds (the Localization Review translates them), its options wiring, any event it adds to `ns.EVENT_NAMES`, and any note the maintainer wrote on its card. The Diagnostics Review covers the new surface in step 4. Order the prompts so dependencies come first, and say when one must run before another.
+For each **Build**, output one copy-and-run prompt per the preamble's fix-prompt block rules, beginning with `Feature N: short title` on its own line. Each says which files it touches (Style Guide → FILE STRUCTURE), the enUS locale keys it adds (the Localization Review translates them), its options wiring in Options-Kit's calls (`Kit.LabelRow`, `Kit.Example` and the rest, never a hand-rolled helper), any event it adds to `ns.EVENT_NAMES`, and any note the maintainer wrote on its card. The Diagnostics Review covers the new surface in step 4. Order the prompts so dependencies come first, and say when one must run before another.
 
 This pass does not audit the docs. If you run into a genuine doc problem, mention it in one line and move on.
