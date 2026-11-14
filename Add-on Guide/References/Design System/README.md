@@ -168,7 +168,8 @@ All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 11. **GogoLoot's Automated Master Looting is a More Features row**, and Shift + Right-Click is held for the Master Looting Window.
 12. **Control Freak's Tanking Tools lists its settings inline**, gray while it's off.
 
-Still open, in its spec: whether Control Freak's free Shift + Right-Click goes to All Alerts.
+13. **Control Freak's Shift + Right-Click toggles All Alerts.**
+14. **Good to Go's rows need no combat guard.**
 
 ## Using the Mock Kit
 

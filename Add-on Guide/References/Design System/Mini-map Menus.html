@@ -692,7 +692,7 @@ var ADDONS = [];
 				row("tankCoR", "Include Curse of Recklessness", true, armorOn);
 				return rows;
 			}
-			e = e.concat(feature({ title: "All Alerts", state: onOff(s.all), tip: { title: "Enable Control Freak", body: "Turn every Control Freak alert on or off." },
+			e = e.concat(feature({ title: "All Alerts", state: onOff(s.all), bind: "Shift + Right-Click", tip: { title: "Enable Control Freak", body: "Turn every Control Freak alert on or off." },
 				rows: s.all ? [] : [{ kind: "note", left: "All Alerts is off, so nothing fires.", c: "message" }],
 				toggle: function () { s.all = !s.all; render(); } }));
 			// Monitoring's and Naughty List's tools are flyouts; Tanking Tools' few sit inline (below).
@@ -712,7 +712,7 @@ var ADDONS = [];
 			return { entries: e.concat(mFooter("Control Freak")), flyouts: flyouts };
 		},
 		changes: [
-			["behavior", "<b>All Alerts gets a block of its own</b>, first. It had no click to spare on the button, so the tooltip couldn't offer one; a menu row costs nothing. It has no description line: its title says what it does, and its Toggle tooltip is the switch's own (Enable Control Freak). Shift + Right-Click is the one click Control Freak leaves free; giving it to All Alerts is your call, so it's drawn without one."],
+			["behavior", "<b>All Alerts gets a block of its own</b>, first. It had no click to spare on the button, so the tooltip couldn't offer one; a menu row costs nothing. It has no description line: its title says what it does, and its Toggle tooltip is the switch's own (Enable Control Freak). It takes <b>Shift + Right-Click</b>, the one click Control Freak had free, which works even while All Alerts is off."],
 			["layout", "While All Alerts is off, the three blocks hide, as the options panel hides what a switched-off feature controls, and the red line becomes a gray note under the toggle."],
 			["layout", "<b>Features mirror: Monitoring's and Naughty List's flyouts are their tool switches</b>, the same ones the main page draws under them, in the same order (hover a title). No More Features: every Control Freak feature is a block."],
 			["layout", "<b>Tanking Tools shows its settings inline</b>, as On/Off rows under its description: When Group Has a Tank, Cold Openers, Armor Debuffs, and while Armor Debuffs is on, Include Faerie Fire and Include Curse of Recklessness. It ships off, so a flyout would hide everything; inline, a player sees what comes with it. While it's off the rows are gray, as on the options panel, and still switch."],

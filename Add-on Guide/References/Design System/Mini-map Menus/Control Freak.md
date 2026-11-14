@@ -33,7 +33,7 @@ With All Alerts off, the three blocks give way to a red `All Alerts is off, so n
 | Header | header | `ADDON_TITLE` | version | | always |
 | All Alerts | status | `KILL_SWITCH` | On / Off | | always |
 | | note | `MINIMAP_ALL_ALERTS_OFF` | | | All Alerts off |
-| Toggle | action | `MENU_TOGGLE` | | none | always; tooltip `KILL_SWITCH_ENABLE` / `KILL_SWITCH_ENABLE_DESC` |
+| Toggle | action | `MENU_TOGGLE` | Shift + Right-Click | ShiftRightButton | always; tooltip `KILL_SWITCH_ENABLE` / `KILL_SWITCH_ENABLE_DESC` |
 | Monitoring | status | `OPTIONS_MONITORING_LABEL` | On / Off | | All Alerts on |
 | | description | `MONITORING_MINIMAP_SUMMARY` | | | |
 | Toggle | action | `MENU_TOGGLE` | Left-Click | LeftButton | |
@@ -57,11 +57,12 @@ No flyouts for now. Monitoring and Naughty List each switch a handful of alerts 
 | Left-Click | Monitoring on/off | Monitoring's Toggle |
 | Right-Click | Naughty List on/off | Naughty List's Toggle |
 | Shift + Left-Click | Tanking Tools on/off | Tanking Tools' Toggle |
+| Shift + Right-Click | All Alerts on/off (new: today this click does nothing) | All Alerts' Toggle |
 | Shift + Middle-Click | Options | Options |
 
-While All Alerts is off, the three clicks do nothing, as today, since their rows are hidden. Every toggle still goes through `ns:ApplyProfile()`, which re-tests the combat-log registration.
+While All Alerts is off, the three feature clicks do nothing, as today, since their rows are hidden; Shift + Right-Click still works, to turn it back on. Every toggle still goes through `ns:ApplyProfile()`, which re-tests the combat-log registration.
 
-**Open:** Shift + Right-Click is the one click Control Freak leaves free. It could take All Alerts' Toggle. Drawn without it; the maintainer decides.
+**Shift + Right-Click turns All Alerts on and off**, the one click Control Freak had free, so a mouse player can silence or restore every alert without opening the menu. It works while All Alerts is off, unlike the other three.
 
 ## Strings
 
@@ -85,7 +86,7 @@ Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMA
 
 ## Check in Game
 
-- [ ] All Alerts' Toggle turns it off: the three blocks hide and the note shows. Turned back on, they return with their own states unchanged.
+- [ ] All Alerts' Toggle and Shift + Right-Click both turn it off: the three blocks hide and the note shows. Turned back on, they return with their own states unchanged.
 - [ ] Left, Right and Shift + Left-Click on the button each flip their block, and the state word follows, with the menu open and closed.
 - [ ] A switched-off feature stops firing (combat-log registration follows).
 - [ ] A controller's cursor reaches every row.
