@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="564" viewBox="0 0 1600 564">
   <!--
     README infographic house style. Canvas 1600 x 564 (shown at width="800").
-    Three step cards: number badge + title, a picture, then a caption box (chat line or result).
+    Always three step cards, never two: Problem > Add-on > Solution, or Opportunity > Add-on > Benefit.
+    Each card: number badge + title, a picture, then a caption box (chat line or result).
     Keep the <style> tokens, card frames, badges, arrows and caption boxes as they are;
     swap only the titles, the pictures, and the caption text.
     Captions: one centered <text> per line at the caption box's center x; a literal space
