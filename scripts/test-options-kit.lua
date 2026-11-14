@@ -155,6 +155,15 @@ check(
 )
 sw.set(nil, true)
 check(ns.db.global.cge == true, "feature switch writes its store")
+ns.FEATURES[4] = { store = "profile", setting = "strangers.enabled", name = "S", caption = "S_ENABLE", desc = "S_DESC" }
+ns.db.profile.strangers = { enabled = false }
+local nested = Kit.FeatureSwitch("strangers.enabled")
+nested.set(nil, true)
+check(
+	ns.db.profile.strangers.enabled == true and nested.get() == true,
+	"feature switch reads and writes a dotted setting"
+)
+ns.FEATURES[4] = nil
 local sub = Kit.SubRow(5, nil, { { type = "toggle" } })
 check(sub.args.indent.width == Kit.SUB_INDENT_WIDTH and sub.args.cell1.order == 1, "SubRow leads with the indent cell")
 local short = Kit.ToggleRow(1, {

@@ -437,7 +437,7 @@ end
     mini-map menu all build from, in menu order: blocks first, then More
     Features. Each record:
 
-      store, setting   where the switch lives (ns.db[store][setting])
+      store, setting   where the switch lives: ns.db[store] and a dotted path ("strangers.enabled")
       name             the feature's name key (menu title, panel name)
       caption, desc    the Enable switch's caption and tooltip keys
       block            true for a feature players flip mid-session
@@ -469,15 +469,15 @@ function Kit.FeatureSwitch(setting, order, width)
 			return not value and L[feature.confirm] or false
 		end or nil,
 		get = function()
-			return ns.db and ns.db[feature.store][feature.setting]
+			local node, key = Resolve(feature.store, feature.setting)
+			return node and node[key]
 		end,
 		set = function(_, value)
-			if ns.db then
-				if feature.apply then
-					feature.apply(value)
-				else
-					ns.db[feature.store][feature.setting] = value
-				end
+			local node, key = Resolve(feature.store, feature.setting)
+			if feature.apply then
+				feature.apply(value)
+			elseif node then
+				node[key] = value
 			end
 			ns.RefreshSettings()
 		end,
