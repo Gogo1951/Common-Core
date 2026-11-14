@@ -1,5 +1,7 @@
 # Folders
-.claude/
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
 .idea/
 .release/
 .vscode/
