@@ -74,7 +74,7 @@ The **reference flyout** pattern: notes about a macro's clicks, not this menu's,
 | Row | Kind | Left | Right |
 |---|---|---|---|
 | Macro name | section | `NOTE_MACRO_*` | |
-| Each click | value | `NOTE_*` / `MINIMAP_*_CLICK` (the macro's click) | what it does |
+| Each click | value | what it does | the macro's click (`NOTE_*` / `MINIMAP_*_CLICK`), MUTED |
 | Closing note | note | `NOTE_MAGE_TARGET_LEVEL` and the like | |
 
 `ns.AddConsumableMacroNotes`, which the Spellbook page's tooltip calls, keeps working: move it and `CLASS_NOTES` out of `Minimap-Button.lua` before removing the tooltip code.

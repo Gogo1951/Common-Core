@@ -515,7 +515,8 @@ var ADDONS = [];
 					var f = [];
 					notes.macros.forEach(function (m) {
 						f.push({ kind: "section", left: m[0] });
-						m[1].forEach(function (r) { f.push({ kind: "value", left: r[0], right: r[1] }); });
+						// What the macro does on the left, its click on the right in gray: the same way round as an action row.
+						m[1].forEach(function (r) { f.push({ kind: "value", left: r[1], right: r[0], rightColor: "MUTED" }); });
 						if (m[2]) f.push({ kind: "note", left: m[2] });
 					});
 					return f;

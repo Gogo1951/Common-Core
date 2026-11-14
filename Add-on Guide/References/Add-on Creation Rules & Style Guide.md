@@ -1120,7 +1120,7 @@ A tooltip carries more than feature blocks. Each kind has one shape in the menu 
 - **Long lists.** Up to 8 rows, then a `note` saying `%d more` (`MENU_MORE`). Never a list taller than that, never only a count where the rows fit.
 - **Message line.** One wrapping line in place of a report with nothing to show: a `description` in C_ON when the news is good (bags clean, fully stocked), a `note` when it's just empty.
 - **Master switch.** A switch that silences the whole add-on gets the first block, with no description and its Toggle's tooltip the switch's own. While it's off, the blocks it silences hide and a `note` says why (Control Freak's All Alerts).
-- **Reference flyout.** Notes about another thing's clicks, such as a macro's, go in a flyout of `section` and `value` rows behind a `submenu` title in the class color (`[Class] Macros`), so the menu holds only rows you click here. The class's live items stay in the menu as `item` rows with their slot on the right.
+- **Reference flyout.** Notes about another thing's clicks, such as a macro's, go in a flyout of `section` and `value` rows behind a `submenu` title in the class color (`[Class] Macros`), so the menu holds only rows you click here. Each value row names what the macro does on the left and its click on the right in C_MUTED (`Conjure … Right-Click`), the same way round as an action row and its button click. The class's live items stay in the menu as `item` rows with their slot on the right.
 
 ### The Pick-List Exception
 
