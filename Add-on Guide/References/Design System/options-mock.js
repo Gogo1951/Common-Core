@@ -580,10 +580,25 @@
 			r.args.indent = { type: "description", name: " ", width: GRID.SUB_INDENT, order: 0 };
 			return r;
 		},
-		LabelRow: function (order, hidden, caption, control, desc) {
+		Helper: function (order, hidden, text) {
+			return row(order, hidden, [kit.Label(" ", null, GRID.LABEL), kit.Label(color("HELP", text), null, GRID.CONTROL)], "row");
+		},
+		LabelRow: function (order, hidden, caption, control, desc, helper) {
 			control.name = "";
 			control.width = GRID.CONTROL;
-			return row(order, hidden, [kit.Label(caption, null, GRID.LABEL, desc || control.desc), control], "row");
+			var r = row(helper ? 1 : order, helper ? null : hidden, [kit.Label(caption, null, GRID.LABEL, desc || control.desc), control], "row");
+			if (!helper) return r;
+			return { type: "group", name: "", inline: true, order: order, hidden: hidden, args: { row: r, helper: kit.Helper(2, null, helper) }, c: "row" };
+		},
+		// Field sets one under the other, a spacer between each.
+		FieldSets: function (order, hidden, sets) {
+			var args = {};
+			sets.forEach(function (set, i) {
+				if (i > 0) args["space" + i] = kit.Spacer(i * 2);
+				set.order = i * 2 + 1;
+				args["set" + i] = set;
+			});
+			return { type: "group", name: "", inline: true, order: order, hidden: hidden, args: args };
 		},
 		SubLabelRow: function (order, hidden, caption, control, desc) {
 			control.name = "";
@@ -633,6 +648,7 @@
 					args.preview = extras.preview;
 				}
 			}
+			if (extras.helper) args.helper = kit.Helper(4, off, extras.helper);
 			return { type: "group", name: "", inline: true, order: order, hidden: extras.hidden, args: args, c: "row" };
 		},
 		SoundPreview: function (play) {
@@ -676,19 +692,32 @@
 				c: "status",
 			};
 		},
-		Example: function (order, hidden, getLine) {
-			var r = kit.SubRow(order, hidden, [
-				{
-					type: "description",
-					name: function () {
-						return color("HELP", "Example: ") + getLine();
-					},
-					fontSize: "medium",
-					width: GRID.ROW - GRID.SUB_INDENT,
+		// Spacer, the silver Example: label on its own line, then the message
+		// line or lines indented under it.
+		Example: function (order, hidden, getLines) {
+			return {
+				type: "group",
+				name: "",
+				inline: true,
+				order: order,
+				hidden: hidden,
+				c: "example",
+				args: {
+					space: kit.Spacer(1),
+					label: { type: "description", name: color("HELP", "Example:"), fontSize: "medium", order: 2 },
+					lines: kit.SubRow(3, null, [
+						{
+							type: "description",
+							name: function () {
+								var l = getLines();
+								return Array.isArray(l) ? l.join("<br>") : l;
+							},
+							fontSize: "medium",
+							width: GRID.ROW - GRID.SUB_INDENT,
+						},
+					]),
 				},
-			]);
-			r.c = "example";
-			return r;
+			};
 		},
 		ResetRow: function (order, hidden, caption, desc, isDefault, reset, confirmText) {
 			var r = row(order, hidden, [

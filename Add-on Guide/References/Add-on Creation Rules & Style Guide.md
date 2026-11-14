@@ -1328,7 +1328,24 @@ descCommands = ns.OptionsDesc(
 
 ### Widget Conventions
 
-- Section layout: spacer → header → spacer → desc → spacer → toggle/control → spacer; adjacent sections share the spacer between them.
+- **Section layout** (`Kit.Section`, `Kit.FieldSets`):
+
+  ```
+  Section Header
+  Summary copy
+  -- spacer
+  Question Label                      Field
+                                      Helper text (only where needed)
+  -- spacer
+  Question Label                      Field
+      Sub-option rows, if any
+  -- spacer
+  Example:
+      Message
+      Message, line 2
+  ```
+
+  A **field set** is one control and what belongs to it: its sub-rows, its helper line, its Example. A spacer separates every field set from the next, and an Example from the controls above it, so nothing reads as crowding a dropdown. Inside a field set, the control, its helper line and its sub-rows sit tight. Adjacent sections share the spacer between them.
 - Primary toggles: `toggle` with `width = "full"`, except the root panel's Features switches, two to a line.
 - Dropdowns: `select` on a label row (Build Reference → Label-Beside-Control Rows).
 - Multi-select groups: `group` with `inline = true` containing toggle children.
@@ -1350,17 +1367,17 @@ Live reference: **Control Freak** — dropdowns and toggles throughout its panel
 
 ### Helper Text Lives in the Tooltip
 
-**A control explains itself once: in its mouseover tooltip, or on the panel only where the hover already shows an item or spell.** Every toggle and control carries exactly two strings — its label and that one explanation, normally `desc`, which AceConfig renders as the tooltip. Never add a second description line under a control: it multiplies the strings every locale must carry and clutters the panel. Section-level `Desc` blocks (Widget Conventions) and row captions (Build Reference → Label-Beside-Control Rows, Sub-Option Rows) are layout, not helper text. Four kinds of on-panel line aren't helper text either: a key binding row's line saying what the key does (its only control opens the game's Key Bindings list), an Example line showing what a chat-printing feature prints (Example Lines, below), a status line shown only while the current settings change what a feature does, and an editable message's tokens line and Too Long line (MESSAGES → Editable Messages).
+**A control explains itself in its mouseover tooltip, or on the panel only where the hover already shows an item or spell.** Every toggle and control carries its label and that one explanation, normally `desc`, which AceConfig renders as the tooltip. **A helper line under the field is allowed where the player needs it before they'd hover:** a limit or a consequence ("General reaches only your current layer."), one short silver line in the control column (`Kit.Helper`, or the `helper` argument of `Kit.LabelRow` and `Kit.ToggleRow`). It adds to the tooltip, never restates it, and most controls have none: each one is another string every locale carries. Section-level `Desc` blocks (Widget Conventions) and row captions (Build Reference → Label-Beside-Control Rows, Sub-Option Rows) are layout, not helper text. Four kinds of on-panel line aren't helper text either: a key binding row's line saying what the key does (its only control opens the game's Key Bindings list), an Example line showing what a chat-printing feature prints (Example Lines, below), a status line shown only while the current settings change what a feature does, and an editable message's tokens line and Too Long line (MESSAGES → Editable Messages).
 
 Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks for the Buff** — the Thank You Button panel's on-panel lines; **Magic Eraser** — its Key Bindings and status lines (`ns.OptionsStatusLine`).
 
 ### Example Lines
 
-**Every feature that prints or sends a chat line shows one Example line on its panel, drawn exactly as the line will arrive with the settings the player has chosen.** An Example is one sample line, even when the feature prints several: pick the kind of line the player will see most often, such as a typical line from the body of a longer report, never its title or header. The player should see the finished line, colors, links and marks included, before it happens.
+**Every feature that prints or sends a chat line shows one Example line on its panel, drawn exactly as the line will arrive with the settings the player has chosen.** An Example shows the line the player will see most often, such as a typical line from the body of a longer report, never its title or header; a feature that prints a short block together (a two-line report) may show those lines, one under the other. The player should see the finished line, colors, links and marks included, before it happens.
 
-- **It sits under the control it shows, indented like a sub-option** (`Kit.Example`): the indent cell, then the line across the rest of the row. It closes that control's group, after any sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows.
+- **It closes the field set of the control it shows** (`Kit.Example`): a spacer, then the silver `Example:` label on a line of its own, then the message line or lines under it, indented like a sub-option and aligned with each other. It comes after the control's helper line and sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows. The label is `SAMPLE_EXAMPLE` with nothing in its `%s`.
 - **The Example follows the selected option.** It is drawn in the form the current setting picks: a Print setting shows the print, an Announce setting shows party chat, and nothing shows a destination the player hasn't chosen. Give it a function `name` so it redraws the moment the dropdown changes. When a feature has several rows with their own dropdowns, the Example follows the row its line belongs to: a line about the player's own cast follows the player's row, a line about someone else's follows the others' row.
-- **The label is silver, the line is not.** `L["SAMPLE_EXAMPLE"] = "Example: %s"`, with the label in `C_HELP`. The line inside it carries its own colors. Open `C_HELP` again after the line, for a locale whose label continues past `%s`.
+- **The label is silver, the lines are not.** `L["SAMPLE_EXAMPLE"] = "Example: %s"` is drawn with nothing in its `%s`, trailing space trimmed, as its own `C_HELP` line. The lines under it carry their own colors.
 - **Draw the line in the colors of where it goes:**
 
 |Where the line goes|Drawn as|Color|

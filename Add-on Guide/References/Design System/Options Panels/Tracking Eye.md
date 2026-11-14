@@ -44,7 +44,7 @@ With `click` and `gate` on the records, the menu's three blocks can read `ns.FEA
 - **Persistent Tracking:** the three override rows become `Kit.SubToggleRow`. Unchanged to look at.
 - **Farm Mode:** Silence Sounds and Zoom Out become `Kit.SubToggleRow`; the local `FarmSpacer` and `FarmDesc` become `Kit.Spacer` and `Kit.Desc`, which take `hidden`. Cycle Speed becomes `Kit.LabelRow` with `Kit.GetChoice` (today label 1.8 + select 1.6; the kit's 2.1 + 1.3 puts it in every other dropdown's column).
 - **Abilities:** unchanged. Its class groups and spell toggles are Tracking Eye's.
-- **Come & Get It:** the Default Output row becomes `Kit.LabelRow`; the README-Notes note under the dropdown stays as it is. The Example becomes `Kit.Example` under the dropdown, indented (Decision 6), its line from `Kit.SentLine` for party and whisper.
+- **Come & Get It:** the Default Output row becomes `Kit.LabelRow` with its note as the `helper` line, which the Style Guide now allows, so the README-Notes entry "Default Output note" retires. A spacer separates it from the switch above, and the Example closes its field set: a spacer, `Example:`, the line indented under it (Decision 6), from `Kit.SentLine` for party and whisper.
 - **Free Placement Mode:** Icon Shape and Icon Size become `Kit.SubLabelRow`, so both controls sit in the 1.3 column (today a 0.9 label, totalling 2.015 and 2.915).
 
 ## Onto the Kit
@@ -64,7 +64,7 @@ With `click` and `gate` on the records, the menu's three blocks can read `ns.FEA
 
 ## Keeps
 
-README-Notes: Default Output note; Free Placement Mode opens options.
+README-Notes: Free Placement Mode opens options. (Default Output note retires: helper lines are the rule now.)
 
 ## Check in Game
 

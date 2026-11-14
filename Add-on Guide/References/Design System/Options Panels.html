@@ -344,8 +344,8 @@ ADDONS.push({
 			var on = function () { return !!s.comeAndGetIt; };
 			var list = [K.Desc("Found an herb you can't pick, a mineral vein you can't mine, or a locked treasure chest with no Rogue in sight? Right-click it, and Come &amp; Get It tells the people around you."), K.Spacer(), K.FeatureSwitch(features(a)[3])];
 			if (proposed) {
-				list.push(K.LabelRow(null, function () { return !on(); }, "Default Output", select(outputs, function () { return s.output; }, function (v) { s.output = v; })));
-				list.push(K.Row(null, function () { return !on(); }, [K.Label(" ", null, G.LABEL), K.Label(C("HELP", "General reaches only your current layer."), null, G.CONTROL)]));
+				list.push(K.Spacer(null, function () { return !on(); }));
+				list.push(K.LabelRow(null, function () { return !on(); }, "Default Output", select(outputs, function () { return s.output; }, function (v) { s.output = v; }), "Where Come &amp; Get It sends its line.", "General reaches only your current layer."));
 				list.push(K.Example(null, function () { return !on(); }, line));
 			} else {
 				var g = flat([K.Label("Default Output", null, G.LABEL), select(outputs, function () { return s.output; }, function (v) { s.output = v; }), K.Label(" ", null, G.LABEL), K.Label(C("HELP", "General reaches only your current layer."), null, G.CONTROL)], "row");
@@ -539,10 +539,16 @@ ADDONS.push({
 			var size = { type: "range", name: "", min: 8, max: 20, step: 1, get: function () { return s.size; }, set: function (_, v) { s.size = v; } };
 			var outline = select(outlines, function () { return s.outline; }, function (v) { s.outline = v; });
 			var sh = stateful(s, "shadow");
-			list.push(K.LabelRow(null, null, "Font", face, "The typeface the quest list draws in."), K.LabelRow(null, null, "Size", size), K.LabelRow(null, null, "Outline", outline), toggle("Shadow", sh[0], sh[1]));
 			if (proposed) {
-				list.push(K.ResetRow(null, null, "Reset Font", "Puts every font setting in this section back as it shipped.", defaults, reset, "Reset the quest list's font, size, outline and shadow?"));
+				list.push(K.FieldSets(null, null, [
+					K.LabelRow(null, null, "Font", face, "The typeface the quest list draws in.", "Fonts other add-ons add show up here too."),
+					K.LabelRow(null, null, "Size", size),
+					K.LabelRow(null, null, "Outline", outline),
+					toggle("Shadow", sh[0], sh[1]),
+					K.ResetRow(null, null, "Reset Font", "Puts every font setting in this section back as it shipped.", defaults, reset, "Reset the quest list's font, size, outline and shadow?"),
+				]));
 			} else {
+				list.push(K.LabelRow(null, null, "Font", face, "The typeface the quest list draws in."), K.LabelRow(null, null, "Size", size), K.LabelRow(null, null, "Outline", outline), toggle("Shadow", sh[0], sh[1]));
 				var r = flat([K.Label(" ", null, 2.15), exec("Reset Font", 1.25, { func: reset })], "drift");
 				list.push(r);
 			}
@@ -908,8 +914,18 @@ var CATALOG = [
 	["Kit.Section", "Spacer, gold header, spacer, description, spacer: the shape every section on every panel opens with.", function () {
 		var args = {}; K.Section(args, "s", 1, "Bag-Space Warnings", "Warns you before your bags fill up."); return args;
 	}],
-	["Kit.LabelRow", "A white caption in the 2.1 label column beside its dropdown, slider or box in the 1.3 control column, so every control on every panel lines up. With a tooltip, hovering the caption shows it too.", function () {
-		return seq([K.LabelRow(null, null, "Default Output", select(modes, function () { return demo.mode; }, function (v) { demo.mode = v; }), "Where Come &amp; Get It sends its line."), K.LabelRow(null, null, "Icon Size", { type: "range", name: "", min: 0.25, max: 3, step: 0.05, isPercent: true, get: function () { return 1; }, set: function () {} })]);
+	["Kit.LabelRow · Kit.Helper", "A white caption in the 2.1 label column beside its dropdown, slider or box in the 1.3 control column, so every control on every panel lines up. With a tooltip, hovering the caption shows it too. A helper line, when a player needs it before they hover, sits under the field in silver.", function () {
+		return seq([K.LabelRow(null, null, "Default Output", select(modes, function () { return demo.mode; }, function (v) { demo.mode = v; }), "Where Come &amp; Get It sends its line.", "General reaches only your current layer.")]);
+	}],
+	["Kit.FieldSets", "A section's field sets, one under the other with a spacer between each. A field set is a control and what belongs to it: its sub-rows, its helper line, its Example.", function () {
+		var args = {};
+		var o = K.Section(args, "s", 1, "Text", "How each toast's words draw.");
+		args.sets = K.FieldSets(o, null, [
+			K.LabelRow(null, null, "Font", select({ f: "Friz Quadrata" }, function () { return "f"; }, function () {}), null, "Fonts other add-ons add show up here too."),
+			K.LabelRow(null, null, "Size", { type: "range", name: "", min: 8, max: 20, step: 1, get: function () { return 13; }, set: function () {} }),
+			K.LabelRow(null, null, "Outline", select({ n: "None" }, function () { return "n"; }, function () {})),
+		]);
+		return args;
 	}],
 	["Kit.SubRow · SubToggleRow · SubLabelRow", "A sub-option: indented, silver caption, under the control it belongs to, gone while that control is off. A sub-row caption pays for its indent, so its control keeps the shared column.", function () {
 		var t = [function () { return demo.on; }, function (v) { demo.on = v; }];
@@ -926,7 +942,12 @@ var CATALOG = [
 	["Kit.StatusLine · Kit.WarningLine", "Silver: something elsewhere changes what this page does (a parent switched off, a reload pending, slots held back). Red, only: the settings mean nothing will happen. Both show only while true.", function () {
 		return seq([K.StatusLine(function () { return C("TITLE", "Automated Rolls") + C("HELP", " is off, so nothing on this page runs. Its switch is on the GogoLoot page."); }), K.Spacer(), K.WarningLine("Tick at least one kind of junk, or nothing will be erased.", function () { return true; })]);
 	}],
-	["Kit.Example", "The finished line, in the colors of where it goes, under the control that decides it, indented like a sub-option. Only <code>Example:</code> is silver. Built through the feature's own builder, so a reworded message rewords its Example.", function () {
+	["Kit.Example (several lines)", "A feature that prints a short report shows its lines one under the other, aligned under the same label.", function () {
+		return seq([toggle("Print the Clutter Report", function () { return true; }, function () {}), K.Example(null, null, function () {
+			return [C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Clutter Report: 9 bag slots, worth ") + GG.money(264), C("TEXT", "4 ") + icon(25) + C("q:poor", "[Chipped Claw]") + C("TEXT", ", 3 ") + icon(40) + C("q:poor", "[Broken Fang]")];
+		})]);
+	}],
+	["Kit.Example", "The finished line, in the colors of where it goes, closing its control's field set: a spacer above, the silver <code>Example:</code> label on its own line, the message indented under it. Built through the feature's own builder, so a reworded message rewords its Example.", function () {
 		return seq([K.LabelRow(null, null, "Announce", select(modes, function () { return demo.mode; }, function (v) { demo.mode = v; })), K.Example(null, function () { return demo.mode === "NEVER"; }, function () {
 			return demo.mode === "SAY" ? '<span style="color:#ffffff">[' + C(GG.CLASS.DRUID, "Aero") + "] says: Taunt missed on Ragnaros!</span>" : '<span style="color:#aaaaff">[Party] [' + C(GG.CLASS.DRUID, "Aero") + ']: Taunt missed on <img alt="" style="width:12px;height:12px;vertical-align:-2px;background:#eee;border-radius:50%"> Ragnaros!</span>';
 		})]);
@@ -966,11 +987,11 @@ var DECISIONS = [
 	[3, "code", "One Refresh in every add-on", "The kit's <code>ns.RefreshSettings</code>, menu or not. Today the Style Guide binds only add-ons with a menu, and eight of nine notify panels by hand or not at all."],
 	[4, "code", "Every panel through <code>Kit.RegisterPanel</code>", "As its builder function, nested by category ID, every ID kept, so <code>ns:OpenOptionsPanel(key)</code> opens any panel."],
 	[5, "seen", "The Features section holds only the switches", "<code>ns.FEATURES</code>, two to a line, Enable captions. No description, status line, icon, group heading or blank line. Each add-on's band shows its own before and after on its root page (Control Freak's changes most)."],
-	[6, "seen", "Examples sit under their control, indented, and leave with it", "Five add-ons draw them flush; GogoLoot keeps them while their toggle is off. Untick Print in each to compare.", function () {
+	[6, "seen", "Examples close their field set: spacer, label, lines indented, and leave with their control", "Five add-ons draw them flush and tight under the control; GogoLoot keeps them while their toggle is off. Proposed: a spacer above, <code>Example:</code> on its own line, the message line or lines indented under it. Untick Print in each to compare.", function () {
 		var t = function () { return d6.print; }, s = function (v) { d6.print = v; };
 		var line = function () { return C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Erased ") + icon(25) + C("q:poor", "[Chipped Claw]") + C("TEXT", "."); };
 		var ex = K.Desc(C("HELP", "Example: ") + line()); ex.c = "drift";
-		return ba(seq([toggle("Print What Was Erased", t, s), K.Spacer(), ex]), seq([toggle("Print What Was Erased", t, s), K.Example(null, function () { return !d6.print; }, line)]));
+		return ba(seq([toggle("Print What Was Erased", t, s), K.Spacer(), ex]), seq([toggle("Print What Was Erased", t, s), K.Example(null, function () { return !d6.print; }, function () { return [line(), C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Erased ") + icon(40) + C("q:poor", "[Broken Fang]") + C("TEXT", ".")]; })]));
 	}],
 	[7, "seen", "A sub-panel whose feature is off stays, with a silver line naming the switch", "Today GogoLoot draws the line red; Control Freak silver with a red Off; seven add-ons show nothing, so a page of settings nobody is using reads as live.", function () {
 		var red = K.Desc(C("OFF", "These settings aren't being used while Automated Rolls is off.")); red.c = "drift";

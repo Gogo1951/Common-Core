@@ -288,11 +288,58 @@ function Kit.SubRow(order, hidden, cells)
 	return row
 end
 
--- A caption and its dropdown, slider or box on one line, at the panel's own level.
-function Kit.LabelRow(order, hidden, caption, control, desc)
+--[[
+    A silver line under a field, in the control column, for what a player needs
+    before they hover: a limit or a consequence ("General reaches only your
+    current layer."). The control's tooltip still carries its description.
+]]
+function Kit.Helper(order, hidden, text)
+	return Kit.Row(order, hidden, {
+		Kit.Label(" ", nil, Kit.LABEL_WIDTH),
+		Kit.Label(Kit.Color("HELP", text), nil, Kit.CONTROL_WIDTH),
+	})
+end
+
+-- One arg holding a row and, when there is helper text, the helper line under its control.
+local function WithHelper(order, hidden, row, helper)
+	if not helper then
+		row.order, row.hidden = order, hidden
+		return row
+	end
+	row.order = 1
+	return {
+		type = "group",
+		name = "",
+		inline = true,
+		order = order,
+		hidden = hidden,
+		args = { row = row, helper = Kit.Helper(2, nil, helper) },
+	}
+end
+
+-- A caption and its dropdown, slider or box on one line, at the panel's own level, with an optional helper line.
+function Kit.LabelRow(order, hidden, caption, control, desc, helper)
 	control.name = ""
 	control.width = Kit.CONTROL_WIDTH
-	return Kit.Row(order, hidden, { Kit.Label(caption, nil, Kit.LABEL_WIDTH, desc or control.desc), control })
+	local row = Kit.Row(nil, nil, { Kit.Label(caption, nil, Kit.LABEL_WIDTH, desc or control.desc), control })
+	return WithHelper(order, hidden, row, helper)
+end
+
+--[[
+    A section's field sets, one under the other with a spacer between each: a
+    field set is a control with what belongs to it (its sub-rows, its helper
+    line, its Example). Returns one arg.
+]]
+function Kit.FieldSets(order, hidden, sets)
+	local args = {}
+	for index, set in ipairs(sets) do
+		if index > 1 then
+			args["space" .. index] = Kit.Spacer(index * 2 - 1)
+		end
+		set.order = index * 2
+		args["set" .. index] = set
+	end
+	return { type = "group", name = "", inline = true, order = order, hidden = hidden, args = args }
 end
 
 -- The same under the control it belongs to: the caption pays for the indent, so the control keeps its column.
@@ -366,7 +413,8 @@ end
     off. A speaker with no setting gets a blank cell in the setting's place, so
     every speaker on a panel lines up. When the caption won't fit the label
     column, the switch takes the whole line and its setting drops to the line
-    below, still in its column. toggle.get is called with no info.
+    below, still in its column. extras.helper puts a silver helper line under
+    the setting, leaving with it. toggle.get is called with no info.
 ]]
 function Kit.ToggleRow(order, toggle, extras)
 	extras = extras or {}
@@ -404,6 +452,11 @@ function Kit.ToggleRow(order, toggle, extras)
 		toggle.width = "full"
 		rest.filler = { type = "description", name = " ", width = Kit.LABEL_WIDTH, order = 1 }
 		args.below = { type = "group", name = "", inline = true, order = 2, hidden = IsOff, args = rest }
+	end
+
+	if extras.helper then
+		local helper = Kit.Helper(3, IsOff, extras.helper)
+		args.helper = helper
 	end
 
 	return { type = "group", name = "", inline = true, order = order, hidden = extras.hidden, args = args }
@@ -541,23 +594,48 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-    One line showing what a chat-printing feature will print or send, drawn
-    exactly as it arrives, under the control that decides it, indented like a
-    sub-option. Only the "Example:" label is silver. getLine builds the finished
-    line through the feature's own builder, on every draw, so the Example
-    follows the settings and a reworded message rewords its Example.
+    What a chat-printing feature will print or send, drawn exactly as it
+    arrives, closing the field set of the control that decides it:
+
+      -- spacer
+      Example:
+          [Party] [Aero]: Come & get it! [Peacebloom] in Teldrassil
+          a second line, when the feature prints several
+
+    A spacer keeps it clear of the controls above, the silver "Example:" label
+    sits on its own line, and the message lines sit under it, indented like a
+    sub-option and aligned with each other. getLines returns the finished line,
+    or a list of lines, built through the feature's own builder on every draw,
+    so the Example follows the settings and a reworded message rewords it.
 ]]
-function Kit.Example(order, hidden, getLine)
-	return Kit.SubRow(order, hidden, {
-		{
-			type = "description",
-			name = function()
-				return Open("HELP") .. format(TEXT.example, getLine() .. Open("HELP")) .. "|r"
-			end,
-			fontSize = "medium",
-			width = Kit.ROW_WIDTH - Kit.SUB_INDENT_WIDTH,
+local function ExampleLabel()
+	local label = string.gsub(format(TEXT.example, ""), "%s+$", "")
+	return Kit.Color("HELP", label)
+end
+
+function Kit.Example(order, hidden, getLines)
+	return {
+		type = "group",
+		name = "",
+		inline = true,
+		order = order,
+		hidden = hidden,
+		args = {
+			space = Kit.Spacer(1),
+			label = { type = "description", name = ExampleLabel, fontSize = "medium", order = 2 },
+			lines = Kit.SubRow(3, nil, {
+				{
+					type = "description",
+					name = function()
+						local lines = getLines()
+						return type(lines) == "table" and table.concat(lines, "\n") or lines
+					end,
+					fontSize = "medium",
+					width = Kit.ROW_WIDTH - Kit.SUB_INDENT_WIDTH,
+				},
+			}),
 		},
-	})
+	}
 end
 
 local SENT_FORMS = {

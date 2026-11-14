@@ -58,7 +58,7 @@ The caption keys mix three families today (`BUFF_DUTY_ENABLE`, `OPTIONS_RESTOCKE
 
 ## Keeps
 
-README-Notes: Options command takes an ignore argument; Readiness Report Example shows several lines; Rank Watch's reset reaches its account-wide settings.
+README-Notes: Options command takes an ignore argument; Rank Watch's reset reaches its account-wide settings. (Readiness Report Example shows several lines retires: a several-line Example is the rule now, through `Kit.Example` with a list of lines.)
 
 ## Check in Game
 

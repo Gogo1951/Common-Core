@@ -191,11 +191,25 @@ check(
 local ex = Kit.Example(3, nil, function()
 	return Kit.SentLine("PARTY", "Hi {rt4}")
 end)
-local line = ex.args.cell1.name()
+local line = ex.args.lines.args.cell1.name()
 check(
-	line:find("Example: ") and line:find("Aero") and line:find("UI%-RaidTargetingIcon_4"),
-	"Example draws a sent line with You and the marker icon"
+	ex.args.space
+		and ex.args.label.name():find("Example:")
+		and line:find("Aero")
+		and line:find("UI%-RaidTargetingIcon_4"),
+	"Example: spacer, its own label line, then the sent line with You and the marker icon"
 )
+local two = Kit.Example(4, nil, function()
+	return { "one", "two" }
+end)
+check(two.args.lines.args.cell1.name() == "one\ntwo", "Example takes several lines, one under the other")
+local lr = Kit.LabelRow(5, nil, "Output", { type = "select" }, nil, "Reaches only your layer.")
+check(
+	lr.args.row and lr.args.helper.args.cell2.width == Kit.CONTROL_WIDTH,
+	"LabelRow puts its helper line under the control"
+)
+local sets = Kit.FieldSets(6, nil, { Kit.Desc("a"), Kit.Desc("b"), Kit.Desc("c") })
+check(sets.args.space2 and sets.args.space3 and not sets.args.space1, "FieldSets puts a spacer between each set")
 -- items
 check(
 	Kit.ParseItem("|Hitem:6948:0|h") == 6948

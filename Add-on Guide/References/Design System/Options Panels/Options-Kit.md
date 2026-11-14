@@ -88,11 +88,13 @@ Widths are AceConfig units (170 points each), so they sit outside the Spacing Sc
 | `Kit.SubLabel(text)` | string | Silver caption text |
 | `Kit.Row(order, hidden, cells)` | inline group | Cells left to right on one pinned line |
 | `Kit.SubRow(order, hidden, cells)` | inline group | The same, indented: a sub-option |
-| `Kit.LabelRow(order, hidden, caption, control, desc)` | inline group | A caption beside its dropdown, slider or box |
+| `Kit.LabelRow(order, hidden, caption, control, desc, helper)` | inline group | A caption beside its dropdown, slider or box; `helper` adds a silver line under the field |
+| `Kit.Helper(order, hidden, text)` | inline group | A silver helper line under a field, in the control column |
+| `Kit.FieldSets(order, hidden, sets)` | inline group | A section's field sets, a spacer between each |
 | `Kit.SubLabelRow(order, hidden, caption, control, desc)` | inline group | The same under the control it belongs to |
 | `Kit.SubToggleRow(order, hidden, toggle)` | inline group | An on/off choice under the control it belongs to |
 | `Kit.Pairs(order, hidden, toggles)` | inline group | Toggles two to a line |
-| `Kit.ToggleRow(order, toggle, { control, preview, hidden })` | inline group | A switch with its one setting beside it and a sound's speaker past the end; both leave while it's off; a caption too long for the label column (measured) sends them to the line below |
+| `Kit.ToggleRow(order, toggle, { control, preview, helper, hidden })` | inline group | A switch with its one setting beside it, a sound's speaker past the end and a helper line under the setting; all leave while it's off; a caption too long for the label column (measured) sends them to the line below |
 | `Kit.SoundPreview(play)` | execute | The speaker for `ToggleRow` |
 | `Kit.HideAllExcept(args, isHidden, keep)` | — | Hides a page behind its switch, keeping the named args, composed with each arg's own `hidden` |
 | `Kit.Color(key, text)`, `Kit.Tint(key, text)` | string | Palette key or hex; `Tint` reopens the color after every `\|r` |
@@ -136,7 +138,7 @@ ns.FEATURES = {
 |---|---|---|
 | `Kit.StatusLine(getText, order)` | Silver | Only while `getText()` returns text: something elsewhere changes what this page does |
 | `Kit.WarningLine(text, isWrong, order)` | Red | Only while `isWrong()`: the settings mean nothing will happen |
-| `Kit.Example(order, hidden, getLine)` | Silver `Example:`, then the line in its own colors, indented under its control | Whenever its control's row shows |
+| `Kit.Example(order, hidden, getLines)` | A spacer, the silver `Example:` label on its own line, then the line, or each line of a list, indented and aligned | Last in its control's field set, whenever that control is on |
 | `Kit.PrintedLine(printLine)` | A print, retinted after each link | Pass the add-on's print helper's finished string |
 | `Kit.SentLine("PARTY" or "WHISPER", message)` | `[Party] [You]: …` or `[You] whispers: …` in the player's channel color, markers as icons | |
 | `Kit.You()`, `Kit.ClassColor(classFile)`, `Kit.Markers(text)` | The current character in class color; a class's hex; `{rtN}` as icons | |

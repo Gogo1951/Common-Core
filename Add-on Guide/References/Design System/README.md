@@ -242,14 +242,16 @@ Options-Kit's pieces (`Options Panels/Options-Kit.md` → API), each drawn in th
 |---|---|---|
 | Section | `Kit.Section` | Spacer, gold header, spacer, description, spacer |
 | Primary toggle | AceConfig `toggle`, `width = "full"` | A setting on its own line |
-| Label row | `Kit.LabelRow` | A white caption (2.1) beside its dropdown, slider or box (1.3) |
+| Label row | `Kit.LabelRow` | A white caption (2.1) beside its dropdown, slider or box (1.3), with an optional helper line under the field |
+| Helper line | `Kit.Helper` | One short silver line under a field, in the control column: a limit or consequence a player needs before they'd hover |
+| Field sets | `Kit.FieldSets` | A section's field sets, a spacer between each |
 | Sub-option row | `Kit.SubRow`, `Kit.SubToggleRow`, `Kit.SubLabelRow` | Indented, silver caption, under the control it belongs to, hidden while that's off |
 | Switch and its setting | `Kit.ToggleRow` | A switch with its one setting beside it, a sound's speaker past the row's end; a caption too long sends them to the line below |
 | Pairs | `Kit.Pairs`, `Kit.FeatureSwitches` | Short switches two to a line (1.6 each) |
 | Feature switch | `Kit.FeatureSwitch` | One Enable switch from `ns.FEATURES`, drawn on the root page and atop its panel |
 | Status line | `Kit.StatusLine` | Silver, shown only while something elsewhere changes this page |
 | Warning line | `Kit.WarningLine` | Red, shown only while nothing will happen |
-| Example | `Kit.Example` | Silver `Example:` and the finished line in its own colors, indented under its control |
+| Example | `Kit.Example` | A spacer, the silver `Example:` label on its own line, then the finished line or lines in their own colors, indented and aligned |
 | Reset row | `Kit.ResetRow` | A caption and a Reset button in the control column, gray at default |
 | Sound preview | `Kit.SoundPreview` | A 16-point speaker past the row's end |
 | Item list | `Kit.ItemList` | Add from Bags, Add Item, one row per item, Restore and Clear at the foot |
@@ -262,7 +264,21 @@ Options-Kit's pieces (`Options Panels/Options-Kit.md` → API), each drawn in th
 - **Features section.** `ns.FEATURES` switches, two to a line, menu order, Enable captions. No description, status line, icon, group heading or blank line inside it.
 - **Feature panel.** Description; its Enable switch (`Kit.FeatureSwitch`); then its sections, all hidden while it's off (`Kit.HideAllExcept`), so a switched-off feature shows only what it is and how to turn it on.
 - **Sub-panel.** A list or separate tool under its feature, titled "Feature > Sub-panel". It stays in the tree while the feature is off and opens with a silver status line naming the switch (Decision 7).
-- **A control and what belongs to it.** One setting rides on the switch's line (`ToggleRow`); anything more sits on sub-rows under it; an Example closes the group, indented, and everything leaves while the switch is off.
+- **Field sets.** A section is its header and summary, then its field sets, a spacer between each. A field set is one control and what belongs to it: one setting riding on the switch's line (`ToggleRow`), a helper line under the field where a player needs it before they'd hover (`Kit.Helper`), sub-rows for anything more, and last its Example: a spacer, `Example:` on its own line, the message line or lines indented under it. Everything after the control leaves while it's off.
+
+  ```
+  Section Header
+  Summary copy
+  -- spacer
+  Question Label                      Field
+                                      Helper text
+  -- spacer
+  Question Label                      Field
+  -- spacer
+  Example:
+      Message
+      Message, line 2
+  ```
 - **Hidden or disabled.** Hidden: belongs to a switch that's off. Disabled: the player can't change it here and now (not the leader, a reload pending, nothing to pick, already the default).
 - **Tree group.** A per-character or per-item page set: 176 sidebar, `TREE_ROW_WIDTH` rows, the description above the tree, opening on home every time.
 - **Long checklist.** Past 64 boxes, AceConfig toggles stall the UI on every click; one custom widget pools its checkboxes and writes without a rebuild (Thanks for the Buff's emote grid).
