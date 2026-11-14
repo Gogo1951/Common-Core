@@ -60,7 +60,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass ends with the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass), for you to paste into a new session when you're ready. No pass ever starts a session for you. Start step 5 once you've tested step 4 in game and have its reports, and step 8 once both branches are done.
+**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Start step 5 once you've tested step 4 in game and have its reports, and step 8 once both branches are done.
 
 **Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 
