@@ -1,7 +1,7 @@
 # GogoLoot: Mini-map Menu
 
 **State:** tooltip.
-**Needs first:** `Menu-Kit.md`.
+**Kit:** Tracking Eye's, copied from GitHub until Menu-Kit v2 lands (`Menu-Kit.md`, the maintainer's work). Until then the Code section's v2 names (an entry's `click` key, `OnClick` going to the kit) are built with Tracking Eye's `CLICKS` table and `ns.HandleLauncherClick` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 **Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/GogoLoot#149](https://github.com/Gogo1951/GogoLoot/issues/149). Close it with the PR that builds this.
@@ -74,19 +74,19 @@ Shift + Middle-Click
 | Middle-Click | Loot windows, only while they're loaded | (their block, when it returns) |
 | Shift + Middle-Click | Options | Options |
 
-Each toggle keeps its current side effects (`ToggleAutomatedRolls` and the others): the icon, `NotifyChange` on its panels, the trade checkbox and the master-looter pop-ups.
+Each toggle keeps its current side effects (`ToggleAutomatedRolls` and the others): the icon, the trade checkbox and the master-looter pop-ups, then `ns.RefreshSettings()` (One Refresh).
 
 ## Strings
 
-- **Rename, keeping every locale's text:** `MINIMAP_TOGGLE` → `MENU_TOGGLE`, `MINIMAP_OPEN` → `MENU_OPEN`, `MINIMAP_LEFT_CLICK` / `_RIGHT_CLICK` / `_SHIFT_LEFT_CLICK` / `_SHIFT_RIGHT_CLICK` / `_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`, `MINIMAP_TRADABLE_MORE` → `MENU_MORE`.
-- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_ROLLS_SETTING` "%s, %s": each locale's `MINIMAP_ROLLS_SETTING` with its leading `%s: ` removed. `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
+- **Rename in `enUS.lua`**, each listed old → new in the prompt; the Localization Review carries every locale's text across: `MINIMAP_TOGGLE` → `MENU_TOGGLE`, `MINIMAP_OPEN` → `MENU_OPEN`, `MINIMAP_LEFT_CLICK` / `_RIGHT_CLICK` / `_SHIFT_LEFT_CLICK` / `_SHIFT_RIGHT_CLICK` / `_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`, `MINIMAP_TRADABLE_MORE` → `MENU_MORE`.
+- **New, in `enUS.lua`:** `MENU_ON` / `MENU_OFF`, `MENU_ROLLS_SETTING` "%s, %s" and `MENU_MORE_FEATURES` "More Features". The Localization Review fills every other locale (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 4). `MENU_ROLLS_SETTING` takes each locale's `MINIMAP_ROLLS_SETTING` with its leading `%s: ` removed.
 - **Retire** `MINIMAP_ROLLS_SETTING`, `MINIMAP_ROLLS_SETTING_MANUAL`; and `STATUS_ENABLED` / `STATUS_DISABLED` only if nothing else reads them. **Keep** `STATUS_PAUSED`.
 
 ## Code
 
-- Copy the kit and plate from Common-Core; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
+- Copy the kit and plate per Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
 - New `Features/Minimap-Menu.lua`: the rows above.
-- `Features/Minimap-Button.lua`: remove `ShowTooltip`, `AddFeatureBlock`, `RollSettingLine` and the click tables; keep the toggles, `ns:UpdateMinimapIcon`, the loot-window helpers and the icon fit. `OnClick` goes to the kit.
+- `Features/Minimap-Button.lua`: remove `ShowTooltip`, `AddFeatureBlock`, `RollSettingLine` and the click tables; keep the toggles, the icon function (as `ns.UpdateMinimapIcon()`, Building the Button), the loot-window helpers and the icon fit. `OnClick` goes to the kit.
 
 ## Features, Refresh and Button
 
@@ -94,7 +94,7 @@ Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMA
 
 - **Features mirror: the root panel reorders.** Today it reads Speedy Loot, Automated Rolls, Automated Opening, Loot Toasts, Loot Sounds, Loot Announcements, Automated Master Looting, Roll Macro. It becomes the three blocks in menu order (Automated Rolls, Automated Opening, Loot Announcements), then Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting and Roll Macro. The menu gains **More Features** with those five as compact rows (`TAB_SPEEDY_LOOT`, `TAB_LOOT_TOASTS`, `TAB_LOOT_SOUNDS`, `TAB_MASTER_LOOTER`, `TAB_ROLL_MACRO`), their switches' captions and descriptions as tooltips. **Automated Master Looting is set once per raid, not mid-fight, so it's a compact row**, and its row keeps the toggle's side effects (the not-master-looter chat line, the pop-ups). `FEATURE_SWITCHES` in `Options/Options-General.lua` becomes `ns.FEATURES`.
 - **One refresh.** Each toggle's hand-listed `NotifyChange` calls (its own panel, General, the master-looter pop-ups) become its side effects, then `ns.RefreshSettings()`.
-- **Button: two fixes.** GogoLoot is Simple, so its position moves from `ns.db.global.minimap` to `ns.db.profile.minimap`, copied over once in a migration so no button jumps. `ns:UpdateMinimapIcon` stops calling `LibDBIcon:Refresh`: assigning `brokerObject.icon` is enough. Icon Fit runs on Camelot and Mainline, as the rule says, not Camelot alone.
+- **Button: two fixes.** GogoLoot is Simple, so its position moves from `ns.db.global.minimap` to `ns.db.profile.minimap`, copied over once in a migration so no button jumps. `ns.UpdateMinimapIcon()` stops calling `LibDBIcon:Refresh`: assigning `brokerObject.icon` is enough. Icon Fit runs on Camelot and Mainline, as the rule says, not Camelot alone.
 
 ## Check in Game
 

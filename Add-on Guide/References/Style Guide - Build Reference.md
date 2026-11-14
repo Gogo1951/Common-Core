@@ -55,7 +55,7 @@ Rules:
 
 - **Confirm what takes real effort to rebuild.** An item the player can put back in seconds, by adding it again, removes on one click with no confirm. An item carrying configuration of its own confirms, as does Restore defaults.
 - **Row widths still total `ns.OPTIONS_ROW_WIDTH`** — the item cell takes the row width minus the remove icon, minus any per-row control or tag.
-- **Every mutation ends in `AceConfigRegistry:NotifyChange`** on the panel's registry key so the list redraws.
+- **Every mutation ends in a refresh** so the list redraws: `ns.RefreshSettings()` in an add-on with a mini-map menu (Style Guide → MINIMAP MENU → One Refresh), otherwise `AceConfigRegistry:NotifyChange` on the panel's registry key.
 - **Handle uncached items.** `C_Item.GetItemInfo` returns `nil` until the client has the item. Register a refresh watcher when any row is uncached, redraw as answers arrive, and unregister once nothing is outstanding — never leave a bare ID where an item link belongs.
 
 Live reference: **Magic Eraser** — `Options/Options-Utilities.lua`.

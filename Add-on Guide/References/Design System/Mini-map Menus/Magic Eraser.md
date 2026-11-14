@@ -1,7 +1,7 @@
 # Magic Eraser: Mini-map Menu
 
 **State:** tooltip. An action button: Left-Click erases.
-**Needs first:** `Menu-Kit.md`.
+**Kit:** Tracking Eye's, copied from GitHub until Menu-Kit v2 lands (`Menu-Kit.md`, the maintainer's work). Until then the Code section's v2 names (an entry's `click` key, `OnClick` going to the kit) are built with Tracking Eye's `CLICKS` table and `ns.HandleLauncherClick` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 **Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/Magic-Eraser#51](https://github.com/Gogo1951/Magic-Eraser/issues/51). Close it with the PR that builds this.
@@ -61,26 +61,26 @@ Order is the tooltip's: Protect List stays last because only it grows, so nothin
 | Shift + Right-Click | Auto-Vend on/off | Auto-Vend's Toggle |
 | Shift + Middle-Click | Options | Options |
 
-Left-Click has a job, so **hover alone opens the menu**. With clean bags, Left-Click still runs the eraser (which prints the congratulation), exactly as today. After an erase or a protect, the open menu redraws on the next item.
+Left-Click has a job, so **hover alone opens the menu**. With clean bags the Erase row is hidden, so Left-Click runs the eraser through the kit's `fallback` (`Menu-Kit.md` → API), which prints the congratulation, exactly as today. After an erase or a protect, the open menu redraws on the next item.
 
 ## Strings
 
-- **Rename, keeping every locale's text:** `ACTION_TOGGLE` → `MENU_TOGGLE`, `LEFT_CLICK` / `RIGHT_CLICK` / `MIDDLE_CLICK` / `SHIFT_RIGHT_CLICK` / `SHIFT_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`.
-- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_MORE`, copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
+- **Rename in `enUS.lua`**, each listed old → new in the prompt; the Localization Review carries every locale's text across: `ACTION_TOGGLE` → `MENU_TOGGLE`, `LEFT_CLICK` / `RIGHT_CLICK` / `MIDDLE_CLICK` / `SHIFT_RIGHT_CLICK` / `SHIFT_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`.
+- **New, in `enUS.lua`:** `MENU_ON` / `MENU_OFF`, `MENU_MORE` and `MENU_MORE_FEATURES` "More Features". The Localization Review fills every other locale (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 4).
 - **Keep** `ENABLED` / `DISABLED` if the options read them.
 
 ## Code
 
-- Copy the kit and plate from Common-Core; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
+- Copy the kit and plate per Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
 - New `Features/Minimap-Menu.lua`: the rows above.
-- `Features/Minimap-Button.lua`: remove `RefreshTooltip` and the click branches; keep `ns:RefreshDisplay` (the icon follows the next item), which now redraws the open menu where it redrew the tooltip. `OnClick` goes to the kit.
+- `Features/Minimap-Button.lua`: remove `RefreshTooltip` and the click branches; the icon half of `ns:RefreshDisplay` (the icon follows the next item) moves into `ns.UpdateMinimapIcon()`, which only sets the LDB icon; `ns.RefreshSettings()` redraws the open menu where the tooltip was redrawn. `OnClick` goes to the kit.
 
 ## Features, Refresh and Button
 
 Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
 
 - **Features mirror.** The root panel's order already leads with Auto-Vend, the one block. The menu gains **More Features**: Bank Retrieval, Maximum Value to Erase, Manual Delete Assistance, Erase Confirmation, Junk Item Tint, Quest Item Alerts, Bag-Space Warnings, in that order, each with its switch's caption and description as the tooltip. `FEATURE_TOGGLES` in `Options/Options-General.lua` becomes `ns.FEATURES`, and keeps each `onSet` (`ns.OnValueCapToggled`, `ns.OnTintJunkChanged`).
-- **One refresh.** The `NotifyChange` calls in the click handler and options become `ns.RefreshSettings()`; `ns:RefreshDisplay` keeps the bag tints and calls it.
+- **One refresh.** The `NotifyChange` calls in the click handler and options become `ns.RefreshSettings()`; `ns:RefreshDisplay` keeps only the bag tints and ends in it.
 - **Button: three fixes.**
   - A **launcher**, not a `"data source"`.
   - Magic Eraser is Simple, so its position moves from `ns.db.global.minimap` to `ns.db.profile.minimap`, copied once in a migration.

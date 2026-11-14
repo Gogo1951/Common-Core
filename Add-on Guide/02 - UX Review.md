@@ -34,11 +34,11 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 ## Menus, Not Tooltips
 
-A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Build it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
+A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Its feature prompt builds it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
 
 **When the add-on has a spec** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, that spec is the Proposed menu, and its open GitHub issue is the change: draw it as written, give it one *layout* card that names the issue, and don't redesign it. Report anything the code has gained since the spec was written as a finding in Guide Feedback, so the spec is updated.
 
-**Every UX Review checks the menu**, converted or not, against these, and each miss is a change:
+**Every UX Review checks the menu**, converted or not, against these, and each miss is a change. They are what a player sees; how the code behind it is built (One Refresh, Building the Button, row widths) is the Code Review's.
 
 - Every click the button had still does its job, and the row that does the same job names it on the right in gray. No click hint survives outside an action row.
 - On / Off for state, C_MUTED for anything not acting, never red.
@@ -46,8 +46,7 @@ A tooltip the add-on draws on hover over its own mini-map button, arrow or frame
 - Only this character's rows show; the options panel still shows every setting.
 - A controller's cursor reaches every row and flyout.
 - The menu and the root panel's Features section are one list: same features, same order, same names, the rest under More Features (Features Mirror).
-- A change made in the menu, on the button, in the options panel, by a slash command or by a profile switch shows in all of them at once (One Refresh).
-- The button follows Style Guide → MINIMAP BUTTON → Building the Button, and the menu opens from its corner per MINIMAP MENU → Placement.
+- The menu opens from the button's corner per Style Guide → MINIMAP MENU → Placement.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 

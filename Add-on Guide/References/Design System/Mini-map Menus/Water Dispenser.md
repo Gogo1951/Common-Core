@@ -1,7 +1,7 @@
 # Water Dispenser: Mini-map Menu
 
 **State:** tooltip. The smallest conversion, so it goes first after Tracking Eye.
-**Needs first:** `Menu-Kit.md`.
+**Kit:** Tracking Eye's, copied from GitHub until Menu-Kit v2 lands (`Menu-Kit.md`, the maintainer's work). Until then the Code section's v2 names (an entry's `click` key, `OnClick` going to the kit) are built with Tracking Eye's `CLICKS` table and `ns.HandleLauncherClick` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 **Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/Water-Dispenser#25](https://github.com/Gogo1951/Water-Dispenser/issues/25). Close it with the PR that builds this.
@@ -48,15 +48,15 @@ Hover opens the menu. Left-Click has a job, so it doesn't open it.
 
 ## Strings
 
-- **Rename, keeping every locale's text:** `UI_TOGGLE` → `MENU_TOGGLE`, `UI_LEFT_CLICK` → `MENU_CLICK_LEFT`, `MINIMAP_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`.
-- **New:** `MENU_ON` "On" and `MENU_OFF` "Off", every locale's text copied from Tracking Eye's; `MENU_MORE` "%d more", copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
+- **Rename in `enUS.lua`**, each listed old → new in the prompt; the Localization Review carries every locale's text across: `UI_TOGGLE` → `MENU_TOGGLE`, `UI_LEFT_CLICK` → `MENU_CLICK_LEFT`, `MINIMAP_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`.
+- **New, in `enUS.lua`:** `MENU_ON` "On", `MENU_OFF` "Off", `MENU_MORE` "%d more" and `MENU_MORE_FEATURES` "More Features". The Localization Review fills every other locale (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 4).
 - **Retire** `UI_ENABLED` / `UI_DISABLED` only if nothing else reads them.
 
 ## Code
 
-- Copy `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga` from Common-Core; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
+- Copy the kit and plate per Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
 - New `Features/Minimap-Menu.lua`: the rows above.
-- `Features/Minimap-Button.lua`: remove `ShowTooltip` and `AddDispenseReport`; the LDB object's `OnEnter` / `OnLeave` / `OnClick` go to the kit. Keep `ns.ToggleMinimapButton` and `ns.InitMinimap`.
+- `Features/Minimap-Button.lua`: remove `ShowTooltip` and `AddDispenseReport`; the LDB object's `OnEnter` / `OnLeave` / `OnClick` go to the kit. Keep `ns.InitMinimap`; `ns.ToggleMinimapButton` is renamed (Features, Refresh and Button).
 - Every Dispense change (button, row, options) redraws the open menu.
 
 ## Features, Refresh and Button

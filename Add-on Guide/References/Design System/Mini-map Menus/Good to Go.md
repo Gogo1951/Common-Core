@@ -1,7 +1,7 @@
 # Good to Go: Mini-map Menu
 
 **State:** tooltip. The tallest, and the last to convert.
-**Needs first:** `Menu-Kit.md`.
+**Kit:** Tracking Eye's, copied from GitHub until Menu-Kit v2 lands (`Menu-Kit.md`, the maintainer's work). Until then the Code section's v2 names (an entry's `click` key, `OnClick` going to the kit) are built with Tracking Eye's `CLICKS` table and `ns.HandleLauncherClick` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 **Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/Good-to-Go#18](https://github.com/Gogo1951/Good-to-Go/issues/18). Close it with the PR that builds this.
@@ -92,20 +92,20 @@ The **reference flyout** pattern: notes about a macro's clicks, not this menu's,
 | Shift + Right-Click | Open the Restock List window | Open |
 | Shift + Middle-Click | Options | Options |
 
-Left-Click has a job, so hover alone opens the menu. Every click ends in `ns.UpdateMinimapIcon()`, and the open menu redraws.
+Left-Click has a job, so hover alone opens the menu. Every click ends in `ns.RefreshSettings()`, which redraws the open menu and calls `ns.UpdateMinimapIcon()`.
 
 ## Strings
 
-- **Rename, keeping every locale's text:** `MINIMAP_TOGGLE` → `MENU_TOGGLE`, `MINIMAP_OPEN` → `MENU_OPEN`, `MINIMAP_LEFT_CLICK` / `_RIGHT_CLICK` / `_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_SHIFT_LEFT` → `MENU_CLICK_SHIFT_LEFT`, `MENU_RESTOCKER_KEYBIND` → `MENU_CLICK_SHIFT_RIGHT`, `MENU_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`. Check the macro notes before renaming `MINIMAP_RIGHT_CLICK` and the like: they name a macro's clicks too and keep reading the renamed key.
-- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_MORE`, copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_PAUSED` "Paused", copied from GogoLoot's `STATUS_PAUSED`. Translated fresh: `MENU_CLASS_MACROS` "%s Macros", `MENU_WAITING_FOR` "Waiting for: %s", `NOTE_CONJURE_LOWER_RANK` "Conjure Lower Rank" and `NOTE_CREATE_LOWER_RANK` "Create Lower Rank" (the second click on Mana Gem and Healthstone, which `Lower-Rank Backup` named as a label once the job led the row). `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
+- **Rename in `enUS.lua`**, each listed old → new in the prompt; the Localization Review carries every locale's text across: `MINIMAP_TOGGLE` → `MENU_TOGGLE`, `MINIMAP_OPEN` → `MENU_OPEN`, `MINIMAP_LEFT_CLICK` / `_RIGHT_CLICK` / `_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_SHIFT_LEFT` → `MENU_CLICK_SHIFT_LEFT`, `MENU_RESTOCKER_KEYBIND` → `MENU_CLICK_SHIFT_RIGHT`, `MENU_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`. Check the macro notes before renaming `MINIMAP_RIGHT_CLICK` and the like: they name a macro's clicks too and keep reading the renamed key.
+- **New, in `enUS.lua`:** `MENU_ON` / `MENU_OFF`, `MENU_MORE` and `MENU_PAUSED` "Paused" (GogoLoot's `STATUS_PAUSED` on GitHub has its translations). The Localization Review fills every other locale (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 4). Also new, translated by the Localization Review: `MENU_CLASS_MACROS` "%s Macros", `MENU_WAITING_FOR` "Waiting for: %s", `NOTE_CONJURE_LOWER_RANK` "Conjure Lower Rank" and `NOTE_CREATE_LOWER_RANK` "Create Lower Rank" (the second click on Mana Gem and Healthstone, which `Lower-Rank Backup` named as a label once the job led the row). `MENU_MORE_FEATURES` "More Features".
 - **Retire**, if nothing else reads them: `NOTE_LOWER_RANK_BACKUP`, `MINIMAP_RESTOCKER_NEEDED`, `MINIMAP_RESTOCKER_REPORT`, `MINIMAP_IGNORE_COUNT`, `MINIMAP_BEST_PET_FOOD`, `MINIMAP_MAIN_HAND_POISON`, `MINIMAP_OFF_HAND_POISON`, `MINIMAP_ENABLED`, `MINIMAP_DISABLED`.
 
 ## Code
 
-- Copy the kit and plate from Common-Core; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
+- Copy the kit and plate per Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1; add `Features/Menu-Kit.lua` and `Features/Minimap-Menu.lua` to every TOC after `Features/Utilities.lua`.
 - New `Features/Minimap-Menu.lua`: the rows and the flyout above.
 - `CLASS_NOTES`, its builders and `ns.AddConsumableMacroNotes` move to their own file, read by both the menu and the Spellbook page.
-- `Features/Minimap-Button.lua`: remove `UpdateTooltip` and the click branches; keep registration, `ns.UpdateMinimapIcon` (it redraws the open menu where it redrew the tooltip) and `ns.ToggleMinimapButton`. `OnClick` goes to the kit.
+- `Features/Minimap-Button.lua`: remove `UpdateTooltip` and the click branches; keep registration and `ns.UpdateMinimapIcon`, which only sets the LDB icon (`ns.RefreshSettings()` redraws the open menu where the tooltip was redrawn); `ns.ToggleMinimapButton` is renamed (below). `OnClick` goes to the kit.
 
 ## Features, Refresh and Button
 

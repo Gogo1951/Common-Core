@@ -4,7 +4,7 @@
 
 **Access is scoped to the add-on being worked on.** A session writes silently only in the folder it was launched in, reads without a prompt, and reaches the open web; the guide and `WTF` are deny-listed for writes, and no write grant is ever machine-wide (What the template grants). **Access is not a reason to look:** a session never reads outside its launch folder unasked (Pass Preamble → Standing scope).
 
-**The template is dynamic.** `References/Permission Template.json` carries a `{{ADDON}}` placeholder; the seed/launch step below renders it with **the name of the folder it's run from**, so the same template file produces a MagicEraser-scoped grant in the MagicEraser folder and an OpenSesame-scoped grant in the OpenSesame folder. Nothing is ever filled in by hand.
+**The template is dynamic.** `References/Permission Template.json` carries a `{{ADDON}}` placeholder; the seed/launch step below renders it with **the name of the folder it's run from**, so the same template file produces a MagicEraser-scoped grant in the MagicEraser folder and a TrackingEye-scoped grant in the TrackingEye folder. Nothing is ever filled in by hand.
 
 This file is safe to paste whole into a session: the launcher setup is human-only, and **Session Prep** at the bottom is the part Claude runs.
 

@@ -69,7 +69,7 @@ On the Spacing Scale (Style Guide → SPACING SCALE). Menu-Kit's constants:
 
 ## Components
 
-Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus two this wave proposes. Each is drawn in the board's Components section.
+Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus the two Menu-Kit v2 adds. Each is drawn in the board's Components section.
 
 | Kind | Left | Right | Use |
 |---|---|---|---|
@@ -83,8 +83,8 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus two this 
 | `toggle` | Name; MUTED while off | On ON / Off MUTED | A setting's switch |
 | `choice` | Name; MUTED unless picked | Check when picked | One of a set |
 | `separator`, `spacer` | — | — | A line; a line's room |
-| `item` *(proposed)* | Icon, name in its quality color, `x4` count | A value, count, ratio or slot | An item the add-on acts on or lists. Hover shows the item. Option indent. |
-| `value` *(proposed)* | Label, BODY | Value, TEXT | A read-out with nothing to click: a total, a setting's read-back, a macro's click. Option indent. |
+| `item` *(Menu-Kit v2)* | Icon, name in its quality color, `x4` count | A value, count, ratio or slot | An item the add-on acts on or lists. Hover shows the item. Option indent. |
+| `value` *(Menu-Kit v2)* | Label, BODY | Value, TEXT | A read-out with nothing to click: a total, a setting's read-back, a macro's click. Option indent. |
 
 ## Patterns
 
@@ -106,9 +106,9 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 
 ## Wave 1: The Six Mini-map Buttons
 
-Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. Build in this order: the kit, then Tracking Eye (which proves it), then smallest to largest.
+Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. **They are the maintainer's work orders** (Style Guide → MINIMAP MENU): the UX Review draws one as the add-on's Proposed menu, and no other pass acts on one. The maintainer's order of work: the kit, then Tracking Eye (which proves it), then smallest to largest.
 
-**Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on the kit it has always carried. Build every other add-on with it open beside the spec; its move onto Menu-Kit v2 follows the kit into `addon-kits/Menu-Kit/`.
+**Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on the kit it has always carried. It is the reference every other conversion copies from, read on GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu); its move onto Menu-Kit v2 follows the kit into `addon-kits/Menu-Kit/`.
 
 | Order | Spec | Issue |
 |---|---|---|
@@ -125,17 +125,17 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 | Tracking Eye | **Live.** Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2, once the kit lands. |
 | Water Dispenser | Tooltip: one feature, one report, 2 clicks | One feature block and the Dispense Report. The first to convert. |
 | Control Freak | Tooltip: three features, 4 clicks | All Alerts as a master switch, then the three feature blocks. |
-| GogoLoot | Tooltip: four features, a report, 5 clicks | Locked Items, then four feature blocks; the roll read-back as value rows. |
+| GogoLoot | Tooltip: four features, a report, 5 clicks | Locked Items, then three feature blocks and More Features; the roll read-back as value rows. |
 | Magic Eraser | Tooltip: an item highlight, a feature, two reports, 5 clicks | Lowest-Value Item with Erase and Protect, Auto-Vend, Clutter Report, Protect List. Left-Click still erases. |
 | Good to Go | Tooltip: an item highlight, three features, class notes, two reports, 7 clicks | Current Food, three feature blocks (Restock List carrying its report), class items, a *[Class] Macros* flyout, Ignore List. |
 
-## Proposed Kit Changes
+## Kit Changes (Menu-Kit v2)
 
 1. **The menu's machinery moves into the kit.** Opening from the button, placing away from the screen edge, the close timer, Escape, flyouts and the public `ns.ShowMenu` / `ns.HideMenu` / `ns.RefreshMenu` are about 250 lines of Tracking Eye's `Minimap-Menu.lua` that know nothing about tracking. They move into `Menu-Kit.lua` as `Kit.CreateMenu{ name, build, flyouts }`, and an add-on's `Minimap-Menu.lua` keeps only its rows.
 2. **`AddFeature` moves into the kit** as `Kit.FeatureBlock`, with the action's label as an argument (Toggle or Open).
 3. **Two row kinds:** `item` and `value` (Components). Colors take a raw six-digit hex as well as a palette key, for quality and class colors.
-4. **The click table moves into the kit.** `Kit.SetClickText` takes the six localized click names once; an action entry carries `click = { button, shift }`, and the kit draws its name on the row's right in MUTED and routes the button's `OnClick` to the same function (`Kit.HandleClick`). `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
-5. **One canonical copy, in Common-Core.** The kit and its plate move to `addon-kits/Menu-Kit/` here, are copied into each add-on with a mini-map button, and CI checks every copy matches, the way `addon-files/` works today. The Style Guide's "copy it from Tracking Eye" becomes "copy it from Common-Core".
+4. **The click table moves into the kit.** An action entry names its click, and the kit draws that click's name on the row's right in MUTED and routes the button's `OnClick` to the same function. The API is `Mini-map Menus/Menu-Kit.md` → API. `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
+5. **One canonical copy, in Common-Core.** The kit and its plate move to `addon-kits/Menu-Kit/` here, are copied into each add-on with a mini-map button, and CI checks every copy matches, the way `addon-files/` works today. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, then copies it from Common-Core instead of Tracking Eye on GitHub.
 
 ## Will It Fit
 
@@ -159,7 +159,7 @@ All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 1. **Both ways.** Every action is a row, and the button keeps every click it had, named on that row in MUTED.
 2. **State words** are On / Off everywhere (`MENU_ON` / `MENU_OFF`); a third state keeps its own word.
 3. **Third states** are MUTED while not acting, never SEPARATOR gray.
-4. **The menu's machinery moves into the kit** (Kit Change 1), in Tracking Eye first.
+4. **The menu's machinery moves into the kit** (Kit Change 1), in Common-Core; Tracking Eye moves onto it after.
 5. **The kit lives in Common-Core** (Kit Change 5), copied into each add-on and checked by CI.
 6. **`item` and `value` row kinds** join the kit (Kit Change 3).
 7. **Long lists** show up to 8 rows, then a gray *N more*.

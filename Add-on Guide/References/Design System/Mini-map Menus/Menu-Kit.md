@@ -1,12 +1,12 @@
 # Menu-Kit v2 (Common-Core)
 
-The shared renderer every mini-map menu is built on, moved into Common-Core so all six add-ons copy one file. **Do this first:** every add-on spec in this folder builds on it.
+The shared renderer every mini-map menu is built on, moved into Common-Core so all six add-ons copy one file. **The maintainer's work, in a session launched in `~/Common-Core`:** it lands before the add-ons move onto v2. A session in an add-on folder never builds or edits it; until it lands, every conversion copies Tracking Eye's kit from GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 
 - **Issue:** [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3).
 - **Rules:** Style Guide → MINIMAP MENU.
-- **Pieces:** `../README.md` → Components, Patterns, Proposed Kit Changes.
+- **Pieces:** `../README.md` → Components, Patterns, Kit Changes (Menu-Kit v2).
 - **Drawn:** `../Mini-map Menus.html`.
-- **Starts from:** Tracking Eye's `Features/Menu-Kit.lua` and the generic half of its `Features/Minimap-Menu.lua`.
+- **Starts from:** Tracking Eye's [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) and the generic half of its [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua), on GitHub `main`.
 
 ## What Moves Where
 
@@ -41,7 +41,8 @@ local menu = Kit.CreateMenu({
 	name = ADDON_NAME .. "Menu", -- named, so Escape closes it
 	build = BuildMainEntries,
 	flyouts = FLYOUTS,
-	afterChange = function() ns.RefreshOptionsPanels() end, -- every row click and button click ends here
+	afterChange = ns.RefreshSettings, -- every row click and button click ends here (One Refresh)
+	fallback = nil, -- optional { LeftButton = fn }: run when no entry's click matches
 })
 
 -- The LDB object hands the kit its events; the kit routes clicks through the click table.
@@ -51,7 +52,7 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 ```
 
 - **`Kit.FeatureBlock(entries, { key, title, state, stateColor, description, note, rows, toggle, after })`**, where `toggle = { name, desc, flip, click }` and `click` is a click key (`"ShiftLeftButton"`) or nil.
-- **Action entries** carry `click = "RightButton"` (or nil). The kit draws that click's name on the row's right in MUTED. `menu:HandleClick` finds the entry whose `click` matches, across the main entries only, and runs its `onClick`. With no match, a Left-Click opens and holds the menu, and anything else does nothing. Shift + Middle-Click with no match opens `ns:OpenOptionsPanel()`, so every add-on gets it for free.
+- **Action entries** carry `click = "RightButton"` (or nil). The kit draws that click's name on the row's right in MUTED. `menu:HandleClick` finds the entry whose `click` matches, across the main entries only, and runs its `onClick`. With no match, the kit runs the add-on's `fallback[button]` when it gave one (Magic Eraser's Left-Click erases even while its Erase row is hidden); otherwise a Left-Click opens and holds the menu, and anything else does nothing. Shift + Middle-Click with no match opens `ns:OpenOptionsPanel()`, so every add-on gets it for free.
 - **The Options row** is `Kit.OptionsRow(L["MENU_OPTIONS"])`: spacer, separator, and an action row naming Shift + Middle-Click.
 - **Two new kinds:**
   - `item`: `{ kind = "item", itemID or link, count, right, rightColor, onClick }`. The kit draws the icon at line height and the name in its quality color without brackets, adds the count, and shows the item's tooltip on hover. An uncached item draws `Loading ID: %d` in MUTED and redraws when it arrives.
@@ -70,11 +71,11 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 1. The kit and plate live in `addon-kits/Menu-Kit/` here.
 2. `scripts/sync-addon-files.sh` copies them into each add-on that has `Features/Menu-Kit.lua` (`Features/` and `Includes/Images/`), and leaves add-ons without one alone.
 3. `ci.yml` gains a check: an add-on that has `Features/Menu-Kit.lua` must match `addon-kits/Menu-Kit/Menu-Kit.lua` byte for byte, plate included, like the shared-files check.
-4. The Style Guide's "copy it from Tracking Eye" becomes "copy it from Common-Core".
+4. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, copies the kit from `addon-kits/Menu-Kit/` instead of Tracking Eye on GitHub.
 
 ## Done When
 
 - [ ] `addon-kits/Menu-Kit/` holds the kit and plate; StyLua, luacheck and `luac5.1 -p` pass on it.
 - [ ] The sync script and the CI check are in, and CI passes on Common-Core.
-- [ ] Tracking Eye runs on v2 with nothing visible changed except its restored clicks (`Tracking Eye.md`). That's the proof.
+- [ ] Tracking Eye runs on v2 with nothing visible changed (`Tracking Eye.md`). That's the proof.
 - [ ] Style Guide → MINIMAP MENU's live references point at `addon-kits/Menu-Kit/`.
