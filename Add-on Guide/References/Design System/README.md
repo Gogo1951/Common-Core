@@ -6,7 +6,7 @@ It grows in waves, one surface at a time:
 
 | Wave | Surface | State |
 |---|---|---|
-| 1 | Mini-map menus | **This folder.** Six add-ons drawn, components named, decisions open below. |
+| 1 | Mini-map menus | **This folder.** Six add-ons drawn and specced, decisions made, issues filed. |
 | 2 | Options panel | Later. Rows and sub-rows are already specified in the Build Reference. |
 | 3 | The add-ons' own windows | Later. |
 | 4 | Lines added to the game's tooltips | Later. |
@@ -16,7 +16,8 @@ It grows in waves, one surface at a time:
 
 | File | What it is |
 |---|---|
-| `README.md` | This: foundations, components, patterns, and the open decisions. |
+| `README.md` | This: foundations, components, patterns, decisions, and the order of work. |
+| `Mini-map Menus/` | One spec per add-on: its tooltip today, its menu row by row, its clicks, its strings, and how to check it in game. |
 | `Mini-map Menus.html` | The board: every mini-map tooltip drawn from its code beside the menu it becomes, clickable, with scenario switches. Open it in a browser next to `menu-mock.css` and `menu-mock.js`. |
 | `menu-mock.css`, `menu-mock.js` | The mock kit. Draws Menu-Kit entries and old-style GameTooltip lines at the game's sizes. Any wireframe pass that draws a mini-map menu builds from these instead of redrawing one (Using the Mock Kit, below). |
 
@@ -104,7 +105,17 @@ Built from the components, in the order a menu runs top to bottom.
 
 ## Wave 1: The Six Mini-map Buttons
 
-Drawn row for row from each add-on's `main` in the board.
+Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. Build in this order: the kit, then Tracking Eye (which proves it), then smallest to largest.
+
+| Order | Spec | Repo for its issue |
+|---|---|---|
+| 1 | [Menu-Kit v2](Mini-map%20Menus/Menu-Kit.md) | Common-Core |
+| 2 | [Tracking Eye](Mini-map%20Menus/Tracking%20Eye.md) | Tracking-Eye |
+| 3 | [Water Dispenser](Mini-map%20Menus/Water%20Dispenser.md) | Water-Dispenser |
+| 4 | [Control Freak](Mini-map%20Menus/Control%20Freak.md) | Control-Freak |
+| 5 | [GogoLoot](Mini-map%20Menus/GogoLoot.md) | GogoLoot |
+| 6 | [Magic Eraser](Mini-map%20Menus/Magic%20Eraser.md) | Magic-Eraser |
+| 7 | [Good to Go](Mini-map%20Menus/Good%20to%20Go.md) | Good-to-Go |
 
 | Add-on | Today | In the menu |
 |---|---|---|
@@ -123,21 +134,21 @@ Drawn row for row from each add-on's `main` in the board.
 4. **The click table moves into the kit.** `Kit.SetClickText` takes the six localized click names once; an action entry carries `click = { button, shift }`, and the kit draws its name on the row's right in MUTED and routes the button's `OnClick` to the same function (`Kit.HandleClick`). `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
 5. **One canonical copy, in Common-Core.** The kit and its plate move to `addon-kits/Menu-Kit/` here, are copied into each add-on with a mini-map button, and CI checks every copy matches, the way `addon-files/` works today. The Style Guide's "copy it from Tracking Eye" becomes "copy it from Common-Core".
 
-## Open Decisions
+## Decisions
 
-Each has a recommendation. None is built until the maintainer chooses.
+All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 
-**Decided:** both ways. Every action is a row, and the button keeps every click it had, named on that row (Patterns → Both Ways). The Style Guide's MINIMAP MENU and the UX Review's Menus, Not Tooltips say so now.
+1. **Both ways.** Every action is a row, and the button keeps every click it had, named on that row in MUTED.
+2. **State words** are On / Off everywhere (`MENU_ON` / `MENU_OFF`); a third state keeps its own word.
+3. **Third states** are MUTED while not acting, never SEPARATOR gray.
+4. **The menu's machinery moves into the kit** (Kit Change 1), in Tracking Eye first.
+5. **The kit lives in Common-Core** (Kit Change 5), copied into each add-on and checked by CI.
+6. **`item` and `value` row kinds** join the kit (Kit Change 3).
+7. **Long lists** show up to 8 rows, then a gray *N more*.
+8. **A hunter's ten-row pick list** in Tracking Eye stays as it is.
+9. **Good to Go's macro notes** move to a class-colored reference flyout.
 
-1. **State words.** Tracking Eye says On / Off; the five tooltips say Enabled / Disabled, and the Style Guide's tooltip-to-menu map says to keep each add-on's words. *Recommend: On / Off everywhere.*
-2. **Third states.** GogoLoot's Paused and Good to Go's *Party, Raid* are SEPARATOR gray; Tracking Eye's Paused is MUTED. *Recommend: MUTED.*
-3. **The machinery moves into the kit** (Kit Change 1). *Recommend: yes, in Tracking Eye, before a second add-on copies it.*
-4. **The kit lives in Common-Core** (Kit Change 5). *Recommend: yes.*
-5. **`item` and `value` row kinds** (Kit Change 3). *Recommend: yes.*
-6. **Long lists.** GogoLoot shows 3, Good to Go 8 then a count, Magic Eraser all. *Recommend: up to 8, then N more.*
-7. **A hunter's ten-row pick list** in Tracking Eye. *Recommend: leave it.*
-8. **Good to Go's macro notes** move to a class-colored flyout. *Recommend: yes.*
-9. **The click's color** on an action row. The old tooltips drew clicks in INFO blue. *Recommend: MUTED, so the row's job reads first.*
+Still open, in its spec: whether Control Freak's free Shift + Right-Click goes to All Alerts.
 
 ## Using the Mock Kit
 

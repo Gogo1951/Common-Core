@@ -131,7 +131,7 @@ tbody tr:hover { background: var(--panel); }
 
 	<section class="band" id="decisions">
 		<h2>Decisions</h2>
-		<p>What drawing all six side by side turned up. Each open one has a recommendation; none is built until you choose.</p>
+		<p>What drawing all six side by side turned up, and what was decided. The Style Guide's MINIMAP MENU says each one now, and each add-on's spec in <code>Mini-map Menus/</code> applies them.</p>
 		<div class="decisions" id="decisionList"></div>
 	</section>
 </div>
@@ -811,7 +811,7 @@ var DECISIONS = [
 document.getElementById("decisionList").innerHTML = DECIDED.map(function (d) {
 	return '<div class="decision"><b>Decided: ' + d[0] + "</b><p>" + d[1] + '</p><p class="rec">' + d[2] + "</p></div>";
 }).join("") + DECISIONS.map(function (d, i) {
-	return '<div class="decision"><b>' + (i + 1) + ". " + d[0] + "</b><p>" + d[1] + '</p><p class="rec">Recommend: ' + d[2] + "</p></div>";
+	return '<div class="decision"><b>Decided: ' + d[0] + "</b><p>" + d[1] + '</p><p class="rec">' + d[2] + "</p></div>";
 }).join("");
 
 // Draw once the mock font is in, so every width measures true.

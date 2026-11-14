@@ -957,7 +957,9 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 ## MINIMAP MENU
 
-Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer) and [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it).
+Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer) and [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it), until Menu-Kit v2 lands in Common-Core's `addon-kits/Menu-Kit/`; from then on the kit is copied from there.
+
+Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **Each add-on's conversion is specced** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, and tracked by a GitHub issue in that add-on's repo; build to the spec. Menu-Kit v2 itself is `Mini-map Menus/Menu-Kit.md`, and comes first.
 
 **Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
@@ -1008,7 +1010,7 @@ Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.co
 - **One type size.** Every row is the same font size; kinds differ by color only, never by a smaller font.
 - **Every heading is gold.** A feature title, a section label inside a flyout, and a plain status line all read C_TITLE.
 - **A spacer above every heading.** The kit inserts it, unless the heading opens the panel or already follows a spacer. Never add one by hand before a heading.
-- **State on the right.** On is C_ON. Off is C_MUTED, never red: an off feature sits back, it isn't an error. A feature with more than two states uses short words (Active in C_ON, Paused or Off in C_MUTED).
+- **State on the right.** On is C_ON. Off is C_MUTED, never red: an off feature sits back, it isn't an error. The words are the add-on's `MENU_ON` and `MENU_OFF`, On and Off in every add-on, never Enabled and Disabled. A feature with more than two states keeps its own short word for the third (Active, Paused, or what it's waiting for, such as Party, Raid): C_ON while it's acting, C_MUTED while it isn't, never SEPARATOR gray.
 - **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering.
 - **The Toggle row** is blue, says only Toggle, flips the feature's Enable switch, and names the button click that does the same on its right. Its tooltip is that Enable option's name and description.
 - **The arrow.** Blizzard's submenu arrow (`ChatFrameExpandArrow`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
@@ -1047,10 +1049,25 @@ A flyout holds a feature's secondary settings and opens beside its title, on the
 | `toggle` | Name; C_MUTED while off | On in C_ON, Off in C_MUTED | A setting's switch |
 | `choice` | Name; white when picked, C_MUTED otherwise | Check mark when picked | One of a set |
 | `action` | Label, set `leftColor = "INFO"` | The button click that does the same, set `rightColor = "MUTED"` | Toggle, Clear, Options, and other one-shot clicks |
+| `item` | Icon at line height, the name in its quality color without brackets, then the count (`x4`) | A value, count, have/wanted, or a slot in C_MUTED | An item the add-on acts on or lists; hovering shows the item. Menu-Kit v2. |
+| `value` | Label, C_BODY | Value, C_TEXT | A read-out with nothing to click: a total, a setting's read-back, a macro's click. Menu-Kit v2. |
 | `separator` | — | — | A thin line |
 | `spacer` | — | — | A line's room |
 
-**Choice and toggle rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry `tooltip`, a `function(GameTooltip)`, shown beside it under the cursor.
+Until Menu-Kit v2, an item row is an `action` or `status` row with the icon and colored name written into `left`, and a value row a `status` row with `leftColor = "BODY"`.
+
+**Choice, toggle, item and value rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry `tooltip`, a `function(GameTooltip)`, shown beside it under the cursor.
+
+### Blocks Beyond Features
+
+A tooltip carries more than feature blocks. Each kind has one shape in the menu (`References/Design System/README.md` → Patterns):
+
+- **Item highlight.** The item the add-on will act on next: a gold `status` heading, its `item` row, then an `action` row for each thing you can do to it, each naming its click (Magic Eraser's Lowest-Value Item: Erase, Protect).
+- **Live report.** What changes with the bags or the group, such as a total or a list of items: a gold `status` heading over `item` or `value` rows. A report that belongs to one feature sits inside that feature's block, between its description and Toggle, with its count on the title's right (Good to Go's orders in its Restock List block). A report the player can grow without limit goes last before Options, so nothing above it moves.
+- **Long lists.** Up to 8 rows, then a `note` saying `%d more` (`MENU_MORE`). Never a list taller than that, never only a count where the rows fit.
+- **Message line.** One wrapping line in place of a report with nothing to show: a `description` in C_ON when the news is good (bags clean, fully stocked), a `note` when it's just empty.
+- **Master switch.** A switch that silences the whole add-on gets the first block, with no description and its Toggle's tooltip the switch's own. While it's off, the blocks it silences hide and a `note` says why (Control Freak's All Alerts).
+- **Reference flyout.** Notes about another thing's clicks, such as a macro's, go in a flyout of `section` and `value` rows behind a `submenu` title in the class color (`[Class] Macros`), so the menu holds only rows you click here. The class's live items stay in the menu as `item` rows with their slot on the right.
 
 ### The Pick-List Exception
 
@@ -1076,6 +1093,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 ### Moving a Tooltip to a Menu
 
+0. **Read the add-on's spec** in `References/Design System/Mini-map Menus/`, and its GitHub issue. The spec says every row, click and string; the steps below say how.
 1. **Copy `Features/Menu-Kit.lua` unchanged** into `Features/`, after `Features/Utilities.lua` in the TOC. Copy `Includes/Images/Menu-Plate.tga`. The kit knows nothing about the add-on; it reads only `ns.PALETTE`.
 2. **Write `Features/Minimap-Menu.lua`** from Tracking Eye's: `Kit.SetToggleText(L["MENU_ON"], L["MENU_OFF"])` once at load, one `AddFeature` call per feature a player turns on and off mid-session, a `FLYOUTS[key]` builder for each feature with settings, and the Options row last.
 3. **Map the old tooltip lines:**
@@ -1083,13 +1101,13 @@ When picking from a set is the feature's main job, the list lives in the block, 
    | Old tooltip | Menu |
    |-------------|------|
    | Title / Version | `header` row |
-   | Feature name + state | `submenu` or `status` title, same state words |
+   | Feature name + state | `submenu` or `status` title; Enabled / Disabled become On / Off, a third state keeps its word |
    | Description line | `description` row, same string |
    | Keybind / action hint ("Left-Click … Toggle") | Toggle `action` row, `Left-Click` on its right |
    | Other click hints (Right-Click, Shift-Click) | An `action` row each, naming its click on the right |
    | `[Short Name] Options` + Shift + Middle-Click | `[Short Name] Options` `action` row, `Shift + Middle-Click` on its right |
 
-4. **Keep the translations.** Bring the old tooltip strings back from git as `MENU_*` keys (`MENU_[FEATURE]_DESCRIPTION`, `MENU_TOGGLE`, `MENU_ON`, `MENU_OFF`) with every locale's translation, rather than writing new copy. The click names (`Left-Click`, `Shift + Right-Click`) stay too, for the action rows' right side. Option rows reuse the options' own keys.
+4. **Keep the translations.** The strings the kit reads take one set of names in every add-on, renamed with every locale's text kept: `MENU_ON`, `MENU_OFF`, `MENU_TOGGLE`, `MENU_OPEN`, `MENU_MORE` (`%d more`), `MENU_OPTIONS` (`[Short Name] Options`) and the click names `MENU_CLICK_LEFT`, `MENU_CLICK_RIGHT`, `MENU_CLICK_MIDDLE`, `MENU_CLICK_SHIFT_LEFT`, `MENU_CLICK_SHIFT_RIGHT`, `MENU_CLICK_SHIFT_MIDDLE` (only those the add-on uses). An add-on new to `MENU_ON` / `MENU_OFF` copies every locale's text from Tracking Eye's, and one new to `MENU_MORE` from GogoLoot's. Every other tooltip string keeps its key, or comes back from git with its translations, rather than being written fresh. Option rows reuse the options' own keys.
 5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `ns.ShowMenu(self, nil, "hover")`, and `OnLeave` does nothing, since the menu closes itself. `OnClick` looks the click up in the click table (Button Clicks), runs its function and redraws the menu; a Left-Click with no entry calls `ns.ShowMenu(self, nil, "click")`. Remove the tooltip code, and keep every click it named.
 6. **Gate the rows.** For each class, race or profession row, add an `IsPlayerSpell` check in the menu only. Leave the options panel alone.
 7. **Check it in game** on at least three classes, one of which can't use any gated row, and with a controller:
