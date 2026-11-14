@@ -959,7 +959,7 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer) and [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it).
 
-**Every action is a row the player clicks:** no click hints, no modifier keys, no right or middle button. A controller's virtual cursor then reaches everything a mouse does. An action button, whose left-click does the add-on's main job, keeps that one plain click, and the job is a row in the menu too. Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
+**Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
 ### Two Homes for Every Setting
 
@@ -974,6 +974,17 @@ Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.co
 - **Long pickers stay in options.** A choice of more than a handful of values (Tracking Eye's 17 Cycle Speeds) is a dropdown, not a menu.
 - **Set-and-forget settings stay in options.** Tracking Eye's Free Placement Mode, Come & Get It and display toggles aren't changed mid-session, so they get no block.
 
+### Button Clicks
+
+**Both ways, from one table.** In `Features/Minimap-Menu.lua`, one table names each action's click (`button`, `shift`) and its function. The action row draws the click's name on its right, and the button's `OnClick` looks the click up in the same table, so a row never names a click that does something else.
+
+- **The click's name is the old tooltip's.** The tooltip line `Right-Click … Clear Tracking` becomes the row `Clear Tracking … Right-Click`: the same two strings with the sides swapped, so every translation carries over.
+- **Gray, on the right.** The action reads first in C_INFO; the click sits back in C_MUTED, like a menu's shortcut column, and a controller player can ignore it.
+- **Six clicks:** Left-Click, Right-Click and Middle-Click, each plain or with Shift. Shift + Middle-Click opens the options panel in every add-on. No Ctrl or Alt.
+- **Left-Click opens and holds the menu** on a button whose Left-Click has no job. On one that has a job (Magic Eraser erases), Left-Click does it and hover alone opens the menu.
+- **Not every row has a click.** Choice and flyout rows, and a block added after the button's clicks ran out, are rows only. A click never moves to a different job without the maintainer's say-so: players have it in their hands.
+- **A click redraws the open menu,** as a row's click does.
+
 ### Layout
 
 ```
@@ -984,14 +995,14 @@ Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.co
 [Feature Name] (C_TITLE, left)          [STATE] (C_ON / C_MUTED, right) [>]
 [Description] (C_BODY, wraps)
     [Pick list] (choice rows, only if the feature has one)
-[Toggle] (C_INFO)
-[Follow-up action] (C_INFO, only while it applies)
+[Toggle] (C_INFO)                               [Click] (C_MUTED, right, if it has one)
+[Follow-up action] (C_INFO, only while it applies)            [Click] (C_MUTED, right)
 [SPACER, added by the kit]
 
 -- After the last block: --
 [SPACER]
 [SEPARATOR]
-[Short Name] Options (C_INFO, left)                     Open (C_INFO, right)
+[Short Name] Options (C_INFO, left)            Shift + Middle-Click (C_MUTED, right)
 ```
 
 - **One type size.** Every row is the same font size; kinds differ by color only, never by a smaller font.
@@ -999,9 +1010,9 @@ Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.co
 - **A spacer above every heading.** The kit inserts it, unless the heading opens the panel or already follows a spacer. Never add one by hand before a heading.
 - **State on the right.** On is C_ON. Off is C_MUTED, never red: an off feature sits back, it isn't an error. A feature with more than two states uses short words (Active in C_ON, Paused or Off in C_MUTED).
 - **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering.
-- **The Toggle row** is blue, says only Toggle, and flips the feature's Enable switch. Its tooltip is that Enable option's name and description.
+- **The Toggle row** is blue, says only Toggle, flips the feature's Enable switch, and names the button click that does the same on its right. Its tooltip is that Enable option's name and description.
 - **The arrow.** Blizzard's submenu arrow (`ChatFrameExpandArrow`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
-- **Options last.** A spacer, a separator, then the blue `[Short Name] Options` / `Open` row. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
+- **Options last.** A spacer, a separator, then the `[Short Name] Options` action row, naming Shift + Middle-Click. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
 
 ### Flyouts
 
@@ -1035,8 +1046,7 @@ A flyout holds a feature's secondary settings and opens beside its title, on the
 | `note` | C_MUTED, wraps at 260 | — | A short reason or helper line |
 | `toggle` | Name; C_MUTED while off | On in C_ON, Off in C_MUTED | A setting's switch |
 | `choice` | Name; white when picked, C_MUTED otherwise | Check mark when picked | One of a set |
-| `action` | Label, set `leftColor = "INFO"` | — | Toggle, Clear, and other one-shot clicks |
-| `hint` | C_INFO | C_INFO | The Options / Open row |
+| `action` | Label, set `leftColor = "INFO"` | The button click that does the same, set `rightColor = "MUTED"` | Toggle, Clear, Options, and other one-shot clicks |
 | `separator` | — | — | A thin line |
 | `spacer` | — | — | A line's room |
 
@@ -1048,7 +1058,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 ### Behavior
 
-- **Hover or left-click opens it.** Hovering the button opens the menu the way the tooltip did. It closes 0.4 seconds after the cursor leaves the button, the menu and the flyout; after a click, 1.0 seconds. On an action button, left-click does the main job instead, and hover alone opens the menu.
+- **Hover opens it; Left-Click opens and holds it.** Hovering the button opens the menu the way the tooltip did. It closes 0.4 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A button whose Left-Click has a job (Button Clicks) does that job instead, and hover alone opens the menu.
 - **Escape closes it.** Name the menu frame and add it to `UISpecialFrames`.
 - **Hovering a title opens its flyout**, and clicking it does too. Hovering any other clickable row closes the flyout.
 - **A pick closes the menu; a switch keeps it open.** Choosing from a set is done; flipping switches often comes in runs.
@@ -1075,12 +1085,12 @@ When picking from a set is the feature's main job, the list lives in the block, 
    | Title / Version | `header` row |
    | Feature name + state | `submenu` or `status` title, same state words |
    | Description line | `description` row, same string |
-   | Keybind / action hint ("Left-Click … Toggle") | Blue Toggle `action` row |
-   | Other click hints (Right-Click, Shift-Click) | An `action` row each, or a flyout row |
-   | `[Short Name] Options` + Shift + Middle-Click | Blue `[Short Name] Options` / `Open` `hint` row |
+   | Keybind / action hint ("Left-Click … Toggle") | Toggle `action` row, `Left-Click` on its right |
+   | Other click hints (Right-Click, Shift-Click) | An `action` row each, naming its click on the right |
+   | `[Short Name] Options` + Shift + Middle-Click | `[Short Name] Options` `action` row, `Shift + Middle-Click` on its right |
 
-4. **Keep the translations.** Bring the old tooltip strings back from git as `MENU_*` keys (`MENU_[FEATURE]_DESCRIPTION`, `MENU_TOGGLE`, `MENU_ON`, `MENU_OFF`) with every locale's translation, rather than writing new copy. Option rows reuse the options' own keys.
-5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `ns.ShowMenu(self, nil, "hover")`, and `OnLeave` does nothing, since the menu closes itself. `OnClick` calls `ns.ShowMenu(self, nil, "click")` for `LeftButton` only, or on an action button does the main job. Remove the tooltip code, the modifier-click branches and the right and middle buttons.
+4. **Keep the translations.** Bring the old tooltip strings back from git as `MENU_*` keys (`MENU_[FEATURE]_DESCRIPTION`, `MENU_TOGGLE`, `MENU_ON`, `MENU_OFF`) with every locale's translation, rather than writing new copy. The click names (`Left-Click`, `Shift + Right-Click`) stay too, for the action rows' right side. Option rows reuse the options' own keys.
+5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `ns.ShowMenu(self, nil, "hover")`, and `OnLeave` does nothing, since the menu closes itself. `OnClick` looks the click up in the click table (Button Clicks), runs its function and redraws the menu; a Left-Click with no entry calls `ns.ShowMenu(self, nil, "click")`. Remove the tooltip code, and keep every click it named.
 6. **Gate the rows.** For each class, race or profession row, add an `IsPlayerSpell` check in the menu only. Leave the options panel alone.
 7. **Check it in game** on at least three classes, one of which can't use any gated row, and with a controller:
    - Each class sees only its own rows; the options panel still shows all of them.
@@ -1089,6 +1099,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
    - The menu opens left of the button on the right half of the screen and below it on the top half.
    - Escape closes it; a pick closes it; a switch doesn't.
    - The controller's cursor opens, hovers and clicks every row.
+   - Every click the tooltip named still does its job on the button, and its row names it.
 
 -----
 

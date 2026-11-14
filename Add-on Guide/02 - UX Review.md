@@ -34,7 +34,7 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 ## Menus, Not Tooltips
 
-A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint and modifier click becomes a row the player clicks, so a controller reaches everything. Build it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
+A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Build it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 

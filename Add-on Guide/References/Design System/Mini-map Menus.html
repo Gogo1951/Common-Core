@@ -116,13 +116,13 @@ tbody tr:hover { background: var(--panel); }
 
 	<section class="band" id="components">
 		<h2>Components</h2>
-		<p>The menu pieces every add-on builds from. After the plate and spacing come Menu-Kit's row kinds today. The two marked <span class="new">proposed</span> cover what five tooltips draw and the kit can't: an item with its icon and value, and a read-out with nothing to click.</p>
+		<p>The menu pieces every add-on builds from. After the plate and spacing come Menu-Kit's row kinds today. What's marked <span class="new">proposed</span> is new: an item row, a read-out row, and the button's shortcut named on an action row.</p>
 		<div class="catalog" id="catalog"></div>
 	</section>
 
 	<section class="band" id="decisions">
 		<h2>Decisions</h2>
-		<p>What drawing all six side by side turned up. Each has a recommendation; none is built until you choose.</p>
+		<p>What drawing all six side by side turned up. Each open one has a recommendation; none is built until you choose.</p>
 		<div class="decisions" id="decisionList"></div>
 	</section>
 </div>
@@ -164,7 +164,14 @@ function ttItem(hue, name, quality, extra) { return icon(hue) + paint(name, "q:"
 
 // Menu helpers, as a Minimap-Menu.lua writes them.
 function mHeader(name, ver) { return [{ kind: "header", left: name, right: ver, c: "header" }, { kind: "spacer", c: "header" }]; }
-function mFooter(short) { return [{ kind: "spacer", c: "footer" }, { kind: "separator", c: "footer" }, { kind: "hint", left: short + " Options", right: "Open", c: "footer", onClick: function () {}, tooltip: "Opens the options panel." }]; }
+// Today's Options row says Open; proposed, it's an action row whose right side is the button's Shift + Middle-Click.
+function mFooter(short, today) {
+	var row = today
+		? { kind: "hint", left: short + " Options", right: "Open", c: "footer", onClick: function () {} }
+		: { kind: "action", left: short + " Options", right: "Shift + Middle-Click", c: "footer", onClick: function () {} };
+	row.tooltip = "Opens the options panel.";
+	return [{ kind: "spacer", c: "footer" }, { kind: "separator", c: "footer" }, row];
+}
 function onOff(v) { return v ? ["On", "ON"] : ["Off", "MUTED"]; }
 // Menu-Kit's AddFeature: title and state, description, rows, the blue action, rows after it.
 function feature(o) {
@@ -173,11 +180,12 @@ function feature(o) {
 	rows.push({ kind: hasFly ? "submenu" : "status", submenu: hasFly ? o.key : null, left: o.title, right: o.state[0], rightColor: o.state[1], c: "feature" });
 	if (o.desc) rows.push({ kind: "description", left: o.desc, c: "feature" });
 	(o.rows || []).forEach(function (r) { rows.push(r); });
-	if (o.toggle) rows.push({ kind: "action", left: o.actionLabel || "Toggle", leftColor: "INFO", c: "action", tooltip: o.tip, onClick: o.toggle });
+	if (o.toggle) rows.push({ kind: "action", left: o.actionLabel || "Toggle", right: o.bind, c: "action", tooltip: o.tip, onClick: o.toggle });
 	(o.after || []).forEach(function (r) { rows.push(r); });
 	return rows;
 }
-function action(label, fn, tip) { return { kind: "action", left: label, leftColor: "INFO", c: "action", onClick: fn || function () {}, tooltip: tip }; }
+// An action row; bind is the button click that does the same job, shown on the right.
+function action(label, fn, tip, bind) { return { kind: "action", left: label, right: bind, c: "action", onClick: fn || function () {}, tooltip: tip }; }
 function mItem(hue, name, quality, count, right, rc) { return { kind: "item", icon: icon(hue), left: name, quality: quality, count: count, right: right, rightColor: rc, c: "item" }; }
 
 // ---------------------------------------------------------------------------
@@ -199,14 +207,15 @@ var ADDONS = [];
 	function flip(k, d) { s.flags[k] = !flag(k, d); }
 	ADDONS.push({
 		id: "te", name: "Tracking Eye", tag: "Menu (draft)", isMenu: true, state: s,
-		blurb: "Already converted: this is the live draft on main, drawn row for row from <code>Features/Minimap-Menu.lua</code>. It stays as it is; the notes below are what the other five taught us about the kit underneath it.",
+		blurb: "Already converted: Today is the live draft on main, drawn row for row from <code>Features/Minimap-Menu.lua</code>. The conversion dropped the old tooltip's four button shortcuts; Proposed brings them back on the rows they belong to.",
 		scenarios: [
 			{ key: "cls", label: "Character", options: [["HUNTER", "Hunter"], ["DRUID", "Druid"], ["WARRIOR", "Warrior"]] },
 			{ key: "persistent", label: "Persistent", options: [[true, "On"], [false, "Off"]] },
 			{ key: "farm", label: "Farm Mode", options: [["active", "Active"], ["paused", "Paused"], ["off", "Off"]] },
 		],
-		menu: function (render) {
+		menu: function (render, proposed) {
 			var c = CLASSES[s.cls];
+			function b(text) { return proposed ? text : undefined; }
 			if (c.pick.indexOf(s.picked) < 0) s.picked = c.pick[0];
 			var flyouts = {
 				persistent: function () {
@@ -240,19 +249,21 @@ var ADDONS = [];
 			e = e.concat(feature({ key: "persistent", title: "Persistent Tracking", state: onOff(s.persistent), desc: "Choose your Persistent Tracking Ability.", rows: picks, flyout: flyouts.persistent,
 				tip: { title: "Enable Persistent Tracking", body: "Waits until you're out of combat, so it never costs you a global cooldown mid-fight." },
 				toggle: function () { s.persistent = !s.persistent; render(); },
-				after: s.picked ? [action("Clear Tracking", function () { s.picked = null; render(); })] : [] }));
+				after: s.picked ? [action("Clear Tracking", function () { s.picked = null; render(); }, null, b("Right-Click"))] : [] }));
 			var farmState = s.farm === "off" ? ["Off", "MUTED"] : s.farm === "paused" ? ["Paused", "MUTED"] : ["Active", "ON"];
-			e = e.concat(feature({ key: "farm", title: "Farm Mode", state: farmState, desc: "Cycles your tracking abilities as you travel.", flyout: flyouts.farm,
+			e = e.concat(feature({ key: "farm", title: "Farm Mode", state: farmState, desc: "Cycles your tracking abilities as you travel.", flyout: flyouts.farm, bind: b("Shift + Left-Click"),
 				tip: { title: "Enable Farm Mode", body: "Pauses on its own in combat, towns, instances, and on flights. Hover the Tracking Eye button to see why." },
 				toggle: function () { s.farm = s.farm === "off" ? "active" : "off"; render(); } }));
 			if (c.hunt) {
-				e = e.concat(feature({ key: "target", title: "Automatic Target Tracking", state: onOff(s.target), desc: "Tracks whatever kind of creature you target.",
+				e = e.concat(feature({ key: "target", title: "Automatic Target Tracking", state: onOff(s.target), desc: "Tracks whatever kind of creature you target.", bind: b("Shift + Right-Click"),
 					tip: { title: "Enable Automatic Target Tracking", body: "Never switches in combat, so adds can't hijack your tracking. Looting a corpse won't switch it either." },
 					toggle: function () { s.target = !s.target; render(); } }));
 			}
-			return { entries: e.concat(mFooter("Tracking Eye")), flyouts: flyouts };
+			return { entries: e.concat(mFooter("Tracking Eye", !proposed)), flyouts: flyouts };
 		},
 		changes: [
+			["behavior", "<b>The old clicks come back.</b> The tooltip before the menu had Right-Click for Clear Tracking, Shift + Left-Click for Farm Mode, Shift + Right-Click for Target Tracking and Shift + Middle-Click for Options. Each one returns, with its row naming it on the right. The strings (<code>RIGHT_CLICK</code>, <code>SHIFT_LEFT</code>, <code>SHIFT_RIGHT</code>, <code>SHIFT_MIDDLE</code>) come back from git with every locale's translation."],
+			["behavior", "<b>Left-Click opens and holds the menu</b>, as it opened the old Tracking Menu. It's the only click with no row, because the menu is its job. Persistent Tracking's Toggle had no click before and still has none."],
 			["kit", "<b>Move the menu's machinery into the kit.</b> About 250 of Minimap-Menu.lua's 725 lines open, place, time out, and flyout the menu, and know nothing about tracking. Each add-on copying them is five copies to keep in step. Proposed: <code>Kit.CreateMenu{ build, flyouts }</code> owns all of it, and an add-on's Minimap-Menu.lua holds only its rows."],
 			["kit", "<b>Move <code>AddFeature</code> into the kit</b> with the action's label as an argument. Good to Go's Restock List and GogoLoot's loot windows need an <i>Open</i> row where Tracking Eye's blocks have Toggle."],
 			["layout", "<b>A hunter's pick list is ten rows</b> (switch Character to Hunter). It's the Pick-List Exception working as written, but it's also the longest list in any menu. Fine as is, or fold past eight into the flyout? See Decisions."],
@@ -305,27 +316,27 @@ var ADDONS = [];
 			if (s.junk) {
 				e.push({ kind: "status", left: "Lowest-Value Item", c: "item" });
 				e.push(mItem(25, "Chipped Claw", "poor", 4, money(12)));
-				e.push(action("Erase", function () { s.junk = false; render(); }, { title: "Erase", body: "The same as a Left-Click on the button." }));
-				e.push(action("Protect", function () { s.protect = true; render(); }, { title: "Protect", body: "Adds it to this character's Protect List, so it's never erased." }));
+				e.push(action("Erase", function () { s.junk = false; render(); }, null, "Left-Click"));
+				e.push(action("Protect", function () { s.protect = true; render(); }, { title: "Protect", body: "Adds it to this character's Protect List, so it's never erased." }, "Right-Click"));
 			} else {
 				e.push({ kind: "description", left: "Congratulations, your bags are full of good stuff!", leftColor: "ON", c: "message" });
 			}
-			e = e.concat(feature({ title: "Auto-Vend", state: onOff(s.vend), desc: "Sells your junk the moment you open a merchant, cheapest first.", toggle: function () { s.vend = !s.vend; render(); } }));
+			e = e.concat(feature({ title: "Auto-Vend", state: onOff(s.vend), desc: "Sells your junk the moment you open a merchant, cheapest first.", bind: "Shift + Right-Click", toggle: function () { s.vend = !s.vend; render(); } }));
 			e.push({ kind: "status", left: "Clutter Report", c: "report" });
 			if (s.junk) e.push({ kind: "value", left: "9 Bag Slots " + paint("(27 Items)", "MUTED"), right: money(264), c: "report" });
 			else e.push({ kind: "description", left: "You'll have to manually erase something if you want to free up more space.", c: "message" });
 			if (s.protect) {
 				e.push({ kind: "status", left: "Protect List", c: "report" });
 				PROTECTED.forEach(function (p) { e.push(mItem(p[2], p[0], p[1], 1, null)); });
-				e.push(action("Clear Protect List", function () { s.protect = false; render(); }));
+				e.push(action("Clear Protect List", function () { s.protect = false; render(); }, null, "Middle-Click"));
 			}
 			return { entries: e.concat(mFooter("Magic Eraser")) };
 		},
 		changes: [
-			["layout", "Lowest-Value Item becomes a heading, an <b>item row</b> (proposed kind) with the value on the right, and <b>Erase</b> and <b>Protect</b> action rows. Left-Click on the button still erases."],
-			["layout", "Auto-Vend is a standard feature block: Shift + Right-Click becomes its Toggle row."],
+			["layout", "Lowest-Value Item becomes a heading, an <b>item row</b> (proposed kind) with the value on the right, and <b>Erase … Left-Click</b> and <b>Protect … Right-Click</b> action rows. Every click on the button does what it does today."],
+			["layout", "Auto-Vend is a standard feature block, its Toggle row naming Shift + Right-Click."],
 			["layout", "Clutter Report's slots, items and value become a <b>value row</b> (proposed kind), nothing to click."],
-			["layout", "Protect List lists item rows, and Middle-Click becomes a <b>Clear Protect List</b> action row, still one click with no confirmation."],
+			["layout", "Protect List lists item rows, and a <b>Clear Protect List … Middle-Click</b> action row, still one click with no confirmation."],
 			["copy", "Disabled in red becomes Off in gray; the bags-clean congratulation keeps its green."],
 		],
 	});
@@ -415,9 +426,9 @@ var ADDONS = [];
 			var food = FOOD[s.cls];
 			e.push({ kind: "status", left: "Current Food", c: "item" });
 			e.push(mItem(food[1], food[0], "common", 1, null));
-			e.push(action("Ignore", function () { s.ignore = true; render(); }, { title: "Ignore", body: "Adds it to this character's Ignore List, so the macros skip it." }));
-			e = e.concat(feature({ title: "Buff Food & Scrolls", state: menuState(s.buff), desc: "Uses Well Fed food and applies missing scroll buffs before you eat.", toggle: function () { s.buff = s.buff === "off" ? "on" : "off"; render(); } }));
-			e = e.concat(feature({ title: "Buff Duty", state: onOff(s.duty), desc: "Shows who's missing your buffs. Click an icon to cast.", toggle: function () { s.duty = !s.duty; render(); } }));
+			e.push(action("Ignore", function () { s.ignore = true; render(); }, { title: "Ignore", body: "Adds it to this character's Ignore List, so the macros skip it." }, "Right-Click"));
+			e = e.concat(feature({ title: "Buff Food & Scrolls", state: menuState(s.buff), desc: "Uses Well Fed food and applies missing scroll buffs before you eat.", bind: "Left-Click", toggle: function () { s.buff = s.buff === "off" ? "on" : "off"; render(); } }));
+			e = e.concat(feature({ title: "Buff Duty", state: onOff(s.duty), desc: "Shows who's missing your buffs. Click an icon to cast.", bind: "Shift + Left-Click", toggle: function () { s.duty = !s.duty; render(); } }));
 			// Restock List: the Restocker Report moves into its block, as Persistent Tracking's pick list sits in its.
 			var on = s.restock !== "off";
 			var list = RESTOCK[s.cls];
@@ -437,7 +448,7 @@ var ADDONS = [];
 			}
 			e = e.concat(feature({ title: "Restock List", state: state, desc: "Buys and banks the items on your list.", rows: rows,
 				toggle: function () { s.restock = on ? "off" : "orders"; render(); },
-				after: on ? [action("Open", null, { title: "Restock List", body: "The same window /restock opens." })] : [] }));
+				after: on ? [action("Open", null, { title: "Restock List", body: "The same window /restock opens." }, "Shift + Right-Click")] : [] }));
 			var notes = classNotes(s.cls);
 			var flyouts = {};
 			if (notes) {
@@ -456,14 +467,14 @@ var ADDONS = [];
 			if (s.ignore) {
 				e.push({ kind: "status", left: "Ignore List", c: "report" });
 				IGNORED.forEach(function (p) { e.push(mItem(p[2], p[0], p[1], 1, null)); });
-				e.push(action("Clear Ignore List", function () { s.ignore = false; render(); }));
+				e.push(action("Clear Ignore List", function () { s.ignore = false; render(); }, null, "Middle-Click"));
 			}
 			return { entries: e.concat(mFooter("GtG")), flyouts: flyouts };
 		},
 		changes: [
-			["layout", "Current Food is an item row with an <b>Ignore</b> action row under it. The item sits left like every other item row, not right-aligned on its own line."],
-			["layout", "<b>Restocker Report moves into the Restock List block</b>, between its description and Toggle, as Tracking Eye's pick list sits in Persistent Tracking. Orders show on the title's right; the list caps at eight with a gray <i>3 more</i>. Open follows Toggle while the Restocker is on."],
-			["behavior", "Restock List gets a Toggle. Today, with the Restocker off, the tooltip's click says Disabled and the only way back is the options panel."],
+			["layout", "Current Food is an item row with an <b>Ignore … Right-Click</b> action row under it. The item sits left like every other item row, not right-aligned on its own line."],
+			["layout", "<b>Restocker Report moves into the Restock List block</b>, between its description and Toggle, as Tracking Eye's pick list sits in Persistent Tracking. Orders show on the title's right; the list caps at eight with a gray <i>3 more</i>. Open follows Toggle while the Restocker is on, and keeps Shift + Right-Click."],
+			["behavior", "Restock List gets a Toggle, with no button click of its own (all six are taken). Today, with the Restocker off, the tooltip's click says Disabled and the only way back is the options panel."],
 			["layout", "<b>Macro notes move to a flyout</b> behind a class-colored <i>Mage Macros</i> title. They explain clicks on a macro, not on this menu, so they're reference, not actions. The class's live items (poisons, pet food) stay in the menu as item rows with their slot on the right. Switch Class to see each."],
 			["copy", "<i>Party, Raid</i> (Buff Food waiting on its When to Use) keeps its words and turns gray, matching Tracking Eye's Paused. <i>Mage Macros</i> is the one new string."],
 		],
@@ -510,17 +521,17 @@ var ADDONS = [];
 				e.push(mItem(28, "Strong Junkbox", "common", 1, null));
 				e.push({ kind: "note", left: s.rogue ? "Pick these with Pick Lock to unlock them." : "A Rogue can pick these for you.", c: "report" });
 			}
-			e = e.concat(feature({ title: "Automated Rolls", state: onOff(s.rolls), desc: "Rolls for you on eligible items up to the quality you pick.",
+			e = e.concat(feature({ title: "Automated Rolls", bind: "Left-Click", state: onOff(s.rolls), desc: "Rolls for you on eligible items up to the quality you pick.",
 				rows: [{ kind: "value", left: "Party", right: "Greed, Uncommon & Lower", c: "feature" }, { kind: "value", left: "Raid", right: "Manual", c: "feature" }],
 				toggle: function () { s.rolls = !s.rolls; render(); } }));
 			var op = s.opening === "off" ? ["Off", "MUTED"] : s.opening === "paused" ? ["Paused", "MUTED"] : ["On", "ON"];
-			e = e.concat(feature({ title: "Automated Opening", state: op, desc: "Opens clams, crates, coin purses, and unlocked lockboxes in your bags.", toggle: function () { s.opening = s.opening === "off" ? "on" : "off"; render(); } }));
-			e = e.concat(feature({ title: "Loot Announcements", state: onOff(s.ann), desc: "Posts trade summaries and master loot hand-outs to chat.", toggle: function () { s.ann = !s.ann; render(); } }));
-			e = e.concat(feature({ title: "Automated Master Looting", state: onOff(s.ml), desc: "Hands out loot to the players you picked for each quality.", toggle: function () { s.ml = !s.ml; render(); } }));
+			e = e.concat(feature({ title: "Automated Opening", bind: "Right-Click", state: op, desc: "Opens clams, crates, coin purses, and unlocked lockboxes in your bags.", toggle: function () { s.opening = s.opening === "off" ? "on" : "off"; render(); } }));
+			e = e.concat(feature({ title: "Loot Announcements", bind: "Shift + Left-Click", state: onOff(s.ann), desc: "Posts trade summaries and master loot hand-outs to chat.", toggle: function () { s.ann = !s.ann; render(); } }));
+			e = e.concat(feature({ title: "Automated Master Looting", bind: "Shift + Right-Click", state: onOff(s.ml), desc: "Hands out loot to the players you picked for each quality.", toggle: function () { s.ml = !s.ml; render(); } }));
 			return { entries: e.concat(mFooter("GogoLoot")) };
 		},
 		changes: [
-			["layout", "Four click hints (two with Shift) become four Toggle rows."],
+			["layout", "Four click hints (two with Shift) become four Toggle rows, each naming its click on the right. The clicks all still work on the button."],
 			["layout", "The roll read-back becomes two <b>value rows</b>: Party and Raid on the left, the setting on the right, at the option indent. No more two-space padding, and the <code>%s: %s, %s</code> strings give way to the two halves."],
 			["layout", "Locked Items keeps its lead position, as item rows with the counts the kit draws, and its hint becomes a gray note."],
 			["idea", "Automated Rolls could open a flyout with Party and Raid as choice lists (Greed, Need, Pass, Manual). Four values each is within a handful, but the thresholds would double it. Left out of Proposed until you say."],
@@ -558,13 +569,13 @@ var ADDONS = [];
 				toggle: function () { s.all = !s.all; render(); } }));
 			if (s.all) {
 				BLOCKS.forEach(function (b) {
-					e = e.concat(feature({ title: b[1], state: onOff(s[b[0]]), desc: b[2], toggle: function () { s[b[0]] = !s[b[0]]; render(); } }));
+					e = e.concat(feature({ title: b[1], state: onOff(s[b[0]]), desc: b[2], bind: b[3], toggle: function () { s[b[0]] = !s[b[0]]; render(); } }));
 				});
 			}
 			return { entries: e.concat(mFooter("Control Freak")) };
 		},
 		changes: [
-			["behavior", "<b>All Alerts gets a block of its own</b>, first. It had no click to spare on the button, so the tooltip couldn't offer one; a menu row costs nothing. It has no description line: its title says what it does, and its Toggle tooltip is the switch's own (Enable Control Freak)."],
+			["behavior", "<b>All Alerts gets a block of its own</b>, first. It had no click to spare on the button, so the tooltip couldn't offer one; a menu row costs nothing. It has no description line: its title says what it does, and its Toggle tooltip is the switch's own (Enable Control Freak). Shift + Right-Click is the one click Control Freak leaves free; giving it to All Alerts is your call, so it's drawn without one."],
 			["layout", "While All Alerts is off, the three blocks hide, as the options panel hides what a switched-off feature controls, and the red line becomes a gray note under the toggle."],
 			["idea", "Monitoring and Naughty List each switch a handful of alerts on the options panel. A flyout per block is a natural follow-up, if players change those mid-session."],
 		],
@@ -594,7 +605,7 @@ var ADDONS = [];
 		},
 		menu: function (render) {
 			var e = mHeader("Water Dispenser", "2.0.3");
-			e = e.concat(feature({ title: "Dispense", state: onOff(s.on), desc: "Automatically fills the trade window when a trade opens, based on your settings.", toggle: function () { s.on = !s.on; render(); } }));
+			e = e.concat(feature({ title: "Dispense", state: onOff(s.on), desc: "Automatically fills the trade window when a trade opens, based on your settings.", bind: "Left-Click", toggle: function () { s.on = !s.on; render(); } }));
 			if (s.on && s.carrying) {
 				e.push({ kind: "status", left: "Dispense Report", c: "report" });
 				e.push(mItem(200, "Conjured Crystal Water", "common", 1, "60"));
@@ -603,7 +614,7 @@ var ADDONS = [];
 			return { entries: e.concat(mFooter("Water Dispenser")) };
 		},
 		changes: [
-			["layout", "Dispense is a standard feature block; Left-Click becomes its Toggle row."],
+			["layout", "Dispense is a standard feature block, its Toggle row naming Left-Click, which still flips it on the button."],
 			["layout", "Dispense Report keeps its heading and lists item rows with the count on the right, shown only while Dispense is on and something's carried, as today."],
 		],
 	});
@@ -622,10 +633,10 @@ ADDONS.forEach(function (a) {
 		"<p>" + a.blurb + "</p>" +
 		'<div class="scen"></div>' +
 		'<div class="views">' +
-		(a.isMenu ? "" : '<div class="view"><div class="label">Today: tooltip</div><div class="gg-stage today"></div></div>') +
-		'<div class="view"><div class="label">' + (a.isMenu ? "Today: menu" : "Proposed: menu") + '</div><div class="gg-stage proposed"></div></div>' +
+		'<div class="view"><div class="label">Today: ' + (a.isMenu ? "menu" : "tooltip") + '</div><div class="gg-stage today"></div></div>' +
+		'<div class="view"><div class="label">Proposed: menu</div><div class="gg-stage proposed"></div></div>' +
 		"</div>" +
-		"<h3>" + (a.isMenu ? "What the Other Five Taught Us" : "What Changes") + "</h3>" +
+		"<h3>What Changes</h3>" +
 		'<ol class="changes">' + a.changes.map(function (c) { return '<li><span class="kind">' + c[0] + "</span> " + c[1] + "</li>"; }).join("") + "</ol>";
 	host.appendChild(band);
 
@@ -651,14 +662,17 @@ ADDONS.forEach(function (a) {
 		(a.scenarios || []).forEach(function (sc) {
 			sc.el.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b._value === a.state[sc.key])); });
 		});
+		var today = band.querySelector(".today");
+		today.innerHTML = "";
 		if (a.tooltip) {
-			var today = band.querySelector(".today");
-			today.innerHTML = "";
 			GG.tooltip(today, a.tooltip());
+		} else {
+			var t = a.menu(render, false);
+			GG.menu(today, t.entries, { flyouts: t.flyouts });
 		}
 		var prop = band.querySelector(".proposed");
 		prop.innerHTML = "";
-		var m = a.menu(render);
+		var m = a.menu(render, true);
 		GG.menu(prop, m.entries, { flyouts: m.flyouts, openFlyout: openKey, onFlyout: function (k) { openKey = k; } });
 	}
 	a.render = render;
@@ -670,7 +684,7 @@ ADDONS.forEach(function (a) {
 var ROWS = [
 	["Header (Full Name, version)", "all", "Kit: header"],
 	["Feature block: title, state, description", { te: 3, me: 1, gtg: 3, gl: 4, cf: 3, wd: 1 }, "Kit: status / submenu + description"],
-	["Click hint on the button", { me: 5, gtg: 7, gl: 5, cf: 4, wd: 2 }, "Becomes an action row"],
+	["Button shortcut", { te: "0 (had 4)", me: 5, gtg: 6, gl: 5, cf: 4, wd: 2 }, "Stays on the button, named on its action row"],
 	["Item highlight (the item it'll act on)", { me: 1, gtg: "1–3" }, "Proposed: item"],
 	["Live list of items", { me: 1, gtg: 2, gl: 1, wd: 1 }, "Proposed: item"],
 	["Read-out (a total, a setting)", { me: 1, gl: 2 }, "Proposed: value"],
@@ -679,7 +693,7 @@ var ROWS = [
 	["Flyout of settings", { te: 2 }, "Kit: submenu + flyout"],
 	["Class-gated rows", { te: "yes", gtg: "yes", gl: "hint" }, "Gate on the character"],
 	["Reference notes (macro clicks)", { gtg: "1–2" }, "Flyout: section + value"],
-	["Options footer", "all", "Kit: hint"],
+	["Options footer", "all", "Action row: Options … Shift + Middle-Click"],
 ];
 var IDS = ["te", "me", "gtg", "gl", "cf", "wd"];
 var NAMES = { te: "Tracking Eye", me: "Magic Eraser", gtg: "Good to Go", gl: "GogoLoot", cf: "Control Freak", wd: "Water Dispenser" };
@@ -702,13 +716,13 @@ var CATALOG = [
 	["status", "A feature title with no flyout, or a heading with nothing to click. State on the right: On green, Off or Paused gray.", [{ kind: "status", left: "Buff Duty", right: "On", rightColor: "ON" }, { kind: "status", left: "Farm Mode", right: "Paused", rightColor: "MUTED" }]],
 	["submenu", "A title whose flyout has something to show. Hover or click opens it. The arrow goes when the flyout is empty.", [{ kind: "submenu", left: "Farm Mode", right: "Active", rightColor: "ON", onClick: function () {} }]],
 	["description", "What a feature does, one short white sentence. Wraps at 320.", [{ kind: "description", left: "Sells your junk the moment you open a merchant, cheapest first." }]],
-	["action", "A one-shot click: Toggle, Open, Erase, Clear. Always blue.", [{ kind: "action", left: "Toggle", leftColor: "INFO", onClick: function () {} }, { kind: "action", left: "Clear Protect List", leftColor: "INFO", onClick: function () {} }]],
+	["action", "A one-shot click: Toggle, Open, Erase, Clear, always blue. <span class=\"new\">Proposed:</span> when a click on the button does the same job, it's named on the right in gray, like a menu's shortcut column. A controller clicks the row; a mouse can skip the menu.", [{ kind: "action", left: "Toggle", right: "Shift + Right-Click", onClick: function () {} }, { kind: "action", left: "Clear Protect List", right: "Middle-Click", onClick: function () {} }, { kind: "action", left: "Toggle", onClick: function () {} }]],
 	["toggle", "A setting's switch. Its name grays while off, so what's off sits back.", [{ kind: "toggle", left: "Mounted", on: true, onClick: function () {} }, { kind: "toggle", left: "Zoom Mini-map Out", on: false, onClick: function () {} }]],
 	["choice", "One of a set: the pick white with a check, the rest gray. A pick closes the menu.", [{ kind: "choice", left: icon(30) + "Find Minerals", selected: true, onClick: function () {} }, { kind: "choice", left: icon(48) + "Find Treasure", selected: false, onClick: function () {} }]],
 	["section", "A group's gold heading inside a flyout, with an optional state.", [{ kind: "section", left: "Farm Mode Status", right: "Active", rightColor: "ON" }]],
 	["note", "A short gray reason or helper line. Wraps at 260.", [{ kind: "note", left: "Standing still." }]],
 	["separator · spacer", "A thin line sets a few extras apart; a spacer is a line's room. The kit adds a spacer above every heading.", [{ kind: "toggle", left: "Not Mounted", on: true }, { kind: "separator" }, { kind: "toggle", left: "Zoom Mini-map Out", on: false }]],
-	["hint", "The Options row, last after a spacer and separator. The only hint left.", [{ kind: "hint", left: "Water Dispenser Options", right: "Open", onClick: function () {} }]],
+	["options row", "Last, after a spacer and separator. <span class=\"new\">Proposed:</span> an action row like any other, naming Shift + Middle-Click, which every add-on already uses. Menu-Kit's hint kind retires.", [{ kind: "action", left: "Water Dispenser Options", right: "Shift + Middle-Click", onClick: function () {} }]],
 	["item", '<span class="new">Proposed.</span> An item: its icon at line height, the name in its quality color without brackets, a count, and a value, count, ratio or slot on the right. At the option indent. Hovering shows the item.', [mItem(25, "Chipped Claw", "poor", 4, money(12)), mItem(270, "Arcane Powder", "common", 1, "4/20", "BODY"), mItem(100, "Instant Poison VI", "common", 1, "Main Hand", "MUTED")]],
 	["value", '<span class="new">Proposed.</span> A read-out: a white label, a value on the right, nothing to click. At the option indent. For totals, read-backs and macro notes.', [{ kind: "value", left: "Party", right: "Greed, Uncommon & Lower" }, { kind: "value", left: "9 Bag Slots " + paint("(27 Items)", "MUTED"), right: money(264) }]],
 ];
@@ -724,7 +738,11 @@ CATALOG.forEach(function (c) {
 // ---------------------------------------------------------------------------
 // Decisions
 // ---------------------------------------------------------------------------
+var DECIDED = [
+	["Both ways: every action is a row, and the button keeps its clicks.", "A controller needs every action to be a row it can click. A mouse player shouldn't lose Right-Click, Middle-Click and the Shift clicks they already know. So the menu does both: an action row names, on its right in gray, the button click that does the same job. <i>Toggle … Shift + Right-Click.</i> The old tooltip's two strings, sides swapped, so nothing new to translate.", "Hover opens the menu, as it opened the tooltip. Every click the tooltip named keeps its job, and the open menu redraws. Left-Click opens and holds the menu only on a button with no Left-Click job. One table in each add-on names every action's click and its function, and both the row and the button read from it, so a row can never name a click that does something else."],
+];
 var DECISIONS = [
+	["The shortcut's color", "The old tooltips drew clicks in INFO blue. On the menu's action row, the left side is already blue and says what the row does.", "MUTED gray, like a menu's shortcut column: the row's job reads first, the click second, and a controller player can ignore it."],
 	["State words: On / Off, or Enabled / Disabled?", "Tracking Eye's menu says On / Off. The five tooltips say Enabled / Disabled, and the Style Guide's tooltip-to-menu map says to keep each add-on's words, so converting as written would leave the family split.", "On / Off everywhere, matching the toggle rows' own On / Off. Shorter in every locale, and Tracking Eye already carries the translations."],
 	["Third states: what color?", "GogoLoot's Paused and Good to Go's Party, Raid are SEPARATOR gray (AAAAAA); Tracking Eye's Paused is MUTED (808080).", "MUTED, like Off: a feature that isn't acting sits back, whatever the reason. The reason goes in a note or flyout."],
 	["Where the menu's machinery lives", "Tracking Eye's Minimap-Menu.lua holds about 250 lines of opening, placing, timing out and flyouts that every add-on would copy.", "Move it into Menu-Kit (<code>Kit.CreateMenu</code>, <code>Kit.FeatureBlock</code>), so each add-on's Minimap-Menu.lua is only its rows. Do it in Tracking Eye first, before a second add-on copies it."],
@@ -734,7 +752,9 @@ var DECISIONS = [
 	["Hunters' ten-row pick list", "Tracking Eye's pick list is the Pick-List Exception doing its job, but on a dwarf hunter with Mining it's the longest list in any menu.", "Leave it. A pick is the feature's main job, and a hunter picks often. Revisit if testers complain."],
 	["Macro notes in Good to Go", "The class section explains clicks on a macro, not on the button. In a menu, rows look clickable.", "A class-colored <i>[Class] Macros</i> flyout of value rows. Live items (poisons, pet food) stay in the menu."],
 ];
-document.getElementById("decisionList").innerHTML = DECISIONS.map(function (d, i) {
+document.getElementById("decisionList").innerHTML = DECIDED.map(function (d) {
+	return '<div class="decision"><b>Decided: ' + d[0] + "</b><p>" + d[1] + '</p><p class="rec">' + d[2] + "</p></div>";
+}).join("") + DECISIONS.map(function (d, i) {
 	return '<div class="decision"><b>' + (i + 1) + ". " + d[0] + "</b><p>" + d[1] + '</p><p class="rec">Recommend: ' + d[2] + "</p></div>";
 }).join("");
 

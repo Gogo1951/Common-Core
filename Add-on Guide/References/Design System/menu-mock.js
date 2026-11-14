@@ -176,6 +176,10 @@
 		} else if (kind === "choice") {
 			right = entry.selected ? '<span class="gg-check"></span>' : null;
 			lc = lc || (entry.selected ? "TEXT" : "MUTED");
+		} else if (kind === "action") {
+			// Proposed: the button click that does the same job sits on the right, gray, like a menu's shortcut column.
+			lc = lc || "INFO";
+			rc = rc || "MUTED";
 		} else if (kind === "hint") {
 			lc = lc || "INFO";
 			rc = rc || "INFO";
