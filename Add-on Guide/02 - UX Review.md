@@ -34,7 +34,20 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 ## Menus, Not Tooltips
 
-A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint and modifier click becomes a row the player clicks, so a controller reaches everything. Build it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
+A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Build it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
+
+**When the add-on has a spec** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, that spec is the Proposed menu, and its open GitHub issue is the change: draw it as written, give it one *layout* card that names the issue, and don't redesign it. Report anything the code has gained since the spec was written as a finding in Guide Feedback, so the spec is updated.
+
+**Every UX Review checks the menu**, converted or not, against these, and each miss is a change:
+
+- Every click the button had still does its job, and the row that does the same job names it on the right in gray. No click hint survives outside an action row.
+- On / Off for state, C_MUTED for anything not acting, never red.
+- Item highlights, live reports, long lists, message lines, a master switch and reference notes take their shapes from Style Guide → MINIMAP MENU → Blocks Beyond Features.
+- Only this character's rows show; the options panel still shows every setting.
+- A controller's cursor reaches every row and flyout.
+- The menu and the root panel's Features section are one list: same features, same order, same names, the rest under More Features (Features Mirror).
+- A change made in the menu, on the button, in the options panel, by a slash command or by a profile switch shows in all of them at once (One Refresh).
+- The button follows Style Guide → MINIMAP BUTTON → Building the Button, and the menu opens from its corner per MINIMAP MENU → Placement.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 
@@ -44,6 +57,7 @@ Shared by this pass and `Optional - Create UX Wireframes.md`. Load the artifact-
 
 - **Title** as the calling pass names it, written for the testers, who are players: plain language, with no file paths, symbols or code. Material only the maintainer needs stays in chat.
 - **Views.** **Current** is what the code does today, and nothing else. **Proposed**, when the pass has changes, is Current plus every change, each numbered on the mock, and a change carried over as Try first wears an *idea* badge. Add a view for each state worth testing on its own, such as an empty list or a first login.
+- **Mini-map menus and tooltips** are drawn with `References/Design System/menu-mock.css` and `menu-mock.js`, published as the Artifact's supporting files, with the add-on's real rows written as the Lua writes them, and a mini-map button beside each menu that runs the same clicks (as `Mini-map Menus.html` does).
 - **Faithful and clickable.** Draw each window in the game's look: dark panels, gold headings, and quality and class colors, at the sizes the code gives, keeping that dark look in both page themes. Use the locale's strings word for word. Every control does what the code does: toggles, menus, fields, sorting, popups and chat lines in a mock chat box. Hovering shows each tooltip in the add-on's own words. Icons are drawn stand-ins; never copy or hotlink the game's art.
 - **On the Spacing Scale.** Proposed draws every size and gap on the Style Guide's Spacing Scale, and the page's own layout uses it too: every padding, margin, gap and radius is 2, 4, 8, 16, 32, 64 or 128 px.
 - **Realistic mock data.** Fill every window the way a real player's would look: real item, spell and zone names from the add-on's own data files, in believable amounts for a believable character. Invent the counts and the character names.

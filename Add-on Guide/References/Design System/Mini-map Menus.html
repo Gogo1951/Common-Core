@@ -1,0 +1,1088 @@
+<title>Mini-map Menus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="menu-mock.css">
+<style>
+/* One dark look in either theme: the board sits beside the game's own panels. Layout: a long reference page, one band per add-on, Today beside Proposed. */
+:root {
+	--bg: #14130f;
+	--panel: #1d1b16;
+	--line: #34302a;
+	--fg: #ece6da;
+	--dim: #a59d8f;
+	--gold: #e8bf3a;
+	--display: "Marcellus", Georgia, serif;
+	--body: "Inter", system-ui, sans-serif;
+	--mono: "JetBrains Mono", ui-monospace, monospace;
+	color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+.page { max-width: 1280px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: 44px; line-height: 1.1; color: var(--gold); }
+h2 { font-size: 28px; line-height: 1.2; }
+h3 { font-size: 18px; color: var(--gold); }
+p { margin: 0; max-width: 72ch; }
+a { color: #7fc8ff; }
+code { font: 13px var(--mono); color: #f0d98a; }
+.eyebrow { font: 500 12px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.lede { color: var(--dim); font-size: 17px; }
+header.top { display: grid; gap: 16px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.bar nav { display: flex; flex-wrap: wrap; gap: 4px; }
+.bar nav a { padding: 4px 8px; border-radius: 4px; color: var(--fg); text-decoration: none; font-size: 13px; }
+.bar nav a:hover { background: var(--panel); }
+.switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--dim); cursor: pointer; margin-left: auto; }
+.switch input { accent-color: var(--gold); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--dim); }
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend i { width: 12px; height: 12px; border-radius: 2px; background: var(--c); }
+
+section.band { display: grid; gap: 16px; padding-block: 32px; border-bottom: 1px solid var(--line); scroll-margin-top: 64px; }
+.band-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+.tag { font-size: 12px; padding: 2px 8px; border-radius: 16px; border: 1px solid var(--line); color: var(--dim); }
+.tag.menu { border-color: #4a6a3a; color: #b6dc8f; }
+
+.scen { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.seg { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.seg > span { font-size: 12px; color: var(--dim); margin-right: 4px; }
+.seg button { font: 13px var(--body); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+.seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.views { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 16px; align-items: start; }
+.view { display: grid; gap: 8px; min-width: 0; }
+.view .label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+
+ol.changes, ul.plain { margin: 0; padding-left: 24px; display: grid; gap: 8px; max-width: 80ch; }
+ol.changes li::marker { color: var(--gold); font-family: var(--display); }
+.kind { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; margin-right: 4px; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-weight: 500; color: var(--dim); white-space: nowrap; }
+td.dot { text-align: center; color: var(--gold); }
+td.dot.no { color: #4a463e; }
+tbody tr:hover { background: var(--panel); }
+
+.catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 16px; }
+.card { display: grid; gap: 8px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; min-width: 0; }
+.card .gg-stage { padding: 16px; }
+.card p { font-size: 14px; color: var(--dim); }
+.new { color: #b6dc8f; font-size: 12px; }
+
+.decisions { display: grid; gap: 16px; }
+.decision { display: grid; gap: 4px; padding: 16px; border-left: 2px solid var(--gold); background: var(--panel); }
+.decision b { font-weight: 600; }
+.rec { color: #b6dc8f; }
+.opt-panel { display: inline-block; min-width: min(100%, 560px); max-width: 100%; box-sizing: border-box; padding: 16px; background: rgba(10, 10, 12, .92); border: 1px solid #4a4a52; border-radius: 4px; font: 12px var(--gg-font); color: #fff; }
+.opt-head { color: #ffd100; font-size: 13px; padding-bottom: 4px; margin: 0 0 8px; border-bottom: 1px solid rgba(255, 209, 0, .35); }
+.opt-head + .opt-grid, .opt-grid + .opt-head { margin-top: 0; }
+.opt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin-bottom: 16px; }
+.opt-grid:last-child { margin-bottom: 0; }
+.opt-tools { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; padding-left: 32px; }
+.opt-cb { display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 0; }
+.opt-cb input { appearance: none; flex: none; width: 16px; height: 16px; margin: 0; border: 1px solid #a8892e; border-radius: 2px; background: #1a1a1a; display: grid; place-items: center; cursor: pointer; }
+.opt-cb input:checked::after { content: ""; width: 8px; height: 4px; margin-top: -2px; border-left: 2px solid #ffd100; border-bottom: 2px solid #ffd100; transform: rotate(-48deg); }
+.opt-cb input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.opt-cb.group span { color: #ffd100; }
+.opt-cb.off span { color: #808080; }
+.opt-tag { color: #808080; margin-left: 4px; }
+.view.wide { grid-column: 1 / -1; }
+.card .label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.mm-row { display: flex; align-items: flex-start; gap: 4px; }
+.mm-btn { flex: none; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 40% 35%, hsl(var(--h) 55% 62%), hsl(var(--h) 50% 26%) 62%, #0c0c0c 64%); box-shadow: 0 0 0 3px #b8962e, 0 0 0 4px #2a2208, 0 2px 8px rgba(0, 0, 0, .7); }
+.mm-btn:hover { filter: brightness(1.25); }
+.mm-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.clicklog { min-height: 24px; font-size: 13px; color: var(--dim); }
+.clicklog b { color: var(--fg); font-weight: 500; }
+.try { display: grid; gap: 4px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; max-width: 80ch; }
+.try b { color: var(--gold); font-weight: 500; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="page gg">
+	<header class="top">
+		<div class="eyebrow">Gogo Design System · Wave 1</div>
+		<h1>Mini-map Menus</h1>
+		<p class="lede">Every add-on with a mini-map button, drawn from its code: the tooltip it shows today beside the menu it becomes. Flip a scenario and both sides follow. The menus are clickable: hover a gold title with an arrow for its flyout, click Toggle to flip a feature.</p>
+		<div class="try"><b>How to review</b><span>Every menu has its mini-map button beside it, and the menu opens to its left as it does in game. Click the menu's rows the way a controller would, or click the button with Left, Right or Middle, with or without Shift, the way a mouse player would. The line under each menu says what the click did, and both ways change the same switches. Under each menu, the options panel's Features section is wired to the same switches: tick a box and the menu follows, click a row and the box follows.</span></div>
+		<div class="legend" id="legend"></div>
+	</header>
+
+	<div class="bar">
+		<nav>
+			<a href="#glance">At a Glance</a>
+			<a href="#te">Tracking Eye</a>
+			<a href="#me">Magic Eraser</a>
+			<a href="#gtg">Good to Go</a>
+			<a href="#gl">GogoLoot</a>
+			<a href="#cf">Control Freak</a>
+			<a href="#wd">Water Dispenser</a>
+			<a href="#fit">Will It Fit?</a>
+			<a href="#components">Components</a>
+			<a href="#decisions">Decisions</a>
+		</nav>
+		<label class="switch"><input type="checkbox" id="annotate"> Show components</label>
+	</div>
+
+	<section class="band" id="glance">
+		<h2>At a Glance</h2>
+		<p>Six add-ons draw something on hover over their mini-map button. Tracking Eye already draws a menu; the other five draw a tooltip whose click hints use four buttons and Shift. Each row below is a component the board tags when <b>Show components</b> is on.</p>
+		<div class="tablewrap"><table id="inventory"></table></div>
+	</section>
+
+	<div id="bands"></div>
+
+	<section class="band" id="fit">
+		<h2>Will It Fit?</h2>
+		<p>Every one-line menu row from all six add-ons, in all 11 languages: 682 rows, measured the way Menu-Kit sizes them. English fits a 320-point menu everywhere; <b>55 rows</b> in German, French, Spanish, Italian, Portuguese and Russian don't. Chinese and Korean fit. Two rules make every one fit:</p>
+		<ul class="plain">
+			<li><b>Short on the right.</b> A title row's right side is a state word (On, Off, Active, Paused). A row's right side is otherwise a number, money, a ratio, a game slot name or a click. Anything longer or variable goes in a note under the description, which wraps.</li>
+			<li><b>Long on the left wraps.</b> No row widens the menu past 320. A label too long for its row wraps onto a second line, and its right side stays level with the first.</li>
+		</ul>
+		<p>The worst cases, in their own language. Before is today's kit, which widens the menu to fit; after is the two rules. The widths are measured in the game font's proportions; the page draws in a narrower stand-in, so a before can look roomier here than it is in game.</p>
+		<div class="catalog" id="fitList"></div>
+	</section>
+
+	<section class="band" id="components">
+		<h2>Components</h2>
+		<p>The menu pieces every add-on builds from. After the plate and spacing come Menu-Kit's row kinds today. What's marked <span class="new">proposed</span> is new: an item row, a read-out row, and the button's shortcut named on an action row.</p>
+		<div class="catalog" id="catalog"></div>
+	</section>
+
+	<section class="band" id="decisions">
+		<h2>Decisions</h2>
+		<p>What drawing all six side by side turned up, and what was decided. The Style Guide's MINIMAP MENU says each one now, and each add-on's spec in <code>Mini-map Menus/</code> applies them.</p>
+		<div class="decisions" id="decisionList"></div>
+	</section>
+</div>
+
+<script src="menu-mock.js"></script>
+<script>
+(function () {
+"use strict";
+var paint = GG.paint, icon = GG.icon, money = GG.money;
+
+// ---------------------------------------------------------------------------
+// Components the overlay tags
+// ---------------------------------------------------------------------------
+var COMPONENTS = [
+	["header", "Header", "#e0a030"],
+	["feature", "Feature block", "#3fa7ff"],
+	["action", "Action row", "#00e0c0"],
+	["hint", "Click hint", "#ff5a8a"],
+	["item", "Item highlight", "#b07cff"],
+	["report", "Live report / list", "#8bd450"],
+	["message", "Success, empty or off line", "#f2e05a"],
+	["reference", "Macro notes", "#ff9a3c"],
+	["footer", "Options footer", "#9aa3b5"],
+];
+document.getElementById("legend").innerHTML = COMPONENTS.map(function (c) {
+	return '<span><i style="--c:' + c[2] + '"></i>' + c[1] + "</span>";
+}).join("");
+document.getElementById("annotate").addEventListener("change", function (e) {
+	document.querySelector(".page").classList.toggle("gg-annotate", e.target.checked);
+});
+
+// Tooltip line helpers, in the old code's own calls.
+function dbl(l, lc, r, rc, c) { return { l: l, lc: lc, r: r, rc: rc, c: c }; }
+function line(l, lc, c, wrap) { return { l: l, lc: lc, c: c, wrap: !!wrap }; }
+function blank() { return { blank: true }; }
+function hdr(name, ver) { return [dbl(name, "TITLE", ver, "MUTED", "header"), blank(), blank()]; }
+function opts(name) { return [line(name + " Options", "TITLE", "footer"), line("Shift + Middle-Click", "INFO", "footer")]; }
+function ttItem(hue, name, quality, extra) { return icon(hue) + paint(name, "q:" + quality) + (extra || ""); }
+
+// Menu helpers, as a Minimap-Menu.lua writes them.
+function mHeader(name, ver) { return [{ kind: "header", left: name, right: ver, c: "header" }, { kind: "spacer", c: "header" }]; }
+// Today's Options row says Open; proposed, it's an action row whose right side is the button's Shift + Middle-Click.
+function mFooter(short, today) {
+	var row = today
+		? { kind: "hint", left: short + " Options", right: "Open", c: "footer", onClick: function () {} }
+		: { kind: "action", left: short + " Options", right: "Shift + Middle-Click", c: "footer", onClick: function () {} };
+	row.tooltip = "Opens the options panel.";
+	return [{ kind: "spacer", c: "footer" }, { kind: "separator", c: "footer" }, row];
+}
+function onOff(v) { return v ? ["On", "ON"] : ["Off", "MUTED"]; }
+// Menu-Kit's AddFeature: title and state, description, rows, the blue action, rows after it.
+function feature(o) {
+	var rows = [];
+	var hasFly = o.flyout && o.flyout().length > 0;
+	rows.push({ kind: hasFly ? "submenu" : "status", submenu: hasFly ? o.key : null, left: o.title, right: o.state[0], rightColor: o.state[1], c: "feature" });
+	if (o.desc) rows.push({ kind: "description", left: o.desc, c: "feature" });
+	(o.rows || []).forEach(function (r) { rows.push(r); });
+	if (o.toggle) rows.push({ kind: "action", left: o.actionLabel || "Toggle", right: o.bind, c: "action", tooltip: o.tip, onClick: o.toggle });
+	(o.after || []).forEach(function (r) { rows.push(r); });
+	return rows;
+}
+// An action row; bind is the button click that does the same job, shown on the right.
+function action(label, fn, tip, bind) { return { kind: "action", left: label, right: bind, c: "action", onClick: fn || function () {}, tooltip: tip }; }
+function mItem(hue, name, quality, count, right, rc) { return { kind: "item", icon: icon(hue), left: name, quality: quality, count: count, right: right, rightColor: rc, c: "item" }; }
+
+// ---------------------------------------------------------------------------
+// The six add-ons
+// ---------------------------------------------------------------------------
+var ADDONS = [];
+
+// --- Tracking Eye: already a menu ------------------------------------------------
+(function () {
+	var CLASSES = {
+		HUNTER: { name: "Hunter (Dwarf, Mining)", pick: ["Find Minerals", "Find Treasure", "Track Beasts", "Track Demons", "Track Dragonkin", "Track Elementals", "Track Giants", "Track Hidden", "Track Humanoids", "Track Undead"], farmExtra: [], hunt: true, override: "Hunter: Track Humanoids in Battlegrounds", conditions: ["Hunter: Aspect of the Cheetah", "Hunter: Aspect of the Pack"] },
+		DRUID: { name: "Druid (Night Elf, Herbalism)", pick: ["Find Herbs"], farmExtra: ["Track Humanoids"], hunt: false, override: "Druid: Track Humanoids When You Shift Into Cat Form", conditions: ["Druid: Travel Forms"] },
+		WARRIOR: { name: "Warrior (Human, Mining)", pick: ["Find Minerals"], farmExtra: [], hunt: false, override: null, conditions: [] },
+	};
+	var HUES = { "Find Minerals": 30, "Find Herbs": 110, "Find Treasure": 48, "Track Beasts": 20, "Track Demons": 280, "Track Dragonkin": 0, "Track Elementals": 190, "Track Giants": 60, "Track Hidden": 230, "Track Humanoids": 210, "Track Undead": 150 };
+	var s = { cls: "HUNTER", persistent: true, picked: "Find Minerals", farm: "active", target: true, flags: {} };
+	function features() {
+		return [
+			{ block: true, caption: "Enable Persistent Tracking", get: function () { return s.persistent; }, set: function (v) { s.persistent = v; } },
+			{ block: true, caption: "Enable Farm Mode", get: function () { return s.farm !== "off"; }, set: function (v) { s.farm = v ? "active" : "off"; } },
+			{ block: true, caption: "Enable Automatic Target Tracking", get: function () { return s.target; }, set: function (v) { s.target = v; } },
+			flagFeature(s, "cgi", "Enable Come & Get It", "Come & Get It", true),
+			flagFeature(s, "free", "Enable Free Placement Mode", "Free Placement Mode", false),
+		];
+	}
+	function spell(name) { return icon(HUES[name] || 0) + name; }
+	function flag(k, d) { return s.flags[k] === undefined ? d : s.flags[k]; }
+	function flip(k, d) { s.flags[k] = !flag(k, d); }
+	ADDONS.push({
+		id: "te", hue: 150, name: "Tracking Eye", tag: "Menu (draft)", isMenu: true, state: s, features: features,
+		blurb: "Already converted: Today is the live draft on main, drawn row for row from <code>Features/Minimap-Menu.lua</code>. The conversion dropped the old tooltip's four button shortcuts; Proposed brings them back on the rows they belong to.",
+		scenarios: [
+			{ key: "cls", label: "Character", options: [["HUNTER", "Hunter"], ["DRUID", "Druid"], ["WARRIOR", "Warrior"]] },
+			{ key: "persistent", label: "Persistent", options: [[true, "On"], [false, "Off"]] },
+			{ key: "farm", label: "Farm Mode", options: [["active", "Active"], ["paused", "Paused"], ["off", "Off"]] },
+		],
+		menu: function (render, proposed) {
+			var c = CLASSES[s.cls];
+			function b(text) { return proposed ? text : undefined; }
+			if (c.pick.indexOf(s.picked) < 0) s.picked = c.pick[0];
+			var flyouts = {
+				persistent: function () {
+					if (!s.persistent || !c.override) return [];
+					return [{ kind: "toggle", left: c.override, on: flag("override", false), onClick: function () { flip("override", false); render(); } }];
+				},
+				farm: function () {
+					if (s.farm === "off") return [];
+					var paused = s.farm === "paused";
+					var rows = [{ kind: "section", left: "Farm Mode Status", right: paused ? "Paused" : "Active", rightColor: paused ? "MUTED" : "ON" }];
+					if (paused) rows.push({ kind: "note", left: "Standing still." });
+					rows.push({ kind: "section", left: "Farm Mode Abilities" });
+					rows.push({ kind: "toggle", left: "Include Persistent Tracking Ability", on: flag("incl", true), onClick: function () { flip("incl", true); render(); } });
+					c.pick.concat(c.farmExtra).sort().forEach(function (n) {
+						rows.push({ kind: "toggle", left: spell(n), on: flag("f" + n, true), onClick: function () { flip("f" + n, true); render(); } });
+					});
+					rows.push({ kind: "section", left: "Farm Mode Conditions" });
+					["Mounted", "Not Mounted"].concat(c.conditions).forEach(function (n, i) {
+						rows.push({ kind: "toggle", left: n, on: flag("c" + n, i < 2), onClick: function () { flip("c" + n, i < 2); render(); } });
+					});
+					rows.push({ kind: "separator" });
+					rows.push({ kind: "toggle", left: "Silence Sounds From Tracking Ability Casts", on: flag("mute", true), onClick: function () { flip("mute", true); render(); } });
+					rows.push({ kind: "toggle", left: "Zoom Mini-map Out", on: flag("zoom", false), onClick: function () { flip("zoom", false); render(); } });
+					return rows;
+				},
+			};
+			var e = mHeader("Tracking Eye", "3.2.0");
+			var picks = c.pick.map(function (n) {
+				return { kind: "choice", left: spell(n), selected: s.picked === n, c: "feature", onClick: function () { s.picked = n; render(); } };
+			});
+			e = e.concat(feature({ key: "persistent", title: "Persistent Tracking", state: onOff(s.persistent), desc: "Choose your Persistent Tracking Ability.", rows: picks, flyout: flyouts.persistent,
+				tip: { title: "Enable Persistent Tracking", body: "Waits until you're out of combat, so it never costs you a global cooldown mid-fight." },
+				toggle: function () { s.persistent = !s.persistent; render(); },
+				after: s.picked ? [action("Clear Tracking", function () { s.picked = null; render(); }, null, b("Right-Click"))] : [] }));
+			var farmState = s.farm === "off" ? ["Off", "MUTED"] : s.farm === "paused" ? ["Paused", "MUTED"] : ["Active", "ON"];
+			e = e.concat(feature({ key: "farm", title: "Farm Mode", state: farmState, desc: "Cycles your tracking abilities as you travel.", flyout: flyouts.farm, bind: b("Shift + Left-Click"),
+				tip: { title: "Enable Farm Mode", body: "Pauses on its own in combat, towns, instances, and on flights. Hover the Tracking Eye button to see why." },
+				toggle: function () { s.farm = s.farm === "off" ? "active" : "off"; render(); } }));
+			if (c.hunt) {
+				e = e.concat(feature({ key: "target", title: "Automatic Target Tracking", state: onOff(s.target), desc: "Tracks whatever kind of creature you target.", bind: b("Shift + Right-Click"),
+					tip: { title: "Enable Automatic Target Tracking", body: "Never switches in combat, so adds can't hijack your tracking. Looting a corpse won't switch it either." },
+					toggle: function () { s.target = !s.target; render(); } }));
+			}
+			if (proposed) e = e.concat(moreFeatures(features(), render));
+			return { entries: e.concat(mFooter("Tracking Eye", !proposed)), flyouts: flyouts };
+		},
+		changes: [
+			["behavior", "<b>The old clicks come back.</b> The tooltip before the menu had Right-Click for Clear Tracking, Shift + Left-Click for Farm Mode, Shift + Right-Click for Target Tracking and Shift + Middle-Click for Options. Each one returns, with its row naming it on the right. The strings (<code>RIGHT_CLICK</code>, <code>SHIFT_LEFT</code>, <code>SHIFT_RIGHT</code>, <code>SHIFT_MIDDLE</code>) come back from git with every locale's translation."],
+			["layout", "<b>Features mirror.</b> The options panel's main page has no Features section today. It gains one, built from the same list as the menu: the three blocks, then Come & Get It and Free Placement Mode, which join the menu as compact rows under More Features."],
+			["behavior", "<b>Left-Click opens and holds the menu</b>, as it opened the old Tracking Menu. It's the only click with no row, because the menu is its job. Persistent Tracking's Toggle had no click before and still has none."],
+			["kit", "<b>Move the menu's machinery into the kit.</b> About 250 of Minimap-Menu.lua's 725 lines open, place, time out, and flyout the menu, and know nothing about tracking. Each add-on copying them is five copies to keep in step. Proposed: <code>Kit.CreateMenu{ build, flyouts }</code> owns all of it, and an add-on's Minimap-Menu.lua holds only its rows."],
+			["kit", "<b>Move <code>AddFeature</code> into the kit</b> with the action's label as an argument. Good to Go's Restock List and GogoLoot's loot windows need an <i>Open</i> row where Tracking Eye's blocks have Toggle."],
+			["layout", "<b>A hunter's pick list is ten rows</b> (switch Character to Hunter). It's the Pick-List Exception working as written, but it's also the longest list in any menu. Fine as is, or fold past eight into the flyout? See Decisions."],
+			["copy", "<b>On / Off</b> is what this menu says. The other five say Enabled / Disabled, and the Style Guide's tooltip-to-menu map says to keep each add-on's words. One of the two has to give. See Decisions."],
+		],
+	});
+})();
+
+// --- Magic Eraser ----------------------------------------------------------------
+(function () {
+	var s = { junk: true, vend: true, protect: true, flags: {} };
+	function features() {
+		return [
+			{ block: true, caption: "Enable Auto-Vend", get: function () { return s.vend; }, set: function (v) { s.vend = v; } },
+			flagFeature(s, "bank", "Enable Bank Retrieval", "Bank Retrieval", true),
+			flagFeature(s, "cap", "Enable Maximum Value to Erase", "Maximum Value to Erase", false),
+			flagFeature(s, "manual", "Enable Manual Delete Assistance", "Manual Delete Assistance", true),
+			flagFeature(s, "confirm", "Enable Erase Confirmation", "Erase Confirmation", false),
+			flagFeature(s, "tint", "Enable Junk Item Tint", "Junk Item Tint", true),
+			flagFeature(s, "quest", "Enable Quest Item Alerts", "Quest Item Alerts", true),
+			flagFeature(s, "full", "Enable Bag-Space Warnings", "Bag-Space Warnings", true),
+		];
+	}
+	var PROTECTED = [["Light Feather", "common", 200], ["Rough Stone", "common", 35], ["Small Venom Sac", "common", 90]];
+	ADDONS.push({
+		id: "me", hue: 280, name: "Magic Eraser", tag: "Tooltip today", state: s, features: features,
+		blurb: "An action button: Left-Click erases the lowest-value item, so the button keeps that click and the menu opens on hover. The tooltip uses five clicks across three buttons and Shift.",
+		scenarios: [
+			{ key: "junk", label: "Bags", options: [[true, "Junk to erase"], [false, "Bags clean"]] },
+			{ key: "vend", label: "Auto-Vend", options: [[true, "On"], [false, "Off"]] },
+			{ key: "protect", label: "Protect List", options: [[true, "3 items"], [false, "Empty"]] },
+		],
+		tooltip: function () {
+			var t = hdr("Magic Eraser", "2.6.1");
+			if (s.junk) {
+				t.push(line("Lowest-Value Item", "TITLE", "item"));
+				t.push(dbl(ttItem(25, "Chipped Claw", "poor", " " + paint("x4", "TEXT")), null, money(12), null, "item"));
+				t.push(dbl("Left-Click", "INFO", "Erase", "INFO", "hint"));
+				t.push(dbl("Right-Click", "INFO", "Protect", "INFO", "hint"));
+			} else {
+				t.push(line("Congratulations, your bags are full of good stuff!", "ON", "message", true));
+			}
+			t.push(blank());
+			t.push(dbl("Auto-Vend", "TITLE", s.vend ? "Enabled" : "Disabled", s.vend ? "ON" : "OFF", "feature"));
+			t.push(line("Sells your junk the moment you open a merchant, cheapest first.", "BODY", "feature", true));
+			t.push(dbl("Shift + Right-Click", "INFO", "Toggle", "INFO", "hint"));
+			t.push(blank());
+			t.push(line("Clutter Report", "TITLE", "report"));
+			if (s.junk) t.push(dbl(paint("9 Bag Slots", "TEXT") + " " + paint("(27 Items)", "MUTED"), null, money(264), null, "report"));
+			else t.push(line("You'll have to manually erase something if you want to free up more space.", "BODY", "message", true));
+			if (s.protect) {
+				t.push(blank());
+				t.push(line("Protect List", "TITLE", "report"));
+				PROTECTED.forEach(function (p) { t.push(line(ttItem(p[2], p[0], p[1]), null, "report")); });
+				t.push(dbl("Middle-Click", "INFO", "Clear Protect List", "INFO", "hint"));
+			}
+			t.push(blank());
+			return t.concat(opts("Magic Eraser"));
+		},
+		menu: function (render) {
+			var e = mHeader("Magic Eraser", "2.6.1");
+			if (s.junk) {
+				e.push({ kind: "status", left: "Lowest-Value Item", c: "item" });
+				e.push(mItem(25, "Chipped Claw", "poor", 4, money(12)));
+				e.push(action("Erase", function () { s.junk = false; render(); }, null, "Left-Click"));
+				e.push(action("Protect", function () { s.protect = true; render(); }, { title: "Protect", body: "Adds it to this character's Protect List, so it's never erased." }, "Right-Click"));
+			} else {
+				e.push({ kind: "description", left: "Congratulations, your bags are full of good stuff!", leftColor: "ON", c: "message" });
+			}
+			e = e.concat(feature({ title: "Auto-Vend", state: onOff(s.vend), desc: "Sells your junk the moment you open a merchant, cheapest first.", bind: "Shift + Right-Click", toggle: function () { s.vend = !s.vend; render(); } }));
+			e.push({ kind: "status", left: "Clutter Report", c: "report" });
+			if (s.junk) e.push({ kind: "value", left: "9 Bag Slots " + paint("(27 Items)", "MUTED"), right: money(264), c: "report" });
+			else e.push({ kind: "description", left: "You'll have to manually erase something if you want to free up more space.", c: "message" });
+			if (s.protect) {
+				e.push({ kind: "status", left: "Protect List", c: "report" });
+				PROTECTED.forEach(function (p) { e.push(mItem(p[2], p[0], p[1], 1, null)); });
+				e.push(action("Clear Protect List", function () { s.protect = false; render(); }, null, "Middle-Click"));
+			}
+			e = e.concat(moreFeatures(features(), render));
+			return { entries: e.concat(mFooter("Magic Eraser")) };
+		},
+		changes: [
+			["layout", "Lowest-Value Item becomes a heading, an <b>item row</b> (proposed kind) with the value on the right, and <b>Erase … Left-Click</b> and <b>Protect … Right-Click</b> action rows. Every click on the button does what it does today."],
+			["layout", "Auto-Vend is a standard feature block, its Toggle row naming Shift + Right-Click."],
+			["layout", "Clutter Report's slots, items and value become a <b>value row</b> (proposed kind), nothing to click."],
+			["layout", "Protect List lists item rows, and a <b>Clear Protect List … Middle-Click</b> action row, still one click with no confirmation."],
+			["copy", "Disabled in red becomes Off in gray; the bags-clean congratulation keeps its green."],
+			["layout", "<b>Features mirror.</b> The main page's other seven feature switches join the menu as compact rows under More Features, in the same order."],
+		],
+	});
+})();
+
+// --- Good to Go ------------------------------------------------------------------
+(function () {
+	var s = { cls: "MAGE", buff: "on", duty: true, restock: "orders", ignore: true, flags: {} };
+	function features() {
+		return [
+			{ block: true, caption: "Enable Buff Duty", get: function () { return s.duty; }, set: function (v) { s.duty = v; } },
+			{ block: true, caption: "Enable Restocker", get: function () { return s.restock !== "off"; }, set: function (v) { s.restock = v ? "orders" : "off"; } },
+			flagFeature(s, "spellbook", "Enable Enhanced Spellbook", "Enhanced Spellbook", true, { confirm: true }),
+			flagFeature(s, "macros", "Enable Consumable Macros", "Consumable Macros", true, { confirm: true }),
+			flagFeature(s, "rank", "Enable Rank Watch", "Rank Watch", true, { tag: "(not on Mists)" }),
+			flagFeature(s, "inventory", "Enable Inventory Report", "Inventory Report", true),
+			flagFeature(s, "readiness", "Enable Readiness Report", "Readiness Report", false),
+		];
+	}
+	var FOOD = { MAGE: ["Conjured Cinnamon Roll", 35], ROGUE: ["Roasted Quail", 20], HUNTER: ["Roasted Quail", 20], WARRIOR: ["Roasted Quail", 20] };
+	var RESTOCK = {
+		MAGE: [["Arcane Powder", 4, 20, 270], ["Rune of Portals", 0, 10, 300], ["Rune of Teleportation", 3, 10, 30], ["Light Feather", 6, 20, 200]],
+		ROGUE: [["Flash Powder", 8, 20, 0], ["Blinding Powder", 2, 20, 280], ["Thistle Tea", 1, 5, 100]],
+		HUNTER: [["Thorium Shells", 400, 1000, 40], ["Major Healing Potion", 3, 10, 0]],
+		WARRIOR: [["Major Healing Potion", 3, 10, 0], ["Elixir of the Mongoose", 0, 5, 90]],
+	};
+	var IGNORED = [["Conjured Sweet Roll", "common", 35], ["Moist Cornbread", "common", 40]];
+	function waitingState(v) { return v === "on" ? ["Enabled", "ON"] : v === "wait" ? ["Party, Raid", "SEPARATOR"] : ["Disabled", "OFF"]; }
+	// The title row holds only a short state word; what it's waiting for goes in a note, which wraps.
+	function menuState(v) { return v === "on" ? ["On", "ON"] : v === "wait" ? ["Paused", "MUTED"] : ["Off", "MUTED"]; }
+	function classNotes(cls) {
+		// [items: [title, name, hue]], [macros: [title, rows, note]]
+		if (cls === "MAGE") return { items: [], macros: [["Food & Water Macros", [["Right-Click", "Conjure"]], "Target a lower-level player to conjure for their level."], ["Mana Gem Macro", [["Right-Click", "Conjure"], ["Right-Click Again", "Lower-Rank Backup"]]]] };
+		if (cls === "ROGUE") return { items: [["Main Hand Poison", "Instant Poison VI", 100, "Main Hand"], ["Off Hand Poison", "Deadly Poison V", 140, "Off Hand"]], macros: [["Poisons Macro", [["Left-Click", "Off Hand"], ["Right-Click", "Main Hand"], ["Middle-Click", "Poisons Window"]], "Replaces old poisons automatically."]] };
+		if (cls === "HUNTER") return { items: [["Current Pet Food", "Tender Wolf Meat", 10, "Pet Food"]], macros: [["Feed Pet Macro", [["Left-Click", "Call, Feed, or Revive"], ["Right-Click, or in Combat", "Mend Pet"], ["Hold Shift", "Force Revive"], ["Hold Ctrl", "Dismiss"]]]] };
+		return null;
+	}
+	var CLASS_NAME = { MAGE: "Mage", ROGUE: "Rogue", HUNTER: "Hunter", WARRIOR: "Warrior" };
+	ADDONS.push({
+		id: "gtg", hue: 30, name: "Good to Go", tag: "Tooltip today", state: s, features: features,
+		blurb: "The tallest tooltip: an item highlight, three feature blocks, a class section of macro notes, two live lists, and seven different clicks. Its Short Name is GtG, so the footer reads GtG Options.",
+		scenarios: [
+			{ key: "cls", label: "Class", options: [["MAGE", "Mage"], ["ROGUE", "Rogue"], ["HUNTER", "Hunter"], ["WARRIOR", "Warrior"]] },
+			{ key: "buff", label: "Buff Food", options: [["on", "On"], ["wait", "Waiting"], ["off", "Off"]] },
+			{ key: "restock", label: "Restock", options: [["orders", "4 orders"], ["many", "11 orders"], ["stocked", "Stocked"], ["empty", "Empty list"], ["off", "Restocker off"]] },
+			{ key: "ignore", label: "Ignore List", options: [[true, "2 items"], [false, "Empty"]] },
+		],
+		tooltip: function () {
+			var t = hdr("Good to Go", "1.9.4");
+			var food = FOOD[s.cls];
+			t.push(line("Current Food", "TITLE", "item"));
+			t.push(dbl(" ", null, ttItem(food[1], food[0], "common"), null, "item"));
+			t.push(dbl("Right-Click", "INFO", "Ignore", "INFO", "hint"));
+			var b = waitingState(s.buff);
+			t.push(blank(), dbl("Buff Food & Scrolls", "TITLE", b[0], b[1], "feature"), line("Uses Well Fed food and applies missing scroll buffs before you eat.", "BODY", "feature", true), dbl("Left-Click", "INFO", "Toggle", "INFO", "hint"));
+			t.push(blank(), dbl("Buff Duty", "TITLE", s.duty ? "Enabled" : "Disabled", s.duty ? "ON" : "OFF", "feature"), line("Shows who's missing your buffs. Click an icon to cast.", "BODY", "feature", true), dbl("Shift + Left-Click", "INFO", "Toggle", "INFO", "hint"));
+			t.push(blank(), line("Restock List", "TITLE", "feature"), line("Buys and banks the items on your list.", "BODY", "feature", true), dbl("Shift + Right-Click", "INFO", s.restock === "off" ? "Disabled" : "Open", "INFO", "hint"));
+			var notes = classNotes(s.cls);
+			if (notes) {
+				t.push(blank(), line(CLASS_NAME[s.cls], GG.CLASS[s.cls], "reference"));
+				var first = true;
+				notes.items.forEach(function (it) {
+					if (!first) t.push(blank());
+					first = false;
+					t.push(line(it[0], "TITLE", "item"), dbl(" ", null, ttItem(it[2], it[1], "common"), null, "item"));
+				});
+				notes.macros.forEach(function (m) {
+					if (!first) t.push(blank());
+					first = false;
+					t.push(line(m[0], "TITLE", "reference"));
+					m[1].forEach(function (r) { t.push(dbl(r[0], "HELP", r[1], "HELP", "reference")); });
+					if (m[2]) t.push(line(m[2], "HELP", "reference", true));
+				});
+			}
+			if (s.restock !== "off") {
+				t.push(blank());
+				var list = RESTOCK[s.cls];
+				if (s.restock === "orders") {
+					t.push(line("Restocker Report", "TITLE", "report"));
+					list.forEach(function (r) { t.push(dbl(ttItem(r[3], r[0], "common"), null, r[1] + "/" + r[2], "BODY", "report")); });
+				} else if (s.restock === "many") {
+					t.push(dbl("Restocker Report", "TITLE", "11 Orders Outstanding", "BODY", "report"));
+				} else if (s.restock === "stocked") {
+					t.push(line("Congratulations, you're fully stocked up!", "ON", "message", true));
+				} else {
+					t.push(line("Restocker Report", "TITLE", "report"), line("Your list is empty.", "BODY", "message", true));
+				}
+			}
+			if (s.ignore) {
+				t.push(blank(), line("Ignore List", "TITLE", "report"));
+				IGNORED.forEach(function (p) { t.push(line(ttItem(p[2], p[0], p[1]), null, "report")); });
+				t.push(dbl("Middle-Click", "INFO", "Clear Ignore List", "INFO", "hint"));
+			}
+			t.push(blank());
+			return t.concat(opts("GtG"));
+		},
+		menu: function (render) {
+			var e = mHeader("Good to Go", "1.9.4");
+			var food = FOOD[s.cls];
+			e.push({ kind: "status", left: "Current Food", c: "item" });
+			e.push(mItem(food[1], food[0], "common", 1, null));
+			e.push(action("Ignore", function () { s.ignore = true; render(); }, { title: "Ignore", body: "Adds it to this character's Ignore List, so the macros skip it." }, "Right-Click"));
+			e = e.concat(feature({ title: "Buff Food & Scrolls", state: menuState(s.buff), desc: "Uses Well Fed food and applies missing scroll buffs before you eat.", rows: s.buff === "wait" ? [{ kind: "note", left: "Waiting for: Party, Raid", c: "feature" }] : [], bind: "Left-Click", toggle: function () { s.buff = s.buff === "off" ? "on" : "off"; render(); } }));
+			e = e.concat(feature({ title: "Buff Duty", state: onOff(s.duty), desc: "Shows who's missing your buffs. Click an icon to cast.", bind: "Shift + Left-Click", toggle: function () { s.duty = !s.duty; render(); } }));
+			// Restock List: the Restocker Report moves into its block, as Persistent Tracking's pick list sits in its.
+			var on = s.restock !== "off";
+			var list = RESTOCK[s.cls];
+			var rows = [];
+			var state = on ? ["On", "ON"] : ["Off", "MUTED"];
+			if (on && s.restock === "orders") {
+				list.forEach(function (r) { rows.push(mItem(r[3], r[0], "common", 1, r[1] + "/" + r[2], "BODY")); });
+			} else if (on && s.restock === "many") {
+				for (var i = 0; i < 8; i++) { var r = list[i % list.length]; rows.push(mItem(r[3] + i * 37, i < list.length ? r[0] : ["Morning Glory Dew", "Mageweave Bandage", "Elixir of Fortitude", "Greater Arcane Elixir"][i % 4], "common", 1, r[1] + "/" + r[2], "BODY")); }
+				rows.push({ kind: "note", left: "3 more", c: "report" });
+			} else if (on && s.restock === "stocked") {
+				rows.push({ kind: "description", left: "Congratulations, you're fully stocked up!", leftColor: "ON", c: "message" });
+			} else if (on) {
+				rows.push({ kind: "note", left: "Your list is empty.", c: "message" });
+			}
+			e = e.concat(feature({ title: "Restocker", state: state, desc: "Buys and banks the items on your list.", rows: rows,
+				toggle: function () { s.restock = on ? "off" : "orders"; render(); },
+				after: on ? [action("Open", null, { title: "Restock List", body: "The same window /restock opens." }, "Shift + Right-Click")] : [] }));
+			var notes = classNotes(s.cls);
+			var flyouts = {};
+			if (notes) {
+				flyouts.macros = function () {
+					var f = [];
+					notes.macros.forEach(function (m) {
+						f.push({ kind: "section", left: m[0] });
+						// What the macro does on the left, its click on the right in gray: the same way round as an action row.
+						m[1].forEach(function (r) {
+							// "Lower-Rank Backup" read as a label once the job led; the row says what the click does.
+							var job = r[1] === "Lower-Rank Backup" ? "Conjure Lower Rank" : r[1];
+							f.push({ kind: "value", left: job, right: r[0], rightColor: "MUTED" });
+						});
+						if (m[2]) f.push({ kind: "note", left: m[2] });
+					});
+					return f;
+				};
+				e.push({ kind: "submenu", submenu: "macros", left: CLASS_NAME[s.cls] + " Macros", leftColor: GG.CLASS[s.cls], c: "reference" });
+				notes.items.forEach(function (it) { e.push(mItem(it[2], it[1], "common", 1, it[3], "MUTED")); });
+			}
+			if (s.ignore) {
+				e.push({ kind: "status", left: "Ignore List", c: "report" });
+				IGNORED.forEach(function (p) { e.push(mItem(p[2], p[0], p[1], 1, null)); });
+				e.push(action("Clear Ignore List", function () { s.ignore = false; render(); }, null, "Middle-Click"));
+			}
+			e = e.concat(moreFeatures(features(), render));
+			return { entries: e.concat(mFooter("GtG")), flyouts: flyouts };
+		},
+		changes: [
+			["layout", "Current Food is an item row with an <b>Ignore … Right-Click</b> action row under it. The item sits left like every other item row, not right-aligned on its own line."],
+			["layout", "<b>Restocker Report moves into the Restock List block</b>, between its description and Toggle, as Tracking Eye's pick list sits in Persistent Tracking. The title reads On or Off like every feature, with no order count beside it (in French that title and count ran 366 points wide); the orders themselves are the rows, capped at eight with a gray <i>3 more</i>. Open follows Toggle while the Restocker is on, and keeps Shift + Right-Click."],
+			["behavior", "Restock List gets a Toggle, with no button click of its own (all six are taken). Today, with the Restocker off, the tooltip's click says Disabled and the only way back is the options panel."],
+			["layout", "<b>Macro notes move to a flyout</b> behind a class-colored <i>Mage Macros</i> title. They explain clicks on a macro, not on this menu, so they're reference, not actions. The class's live items (poisons, pet food) stay in the menu as item rows with their slot on the right. Switch Class to see each."],
+			["layout", "<b>Features mirror.</b> Enhanced Spellbook, Consumable Macros, Rank Watch, Inventory Report and Readiness Report join the menu as compact rows under More Features. The Restock List block is titled <i>Restocker</i>, the feature's name on the main page. Buff Food & Scrolls keeps its block: it's a setting inside Consumable Macros that players flip mid-session."],
+			["copy", "Buff Food waiting on its When to Use reads <b>Paused</b> on the title, gray like Tracking Eye's, with a gray note under the description saying what it waits for (<i>Waiting for: Party, Raid</i>). That list ran 465 points wide on the title row in French; in a note it wraps."],
+			["copy", "Mana Gem's second click reads <b>Conjure Lower Rank … Right-Click Again</b>. With the job first, <i>Lower-Rank Backup</i> read as a label and lost the tip. New strings: <i>[Class] Macros</i>, <i>Paused</i>, <i>Waiting for: %s</i>, <i>Conjure Lower Rank</i> and <i>Create Lower Rank</i> (Warlock)."],
+		],
+	});
+})();
+
+// --- GogoLoot --------------------------------------------------------------------
+(function () {
+	var s = { locked: true, rogue: false, rolls: true, opening: "on", ann: false, ml: false, flags: {} };
+	function features() {
+		return [
+			{ block: true, caption: "Enable Automated Rolls", get: function () { return s.rolls; }, set: function (v) { s.rolls = v; } },
+			{ block: true, caption: "Enable Automated Opening", get: function () { return s.opening !== "off"; }, set: function (v) { s.opening = v ? "on" : "off"; } },
+			{ block: true, caption: "Enable Loot Announcements", get: function () { return s.ann; }, set: function (v) { s.ann = v; } },
+			flagFeature(s, "speedy", "Enable Speedy Loot", "Speedy Loot", true),
+			flagFeature(s, "toasts", "Enable Loot Toasts", "Loot Toasts", true),
+			flagFeature(s, "sounds", "Enable Loot Sounds", "Loot Sounds", false),
+			{ caption: "Enable Automated Master Looting", label: "Automated Master Looting", get: function () { return s.ml; }, set: function (v) { s.ml = v; } },
+			flagFeature(s, "macro", "Enable Roll Macro", "Roll Macro", false),
+		];
+	}
+	ADDONS.push({
+		id: "gl", hue: 50, name: "GogoLoot", tag: "Tooltip today", state: s, features: features,
+		blurb: "Four feature blocks on four clicks, a Locked Items list that leads while boxes wait on a lock, and Automated Rolls' read-back in silver. Tradable Loot and the loot windows are parked out of the TOCs for now, so they're left off.",
+		scenarios: [
+			{ key: "locked", label: "Locked boxes", options: [[true, "In bags"], [false, "None"]] },
+			{ key: "rogue", label: "Class", options: [[false, "Not a Rogue"], [true, "Rogue"]] },
+			{ key: "opening", label: "Opening", options: [["on", "On"], ["paused", "Paused"], ["off", "Off"]] },
+		],
+		tooltip: function () {
+			var t = hdr("GogoLoot", "4.1.0");
+			if (s.locked) {
+				t.push(line("Locked Items", "TITLE", "report"));
+				t.push(line(ttItem(35, "Heavy Junkbox", "common", " x2"), null, "report"));
+				t.push(line(ttItem(28, "Strong Junkbox", "common"), null, "report"));
+				t.push(line(s.rogue ? "Pick these with Pick Lock to unlock them." : "A Rogue can pick these for you.", "HELP", "report", true));
+				t.push(blank());
+			}
+			function block(title, on, paused, desc, click, detail) {
+				var st = !on ? ["Disabled", "OFF"] : paused ? ["Paused", "SEPARATOR"] : ["Enabled", "ON"];
+				t.push(dbl(title, "TITLE", st[0], st[1], "feature"), line(desc, "BODY", "feature", true));
+				(detail || []).forEach(function (d) { t.push(line("&nbsp;&nbsp;" + d, "HELP", "feature")); });
+				t.push(dbl(click, "INFO", "Toggle", "INFO", "hint"), blank());
+			}
+			block("Automated Rolls", s.rolls, false, "Rolls for you on eligible items up to the quality you pick.", "Left-Click", ["Party: Greed, Uncommon & Lower", "Raid: Manual"]);
+			block("Automated Opening", s.opening !== "off", s.opening === "paused", "Opens clams, crates, coin purses, and unlocked lockboxes in your bags.", "Right-Click");
+			block("Loot Announcements", s.ann, false, "Posts trade summaries and master loot hand-outs to chat.", "Shift + Left-Click");
+			block("Automated Master Looting", s.ml, false, "Hands out loot to the players you picked for each quality.", "Shift + Right-Click");
+			return t.concat(opts("GogoLoot"));
+		},
+		menu: function (render) {
+			var e = mHeader("GogoLoot", "4.1.0");
+			if (s.locked) {
+				e.push({ kind: "status", left: "Locked Items", c: "report" });
+				e.push(mItem(35, "Heavy Junkbox", "common", 2, null));
+				e.push(mItem(28, "Strong Junkbox", "common", 1, null));
+				e.push({ kind: "note", left: s.rogue ? "Pick these with Pick Lock to unlock them." : "A Rogue can pick these for you.", c: "report" });
+			}
+			e = e.concat(feature({ title: "Automated Rolls", bind: "Left-Click", state: onOff(s.rolls), desc: "Rolls for you on eligible items up to the quality you pick.",
+				rows: [{ kind: "value", left: "Party", right: "Greed, Uncommon & Lower", c: "feature" }, { kind: "value", left: "Raid", right: "Manual", c: "feature" }],
+				toggle: function () { s.rolls = !s.rolls; render(); } }));
+			var op = s.opening === "off" ? ["Off", "MUTED"] : s.opening === "paused" ? ["Paused", "MUTED"] : ["On", "ON"];
+			e = e.concat(feature({ title: "Automated Opening", bind: "Right-Click", state: op, desc: "Opens clams, crates, coin purses, and unlocked lockboxes in your bags.", toggle: function () { s.opening = s.opening === "off" ? "on" : "off"; render(); } }));
+			e = e.concat(feature({ title: "Loot Announcements", bind: "Shift + Left-Click", state: onOff(s.ann), desc: "Posts trade summaries and master loot hand-outs to chat.", toggle: function () { s.ann = !s.ann; render(); } }));
+			e = e.concat(moreFeatures(features(), render));
+			return { entries: e.concat(mFooter("GogoLoot")) };
+		},
+		changes: [
+			["layout", "Three click hints become Toggle rows, each naming its click on the right, and those clicks still work on the button."],
+			["behavior", "<b>Automated Master Looting moves to More Features</b>, a compact row: it's set once per raid, not flipped mid-fight. That frees <b>Shift + Right-Click for the Master Looting Window</b> once it's built; until then that click does nothing."],
+			["layout", "The roll read-back becomes two <b>value rows</b>: Party and Raid on the left, the setting on the right, at the option indent. No more two-space padding, and the <code>%s: %s, %s</code> strings give way to the two halves."],
+			["layout", "Locked Items keeps its lead position, as item rows with the counts the kit draws, and its hint becomes a gray note."],
+			["layout", "<b>Features mirror.</b> The main page's Features reorder: the three blocks first, in menu order, then Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting and Roll Macro, which are the menu's More Features rows."],
+			["idea", "Automated Rolls could open a flyout with Party and Raid as choice lists (Greed, Need, Pass, Manual). Four values each is within a handful, but the thresholds would double it. Left out of Proposed until you say."],
+		],
+	});
+})();
+
+// --- Control Freak -----------------------------------------------------------
+(function () {
+	var s = { all: true, mon: true, naughty: true, tank: false, flags: {} };
+	var TOOLS = {
+		mon: ["Taunts", "Interrupts", "Fears", "Incapacitated", "Tank Deaths", "Peer Pressure"],
+		naughty: ["Bad Mages", "Bad Parry Monkeys", "Bad Pets", "Bad Priests"],
+		tank: ["Cold Openers", "Armor Debuffs"],
+	};
+	function tools(key) {
+		return TOOLS[key].map(function (n, i) { return flagFeature(s, key + n, n, n, !(key === "mon" && i === 3)); });
+	}
+	function features() {
+		return [
+			{ master: true, block: true, caption: "Enable Control Freak", get: function () { return s.all; }, set: function (v) { s.all = v; } },
+			{ block: true, caption: "Monitoring", get: function () { return s.mon; }, set: function (v) { s.mon = v; }, children: tools("mon"), disabled: function () { return !s.all; } },
+			{ block: true, caption: "Naughty List", get: function () { return s.naughty; }, set: function (v) { s.naughty = v; }, children: tools("naughty"), disabled: function () { return !s.all; } },
+			{ block: true, caption: "Tanking Tools", get: function () { return s.tank; }, set: function (v) { s.tank = v; }, children: tools("tank"), disabled: function () { return !s.all; } },
+		];
+	}
+	var BLOCKS = [
+		["mon", "Monitoring", "Taunts, interrupts, fears, incapacitation, tank deaths, and peer pressure.", "Left-Click"],
+		["naughty", "Naughty List", "Frost novas, parry monkeys, pets left on taunt, and shields on rage tanks.", "Right-Click"],
+		["tank", "Tanking Tools", "Cold openers and armor debuffs.", "Shift + Left-Click"],
+	];
+	ADDONS.push({
+		id: "cf", hue: 0, name: "Control Freak", tag: "Tooltip today", state: s, features: features,
+		blurb: "Three feature blocks on three clicks. With All Alerts off, the blocks go and a red line says why, and nothing on the button can turn it back on.",
+		scenarios: [{ key: "all", label: "All Alerts", options: [[true, "On"], [false, "Off"]] }],
+		tooltip: function () {
+			var t = hdr("Control Freak", "1.3.2");
+			if (s.all) {
+				BLOCKS.forEach(function (b) {
+					t.push(dbl(b[1], "TITLE", s[b[0]] ? "Enabled" : "Disabled", s[b[0]] ? "ON" : "OFF", "feature"), line(b[2], "BODY", "feature", true), dbl(b[3], "INFO", "Toggle", "INFO", "hint"), blank());
+				});
+			} else {
+				t.push(line("All Alerts is off, so nothing fires.", "OFF", "message", true), blank());
+			}
+			return t.concat(opts("Control Freak"));
+		},
+		menu: function (render) {
+			var e = mHeader("Control Freak", "1.3.2");
+			// Tanking Tools' settings, inline as On/Off rows: drawn gray while the block is off, as the options panel draws them.
+			function tankRows() {
+				var rows = [];
+				function row(key, label, def, show) {
+					if (show === false) return;
+					var f = flagFeature(s, key, label, label, def);
+					var on = f.get();
+					var r = { kind: "toggle", left: label, on: on, c: "feature", onClick: function () { f.set(!f.get()); render(); } };
+					if (!s.tank) { r.leftColor = "MUTED"; r.rightColor = "MUTED"; }
+					rows.push(r);
+				}
+				row("tankScope", "When Group Has a Tank", true);
+				row("tankCold Openers", "Cold Openers", false);
+				row("tankArmor Debuffs", "Armor Debuffs", true);
+				var armorOn = s.flags["tankArmor Debuffs"] === undefined ? true : s.flags["tankArmor Debuffs"];
+				row("tankFF", "Include Faerie Fire", true, armorOn);
+				row("tankCoR", "Include Curse of Recklessness", true, armorOn);
+				return rows;
+			}
+			e = e.concat(feature({ title: "All Alerts", state: onOff(s.all), bind: "Shift + Right-Click", tip: { title: "Enable Control Freak", body: "Turn every Control Freak alert on or off." },
+				rows: s.all ? [] : [{ kind: "note", left: "All Alerts is off, so nothing fires.", c: "message" }],
+				toggle: function () { s.all = !s.all; render(); } }));
+			// Monitoring's and Naughty List's tools are flyouts; Tanking Tools' few sit inline (below).
+			var flyouts = {};
+			BLOCKS.forEach(function (b) {
+				if (b[0] === "tank") return;
+				flyouts[b[0]] = function () {
+					if (!s[b[0]]) return [];
+					return tools(b[0]).map(function (t) { return { kind: "toggle", left: t.label, on: t.get(), onClick: function () { t.set(!t.get()); render(); } }; });
+				};
+			});
+			if (s.all) {
+				BLOCKS.forEach(function (b) {
+					e = e.concat(feature({ key: b[0], flyout: flyouts[b[0]], title: b[1], state: onOff(s[b[0]]), desc: b[2], rows: b[0] === "tank" ? tankRows() : [], bind: b[3], toggle: function () { s[b[0]] = !s[b[0]]; render(); } }));
+				});
+			}
+			return { entries: e.concat(mFooter("Control Freak")), flyouts: flyouts };
+		},
+		changes: [
+			["behavior", "<b>All Alerts gets a block of its own</b>, first. It had no click to spare on the button, so the tooltip couldn't offer one; a menu row costs nothing. It has no description line: its title says what it does, and its Toggle tooltip is the switch's own (Enable Control Freak). It takes <b>Shift + Right-Click</b>, the one click Control Freak had free, which works even while All Alerts is off."],
+			["layout", "While All Alerts is off, the three blocks hide, as the options panel hides what a switched-off feature controls, and the red line becomes a gray note under the toggle."],
+			["layout", "<b>Features mirror: Monitoring's and Naughty List's flyouts are their tool switches</b>, the same ones the main page draws under them, in the same order (hover a title). No More Features: every Control Freak feature is a block."],
+			["layout", "<b>Tanking Tools shows its settings inline</b>, as On/Off rows under its description: When Group Has a Tank, Cold Openers, Armor Debuffs, and while Armor Debuffs is on, Include Faerie Fire and Include Curse of Recklessness. It ships off, so a flyout would hide everything; inline, a player sees what comes with it. While it's off the rows are gray, as on the options panel, and still switch."],
+		],
+	});
+})();
+
+// --- Water Dispenser ---------------------------------------------------------
+(function () {
+	var s = { on: true, carrying: true, flags: {} };
+	function features() {
+		return [
+			{ block: true, caption: "Enable Dispense", get: function () { return s.on; }, set: function (v) { s.on = v; } },
+			flagFeature(s, "macro", "Enable Announcement Macro", "Announcement Macro", true),
+			flagFeature(s, "inv", "Enable Open Trade! in Player Tooltips", "Open Trade! in Player Tooltips", true),
+			flagFeature(s, "bag", "Enable Inventory Tooltips", "Inventory Tooltips", true),
+		];
+	}
+	ADDONS.push({
+		id: "wd", hue: 200, name: "Water Dispenser", tag: "Tooltip today", state: s, features: features,
+		blurb: "The smallest: one feature, one live list. The smallest conversion, and the first to build after Tracking Eye.",
+		scenarios: [
+			{ key: "on", label: "Dispense", options: [[true, "On"], [false, "Off"]] },
+			{ key: "carrying", label: "Bags", options: [[true, "Carrying water"], [false, "Nothing to give"]] },
+		],
+		tooltip: function () {
+			var t = hdr("Water Dispenser", "2.0.3");
+			t.push(dbl("Dispense", "TITLE", s.on ? "Enabled" : "Disabled", s.on ? "ON" : "OFF", "feature"), line("Automatically fills the trade window when a trade opens, based on your settings.", "BODY", "feature", true), dbl("Left-Click", "INFO", "Toggle", "INFO", "hint"), blank());
+			if (s.on && s.carrying) {
+				t.push(line("Dispense Report", "TITLE", "report"));
+				t.push(dbl(ttItem(200, "Conjured Crystal Water", "common"), null, "60", "TEXT", "report"));
+				t.push(dbl(ttItem(35, "Conjured Cinnamon Roll", "common"), null, "40", "TEXT", "report"));
+				t.push(blank());
+			}
+			return t.concat(opts("Water Dispenser"));
+		},
+		menu: function (render) {
+			var e = mHeader("Water Dispenser", "2.0.3");
+			e = e.concat(feature({ title: "Dispense", state: onOff(s.on), desc: "Automatically fills the trade window when a trade opens, based on your settings.", bind: "Left-Click", toggle: function () { s.on = !s.on; render(); } }));
+			if (s.on && s.carrying) {
+				e.push({ kind: "status", left: "Dispense Report", c: "report" });
+				e.push(mItem(200, "Conjured Crystal Water", "common", 1, "60"));
+				e.push(mItem(35, "Conjured Cinnamon Roll", "common", 1, "40"));
+			}
+			e = e.concat(moreFeatures(features(), render));
+			return { entries: e.concat(mFooter("Water Dispenser")) };
+		},
+		changes: [
+			["layout", "Dispense is a standard feature block, its Toggle row naming Left-Click, which still flips it on the button."],
+			["layout", "<b>Features mirror.</b> Announcement Macro, Open Trade! in Player Tooltips and Inventory Tooltips join the menu as compact rows under More Features, in the main page's order. The options switches take the same names (Enable Open Trade! in Player Tooltips, Enable Inventory Tooltips)."],
+			["layout", "Dispense Report keeps its heading and lists item rows with the count on the right, shown only while Dispense is on and something's carried, as today."],
+		],
+	});
+})();
+
+// ---------------------------------------------------------------------------
+// Bands: scenario chips, Today, Proposed, What Changes
+// ---------------------------------------------------------------------------
+// Features Mirror: set-and-forget features as compact rows under More Features, last before Options.
+function moreFeatures(features, render) {
+	var rest = (features || []).filter(function (f) { return !f.block && !f.master; });
+	if (!rest.length) return [];
+	var e = [{ kind: "status", left: "More Features", c: "feature" }];
+	rest.forEach(function (f) {
+		e.push({ kind: "toggle", left: f.label, on: f.get(), c: "feature", tooltip: { title: f.caption, body: f.confirm ? "Asks before turning off, as its switch does." : "The same switch as the options panel's Features section." }, onClick: function () { f.set(!f.get()); render(); } });
+	});
+	return e;
+}
+// The root panel's Features section, built from the same list: blocks first in menu order, then the rest.
+function optionsPanel(host, features, render, log) {
+	var panel = document.createElement("div");
+	panel.className = "opt-panel";
+	host.appendChild(panel);
+	function box(f, cls) {
+		var label = document.createElement("label");
+		label.className = "opt-cb" + (cls ? " " + cls : "") + (f.disabled && f.disabled() ? " off" : "");
+		var input = document.createElement("input");
+		input.type = "checkbox";
+		input.checked = !!f.get();
+		input.addEventListener("change", function () {
+			f.set(input.checked);
+			if (log) log.innerHTML = "<b>Options</b> → " + f.caption + ": " + (input.checked ? "On" : "Off") + ". The menu followed.";
+			render();
+		});
+		var span = document.createElement("span");
+		span.textContent = f.caption;
+		label.appendChild(input);
+		label.appendChild(span);
+		if (f.tag) { var t = document.createElement("span"); t.className = "opt-tag"; t.textContent = f.tag; label.appendChild(t); }
+		return label;
+	}
+	function section(title, list) {
+		if (!list.length) return;
+		var head = document.createElement("div");
+		head.className = "opt-head";
+		head.textContent = title;
+		panel.appendChild(head);
+		var grid = document.createElement("div");
+		grid.className = "opt-grid";
+		panel.appendChild(grid);
+		list.forEach(function (f) {
+			if (f.children) {
+				var g = box(f, "group");
+				g.style.gridColumn = "1 / -1";
+				grid.appendChild(g);
+				var tools = document.createElement("div");
+				tools.className = "opt-tools";
+				f.children.forEach(function (c) { tools.appendChild(box(c, f.get() ? "" : "off")); });
+				grid.appendChild(tools);
+			} else {
+				grid.appendChild(box(f));
+			}
+		});
+	}
+	section("Master Switch", features.filter(function (f) { return f.master; }));
+	section("Features", features.filter(function (f) { return f.block && !f.master; }).concat(features.filter(function (f) { return !f.block && !f.master; })));
+}
+// A feature switch kept in the scenario's flags.
+function flagFeature(s, key, caption, label, def, extra) {
+	var f = { caption: caption, label: label, get: function () { return s.flags[key] === undefined ? def : s.flags[key]; }, set: function (v) { s.flags[key] = v; } };
+	for (var k in extra || {}) f[k] = extra[k];
+	return f;
+}
+
+// The mini-map button: each click runs the action row that names it, so the row and the button share one job.
+function strip(html) { return String(html).replace(/<[^>]*>/g, ""); }
+function clickName(button, shift) {
+	var name = { 0: "Left-Click", 1: "Middle-Click", 2: "Right-Click" }[button];
+	return name ? (shift ? "Shift + " : "") + name : null;
+}
+function addButton(host, entries, log, hue) {
+	var btn = document.createElement("button");
+	btn.type = "button";
+	btn.className = "mm-btn";
+	btn.style.setProperty("--h", hue || 40);
+	btn.setAttribute("aria-label", "Mini-map button: click with Left, Right or Middle, with or without Shift");
+	host.appendChild(btn);
+	function fire(button, shift) {
+		var name = clickName(button, shift);
+		if (!name) return;
+		var heading = null;
+		var hit = null;
+		entries.forEach(function (entry) {
+			if (entry.kind === "status" || entry.kind === "submenu") heading = entry.left;
+			if (!hit && entry.kind === "action" && entry.right === name) hit = { entry: entry, heading: heading };
+		});
+		if (hit) {
+			var label = strip(hit.entry.left);
+			var owner = hit.heading && label.indexOf("Options") < 0 ? " (" + strip(hit.heading) + ")" : "";
+			log.innerHTML = "<b>" + name + "</b> → " + label + owner;
+			if (hit.entry.onClick) hit.entry.onClick();
+		} else if (name === "Left-Click") {
+			log.innerHTML = "<b>Left-Click</b> → opens and holds the menu";
+		} else {
+			log.innerHTML = "<b>" + name + "</b> → does nothing on this button";
+		}
+	}
+	btn.addEventListener("click", function (e) { fire(0, e.shiftKey); });
+	btn.addEventListener("mousedown", function (e) { if (e.button === 1) e.preventDefault(); });
+	btn.addEventListener("auxclick", function (e) { if (e.button === 1) { e.preventDefault(); fire(1, e.shiftKey); } });
+	btn.addEventListener("contextmenu", function (e) { e.preventDefault(); fire(2, e.shiftKey); });
+}
+
+var host = document.getElementById("bands");
+ADDONS.forEach(function (a) {
+	var band = document.createElement("section");
+	band.className = "band";
+	band.id = a.id;
+	band.innerHTML =
+		'<div class="band-head"><h2>' + a.name + '</h2><span class="tag' + (a.isMenu ? " menu" : "") + '">' + a.tag + "</span></div>" +
+		"<p>" + a.blurb + "</p>" +
+		'<div class="scen"></div>' +
+		'<div class="views">' +
+		'<div class="view"><div class="label">Today: ' + (a.isMenu ? "menu" : "tooltip") + '</div><div class="gg-stage today"></div>' + (a.isMenu ? '<div class="clicklog today-log" aria-live="polite">Click the button.</div>' : "") + "</div>" +
+		'<div class="view"><div class="label">Proposed: menu</div><div class="gg-stage proposed"></div><div class="clicklog proposed-log" aria-live="polite">Click the button: Left, Right or Middle, with or without Shift.</div></div>' +
+		'<div class="view wide"><div class="label">Proposed: options panel, main page Features</div><div class="gg-stage options"></div></div>' +
+		"</div>" +
+		"<h3>What Changes</h3>" +
+		'<ol class="changes">' + a.changes.map(function (c) { return '<li><span class="kind">' + c[0] + "</span> " + c[1] + "</li>"; }).join("") + "</ol>";
+	host.appendChild(band);
+
+	var scen = band.querySelector(".scen");
+	(a.scenarios || []).forEach(function (sc) {
+		var seg = document.createElement("div");
+		seg.className = "seg";
+		seg.innerHTML = "<span>" + sc.label + "</span>";
+		sc.options.forEach(function (o) {
+			var b = document.createElement("button");
+			b.type = "button";
+			b.textContent = o[1];
+			b.addEventListener("click", function () { a.state[sc.key] = o[0]; render(); });
+			b._value = o[0];
+			seg.appendChild(b);
+		});
+		scen.appendChild(seg);
+		sc.el = seg;
+	});
+
+	var openKey = null;
+	function render() {
+		(a.scenarios || []).forEach(function (sc) {
+			sc.el.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b._value === a.state[sc.key])); });
+		});
+		var today = band.querySelector(".today");
+		today.innerHTML = "";
+		if (a.tooltip) {
+			GG.tooltip(today, a.tooltip());
+		} else {
+			var t = a.menu(render, false);
+			var tr = document.createElement("div");
+			tr.className = "mm-row";
+			today.appendChild(tr);
+			GG.menu(tr, t.entries, { flyouts: t.flyouts, openLeft: true });
+			addButton(tr, t.entries, band.querySelector(".today-log"), a.hue);
+		}
+		var prop = band.querySelector(".proposed");
+		prop.innerHTML = "";
+		var m = a.menu(render, true);
+		var pr = document.createElement("div");
+		pr.className = "mm-row";
+		prop.appendChild(pr);
+		GG.menu(pr, m.entries, { flyouts: m.flyouts, openLeft: true, openFlyout: openKey, onFlyout: function (k) { openKey = k; } });
+		addButton(pr, m.entries, band.querySelector(".proposed-log"), a.hue);
+		var op = band.querySelector(".options");
+		op.innerHTML = "";
+		optionsPanel(op, a.features(), render, band.querySelector(".proposed-log"));
+	}
+	a.render = render;
+});
+
+// ---------------------------------------------------------------------------
+// At a Glance
+// ---------------------------------------------------------------------------
+var ROWS = [
+	["Header (Full Name, version)", "all", "Kit: header"],
+	["Feature block: title, state, description", { te: 3, me: 1, gtg: 3, gl: 4, cf: 3, wd: 1 }, "Kit: status / submenu + description"],
+	["Button shortcut", { te: "0 (had 4)", me: 5, gtg: 6, gl: 5, cf: 4, wd: 2 }, "Stays on the button, named on its action row"],
+	["Item highlight (the item it'll act on)", { me: 1, gtg: "1–3" }, "Proposed: item"],
+	["Live list of items", { me: 1, gtg: 2, gl: 1, wd: 1 }, "Proposed: item"],
+	["Read-out (a total, a setting)", { me: 1, gl: 2 }, "Proposed: value"],
+	["Success, empty or off line", { me: 2, gtg: 2, cf: 1 }, "Kit: description or note"],
+	["Pick list inside a block", { te: 1 }, "Kit: choice"],
+	["Flyout of settings", { te: 2 }, "Kit: submenu + flyout"],
+	["Class-gated rows", { te: "yes", gtg: "yes", gl: "hint" }, "Gate on the character"],
+	["Reference notes (macro clicks)", { gtg: "1–2" }, "Flyout: section + value"],
+	["Options footer", "all", "Action row: Options … Shift + Middle-Click"],
+];
+var IDS = ["te", "me", "gtg", "gl", "cf", "wd"];
+var NAMES = { te: "Tracking Eye", me: "Magic Eraser", gtg: "Good to Go", gl: "GogoLoot", cf: "Control Freak", wd: "Water Dispenser" };
+document.getElementById("inventory").innerHTML =
+	"<thead><tr><th>Component</th>" + IDS.map(function (id) { return "<th>" + NAMES[id] + "</th>"; }).join("") + "<th>In the menu</th></tr></thead><tbody>" +
+	ROWS.map(function (r) {
+		return "<tr><td>" + r[0] + "</td>" + IDS.map(function (id) {
+			var v = r[1] === "all" ? "●" : r[1][id];
+			return '<td class="dot' + (v ? "" : " no") + '">' + (v || "·") + "</td>";
+		}).join("") + "<td>" + r[2] + "</td></tr>";
+	}).join("") + "</tbody>";
+
+// ---------------------------------------------------------------------------
+// Components catalog
+// ---------------------------------------------------------------------------
+var CATALOG = [
+	["the plate", "Pretty Wide Quest Log's Quest Arrow plate: black, angled corners, 80% alpha, so the world shows through. No boxes or borders inside it; blocks part by spacing and gold headings. A clickable row lights gold at 16%.", [{ kind: "status", left: "Dispense", right: "On", rightColor: "ON" }, { kind: "action", left: "Toggle", leftColor: "INFO", onClick: function () {} }]],
+	["spacing", "On the Spacing Scale. A row is a 12-point line with 4 above and below (20). A spacer is 16, a separator 8. Text sits 8 in from its row, rows 4 in from the plate, option rows 4 further in. Descriptions wrap at 320, notes at 260, and the menu is never under 128 wide.", [{ kind: "status", left: "Heading" }, { kind: "toggle", left: "Option row", on: true }, { kind: "spacer" }, { kind: "separator" }, { kind: "note", left: "Note text wraps at 260." }]],
+	["header", "First row, always: the Full Name in gold, the version in gray. A spacer follows.", [{ kind: "header", left: "Good to Go", right: "1.9.4" }]],
+	["status", "A feature title with no flyout, or a heading with nothing to click. State on the right: On green, Off or Paused gray.", [{ kind: "status", left: "Buff Duty", right: "On", rightColor: "ON" }, { kind: "status", left: "Farm Mode", right: "Paused", rightColor: "MUTED" }]],
+	["submenu", "A title whose flyout has something to show. Hover or click opens it. The arrow goes when the flyout is empty.", [{ kind: "submenu", left: "Farm Mode", right: "Active", rightColor: "ON", onClick: function () {} }]],
+	["description", "What a feature does, one short white sentence. Wraps at 320.", [{ kind: "description", left: "Sells your junk the moment you open a merchant, cheapest first." }]],
+	["action", "A one-shot click: Toggle, Open, Erase, Clear, always blue. <span class=\"new\">Proposed:</span> when a click on the button does the same job, it's named on the right in gray, like a menu's shortcut column. A controller clicks the row; a mouse can skip the menu.", [{ kind: "action", left: "Toggle", right: "Shift + Right-Click", onClick: function () {} }, { kind: "action", left: "Clear Protect List", right: "Middle-Click", onClick: function () {} }, { kind: "action", left: "Toggle", onClick: function () {} }]],
+	["toggle", "A setting's switch. Its name grays while off, so what's off sits back.", [{ kind: "toggle", left: "Mounted", on: true, onClick: function () {} }, { kind: "toggle", left: "Zoom Mini-map Out", on: false, onClick: function () {} }]],
+	["choice", "One of a set: the pick white with a check, the rest gray. A pick closes the menu.", [{ kind: "choice", left: icon(30) + "Find Minerals", selected: true, onClick: function () {} }, { kind: "choice", left: icon(48) + "Find Treasure", selected: false, onClick: function () {} }]],
+	["section", "A group's gold heading inside a flyout, with an optional state.", [{ kind: "section", left: "Farm Mode Status", right: "Active", rightColor: "ON" }]],
+	["note", "A short gray reason or helper line. Wraps at 260.", [{ kind: "note", left: "Standing still." }]],
+	["separator · spacer", "A thin line sets a few extras apart; a spacer is a line's room. The kit adds a spacer above every heading.", [{ kind: "toggle", left: "Not Mounted", on: true }, { kind: "separator" }, { kind: "toggle", left: "Zoom Mini-map Out", on: false }]],
+	["options row", "Last, after a spacer and separator. <span class=\"new\">Proposed:</span> an action row like any other, naming Shift + Middle-Click, which every add-on already uses. Menu-Kit's hint kind retires.", [{ kind: "action", left: "Water Dispenser Options", right: "Shift + Middle-Click", onClick: function () {} }]],
+	["item", '<span class="new">Proposed.</span> An item: its icon at line height, the name in its quality color without brackets, a count, and a value, count, ratio or slot on the right. At the option indent. Hovering shows the item.', [mItem(25, "Chipped Claw", "poor", 4, money(12)), mItem(270, "Arcane Powder", "common", 1, "4/20", "BODY"), mItem(100, "Instant Poison VI", "common", 1, "Main Hand", "MUTED")]],
+	["value", '<span class="new">Proposed.</span> A read-out: a white label, a value on the right, nothing to click. At the option indent. For totals, read-backs and macro notes.', [{ kind: "value", left: "Party", right: "Greed, Uncommon & Lower" }, { kind: "value", left: "9 Bag Slots " + paint("(27 Items)", "MUTED"), right: money(264) }]],
+];
+var cat = document.getElementById("catalog");
+CATALOG.forEach(function (c) {
+	var card = document.createElement("div");
+	card.className = "card";
+	card.innerHTML = "<h3>" + c[0] + "</h3><p>" + c[1] + '</p><div class="gg-stage"></div>';
+	cat.appendChild(card);
+	card._entries = c[2];
+});
+
+// ---------------------------------------------------------------------------
+// Will It Fit? The worst rows, before (one line, the menu grows) and after (short right side, wrapping left)
+// ---------------------------------------------------------------------------
+var FIT = [
+	["Good to Go · French · a list on the title row", 465,
+		[{ kind: "status", left: "Nourriture à amélioration et parchemins", right: "Groupe, Raid, Champ de bataille", rightColor: "MUTED" }, { kind: "action", left: "Activer/désactiver", right: "Clic gauche" }],
+		[{ kind: "status", left: "Nourriture à amélioration et parchemins", right: "En pause", rightColor: "MUTED" }, { kind: "note", left: "En attente : Groupe, Raid, Champ de bataille" }, { kind: "action", left: "Activer/désactiver", right: "Clic gauche" }],
+		"The state becomes a word; the list moves to a note. (The note's wording is a draft for the Localization Review.)"],
+	["Good to Go · French · a count on the title row", 366,
+		[{ kind: "status", left: "Liste de réapprovisionnement", right: "12 commandes en attente" }, { kind: "description", left: "Achète et range à la banque les objets de votre liste." }],
+		[{ kind: "status", left: "Liste de réapprovisionnement", right: "Activé", rightColor: "ON" }, { kind: "description", left: "Achète et range à la banque les objets de votre liste." }],
+		"No count beside the title: the orders are the rows under it, and past eight a note says how many more."],
+	["Tracking Eye · Portuguese · a long setting in a flyout", 454,
+		[{ kind: "section", left: "Status do Modo de Coleta", right: "Ativo", rightColor: "ON" }, { kind: "toggle", left: "Silenciar Sons da Conjuração de Habilidades de Rastreamento", on: true }, { kind: "toggle", left: "Afastar o Zoom do Minimapa", on: false }],
+		[{ kind: "section", left: "Status do Modo de Coleta", right: "Ativo", rightColor: "ON" }, { kind: "toggle", left: "Silenciar Sons da Conjuração de Habilidades de Rastreamento", on: true }, { kind: "toggle", left: "Afastar o Zoom do Minimapa", on: false }],
+		"The label wraps; its state stays on the first line.", { on: "Ligado", off: "Desligado" }],
+	["Control Freak · Italian · a long click", 350,
+		[{ kind: "status", left: "Monitoraggio", right: "Attivo", rightColor: "ON" }, { kind: "action", left: "Attiva/Disattiva", right: "Pulsante sinistro" }, { kind: "spacer" }, { kind: "separator" }, { kind: "action", left: "Opzioni di Control Freak", right: "MAIUSC + pulsante centrale" }],
+		[{ kind: "status", left: "Monitoraggio", right: "Attivo", rightColor: "ON" }, { kind: "action", left: "Attiva/Disattiva", right: "Pulsante sinistro" }, { kind: "spacer" }, { kind: "separator" }, { kind: "action", left: "Opzioni di Control Freak", right: "MAIUSC + pulsante centrale" }],
+		"The click keeps its line; the Options label wraps beside it."],
+	["Magic Eraser · German · a read-out", 384,
+		[{ kind: "status", left: "Ramsch-Bericht" }, { kind: "value", left: "1,234 Taschenplätze " + paint("(5,678 Gegenstände)", "MUTED"), right: money(12345678) }],
+		[{ kind: "status", left: "Ramsch-Bericht" }, { kind: "value", left: "1,234 Taschenplätze " + paint("(5,678 Gegenstände)", "MUTED"), right: money(12345678) }],
+		"The totals wrap; the money stays on the right."],
+	["Water Dispenser · Spanish · a long More Features row", 452,
+		[{ kind: "status", left: "Más funciones" }, { kind: "toggle", left: "Mostrar descripciones de bolsa para los objetos dispensados", on: true }, { kind: "toggle", left: "Mostrar inventario en las descripciones de jugador", on: false }],
+		[{ kind: "status", left: "Más funciones" }, { kind: "toggle", left: "Mostrar descripciones de bolsa para los objetos dispensados", on: true }, { kind: "toggle", left: "Mostrar inventario en las descripciones de jugador", on: false }],
+		"Measured with the full switch caption, the longest a row can get. (More Features is a draft translation.)", { on: "Activado", off: "Desactivado" }],
+];
+var fitList = document.getElementById("fitList");
+FIT.forEach(function (f) {
+	var card = document.createElement("div");
+	card.className = "card";
+	card.innerHTML = "<h3>" + f[0] + "</h3><p>" + f[4] + '</p><div class="label">Before: about ' + f[1] + ' points in game</div><div class="gg-stage before"></div><div class="label">After: within 320</div><div class="gg-stage after"></div>';
+	fitList.appendChild(card);
+	card._fit = f;
+});
+
+// ---------------------------------------------------------------------------
+// Decisions
+// ---------------------------------------------------------------------------
+var DECIDED = [
+	["Both ways: every action is a row, and the button keeps its clicks.", "A controller needs every action to be a row it can click. A mouse player shouldn't lose Right-Click, Middle-Click and the Shift clicks they already know. So the menu does both: an action row names, on its right in gray, the button click that does the same job. <i>Toggle … Shift + Right-Click.</i> The old tooltip's two strings, sides swapped, so nothing new to translate.", "Hover opens the menu, as it opened the tooltip. Every click the tooltip named keeps its job, and the open menu redraws. Left-Click opens and holds the menu only on a button with no Left-Click job. One table in each add-on names every action's click and its function, and both the row and the button read from it, so a row can never name a click that does something else."],
+];
+DECIDED.push(
+	["Every row fits every language.", "Measured: 55 of 682 one-line rows ran past a 320-point menu outside English, worst 465 (Good to Go's Buff Food title with its waiting list, in French).", "Short on the right: a title row holds a state word, any other right side a number, money, a ratio, a slot name or a click; anything longer goes in a note. Long on the left wraps: no row widens the menu past 320, and a wrapped label keeps its right side level with its first line."],
+	["Features mirror: the menu and the main page's Features section are one list.", "Magic Eraser showed 8 feature switches on its main page and 1 in its menu; GogoLoot 8 and 4.", "Same features, same order, same names. A feature changed mid-session is a full block; every other feature is a compact On/Off row under More Features. A feature's tool switches are its block's flyout."],
+	["One refresh: every change shows everywhere at once.", "Each add-on refreshed its own way: a panel or two by hand, a whole-profile apply, or a menu-only redraw.", "One ns.RefreshSettings() redraws every options panel, the open menu and the button's icon. Options, menu rows, button clicks, slash commands, key bindings and profile changes all end in it."],
+	["One button, hung the same way.", "Two buttons were data sources, two Simple add-ons kept the position in the wrong scope, and icons were updated three different ways.", "A launcher, one key, its position in the save model's presentation scope, one show/hide function, a live icon set on the LDB object only. The menu's corner meets the button's opposite corner, 2 points apart, flipping by screen halves, with the flyout on the same side."]
+);
+var DECISIONS = [
+	["The shortcut's color", "The old tooltips drew clicks in INFO blue. On the menu's action row, the left side is already blue and says what the row does.", "MUTED gray, like a menu's shortcut column: the row's job reads first, the click second, and a controller player can ignore it."],
+	["State words: On / Off, or Enabled / Disabled?", "Tracking Eye's menu says On / Off. The five tooltips say Enabled / Disabled, and the Style Guide's tooltip-to-menu map says to keep each add-on's words, so converting as written would leave the family split.", "On / Off everywhere, matching the toggle rows' own On / Off. Shorter in every locale, and Tracking Eye already carries the translations."],
+	["Third states: what color?", "GogoLoot's Paused and Good to Go's Party, Raid are SEPARATOR gray (AAAAAA); Tracking Eye's Paused is MUTED (808080).", "MUTED, like Off: a feature that isn't acting sits back, whatever the reason. The reason goes in a note or flyout."],
+	["Where the menu's machinery lives", "Tracking Eye's Minimap-Menu.lua holds about 250 lines of opening, placing, timing out and flyouts that every add-on would copy.", "Move it into Menu-Kit (<code>Kit.CreateMenu</code>, <code>Kit.FeatureBlock</code>), so each add-on's Minimap-Menu.lua is only its rows. Do it in Tracking Eye first, before a second add-on copies it."],
+	["Where the kit lives", "Today the guide says to copy Menu-Kit.lua from Tracking Eye unchanged.", "Keep the canonical kit in Common-Core (<code>addon-kits/Menu-Kit/</code>), copied into each add-on with a button, and have CI check every copy matches, the way <code>addon-files/</code> already works."],
+	["Two new row kinds: item and value", "Five tooltips draw items with icons and values, and read-outs with nothing to click. The kit has neither, so each add-on would hand-build them.", "Add both to the kit, with the color argument also taking a raw hex for quality and class colors."],
+	["Long lists", "GogoLoot caps Tradable Loot at 3 and says how many more. Good to Go shows 8, then collapses to a count. Magic Eraser shows every protected item.", "One rule: show up to 8 item rows, then a gray <i>N more</i>. The title's right side carries the total when it's useful."],
+	["Hunters' ten-row pick list", "Tracking Eye's pick list is the Pick-List Exception doing its job, but on a dwarf hunter with Mining it's the longest list in any menu.", "Leave it. A pick is the feature's main job, and a hunter picks often. Revisit if testers complain."],
+	["Macro notes in Good to Go", "The class section explains clicks on a macro, not on the button. In a menu, rows look clickable.", "A class-colored <i>[Class] Macros</i> flyout of value rows. Live items (poisons, pet food) stay in the menu."],
+];
+document.getElementById("decisionList").innerHTML = DECIDED.map(function (d) {
+	return '<div class="decision"><b>Decided: ' + d[0] + "</b><p>" + d[1] + '</p><p class="rec">' + d[2] + "</p></div>";
+}).join("") + DECISIONS.map(function (d, i) {
+	return '<div class="decision"><b>Decided: ' + d[0] + "</b><p>" + d[1] + '</p><p class="rec">' + d[2] + "</p></div>";
+}).join("");
+
+// Draw once the mock font is in, so every width measures true.
+function drawAll() {
+	ADDONS.forEach(function (a) { a.render(); });
+	fitList.querySelectorAll(".card").forEach(function (card) {
+		var b = card.querySelector(".before"), a = card.querySelector(".after");
+		b.innerHTML = ""; a.innerHTML = "";
+		GG.menu(b, card._fit[2], { uncapped: true, toggleText: card._fit[5] });
+		GG.menu(a, card._fit[3], { toggleText: card._fit[5] });
+	});
+	cat.querySelectorAll(".card").forEach(function (card) {
+		var stage = card.querySelector(".gg-stage");
+		stage.innerHTML = "";
+		GG.menu(stage, card._entries, {});
+	});
+}
+drawAll();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+})();
+</script>

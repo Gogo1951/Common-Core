@@ -67,7 +67,7 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 
 - **`.pkgmeta`, `.github/` (workflows), and `LICENSE`** — packaging and release wiring are reviewed by the Prelaunch Review, not here. Don't review their contents and don't flag their absence.
 - **The Spacing Scale** — `02 - UX Review.md` moves sizes and gaps onto it through its Build choices, never a sweep (Style Guide → SPACING SCALE), so an off-scale value is never a finding here.
-- **A mini-map tooltip not yet turned into a menu** — `02 - UX Review.md` moves it through its Build choices (Menus, Not Tooltips), never a sweep, so a button still on a tooltip is never a finding here. A built menu is reviewed against Style Guide → MINIMAP MENU.
+- **A mini-map tooltip not yet turned into a menu** — `02 - UX Review.md` moves it through its Build choices (Menus, Not Tooltips), never a sweep, so a button still on a tooltip is never a finding here. A built menu is reviewed against Style Guide → MINIMAP MENU (Button Clicks, Features Mirror, One Refresh, Placement, and Short on the Right / Long on the Left Wraps) and its button against MINIMAP BUTTON → Building the Button; each miss is a finding.
 - **`Diagnostics/`** — `04 - Diagnostics Review.md` owns it. Only its load-time wiring (TOC entries, the dispatcher's one logging call) is reviewed here.
 - **Includes folder** — don't review its contents. Separately, do verify its files are correctly referenced (in every TOC and any XML), and that every file a TOC references exists.
 - Any **.tga** files.
