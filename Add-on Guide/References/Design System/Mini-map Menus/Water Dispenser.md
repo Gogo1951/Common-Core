@@ -48,7 +48,7 @@ Hover opens the menu. Left-Click has a job, so it doesn't open it.
 ## Strings
 
 - **Rename, keeping every locale's text:** `UI_TOGGLE` → `MENU_TOGGLE`, `UI_LEFT_CLICK` → `MENU_CLICK_LEFT`, `MINIMAP_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`.
-- **New:** `MENU_ON` "On" and `MENU_OFF` "Off", every locale's text copied from Tracking Eye's; `MENU_MORE` "%d more", copied from GogoLoot's `MINIMAP_TRADABLE_MORE`.
+- **New:** `MENU_ON` "On" and `MENU_OFF` "Off", every locale's text copied from Tracking Eye's; `MENU_MORE` "%d more", copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
 - **Retire** `UI_ENABLED` / `UI_DISABLED` only if nothing else reads them.
 
 ## Code
@@ -62,7 +62,8 @@ Hover opens the menu. Left-Click has a job, so it doesn't open it.
 
 Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
 
-- **Features mirror.** Root panel order stays Dispense, then Announcement Macro, Inventory in Player Tooltips, Bag Tooltips for Dispensed Items, now built from `ns.FEATURES`. The menu gains **More Features** with those three as compact rows (each labeled by its panel's name, or its caption without Enable), their switches' captions and descriptions as tooltips.
+- **Features mirror.** Root panel order stays Dispense, then Announcement Macro, Open Trade! in Player Tooltips, Inventory Tooltips, now built from `ns.FEATURES`. The menu gains **More Features** with those three as compact rows, their switches' captions and descriptions as tooltips.
+- **Two features take their names** in both places: the player-tooltip block is **Open Trade! in Player Tooltips** (new `FEATURE_OPEN_TRADE_TOOLTIPS`; its switch, `OPTIONS_SHOW_INVENTORY`, reads `Enable Open Trade! in Player Tooltips`), and the bag-item line is **Inventory Tooltips** (the existing `TAB_INVENTORY_TOOLTIPS`; its switch, `OPTIONS_BAG_TOOLTIPS`, reads `Enable Inventory Tooltips`). The two captions are retranslated by the Localization Review.
 - **One refresh.** Every `NotifyChange` in `Features/Dispenser.lua`, `Features/Announcements.lua` and the options panels becomes `ns.RefreshSettings()`, which `ns:ApplyProfile` calls too.
 - **Button:** a launcher keyed `ns.LOCALE_NAME`, Simple so `ns.db.profile.minimap`: right. Rename `ns.ToggleMinimapButton` → `ns:ApplyMinimapButton()`, a plain `Refresh` with the current subtable.
 

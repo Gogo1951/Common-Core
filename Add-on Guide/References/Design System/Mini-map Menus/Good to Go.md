@@ -45,13 +45,14 @@ Shift + Middle-Click
 | Current Food | status | `MINIMAP_BEST_FOOD` | | | always |
 | The food | item | `ns.bestFoodID` | | | a food resolved; else a description, `MESSAGE_NO_ITEM` with `LABEL_FOOD` |
 | Ignore | action | `MENU_IGNORE` | Right-Click | RightButton | a food resolved |
-| Buff Food & Scrolls | status | `MINIMAP_BUFF_FOOD_SCROLLS` | On (ON) / the waiting label (MUTED) / Off (MUTED) | | always |
+| Buff Food & Scrolls | status | `MINIMAP_BUFF_FOOD_SCROLLS` | On (ON) / Paused (MUTED) / Off (MUTED) | | always |
 | | description | `MINIMAP_BUFF_FOOD_SCROLLS_DESCRIPTION_FORMAT` with `ns.GetWellFedName()` | | | |
+| Waiting | note | `MENU_WAITING_FOR` with the waiting label (`Waiting for: Party, Raid`, or the level filter's label) | | | on, while its When to Use doesn't hold |
 | Toggle | action | `MENU_TOGGLE` | Left-Click | LeftButton | flips both as a pair (`ToggleBuffFoodAndScrolls`) |
 | Buff Duty | status | `TAB_BUFF_DUTY` | On / Off, for this class | | always |
 | | description | `BUFF_DUTY_DESCRIPTION` | | | |
 | Toggle | action | `MENU_TOGGLE` | Shift + Left-Click | ShiftLeftButton | |
-| Restock List | status | `MENU_RESTOCKER` | `MINIMAP_RESTOCKER_NEEDED` while orders are out (TEXT); On / Off otherwise | | always |
+| Restocker | status | the feature's name, as the root panel's switch names it | On / Off, never a count | | always |
 | | description | `MENU_RESTOCKER_DESCRIPTION` | | | |
 | Each order | item | `ns.GetItemLabel(itemID)` | `MINIMAP_RESTOCKER_ITEM_COUNT` have/wanted, BODY | | Restocker on; `Kit.List`, 8 max, from `ns.BuildGroceryList()` |
 | Stocked | description, `leftColor = "ON"` | `MINIMAP_RESTOCKER_STOCKED` | | | on, list has rows, nothing to buy |
@@ -74,7 +75,7 @@ The **reference flyout** pattern: notes about a macro's clicks, not this menu's,
 | Row | Kind | Left | Right |
 |---|---|---|---|
 | Macro name | section | `NOTE_MACRO_*` | |
-| Each click | value | what it does | the macro's click (`NOTE_*` / `MINIMAP_*_CLICK`), MUTED |
+| Each click | value | what it does, as a verb: `NOTE_CONJURE`, `NOTE_CREATE`, `NOTE_CONJURE_LOWER_RANK` (mage), `NOTE_CREATE_LOWER_RANK` (warlock) | the macro's click (`NOTE_*` / `MINIMAP_*_CLICK`), MUTED |
 | Closing note | note | `NOTE_MAGE_TARGET_LEVEL` and the like | |
 
 `ns.AddConsumableMacroNotes`, which the Spellbook page's tooltip calls, keeps working: move it and `CLASS_NOTES` out of `Minimap-Button.lua` before removing the tooltip code.
@@ -95,8 +96,8 @@ Left-Click has a job, so hover alone opens the menu. Every click ends in `ns.Upd
 ## Strings
 
 - **Rename, keeping every locale's text:** `MINIMAP_TOGGLE` → `MENU_TOGGLE`, `MINIMAP_OPEN` → `MENU_OPEN`, `MINIMAP_LEFT_CLICK` / `_RIGHT_CLICK` / `_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_SHIFT_LEFT` → `MENU_CLICK_SHIFT_LEFT`, `MENU_RESTOCKER_KEYBIND` → `MENU_CLICK_SHIFT_RIGHT`, `MENU_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`. Check the macro notes before renaming `MINIMAP_RIGHT_CLICK` and the like: they name a macro's clicks too and keep reading the renamed key.
-- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_MORE`, copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_CLASS_MACROS` "%s Macros", the one string to translate fresh.
-- **Retire**, if nothing else reads them: `MINIMAP_RESTOCKER_REPORT`, `MINIMAP_IGNORE_COUNT`, `MINIMAP_BEST_PET_FOOD`, `MINIMAP_MAIN_HAND_POISON`, `MINIMAP_OFF_HAND_POISON`, `MINIMAP_ENABLED`, `MINIMAP_DISABLED`.
+- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_MORE`, copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_PAUSED` "Paused", copied from GogoLoot's `STATUS_PAUSED`. Translated fresh: `MENU_CLASS_MACROS` "%s Macros", `MENU_WAITING_FOR` "Waiting for: %s", `NOTE_CONJURE_LOWER_RANK` "Conjure Lower Rank" and `NOTE_CREATE_LOWER_RANK` "Create Lower Rank" (the second click on Mana Gem and Healthstone, which `Lower-Rank Backup` named as a label once the job led the row). `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
+- **Retire**, if nothing else reads them: `NOTE_LOWER_RANK_BACKUP`, `MINIMAP_RESTOCKER_NEEDED`, `MINIMAP_RESTOCKER_REPORT`, `MINIMAP_IGNORE_COUNT`, `MINIMAP_BEST_PET_FOOD`, `MINIMAP_MAIN_HAND_POISON`, `MINIMAP_OFF_HAND_POISON`, `MINIMAP_ENABLED`, `MINIMAP_DISABLED`.
 
 ## Code
 

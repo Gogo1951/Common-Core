@@ -54,9 +54,8 @@ Shift + Middle-Click
 | Loot Announcements | status | `TAB_ANNOUNCEMENTS` | On / Off | | always |
 | | description | `MINIMAP_ANNOUNCEMENTS_DESCRIPTION` | | | |
 | Toggle | action | `MENU_TOGGLE` | Shift + Left-Click | ShiftLeftButton | |
-| Automated Master Looting | status | `TAB_MASTER_LOOTER` | On / Off | | always |
-| | description | `MINIMAP_AUTOMATED_MASTER_LOOTING_DESCRIPTION` | | | |
-| Toggle | action | `MENU_TOGGLE` | Shift + Right-Click | ShiftRightButton | |
+| More Features | status | `MENU_MORE_FEATURES` | | | always |
+| Each set-and-forget feature | toggle | Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting, Roll Macro | On / Off | | always; tooltip is the switch's caption and description |
 | Options | action | `MENU_OPTIONS` | Shift + Middle-Click | ShiftMiddleButton | always |
 
 **When the loot windows come back:** Tradable Loot is a live report under Locked Items (item rows with the time left on the right in its window colors, `Kit.List` at 8). A `Loot Master & Loot Tracker` block (status with `MINIMAP_TO_HAND_OUT` on the right, `MINIMAP_LOOT_WINDOWS_DESCRIPTION`, an `MENU_OPEN` action naming Middle-Click) comes before Options.
@@ -70,7 +69,7 @@ Shift + Middle-Click
 | Left-Click | Automated Rolls on/off (and the icon swap) | Rolls' Toggle |
 | Right-Click | Automated Opening on/off | Opening's Toggle |
 | Shift + Left-Click | Loot Announcements on/off | Announcements' Toggle |
-| Shift + Right-Click | Automated Master Looting on/off | Master Looting's Toggle |
+| Shift + Right-Click | **Held for the Master Looting Window**, once it's built. Until then it does nothing. (Today it flips Automated Master Looting, which moves to More Features.) | the window's Open row, when it comes |
 | Middle-Click | Loot windows, only while they're loaded | (their block, when it returns) |
 | Shift + Middle-Click | Options | Options |
 
@@ -79,7 +78,7 @@ Each toggle keeps its current side effects (`ToggleAutomatedRolls` and the other
 ## Strings
 
 - **Rename, keeping every locale's text:** `MINIMAP_TOGGLE` → `MENU_TOGGLE`, `MINIMAP_OPEN` → `MENU_OPEN`, `MINIMAP_LEFT_CLICK` / `_RIGHT_CLICK` / `_SHIFT_LEFT_CLICK` / `_SHIFT_RIGHT_CLICK` / `_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS_KEYBIND` → `MENU_CLICK_SHIFT_MIDDLE`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`, `MINIMAP_TRADABLE_MORE` → `MENU_MORE`.
-- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_ROLLS_SETTING` "%s, %s": each locale's `MINIMAP_ROLLS_SETTING` with its leading `%s: ` removed.
+- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_ROLLS_SETTING` "%s, %s": each locale's `MINIMAP_ROLLS_SETTING` with its leading `%s: ` removed. `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
 - **Retire** `MINIMAP_ROLLS_SETTING`, `MINIMAP_ROLLS_SETTING_MANUAL`; and `STATUS_ENABLED` / `STATUS_DISABLED` only if nothing else reads them. **Keep** `STATUS_PAUSED`.
 
 ## Code
@@ -92,7 +91,7 @@ Each toggle keeps its current side effects (`ToggleAutomatedRolls` and the other
 
 Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
 
-- **Features mirror: the root panel reorders.** Today it reads Speedy Loot, Automated Rolls, Automated Opening, Loot Toasts, Loot Sounds, Loot Announcements, Automated Master Looting, Roll Macro. It becomes the four blocks in menu order (Automated Rolls, Automated Opening, Loot Announcements, Automated Master Looting), then Speedy Loot, Loot Toasts, Loot Sounds and Roll Macro. The menu gains **More Features** with those four as compact rows (`TAB_SPEEDY_LOOT`, `TAB_LOOT_TOASTS`, `TAB_LOOT_SOUNDS`, `TAB_ROLL_MACRO`), their switches' captions and descriptions as tooltips. `FEATURE_SWITCHES` in `Options/Options-General.lua` becomes `ns.FEATURES`.
+- **Features mirror: the root panel reorders.** Today it reads Speedy Loot, Automated Rolls, Automated Opening, Loot Toasts, Loot Sounds, Loot Announcements, Automated Master Looting, Roll Macro. It becomes the three blocks in menu order (Automated Rolls, Automated Opening, Loot Announcements), then Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting and Roll Macro. The menu gains **More Features** with those five as compact rows (`TAB_SPEEDY_LOOT`, `TAB_LOOT_TOASTS`, `TAB_LOOT_SOUNDS`, `TAB_MASTER_LOOTER`, `TAB_ROLL_MACRO`), their switches' captions and descriptions as tooltips. **Automated Master Looting is set once per raid, not mid-fight, so it's a compact row**, and its row keeps the toggle's side effects (the not-master-looter chat line, the pop-ups). `FEATURE_SWITCHES` in `Options/Options-General.lua` becomes `ns.FEATURES`.
 - **One refresh.** Each toggle's hand-listed `NotifyChange` calls (its own panel, General, the master-looter pop-ups) become its side effects, then `ns.RefreshSettings()`.
 - **Button: two fixes.** GogoLoot is Simple, so its position moves from `ns.db.global.minimap` to `ns.db.profile.minimap`, copied over once in a migration so no button jumps. `ns:UpdateMinimapIcon` stops calling `LibDBIcon:Refresh`: assigning `brokerObject.icon` is enough. Icon Fit runs on Camelot and Mainline, as the rule says, not Camelot alone.
 

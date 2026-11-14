@@ -52,6 +52,7 @@
 		MIN_WIDTH: 128,
 		NOTE_MAX_WIDTH: 260,
 		DESCRIPTION_MAX_WIDTH: 320,
+		MAX_WIDTH: 320, // no row widens the menu past this; a long left side wraps
 		INSETS: 2 * (8 + 4), // TEXT_INSET + ROW_INSET, both sides
 		FLYOUT_GAP: 4 + 8, // ROW_INSET + SPACE.NEAR
 		FLYOUT_RISE: 8, // SPACE.NEAR
@@ -235,6 +236,7 @@
 			draw(rows, flyout, toggleText, null);
 		}
 		if (options.openLeft) wrap.classList.add("left");
+		if (options.uncapped) wrap.classList.add("gg-uncapped");
 		if (options.openFlyout) {
 			var row = panel.querySelector('[data-submenu="' + options.openFlyout + '"]');
 			if (row) openFlyout(options.openFlyout, row);

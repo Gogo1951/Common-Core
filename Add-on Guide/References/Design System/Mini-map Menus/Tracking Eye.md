@@ -53,7 +53,7 @@ Flyouts (Persistent Tracking's class overrides, Farm Mode's status, abilities, c
 - **Bring back from git** (`fbcd7e3:Locales/*.lua`), every locale, under the standard names: `RIGHT_CLICK` → `MENU_CLICK_RIGHT`, `SHIFT_LEFT` → `MENU_CLICK_SHIFT_LEFT`, `SHIFT_RIGHT` → `MENU_CLICK_SHIFT_RIGHT`, `SHIFT_MIDDLE` → `MENU_CLICK_SHIFT_MIDDLE`.
 - **Rename:** `TOOLTIP_OPTIONS` → `MENU_OPTIONS`.
 - **Retire:** `OPEN` (only the Options row read it).
-- **New:** `MENU_MORE` "%d more" (the kit needs it; Tracking Eye's lists never reach 8 today).
+- **New:** `MENU_MORE` "%d more" (the kit needs it; Tracking Eye's lists never reach 8 today). `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
 
 ## Code
 

@@ -94,6 +94,7 @@ tbody tr:hover { background: var(--panel); }
 .opt-cb.off span { color: #808080; }
 .opt-tag { color: #808080; margin-left: 4px; }
 .view.wide { grid-column: 1 / -1; }
+.card .label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
 .mm-row { display: flex; align-items: flex-start; gap: 4px; }
 .mm-btn { flex: none; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 40% 35%, hsl(var(--h) 55% 62%), hsl(var(--h) 50% 26%) 62%, #0c0c0c 64%); box-shadow: 0 0 0 3px #b8962e, 0 0 0 4px #2a2208, 0 2px 8px rgba(0, 0, 0, .7); }
 .mm-btn:hover { filter: brightness(1.25); }
@@ -123,6 +124,7 @@ tbody tr:hover { background: var(--panel); }
 			<a href="#gl">GogoLoot</a>
 			<a href="#cf">Control Freak</a>
 			<a href="#wd">Water Dispenser</a>
+			<a href="#fit">Will It Fit?</a>
 			<a href="#components">Components</a>
 			<a href="#decisions">Decisions</a>
 		</nav>
@@ -136,6 +138,17 @@ tbody tr:hover { background: var(--panel); }
 	</section>
 
 	<div id="bands"></div>
+
+	<section class="band" id="fit">
+		<h2>Will It Fit?</h2>
+		<p>Every one-line menu row from all six add-ons, in all 11 languages: 682 rows, measured the way Menu-Kit sizes them. English fits a 320-point menu everywhere; <b>55 rows</b> in German, French, Spanish, Italian, Portuguese and Russian don't. Chinese and Korean fit. Two rules make every one fit:</p>
+		<ul class="plain">
+			<li><b>Short on the right.</b> A title row's right side is a state word (On, Off, Active, Paused). A row's right side is otherwise a number, money, a ratio, a game slot name or a click. Anything longer or variable goes in a note under the description, which wraps.</li>
+			<li><b>Long on the left wraps.</b> No row widens the menu past 320. A label too long for its row wraps onto a second line, and its right side stays level with the first.</li>
+		</ul>
+		<p>The worst cases, in their own language. Before is today's kit, which widens the menu to fit; after is the two rules. The widths are measured in the game font's proportions; the page draws in a narrower stand-in, so a before can look roomier here than it is in game.</p>
+		<div class="catalog" id="fitList"></div>
+	</section>
 
 	<section class="band" id="components">
 		<h2>Components</h2>
@@ -413,7 +426,8 @@ var ADDONS = [];
 	};
 	var IGNORED = [["Conjured Sweet Roll", "common", 35], ["Moist Cornbread", "common", 40]];
 	function waitingState(v) { return v === "on" ? ["Enabled", "ON"] : v === "wait" ? ["Party, Raid", "SEPARATOR"] : ["Disabled", "OFF"]; }
-	function menuState(v) { return v === "on" ? ["On", "ON"] : v === "wait" ? ["Party, Raid", "MUTED"] : ["Off", "MUTED"]; }
+	// The title row holds only a short state word; what it's waiting for goes in a note, which wraps.
+	function menuState(v) { return v === "on" ? ["On", "ON"] : v === "wait" ? ["Paused", "MUTED"] : ["Off", "MUTED"]; }
 	function classNotes(cls) {
 		// [items: [title, name, hue]], [macros: [title, rows, note]]
 		if (cls === "MAGE") return { items: [], macros: [["Food & Water Macros", [["Right-Click", "Conjure"]], "Target a lower-level player to conjure for their level."], ["Mana Gem Macro", [["Right-Click", "Conjure"], ["Right-Click Again", "Lower-Rank Backup"]]]] };
@@ -486,7 +500,7 @@ var ADDONS = [];
 			e.push({ kind: "status", left: "Current Food", c: "item" });
 			e.push(mItem(food[1], food[0], "common", 1, null));
 			e.push(action("Ignore", function () { s.ignore = true; render(); }, { title: "Ignore", body: "Adds it to this character's Ignore List, so the macros skip it." }, "Right-Click"));
-			e = e.concat(feature({ title: "Buff Food & Scrolls", state: menuState(s.buff), desc: "Uses Well Fed food and applies missing scroll buffs before you eat.", bind: "Left-Click", toggle: function () { s.buff = s.buff === "off" ? "on" : "off"; render(); } }));
+			e = e.concat(feature({ title: "Buff Food & Scrolls", state: menuState(s.buff), desc: "Uses Well Fed food and applies missing scroll buffs before you eat.", rows: s.buff === "wait" ? [{ kind: "note", left: "Waiting for: Party, Raid", c: "feature" }] : [], bind: "Left-Click", toggle: function () { s.buff = s.buff === "off" ? "on" : "off"; render(); } }));
 			e = e.concat(feature({ title: "Buff Duty", state: onOff(s.duty), desc: "Shows who's missing your buffs. Click an icon to cast.", bind: "Shift + Left-Click", toggle: function () { s.duty = !s.duty; render(); } }));
 			// Restock List: the Restocker Report moves into its block, as Persistent Tracking's pick list sits in its.
 			var on = s.restock !== "off";
@@ -494,10 +508,8 @@ var ADDONS = [];
 			var rows = [];
 			var state = on ? ["On", "ON"] : ["Off", "MUTED"];
 			if (on && s.restock === "orders") {
-				state = [list.length + " Orders Outstanding", "TEXT"];
 				list.forEach(function (r) { rows.push(mItem(r[3], r[0], "common", 1, r[1] + "/" + r[2], "BODY")); });
 			} else if (on && s.restock === "many") {
-				state = ["11 Orders Outstanding", "TEXT"];
 				for (var i = 0; i < 8; i++) { var r = list[i % list.length]; rows.push(mItem(r[3] + i * 37, i < list.length ? r[0] : ["Morning Glory Dew", "Mageweave Bandage", "Elixir of Fortitude", "Greater Arcane Elixir"][i % 4], "common", 1, r[1] + "/" + r[2], "BODY")); }
 				rows.push({ kind: "note", left: "3 more", c: "report" });
 			} else if (on && s.restock === "stocked") {
@@ -516,7 +528,11 @@ var ADDONS = [];
 					notes.macros.forEach(function (m) {
 						f.push({ kind: "section", left: m[0] });
 						// What the macro does on the left, its click on the right in gray: the same way round as an action row.
-						m[1].forEach(function (r) { f.push({ kind: "value", left: r[1], right: r[0], rightColor: "MUTED" }); });
+						m[1].forEach(function (r) {
+							// "Lower-Rank Backup" read as a label once the job led; the row says what the click does.
+							var job = r[1] === "Lower-Rank Backup" ? "Conjure Lower Rank" : r[1];
+							f.push({ kind: "value", left: job, right: r[0], rightColor: "MUTED" });
+						});
 						if (m[2]) f.push({ kind: "note", left: m[2] });
 					});
 					return f;
@@ -534,11 +550,12 @@ var ADDONS = [];
 		},
 		changes: [
 			["layout", "Current Food is an item row with an <b>Ignore … Right-Click</b> action row under it. The item sits left like every other item row, not right-aligned on its own line."],
-			["layout", "<b>Restocker Report moves into the Restock List block</b>, between its description and Toggle, as Tracking Eye's pick list sits in Persistent Tracking. Orders show on the title's right; the list caps at eight with a gray <i>3 more</i>. Open follows Toggle while the Restocker is on, and keeps Shift + Right-Click."],
+			["layout", "<b>Restocker Report moves into the Restock List block</b>, between its description and Toggle, as Tracking Eye's pick list sits in Persistent Tracking. The title reads On or Off like every feature, with no order count beside it (in French that title and count ran 366 points wide); the orders themselves are the rows, capped at eight with a gray <i>3 more</i>. Open follows Toggle while the Restocker is on, and keeps Shift + Right-Click."],
 			["behavior", "Restock List gets a Toggle, with no button click of its own (all six are taken). Today, with the Restocker off, the tooltip's click says Disabled and the only way back is the options panel."],
 			["layout", "<b>Macro notes move to a flyout</b> behind a class-colored <i>Mage Macros</i> title. They explain clicks on a macro, not on this menu, so they're reference, not actions. The class's live items (poisons, pet food) stay in the menu as item rows with their slot on the right. Switch Class to see each."],
 			["layout", "<b>Features mirror.</b> Enhanced Spellbook, Consumable Macros, Rank Watch, Inventory Report and Readiness Report join the menu as compact rows under More Features. The Restock List block is titled <i>Restocker</i>, the feature's name on the main page. Buff Food & Scrolls keeps its block: it's a setting inside Consumable Macros that players flip mid-session."],
-			["copy", "<i>Party, Raid</i> (Buff Food waiting on its When to Use) keeps its words and turns gray, matching Tracking Eye's Paused. <i>Mage Macros</i> is the one new string."],
+			["copy", "Buff Food waiting on its When to Use reads <b>Paused</b> on the title, gray like Tracking Eye's, with a gray note under the description saying what it waits for (<i>Waiting for: Party, Raid</i>). That list ran 465 points wide on the title row in French; in a note it wraps."],
+			["copy", "Mana Gem's second click reads <b>Conjure Lower Rank … Right-Click Again</b>. With the job first, <i>Lower-Rank Backup</i> read as a label and lost the tip. New strings: <i>[Class] Macros</i>, <i>Paused</i>, <i>Waiting for: %s</i>, <i>Conjure Lower Rank</i> and <i>Create Lower Rank</i> (Warlock)."],
 		],
 	});
 })();
@@ -551,10 +568,10 @@ var ADDONS = [];
 			{ block: true, caption: "Enable Automated Rolls", get: function () { return s.rolls; }, set: function (v) { s.rolls = v; } },
 			{ block: true, caption: "Enable Automated Opening", get: function () { return s.opening !== "off"; }, set: function (v) { s.opening = v ? "on" : "off"; } },
 			{ block: true, caption: "Enable Loot Announcements", get: function () { return s.ann; }, set: function (v) { s.ann = v; } },
-			{ block: true, caption: "Enable Automated Master Looting", get: function () { return s.ml; }, set: function (v) { s.ml = v; } },
 			flagFeature(s, "speedy", "Enable Speedy Loot", "Speedy Loot", true),
 			flagFeature(s, "toasts", "Enable Loot Toasts", "Loot Toasts", true),
 			flagFeature(s, "sounds", "Enable Loot Sounds", "Loot Sounds", false),
+			{ caption: "Enable Automated Master Looting", label: "Automated Master Looting", get: function () { return s.ml; }, set: function (v) { s.ml = v; } },
 			flagFeature(s, "macro", "Enable Roll Macro", "Roll Macro", false),
 		];
 	}
@@ -601,15 +618,15 @@ var ADDONS = [];
 			var op = s.opening === "off" ? ["Off", "MUTED"] : s.opening === "paused" ? ["Paused", "MUTED"] : ["On", "ON"];
 			e = e.concat(feature({ title: "Automated Opening", bind: "Right-Click", state: op, desc: "Opens clams, crates, coin purses, and unlocked lockboxes in your bags.", toggle: function () { s.opening = s.opening === "off" ? "on" : "off"; render(); } }));
 			e = e.concat(feature({ title: "Loot Announcements", bind: "Shift + Left-Click", state: onOff(s.ann), desc: "Posts trade summaries and master loot hand-outs to chat.", toggle: function () { s.ann = !s.ann; render(); } }));
-			e = e.concat(feature({ title: "Automated Master Looting", bind: "Shift + Right-Click", state: onOff(s.ml), desc: "Hands out loot to the players you picked for each quality.", toggle: function () { s.ml = !s.ml; render(); } }));
 			e = e.concat(moreFeatures(features(), render));
 			return { entries: e.concat(mFooter("GogoLoot")) };
 		},
 		changes: [
-			["layout", "Four click hints (two with Shift) become four Toggle rows, each naming its click on the right. The clicks all still work on the button."],
+			["layout", "Three click hints become Toggle rows, each naming its click on the right, and those clicks still work on the button."],
+			["behavior", "<b>Automated Master Looting moves to More Features</b>, a compact row: it's set once per raid, not flipped mid-fight. That frees <b>Shift + Right-Click for the Master Looting Window</b> once it's built; until then that click does nothing."],
 			["layout", "The roll read-back becomes two <b>value rows</b>: Party and Raid on the left, the setting on the right, at the option indent. No more two-space padding, and the <code>%s: %s, %s</code> strings give way to the two halves."],
 			["layout", "Locked Items keeps its lead position, as item rows with the counts the kit draws, and its hint becomes a gray note."],
-			["layout", "<b>Features mirror.</b> The main page's Features reorder: the four blocks first, in menu order, then Speedy Loot, Loot Toasts, Loot Sounds and Roll Macro, which join the menu as compact rows under More Features."],
+			["layout", "<b>Features mirror.</b> The main page's Features reorder: the three blocks first, in menu order, then Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting and Roll Macro, which are the menu's More Features rows."],
 			["idea", "Automated Rolls could open a flyout with Party and Raid as choice lists (Greed, Need, Pass, Manual). Four values each is within a handful, but the thresholds would double it. Left out of Proposed until you say."],
 		],
 	});
@@ -656,12 +673,32 @@ var ADDONS = [];
 		},
 		menu: function (render) {
 			var e = mHeader("Control Freak", "1.3.2");
+			// Tanking Tools' settings, inline as On/Off rows: drawn gray while the block is off, as the options panel draws them.
+			function tankRows() {
+				var rows = [];
+				function row(key, label, def, show) {
+					if (show === false) return;
+					var f = flagFeature(s, key, label, label, def);
+					var on = f.get();
+					var r = { kind: "toggle", left: label, on: on, c: "feature", onClick: function () { f.set(!f.get()); render(); } };
+					if (!s.tank) { r.leftColor = "MUTED"; r.rightColor = "MUTED"; }
+					rows.push(r);
+				}
+				row("tankScope", "When Group Has a Tank", true);
+				row("tankCold Openers", "Cold Openers", false);
+				row("tankArmor Debuffs", "Armor Debuffs", true);
+				var armorOn = s.flags["tankArmor Debuffs"] === undefined ? true : s.flags["tankArmor Debuffs"];
+				row("tankFF", "Include Faerie Fire", true, armorOn);
+				row("tankCoR", "Include Curse of Recklessness", true, armorOn);
+				return rows;
+			}
 			e = e.concat(feature({ title: "All Alerts", state: onOff(s.all), tip: { title: "Enable Control Freak", body: "Turn every Control Freak alert on or off." },
 				rows: s.all ? [] : [{ kind: "note", left: "All Alerts is off, so nothing fires.", c: "message" }],
 				toggle: function () { s.all = !s.all; render(); } }));
-			// Each block's flyout is its tool switches from the main page, empty while the block is off.
+			// Monitoring's and Naughty List's tools are flyouts; Tanking Tools' few sit inline (below).
 			var flyouts = {};
 			BLOCKS.forEach(function (b) {
+				if (b[0] === "tank") return;
 				flyouts[b[0]] = function () {
 					if (!s[b[0]]) return [];
 					return tools(b[0]).map(function (t) { return { kind: "toggle", left: t.label, on: t.get(), onClick: function () { t.set(!t.get()); render(); } }; });
@@ -669,7 +706,7 @@ var ADDONS = [];
 			});
 			if (s.all) {
 				BLOCKS.forEach(function (b) {
-					e = e.concat(feature({ key: b[0], flyout: flyouts[b[0]], title: b[1], state: onOff(s[b[0]]), desc: b[2], bind: b[3], toggle: function () { s[b[0]] = !s[b[0]]; render(); } }));
+					e = e.concat(feature({ key: b[0], flyout: flyouts[b[0]], title: b[1], state: onOff(s[b[0]]), desc: b[2], rows: b[0] === "tank" ? tankRows() : [], bind: b[3], toggle: function () { s[b[0]] = !s[b[0]]; render(); } }));
 				});
 			}
 			return { entries: e.concat(mFooter("Control Freak")), flyouts: flyouts };
@@ -677,7 +714,8 @@ var ADDONS = [];
 		changes: [
 			["behavior", "<b>All Alerts gets a block of its own</b>, first. It had no click to spare on the button, so the tooltip couldn't offer one; a menu row costs nothing. It has no description line: its title says what it does, and its Toggle tooltip is the switch's own (Enable Control Freak). Shift + Right-Click is the one click Control Freak leaves free; giving it to All Alerts is your call, so it's drawn without one."],
 			["layout", "While All Alerts is off, the three blocks hide, as the options panel hides what a switched-off feature controls, and the red line becomes a gray note under the toggle."],
-			["layout", "<b>Features mirror: each block's flyout is its tool switches</b>, the same ones the main page draws under it, in the same order (hover a title). No More Features: every Control Freak feature is a block."],
+			["layout", "<b>Features mirror: Monitoring's and Naughty List's flyouts are their tool switches</b>, the same ones the main page draws under them, in the same order (hover a title). No More Features: every Control Freak feature is a block."],
+			["layout", "<b>Tanking Tools shows its settings inline</b>, as On/Off rows under its description: When Group Has a Tank, Cold Openers, Armor Debuffs, and while Armor Debuffs is on, Include Faerie Fire and Include Curse of Recklessness. It ships off, so a flyout would hide everything; inline, a player sees what comes with it. While it's off the rows are gray, as on the options panel, and still switch."],
 		],
 	});
 })();
@@ -689,8 +727,8 @@ var ADDONS = [];
 		return [
 			{ block: true, caption: "Enable Dispense", get: function () { return s.on; }, set: function (v) { s.on = v; } },
 			flagFeature(s, "macro", "Enable Announcement Macro", "Announcement Macro", true),
-			flagFeature(s, "inv", "Show Inventory in Player Tooltips", "Inventory in Player Tooltips", true),
-			flagFeature(s, "bag", "Show Bag Tooltips for Dispensed Items", "Bag Tooltips", true),
+			flagFeature(s, "inv", "Enable Open Trade! in Player Tooltips", "Open Trade! in Player Tooltips", true),
+			flagFeature(s, "bag", "Enable Inventory Tooltips", "Inventory Tooltips", true),
 		];
 	}
 	ADDONS.push({
@@ -724,7 +762,7 @@ var ADDONS = [];
 		},
 		changes: [
 			["layout", "Dispense is a standard feature block, its Toggle row naming Left-Click, which still flips it on the button."],
-			["layout", "<b>Features mirror.</b> Announcement Macro, Inventory in Player Tooltips and Bag Tooltips join the menu as compact rows under More Features, in the main page's order."],
+			["layout", "<b>Features mirror.</b> Announcement Macro, Open Trade! in Player Tooltips and Inventory Tooltips join the menu as compact rows under More Features, in the main page's order. The options switches take the same names (Enable Open Trade! in Player Tooltips, Enable Inventory Tooltips)."],
 			["layout", "Dispense Report keeps its heading and lists item rows with the count on the right, shown only while Dispense is on and something's carried, as today."],
 		],
 	});
@@ -963,12 +1001,51 @@ CATALOG.forEach(function (c) {
 });
 
 // ---------------------------------------------------------------------------
+// Will It Fit? The worst rows, before (one line, the menu grows) and after (short right side, wrapping left)
+// ---------------------------------------------------------------------------
+var FIT = [
+	["Good to Go · French · a list on the title row", 465,
+		[{ kind: "status", left: "Nourriture à amélioration et parchemins", right: "Groupe, Raid, Champ de bataille", rightColor: "MUTED" }, { kind: "action", left: "Activer/désactiver", right: "Clic gauche" }],
+		[{ kind: "status", left: "Nourriture à amélioration et parchemins", right: "En pause", rightColor: "MUTED" }, { kind: "note", left: "En attente : Groupe, Raid, Champ de bataille" }, { kind: "action", left: "Activer/désactiver", right: "Clic gauche" }],
+		"The state becomes a word; the list moves to a note. (The note's wording is a draft for the Localization Review.)"],
+	["Good to Go · French · a count on the title row", 366,
+		[{ kind: "status", left: "Liste de réapprovisionnement", right: "12 commandes en attente" }, { kind: "description", left: "Achète et range à la banque les objets de votre liste." }],
+		[{ kind: "status", left: "Liste de réapprovisionnement", right: "Activé", rightColor: "ON" }, { kind: "description", left: "Achète et range à la banque les objets de votre liste." }],
+		"No count beside the title: the orders are the rows under it, and past eight a note says how many more."],
+	["Tracking Eye · Portuguese · a long setting in a flyout", 454,
+		[{ kind: "section", left: "Status do Modo de Coleta", right: "Ativo", rightColor: "ON" }, { kind: "toggle", left: "Silenciar Sons da Conjuração de Habilidades de Rastreamento", on: true }, { kind: "toggle", left: "Afastar o Zoom do Minimapa", on: false }],
+		[{ kind: "section", left: "Status do Modo de Coleta", right: "Ativo", rightColor: "ON" }, { kind: "toggle", left: "Silenciar Sons da Conjuração de Habilidades de Rastreamento", on: true }, { kind: "toggle", left: "Afastar o Zoom do Minimapa", on: false }],
+		"The label wraps; its state stays on the first line.", { on: "Ligado", off: "Desligado" }],
+	["Control Freak · Italian · a long click", 350,
+		[{ kind: "status", left: "Monitoraggio", right: "Attivo", rightColor: "ON" }, { kind: "action", left: "Attiva/Disattiva", right: "Pulsante sinistro" }, { kind: "spacer" }, { kind: "separator" }, { kind: "action", left: "Opzioni di Control Freak", right: "MAIUSC + pulsante centrale" }],
+		[{ kind: "status", left: "Monitoraggio", right: "Attivo", rightColor: "ON" }, { kind: "action", left: "Attiva/Disattiva", right: "Pulsante sinistro" }, { kind: "spacer" }, { kind: "separator" }, { kind: "action", left: "Opzioni di Control Freak", right: "MAIUSC + pulsante centrale" }],
+		"The click keeps its line; the Options label wraps beside it."],
+	["Magic Eraser · German · a read-out", 384,
+		[{ kind: "status", left: "Ramsch-Bericht" }, { kind: "value", left: "1,234 Taschenplätze " + paint("(5,678 Gegenstände)", "MUTED"), right: money(12345678) }],
+		[{ kind: "status", left: "Ramsch-Bericht" }, { kind: "value", left: "1,234 Taschenplätze " + paint("(5,678 Gegenstände)", "MUTED"), right: money(12345678) }],
+		"The totals wrap; the money stays on the right."],
+	["Water Dispenser · Spanish · a long More Features row", 452,
+		[{ kind: "status", left: "Más funciones" }, { kind: "toggle", left: "Mostrar descripciones de bolsa para los objetos dispensados", on: true }, { kind: "toggle", left: "Mostrar inventario en las descripciones de jugador", on: false }],
+		[{ kind: "status", left: "Más funciones" }, { kind: "toggle", left: "Mostrar descripciones de bolsa para los objetos dispensados", on: true }, { kind: "toggle", left: "Mostrar inventario en las descripciones de jugador", on: false }],
+		"Measured with the full switch caption, the longest a row can get. (More Features is a draft translation.)", { on: "Activado", off: "Desactivado" }],
+];
+var fitList = document.getElementById("fitList");
+FIT.forEach(function (f) {
+	var card = document.createElement("div");
+	card.className = "card";
+	card.innerHTML = "<h3>" + f[0] + "</h3><p>" + f[4] + '</p><div class="label">Before: about ' + f[1] + ' points in game</div><div class="gg-stage before"></div><div class="label">After: within 320</div><div class="gg-stage after"></div>';
+	fitList.appendChild(card);
+	card._fit = f;
+});
+
+// ---------------------------------------------------------------------------
 // Decisions
 // ---------------------------------------------------------------------------
 var DECIDED = [
 	["Both ways: every action is a row, and the button keeps its clicks.", "A controller needs every action to be a row it can click. A mouse player shouldn't lose Right-Click, Middle-Click and the Shift clicks they already know. So the menu does both: an action row names, on its right in gray, the button click that does the same job. <i>Toggle … Shift + Right-Click.</i> The old tooltip's two strings, sides swapped, so nothing new to translate.", "Hover opens the menu, as it opened the tooltip. Every click the tooltip named keeps its job, and the open menu redraws. Left-Click opens and holds the menu only on a button with no Left-Click job. One table in each add-on names every action's click and its function, and both the row and the button read from it, so a row can never name a click that does something else."],
 ];
 DECIDED.push(
+	["Every row fits every language.", "Measured: 55 of 682 one-line rows ran past a 320-point menu outside English, worst 465 (Good to Go's Buff Food title with its waiting list, in French).", "Short on the right: a title row holds a state word, any other right side a number, money, a ratio, a slot name or a click; anything longer goes in a note. Long on the left wraps: no row widens the menu past 320, and a wrapped label keeps its right side level with its first line."],
 	["Features mirror: the menu and the main page's Features section are one list.", "Magic Eraser showed 8 feature switches on its main page and 1 in its menu; GogoLoot 8 and 4.", "Same features, same order, same names. A feature changed mid-session is a full block; every other feature is a compact On/Off row under More Features. A feature's tool switches are its block's flyout."],
 	["One refresh: every change shows everywhere at once.", "Each add-on refreshed its own way: a panel or two by hand, a whole-profile apply, or a menu-only redraw.", "One ns.RefreshSettings() redraws every options panel, the open menu and the button's icon. Options, menu rows, button clicks, slash commands, key bindings and profile changes all end in it."],
 	["One button, hung the same way.", "Two buttons were data sources, two Simple add-ons kept the position in the wrong scope, and icons were updated three different ways.", "A launcher, one key, its position in the save model's presentation scope, one show/hide function, a live icon set on the LDB object only. The menu's corner meets the button's opposite corner, 2 points apart, flipping by screen halves, with the flyout on the same side."]
@@ -993,6 +1070,12 @@ document.getElementById("decisionList").innerHTML = DECIDED.map(function (d) {
 // Draw once the mock font is in, so every width measures true.
 function drawAll() {
 	ADDONS.forEach(function (a) { a.render(); });
+	fitList.querySelectorAll(".card").forEach(function (card) {
+		var b = card.querySelector(".before"), a = card.querySelector(".after");
+		b.innerHTML = ""; a.innerHTML = "";
+		GG.menu(b, card._fit[2], { uncapped: true, toggleText: card._fit[5] });
+		GG.menu(a, card._fit[3], { toggleText: card._fit[5] });
+	});
 	cat.querySelectorAll(".card").forEach(function (card) {
 		var stage = card.querySelector(".gg-stage");
 		stage.innerHTML = "";

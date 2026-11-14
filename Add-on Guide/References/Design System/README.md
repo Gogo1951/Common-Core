@@ -95,8 +95,9 @@ Built from the components, in the order a menu runs top to bottom.
 - **Pick list.** When picking is the feature's main job, the choices sit inside its block, before Toggle (Tracking Eye's Persistent Tracking).
 - **Follow-up action.** An action after Toggle, shown only while it applies: Clear Tracking while something's picked, Open while the Restock List is on.
 - **Flyout.** A feature's secondary settings, beside its title. A live status leads as a section. Empty while the feature is off, and then the arrow goes.
+- **Short right, wrapping left.** A title row's right side is a state word; any other right side a number, money, a ratio, a slot name or a click. A long left side wraps; nothing widens a menu or flyout past 320 (Will It Fit, below).
 - **Item highlight.** A heading, the item row, then an action row per thing you can do to it (Magic Eraser's Lowest-Value Item: Erase, Protect).
-- **Live report.** A heading over item or value rows that change with the bags or the group: Clutter Report, Dispense Report, Locked Items. A feature's own report sits inside its block (the Restock List's orders). Up to 8 rows, then a gray *N more*.
+- **Live report.** A heading over item or value rows that change with the bags or the group: Clutter Report, Dispense Report, Locked Items. A feature's own report sits inside its block, with no count beside the title (the Restocker's orders). Up to 8 rows, then a gray *N more*.
 - **Message line.** One wrapping line that stands in for a report: green when the news is good (bags clean, fully stocked), a gray note when it's just empty or off.
 - **Master switch.** An add-on-wide switch gets the first block. While it's off, the blocks it silences hide and a note says why (Control Freak's All Alerts).
 - **Reference flyout.** Notes about something else's clicks (Good to Go's macros) go in a flyout of value rows behind a class-colored title, each reading job first and click second in gray (`Conjure … Right-Click`), so the menu only holds rows you click here.
@@ -134,6 +135,21 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 4. **The click table moves into the kit.** `Kit.SetClickText` takes the six localized click names once; an action entry carries `click = { button, shift }`, and the kit draws its name on the row's right in MUTED and routes the button's `OnClick` to the same function (`Kit.HandleClick`). `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
 5. **One canonical copy, in Common-Core.** The kit and its plate move to `addon-kits/Menu-Kit/` here, are copied into each add-on with a mini-map button, and CI checks every copy matches, the way `addon-files/` works today. The Style Guide's "copy it from Tracking Eye" becomes "copy it from Common-Core".
 
+## Will It Fit
+
+Every one-line menu row from all six add-ons, in all 11 locales, measured the way Menu-Kit sizes them (Friz Quadrata's proportions for Latin and Cyrillic, a full 12 points per character for Chinese and Korean): **682 rows; English fits a 320-point menu everywhere, and 55 rows don't** in German, French, Spanish, Italian, Portuguese and Russian. The worst:
+
+| Width | Row | Fix |
+|---|---|---|
+| 465 | Good to Go, French: Buff Food & Scrolls with its waiting list on the title | Paused on the title; the list in a note |
+| 454 | Tracking Eye, Portuguese: Silence Sounds From Tracking Ability Casts | The label wraps |
+| 452 | Water Dispenser, Spanish: Show Bag Tooltips for Dispensed Items | The label wraps |
+| 384 | Magic Eraser, German: Clutter Report totals | The label wraps; money stays right |
+| 366 | Good to Go, French: Restock List with its order count | No count beside the title |
+| 350 | Control Freak, Italian: Options … MAIUSC + pulsante centrale | The label wraps; the click stays right |
+
+With the two rules (Patterns → Short right, wrapping left), every row fits. The board's Will It Fit section draws these before and after, in their own language.
+
 ## Decisions
 
 All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
@@ -147,6 +163,10 @@ All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 7. **Long lists** show up to 8 rows, then a gray *N more*.
 8. **A hunter's ten-row pick list** in Tracking Eye stays as it is.
 9. **Good to Go's macro notes** move to a class-colored reference flyout.
+
+10. **Every row fits every language:** short on the right, long on the left wraps, nothing past 320.
+11. **GogoLoot's Automated Master Looting is a More Features row**, and Shift + Right-Click is held for the Master Looting Window.
+12. **Control Freak's Tanking Tools lists its settings inline**, gray while it's off.
 
 Still open, in its spec: whether Control Freak's free Shift + Right-Click goes to All Alerts.
 

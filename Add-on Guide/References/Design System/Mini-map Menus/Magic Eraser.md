@@ -65,7 +65,7 @@ Left-Click has a job, so **hover alone opens the menu**. With clean bags, Left-C
 ## Strings
 
 - **Rename, keeping every locale's text:** `ACTION_TOGGLE` → `MENU_TOGGLE`, `LEFT_CLICK` / `RIGHT_CLICK` / `MIDDLE_CLICK` / `SHIFT_RIGHT_CLICK` / `SHIFT_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`.
-- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_MORE`, copied from GogoLoot's `MINIMAP_TRADABLE_MORE`.
+- **New:** `MENU_ON` / `MENU_OFF`, copied from Tracking Eye's. `MENU_MORE`, copied from GogoLoot's `MINIMAP_TRADABLE_MORE`. `MENU_MORE_FEATURES` "More Features", translated fresh once and copied to every add-on with More Features.
 - **Keep** `ENABLED` / `DISABLED` if the options read them.
 
 ## Code

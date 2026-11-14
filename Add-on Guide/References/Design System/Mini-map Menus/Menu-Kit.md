@@ -58,6 +58,7 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
   - `value`: `{ kind = "value", left, right }`. BODY left, TEXT right, nothing to click.
 - **`Kit.List(entries, rows, max)`** appends up to `max` (8) rows, then a `note` saying how many more.
 - **Colors** take a palette key or a six-digit hex (class colors, quality colors).
+- **`MAX_WIDTH = 320`** for the menu and every flyout. The left text of every row wraps within what's left after its right side and the 16-point gap, and the row grows to the wrapped height; the right side never wraps and stays level with the first line. Measured across all six add-ons and 11 locales, 55 of 682 rows ran past 320 on one line, worst 465, and none does with wrapping (`../README.md` → Will It Fit).
 - **Defaults:** `action` is INFO left and MUTED right. The `hint` kind goes; nothing uses it once the Options row is an action row.
 - **`Kit.MoreFeatures(entries, features)`** appends the gold More Features heading and one compact toggle per set-and-forget feature from the add-on's `ns.FEATURES`, gated and confirmed as its switch is (Features Mirror).
 - **`afterChange`** is the add-on's `ns.RefreshSettings` in every add-on (One Refresh).

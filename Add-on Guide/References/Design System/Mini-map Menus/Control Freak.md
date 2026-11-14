@@ -42,6 +42,7 @@ With All Alerts off, the three blocks give way to a red `All Alerts is off, so n
 | Toggle | action | `MENU_TOGGLE` | Right-Click | RightButton | |
 | Tanking Tools | status | `TAB_TANKING_TOOLS` | On / Off | | All Alerts on |
 | | description | `TANKING_TOOLS_MINIMAP_SUMMARY` | | | |
+| Its settings, inline | toggle, C_MUTED while Tanking Tools is off | `SCOPE_GROUP_HAS_TANK`, `TANKING_TOOLS_COLD_OPENER_HEADER`, `TANKING_TOOLS_ARMOR_HEADER`, then while Armor Debuffs is on `TANKING_TOOLS_ARMOR_FAERIE_FIRE` and `TANKING_TOOLS_ARMOR_RECKLESSNESS` | On / Off | | All Alerts on; tooltips are the options' own descriptions |
 | Toggle | action | `MENU_TOGGLE` | Shift + Left-Click | ShiftLeftButton | |
 | Options | action | `MENU_OPTIONS` | Shift + Middle-Click | ShiftMiddleButton | always |
 
@@ -78,7 +79,7 @@ While All Alerts is off, the three clicks do nothing, as today, since their rows
 
 Style Guide → MINIMAP MENU → Features Mirror, One Refresh, Placement; MINIMAP BUTTON → Building the Button.
 
-- **Features mirror.** The root panel already draws All Alerts (the master switch), then Monitoring, Naughty List and Tanking Tools with their tool switches under each. The menu matches it, and **each block gains a flyout of its tool switches**, the same rows in the same order from `ns.FEATURE_GROUPS`: Monitoring (Taunts, Interrupts, Fears, Incapacitated, Tank Deaths, Peer Pressure), Naughty List (Bad Mages, Bad Parry Monkeys, Bad Pets, Bad Priests), Tanking Tools (Cold Openers, Armor Debuffs). Captions and tooltips are the options' own. A flyout is empty, and its arrow gone, while its block is off. No More Features: every feature is a block.
+- **Features mirror.** The root panel already draws All Alerts (the master switch), then Monitoring, Naughty List and Tanking Tools with their tool switches under each. The menu matches it. **Monitoring and Naughty List gain a flyout of their tool switches**, the same rows in the same order from `ns.FEATURE_GROUPS`: Monitoring (Taunts, Interrupts, Fears, Incapacitated, Tank Deaths, Peer Pressure), Naughty List (Bad Mages, Bad Parry Monkeys, Bad Pets, Bad Priests). A flyout is empty, and its arrow gone, while its block is off. **Tanking Tools lists its settings inline instead** (the table above): it ships off, and a flyout would hide everything a player could switch on. Inline rows are gray while it's off, as the options panel draws them, and still switch. Captions and tooltips are the options' own. No More Features: every feature is a block.
 - **One refresh.** `ns:ApplyProfile` already notifies every panel and re-tests the combat-log registration; `ns.RefreshSettings()` wraps that redraw plus the menu, and every switch, row and click ends in it.
 - **Button:** a launcher keyed `ns.LOCALE_NAME`, Simple so `ns.db.profile.minimap`, shown through `ns:ApplyMinimapButton()`: already the standard.
 
