@@ -46,7 +46,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 - **`08 - Prelaunch Review.md`** — The last gate before tagging a release, run once manual testing is done. Checks release metadata, packaging, translations and leftovers, and gives a Ready to tag or Not ready verdict. *Changes:* nothing; master-list updates are proposed in Guide Feedback.
 - **`09 - Optional Create README.md`** — Writes the marketing README players read before installing. A pitch change also rewrites the pitch in every TOC and every language. *Changes:* `README.md`, plus every copy of the pitch when it changes.
 - **`10 - Optional Create README-Technical.md`** — Writes the code map every later pass reads first: where things live, how they connect, the traps. *Changes:* `README-Technical.md`.
-- **`11 - Optional Create README-Testing.md`** — Writes a short, plain-English test plan for volunteer testers. A Ready-to-tag step 8 offers it; run it again whenever testers need one. *Changes:* `README-Testing.md`.
+- **`11 - Optional Create README-Testing.md`** — Writes a short, plain-English test plan for volunteer testers. A Ready-to-tag step 8 gives its prompt; run it again whenever testers need one. *Changes:* `README-Testing.md`.
 - **`12 - Create Release Notes & PR.md`** — Drafts player-facing notes for everything since the last release, plus the PR title, for one approval. Then checks the GitHub identity, branches from the freshest upstream `main`, commits, pushes and opens the PR with the notes as its body. Tagging stays manual. *Changes:* git and GitHub only, as `Gogo1951`, and nothing is pushed before you approve.
 
 **Optional, whenever wanted:**
@@ -60,7 +60,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass offers the next one in a new session**, in the order the diagram shows (Pass Preamble → Next Pass). Start step 5 once you've tested step 4 in game and have its reports, and step 8 once both branches are done.
+**Each finished pass ends with the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass), for you to paste into a new session when you're ready. No pass ever starts a session for you. Start step 5 once you've tested step 4 in game and have its reports, and step 8 once both branches are done.
 
 **Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 

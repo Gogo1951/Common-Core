@@ -81,7 +81,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 
 ## Report format
 
-**Never offer to create a PR, branch, or commit.** That is `12 - Create Release Notes & PR.md`'s job, offered only as Pass Preamble → Next Pass says. Fix prompts edit the working copy, which step 12 commits; a Packaging file, checked on `main`, gets its complete corrected contents in its own fenced code block instead, for the maintainer to paste into GitHub.
+**Never offer to create a PR, branch, or commit.** That is `12 - Create Release Notes & PR.md`'s job, prompted only as Pass Preamble → Next Pass says. Fix prompts edit the working copy, which step 12 commits; a Packaging file, checked on `main`, gets its complete corrected contents in its own fenced code block instead, for the maintainer to paste into GitHub.
 
 Open with the verdict — **Ready to tag** or **Not ready: N blocker(s)** — and a 2–3 sentence summary. Then list issues grouped by checklist area, Blockers first. Include a short **Master list** line stating whether the master-list row was already current or what updates are proposed (when there are updates, the exact edits ride in Guide Feedback as routine data items). Keep prose lean.
 

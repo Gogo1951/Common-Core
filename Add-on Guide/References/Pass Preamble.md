@@ -71,27 +71,26 @@ It reads the add-on's own TOCs and mirrors this folder into every installed clie
 
 ## Next Pass
 
-When a pass's work is done, it offers the next pass in a new session, so the maintainer never has to start one by hand. Done means the reply that gives the Copy to Other Flavors command, or the report itself when the pass has nothing left to run. The offer comes last, after Guide Feedback when the reply has one.
+When a pass's work is done, it ends with the next pass's prompt, which the maintainer pastes into a new session launched in this folder when they are ready. **A pass never starts, opens or offers a session itself, no exceptions:** no start-session tool, no session card, no hand-off, no moving on to the next pass in this session. The maintainer decides when the next pass runs. Done means the reply that gives the Copy to Other Flavors command, or the report itself when the pass has nothing left to run. The prompt comes last, after Guide Feedback when the reply has one.
 
-| Pass done | Offer |
+| Pass done | Prompt for |
 |---|---|
 | `02 - UX Review.md` | `03 - Code Review.md` |
 | `03 - Code Review.md` | `04 - Diagnostics Review.md` and `06 - Copy Review.md`, side by side |
 | `04 - Diagnostics Review.md` | `05 - Data Review.md` |
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
-| `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md` |
-| The sessions step 8 started, once all have finished | `12 - Create Release Notes & PR.md`, offered by the step 8 session |
+| `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
 
-**After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` needs Validate Data reports, which exist only once step 4 is tested in game, so the maintainer starts its card after that test; step 4 says first whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no offer. Step 7's offer of step 8 adds one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
+**After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` needs Validate Data reports, which exist only once step 4 is tested in game, so the maintainer runs its prompt after that test; step 4 says first whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no prompt. Step 7's prompt for step 8 comes with one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
 
-In the Claude desktop app, offer each one with the app's start-session tool, as an offer (its card asks *New session* or *Do it here*): one card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The brief is exactly this line, with the prompt's file name filled in. Anywhere else, print the same line in a fenced block, to paste into a new session launched in this folder.
+Print each one as this line in its own fenced block, with the prompt's file name filled in, in the Claude desktop app and everywhere else alike:
 
 ```
 Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it as the request. Session Prep already ran in this folder; skip it.
 ```
 
-**Sessions running side by side share this folder,** so the passes paired above never write the same files. A lint or parse failure in a file outside your write scope is another session's edit in progress: run the check again once, and report it only if it fails again.
+**Sessions the maintainer runs side by side share this folder,** so the passes paired above never write the same files. A lint or parse failure in a file outside your write scope is another session's edit in progress: run the check again once, and report it only if it fails again.
 
 ## Guide Feedback
 

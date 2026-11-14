@@ -54,7 +54,7 @@ The single source for the actual JSON is `References/Permission Template.json` �
 
 ## Session Prep — Claude runs this at the start of every code session
 
-**Skip it entirely in a session another pass started (Pass Preamble → Next Pass) and in step 12.** It already ran in this folder this cycle, and step 2 would overwrite the READMEs steps 9–11 wrote.
+**Skip it entirely in a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in step 12.** It already ran in this folder this cycle, and step 2 would overwrite the READMEs steps 9–11 wrote.
 
 0. **Refresh the guide, then render / heal the permission file.** From the add-on folder, run these exactly, as two separate calls:
 
