@@ -114,6 +114,28 @@
 	}
 
 	// ------------------------------------------------------------------------
+	// Confirm: AceConfigDialog asks through a StaticPopup with Accept and
+	// Cancel. Drawn in the page, since a sandboxed viewer refuses confirm().
+	// ------------------------------------------------------------------------
+	function ask(anchor, text, yes) {
+		document.querySelectorAll(".go-popup").forEach(function (p) { p.remove(); });
+		var pop = document.createElement("div");
+		pop.className = "gg go-popup";
+		pop.setAttribute("role", "dialog");
+		pop.innerHTML = '<p></p><div><button type="button" class="go-execute">Accept</button><button type="button" class="go-execute">Cancel</button></div>';
+		pop.querySelector("p").innerHTML = text || "Are you sure?";
+		var buttons = pop.querySelectorAll("button");
+		buttons[0].addEventListener("click", function () { pop.remove(); yes(); });
+		buttons[1].addEventListener("click", function () { pop.remove(); });
+		document.body.appendChild(pop);
+		var r = anchor.getBoundingClientRect();
+		var left = Math.min(window.scrollX + r.left, window.scrollX + document.documentElement.clientWidth - pop.offsetWidth - 8);
+		pop.style.left = Math.max(8, left) + "px";
+		pop.style.top = window.scrollY + r.bottom + 6 + "px";
+		buttons[1].focus();
+	}
+
+	// ------------------------------------------------------------------------
 	// Widgets
 	// ------------------------------------------------------------------------
 	function cap(text) {
@@ -175,7 +197,10 @@
 				t.innerHTML = '<span class="go-box"></span><span class="go-label">' + name + "</span>";
 				var flip = function () {
 					if (disabled) return;
-					if (opt.confirm && on && !window.confirm(call(opt.confirmText, info) || "Are you sure?")) return;
+					if (opt.confirm && on) {
+						ask(t, call(opt.confirmText, info), function () { set(false); });
+						return;
+					}
 					set(!on);
 				};
 				t.addEventListener("click", flip);
@@ -277,9 +302,12 @@
 				b.setAttribute("aria-label", name || call(opt.desc, info) || "button");
 				b.addEventListener("click", function () {
 					if (disabled) return;
-					if (opt.confirm && !window.confirm(call(opt.confirmText, info) || "Are you sure?")) return;
-					if (opt.func) opt.func(info);
-					ctx.redraw();
+					var run = function () {
+						if (opt.func) opt.func(info);
+						ctx.redraw();
+					};
+					if (opt.confirm) ask(b, call(opt.confirmText, info), run);
+					else run();
 				});
 				hover(b, opt, info, name || call(opt.desc, info));
 				w.appendChild(b);
@@ -675,6 +703,7 @@
 	};
 
 	window.GO = {
+		ask: ask,
 		GRID: GRID,
 		page: page,
 		settings: settings,

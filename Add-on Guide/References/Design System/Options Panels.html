@@ -143,8 +143,12 @@ tbody tr:hover { background: var(--panel); }
 <script src="menu-mock.js"></script>
 <script src="options-mock.js"></script>
 <script>
+if (!window.GO || !window.GG) {
+	document.querySelector(".page").insertAdjacentHTML("afterbegin", '<p class="try" role="alert"><b>The drawings need their four mock files.</b> Open this page from its folder, beside menu-mock.css, menu-mock.js, options-mock.css and options-mock.js, or from its published artifact.</p>');
+}
 (function () {
 "use strict";
+if (!window.GO || !window.GG) return;
 var K = GO.kit, G = GO.GRID, C = K.Color, icon = GG.icon;
 
 // ---------------------------------------------------------------------------
