@@ -25,7 +25,7 @@
 ## Naming & Formatting
 
 - **Full Name and Short Name** — the add-on's two names, and where each goes: Style Guide → ADD-ON NAMES. The README talks about the add-on by its Full Name.
-- **Long Name** — CurseForge title and SEO metadata only; never appears in the README body. Format: `Full Name // Descriptive Subtitle`. Example: `Connoisseur & Restocker // Automatically use Your Best Food, Water, Healthstone, Potions, Bandages, Scrolls, Poisons, & Pet Food`.
+- **Long Name** — CurseForge title and SEO metadata only; never appears in the README body. Format: `Full Name // Descriptive Subtitle`. Example: `GogoLoot // Don't Let Loot Slow Down Your Zug!`.
 - **Separator** — ` // ` is the separator throughout (between feature title and benefit, in the status lines, in Special Thanks bullets). Em dashes and en dashes are never used, in any slot or sentence; the title-to-benefit slot is always ` // `. Hyphens are fine everywhere, including the pitch — "auto-loot" is correct, not a violation.
 
 ## Image Handling
@@ -38,7 +38,7 @@
 
 ### 1. Title
 
-H1, `Full Name (Short Name)`: `# Connoisseur & Restocker (C&R)`. When the two names are the same, the name alone: `# Tracking Eye`. That's it.
+H1, `Full Name (Short Name)`: `# Good to Go (GtG)`. When the two names are the same, the name alone: `# Tracking Eye`. That's it.
 
 ### 2. Description
 
@@ -106,9 +106,9 @@ Common bloat, cut on sight:
 
 > Sample Messages
 
-> **Hearth Home After Raid, 🔊 & Self:** Connoisseur & Restocker // Don't forget to restock while you're in town!
+> **Back in Town, 🔊 & Self:** Good to Go // Don't forget to restock while you're in town!
 
-> **Ready Check, Self:** Connoisseur & Restocker // Missing Items : Healthstone, Mana Potion
+> **Ready Check, Self:** Good to Go // Missing Items : Healthstone, Mana Potion
 ```
 
 Every README has at least one feature block; a README without one is broken.
@@ -131,7 +131,7 @@ Numbered list, 4-6 steps.
 - Last step is a short, funny outcome line in the user's voice, italicised with underscores and in straight quotes (`_"..."_`): a play on a movie line or meme, themed to what the add-on actually does. Examples:
   - GogoLoot // _"Zug zug your way to record Naxx clears."_
   - Magic Eraser // _"But wait, there's more bag space!"_
-  - Connoisseur // _"Luck favors the prepared, darling."_
+  - Good to Go // _"I love it when a plan comes together."_
   - Tracking Eye // _"All your nodes are belong to us."_
   - Water Dispenser // _"You had me at H₂O."_
 - Don't reuse a line across add-ons; if the themes overlap, the outcome still shouldn't.

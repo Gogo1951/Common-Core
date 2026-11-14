@@ -82,7 +82,7 @@ Repo-Name/
 
 **Every entry in the tree is mandatory unless its annotation says otherwise.** FILE STRUCTURE says what each file is *for*. On required-versus-optional, the tree wins. An optional entry ships exactly when its annotation's trigger is met, never on preference.
 
-Live reference: **Connoisseur** — the folder layout, end to end.
+Live reference: **Tracking Eye** — the folder layout, end to end, mini-map menu and offline tests included.
 
 **Dev-only files are outside this tree's scope.** A file that exists only for development — an API/type stub, a maintainer backlog, a parity harness under `tools/` — may sit anywhere in the repo; offline tests are the exception and live in `Tests/`. Its presence is never a finding; it is never added to the TOC (stubs that define real API names would overwrite live globals at load); and it must be in the `.pkgmeta` ignore list — one that isn't is a finding. The tree's own entries stay mandatory even when the ignore list keeps them out of the zip.
 
@@ -284,7 +284,7 @@ Live reference: **Magic Eraser** — any file in `Data/Vanilla/`, `Data/TBC/` or
 | Where settings live | `ns.db.profile` by default — settings, mini-map position, welcome toggle, all of it. `ns.db.global` holds only reset-proof state (below). | Presentation and account-wide settings in `ns.db.global`; per-character state in `ns.db.profile` |
 | `AceDB:New` third argument | `true` | omitted |
 | What Reset Profile clears | Everything on the profile, back to install defaults | That character's profile only; `ns.db.global` is untouched, so account-wide settings survive |
-| Reference repo | Come & Get It | Tracking Eye |
+| Reference repo | Magic Eraser | Tracking Eye |
 
 **The selection rule: an add-on uses Per-Character if and only if it stores something that genuinely differs from character to character** — which abilities that character knows, a per-character ignore list, that character's own tracked history. State that is *about the character*, not about how the player wants the add-on to behave. An add-on storing nothing of that kind uses Simple. Read the add-on's data and apply the rule; there is no judgment call and nothing to record.
 
@@ -621,16 +621,16 @@ Optional. The entry point is `Tests/Run.lua`, run from the add-on root with `lua
 
 |Name|Where it goes|Example|
 |---|---|---|
-|**Full Name**|Window titles, shaped `Title // Full Name`; the TOC `## Title`; the Options category and root panel; the mini-map menu's header; the front of every chat print; anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Restock List // Connoisseur & Restocker`, `Connoisseur & Restocker // Some Message.`|
-|**Short Name**|Every other tooltip or menu line that names the add-on, including the header of a block it adds to someone else's tooltip (`Short Name // Title`); the end of every message sent to another player|`{rtN} Some Message // C&R`, `C&R // Inventory Report`|
-|**Both**|The README's H1, `Full Name (Short Name)`; the Full Name alone when the two are the same|`# Connoisseur & Restocker (C&R)`, `# Tracking Eye`|
+|**Full Name**|Window titles, shaped `Title // Full Name`; the TOC `## Title`; the Options category and root panel; the mini-map menu's header; the front of every chat print; anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Restock List // Good to Go`, `Good to Go // Some Message.`|
+|**Short Name**|Every other tooltip or menu line that names the add-on, including the header of a block it adds to someone else's tooltip (`Short Name // Title`); the end of every message sent to another player|`{rtN} Some Message // GtG`, `GtG // Inventory Report`|
+|**Both**|The README's H1, `Full Name (Short Name)`; the Full Name alone when the two are the same|`# Good to Go (GtG)`, `# Tracking Eye`|
 
 **They live in two locale keys, and nowhere else in code:**
 
 ```lua
 -- Locales/enUS.lua, and every other locale file, as written
-L["ADDON_TITLE"] = "Connoisseur & Restocker" -- Full Name
-L["ADDON_SHORT_NAME"] = "C&R" -- Short Name
+L["ADDON_TITLE"] = "Good to Go" -- Full Name
+L["ADDON_SHORT_NAME"] = "GtG" -- Short Name
 ```
 
 - **Both keys ship in every locale, as written.** The names are proper nouns, never translated, and an add-on whose two names match still defines both.
@@ -833,8 +833,8 @@ Two output contexts: prints to the player carry no target marker and use branded
 
 | Context | Channel | Format | Example |
 |---|---|---|---|
-| Print to the player only | `print()` | `Full Name // Message.`, in branded colors | `Connoisseur & Restocker // Some Message.` |
-| Message to other players | `WHISPER`, `PARTY`, `RAID`, `INSTANCE_CHAT`, `SAY`, `YELL` | `{rtN} Message // Short Name` | `{rtN} Some Message // C&R` |
+| Print to the player only | `print()` | `Full Name // Message.`, in branded colors | `Good to Go // Some Message.` |
+| Message to other players | `WHISPER`, `PARTY`, `RAID`, `INSTANCE_CHAT`, `SAY`, `YELL` | `{rtN} Message // Short Name` | `{rtN} Some Message // GtG` |
 
 ### Target Marker
 
@@ -918,7 +918,7 @@ L["CHAT_LOADED"] =
 	"Version %s. Settings (including the option to disable this message) are under Options > AddOns > [Add-on Name]. Enjoying this add-on? Tell a friend, Favorite it on CurseForge, or Star it on GitHub. (="
 ```
 
-The `%s` is `ns.Version`. Replace `[Add-on Name]` with the Full Name when copying into a new add-on — it is baked in literally rather than composed from `L["ADDON_TITLE"]` so it sits inline naturally across translations. Printed, it reads: `Connoisseur & Restocker // Version 2026.10.23.A. Settings (including the option to disable this message) are under Options > AddOns > Connoisseur & Restocker. ...`
+The `%s` is `ns.Version`. Replace `[Add-on Name]` with the Full Name when copying into a new add-on — it is baked in literally rather than composed from `L["ADDON_TITLE"]` so it sits inline naturally across translations. Printed, it reads: `Good to Go // Version 2026.10.23.A. Settings (including the option to disable this message) are under Options > AddOns > Good to Go. ...`
 
 `showWelcome` (default `true`) ships in `ns.DATABASE_DEFAULTS` as a presentation key, scoped per SAVED VARIABLES → The Two Models. `PrintWelcome` reads it, returns early when false, and otherwise prints; the General panel's Enable Welcome Message toggle (OPTIONS PANEL → Main Page Layout) binds the same key. **Never gate it on anything else:** no stored version, no first-login or once-per-update check, no saved "already shown" flag. While the toggle is on, it prints at every login.
 

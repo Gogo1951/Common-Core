@@ -43,7 +43,7 @@ Every add-on is built on Common-Core (Style Guide → COMMON-CORE), and this lis
     Do not create anything until answers are in.
 
 2. **Scaffold.** Build the folder per the Style Guide's REPOSITORY LAYOUT, using the live reference repos as a shape reference and the Style Guide's rules as the standard (its opening rule governs any rule-vs-live-file conflict):
-    - **Structure:** Connoisseur is the end-to-end template.
+    - **Structure:** Tracking Eye is the end-to-end template.
     - **Options panel:** copy each piece from the live reference its Style Guide or Build Reference section names (Label-Beside-Control Rows, Item Lists, Opening the Panel), and carry the layout width constants into `Data/Data.lua`. Register the one options slash command and put the `InCombatLockdown()` gate at the top of `ns:OpenOptionsPanel` per Style Guide → OPTIONS PANEL → Slash Commands and Combat Guard (live reference for the gate: Play It Forward).
     - **Diagnostics:** copy Magic Eraser's `Diagnostics/` folder verbatim (leaving out `Validate-Data.lua` if the add-on has no data files) and re-author per Style Guide → DIAGNOSTIC TOOLS → Live Reference; `DIAGNOSTIC_EVENT_EXCLUDE` starts empty.
     - **Mini-map button** (if chosen): the button and its menu from Tracking Eye, per Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, steps 1–2; adjust identity values.
