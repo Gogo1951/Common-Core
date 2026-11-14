@@ -80,6 +80,14 @@ tbody tr:hover { background: var(--panel); }
 .decision { display: grid; gap: 4px; padding: 16px; border-left: 2px solid var(--gold); background: var(--panel); }
 .decision b { font-weight: 600; }
 .rec { color: #b6dc8f; }
+.mm-row { display: flex; align-items: flex-start; gap: 4px; }
+.mm-btn { flex: none; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; background: radial-gradient(circle at 40% 35%, hsl(var(--h) 55% 62%), hsl(var(--h) 50% 26%) 62%, #0c0c0c 64%); box-shadow: 0 0 0 3px #b8962e, 0 0 0 4px #2a2208, 0 2px 8px rgba(0, 0, 0, .7); }
+.mm-btn:hover { filter: brightness(1.25); }
+.mm-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.clicklog { min-height: 24px; font-size: 13px; color: var(--dim); }
+.clicklog b { color: var(--fg); font-weight: 500; }
+.try { display: grid; gap: 4px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; max-width: 80ch; }
+.try b { color: var(--gold); font-weight: 500; }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 </style>
 
@@ -88,6 +96,7 @@ tbody tr:hover { background: var(--panel); }
 		<div class="eyebrow">Gogo Design System · Wave 1</div>
 		<h1>Mini-map Menus</h1>
 		<p class="lede">Every add-on with a mini-map button, drawn from its code: the tooltip it shows today beside the menu it becomes. Flip a scenario and both sides follow. The menus are clickable: hover a gold title with an arrow for its flyout, click Toggle to flip a feature.</p>
+		<div class="try"><b>How to review</b><span>Every menu has its mini-map button beside it, and the menu opens to its left as it does in game. Click the menu's rows the way a controller would, or click the button with Left, Right or Middle, with or without Shift, the way a mouse player would. The line under each menu says what the click did, and both ways change the same switches.</span></div>
 		<div class="legend" id="legend"></div>
 	</header>
 
@@ -206,7 +215,7 @@ var ADDONS = [];
 	function flag(k, d) { return s.flags[k] === undefined ? d : s.flags[k]; }
 	function flip(k, d) { s.flags[k] = !flag(k, d); }
 	ADDONS.push({
-		id: "te", name: "Tracking Eye", tag: "Menu (draft)", isMenu: true, state: s,
+		id: "te", hue: 150, name: "Tracking Eye", tag: "Menu (draft)", isMenu: true, state: s,
 		blurb: "Already converted: Today is the live draft on main, drawn row for row from <code>Features/Minimap-Menu.lua</code>. The conversion dropped the old tooltip's four button shortcuts; Proposed brings them back on the rows they belong to.",
 		scenarios: [
 			{ key: "cls", label: "Character", options: [["HUNTER", "Hunter"], ["DRUID", "Druid"], ["WARRIOR", "Warrior"]] },
@@ -277,7 +286,7 @@ var ADDONS = [];
 	var s = { junk: true, vend: true, protect: true };
 	var PROTECTED = [["Light Feather", "common", 200], ["Rough Stone", "common", 35], ["Small Venom Sac", "common", 90]];
 	ADDONS.push({
-		id: "me", name: "Magic Eraser", tag: "Tooltip today", state: s,
+		id: "me", hue: 280, name: "Magic Eraser", tag: "Tooltip today", state: s,
 		blurb: "An action button: Left-Click erases the lowest-value item, so the button keeps that click and the menu opens on hover. The tooltip uses five clicks across three buttons and Shift.",
 		scenarios: [
 			{ key: "junk", label: "Bags", options: [[true, "Junk to erase"], [false, "Bags clean"]] },
@@ -364,7 +373,7 @@ var ADDONS = [];
 	}
 	var CLASS_NAME = { MAGE: "Mage", ROGUE: "Rogue", HUNTER: "Hunter", WARRIOR: "Warrior" };
 	ADDONS.push({
-		id: "gtg", name: "Good to Go", tag: "Tooltip today", state: s,
+		id: "gtg", hue: 30, name: "Good to Go", tag: "Tooltip today", state: s,
 		blurb: "The tallest tooltip: an item highlight, three feature blocks, a class section of macro notes, two live lists, and seven different clicks. Its Short Name is GtG, so the footer reads GtG Options.",
 		scenarios: [
 			{ key: "cls", label: "Class", options: [["MAGE", "Mage"], ["ROGUE", "Rogue"], ["HUNTER", "Hunter"], ["WARRIOR", "Warrior"]] },
@@ -485,7 +494,7 @@ var ADDONS = [];
 (function () {
 	var s = { locked: true, rogue: false, rolls: true, opening: "on", ann: false, ml: false };
 	ADDONS.push({
-		id: "gl", name: "GogoLoot", tag: "Tooltip today", state: s,
+		id: "gl", hue: 50, name: "GogoLoot", tag: "Tooltip today", state: s,
 		blurb: "Four feature blocks on four clicks, a Locked Items list that leads while boxes wait on a lock, and Automated Rolls' read-back in silver. Tradable Loot and the loot windows are parked out of the TOCs for now, so they're left off.",
 		scenarios: [
 			{ key: "locked", label: "Locked boxes", options: [[true, "In bags"], [false, "None"]] },
@@ -548,7 +557,7 @@ var ADDONS = [];
 		["tank", "Tanking Tools", "Cold openers and armor debuffs.", "Shift + Left-Click"],
 	];
 	ADDONS.push({
-		id: "cf", name: "Control Freak", tag: "Tooltip today", state: s,
+		id: "cf", hue: 0, name: "Control Freak", tag: "Tooltip today", state: s,
 		blurb: "Three feature blocks on three clicks. With All Alerts off, the blocks go and a red line says why, and nothing on the button can turn it back on.",
 		scenarios: [{ key: "all", label: "All Alerts", options: [[true, "On"], [false, "Off"]] }],
 		tooltip: function () {
@@ -586,7 +595,7 @@ var ADDONS = [];
 (function () {
 	var s = { on: true, carrying: true };
 	ADDONS.push({
-		id: "wd", name: "Water Dispenser", tag: "Tooltip today", state: s,
+		id: "wd", hue: 200, name: "Water Dispenser", tag: "Tooltip today", state: s,
 		blurb: "The smallest: one feature, one live list. The smallest conversion, and the first to build after Tracking Eye.",
 		scenarios: [
 			{ key: "on", label: "Dispense", options: [[true, "On"], [false, "Off"]] },
@@ -623,6 +632,45 @@ var ADDONS = [];
 // ---------------------------------------------------------------------------
 // Bands: scenario chips, Today, Proposed, What Changes
 // ---------------------------------------------------------------------------
+// The mini-map button: each click runs the action row that names it, so the row and the button share one job.
+function strip(html) { return String(html).replace(/<[^>]*>/g, ""); }
+function clickName(button, shift) {
+	var name = { 0: "Left-Click", 1: "Middle-Click", 2: "Right-Click" }[button];
+	return name ? (shift ? "Shift + " : "") + name : null;
+}
+function addButton(host, entries, log, hue) {
+	var btn = document.createElement("button");
+	btn.type = "button";
+	btn.className = "mm-btn";
+	btn.style.setProperty("--h", hue || 40);
+	btn.setAttribute("aria-label", "Mini-map button: click with Left, Right or Middle, with or without Shift");
+	host.appendChild(btn);
+	function fire(button, shift) {
+		var name = clickName(button, shift);
+		if (!name) return;
+		var heading = null;
+		var hit = null;
+		entries.forEach(function (entry) {
+			if (entry.kind === "status" || entry.kind === "submenu") heading = entry.left;
+			if (!hit && entry.kind === "action" && entry.right === name) hit = { entry: entry, heading: heading };
+		});
+		if (hit) {
+			var label = strip(hit.entry.left);
+			var owner = hit.heading && label.indexOf("Options") < 0 ? " (" + strip(hit.heading) + ")" : "";
+			log.innerHTML = "<b>" + name + "</b> → " + label + owner;
+			if (hit.entry.onClick) hit.entry.onClick();
+		} else if (name === "Left-Click") {
+			log.innerHTML = "<b>Left-Click</b> → opens and holds the menu";
+		} else {
+			log.innerHTML = "<b>" + name + "</b> → does nothing on this button";
+		}
+	}
+	btn.addEventListener("click", function (e) { fire(0, e.shiftKey); });
+	btn.addEventListener("mousedown", function (e) { if (e.button === 1) e.preventDefault(); });
+	btn.addEventListener("auxclick", function (e) { if (e.button === 1) { e.preventDefault(); fire(1, e.shiftKey); } });
+	btn.addEventListener("contextmenu", function (e) { e.preventDefault(); fire(2, e.shiftKey); });
+}
+
 var host = document.getElementById("bands");
 ADDONS.forEach(function (a) {
 	var band = document.createElement("section");
@@ -633,8 +681,8 @@ ADDONS.forEach(function (a) {
 		"<p>" + a.blurb + "</p>" +
 		'<div class="scen"></div>' +
 		'<div class="views">' +
-		'<div class="view"><div class="label">Today: ' + (a.isMenu ? "menu" : "tooltip") + '</div><div class="gg-stage today"></div></div>' +
-		'<div class="view"><div class="label">Proposed: menu</div><div class="gg-stage proposed"></div></div>' +
+		'<div class="view"><div class="label">Today: ' + (a.isMenu ? "menu" : "tooltip") + '</div><div class="gg-stage today"></div>' + (a.isMenu ? '<div class="clicklog today-log" aria-live="polite">Click the button.</div>' : "") + "</div>" +
+		'<div class="view"><div class="label">Proposed: menu</div><div class="gg-stage proposed"></div><div class="clicklog proposed-log" aria-live="polite">Click the button: Left, Right or Middle, with or without Shift.</div></div>' +
 		"</div>" +
 		"<h3>What Changes</h3>" +
 		'<ol class="changes">' + a.changes.map(function (c) { return '<li><span class="kind">' + c[0] + "</span> " + c[1] + "</li>"; }).join("") + "</ol>";
@@ -668,12 +716,20 @@ ADDONS.forEach(function (a) {
 			GG.tooltip(today, a.tooltip());
 		} else {
 			var t = a.menu(render, false);
-			GG.menu(today, t.entries, { flyouts: t.flyouts });
+			var tr = document.createElement("div");
+			tr.className = "mm-row";
+			today.appendChild(tr);
+			GG.menu(tr, t.entries, { flyouts: t.flyouts, openLeft: true });
+			addButton(tr, t.entries, band.querySelector(".today-log"), a.hue);
 		}
 		var prop = band.querySelector(".proposed");
 		prop.innerHTML = "";
 		var m = a.menu(render, true);
-		GG.menu(prop, m.entries, { flyouts: m.flyouts, openFlyout: openKey, onFlyout: function (k) { openKey = k; } });
+		var pr = document.createElement("div");
+		pr.className = "mm-row";
+		prop.appendChild(pr);
+		GG.menu(pr, m.entries, { flyouts: m.flyouts, openLeft: true, openFlyout: openKey, onFlyout: function (k) { openKey = k; } });
+		addButton(pr, m.entries, band.querySelector(".proposed-log"), a.hue);
 	}
 	a.render = render;
 });
