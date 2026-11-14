@@ -7,7 +7,7 @@ It grows in waves, one surface at a time:
 | Wave | Surface | State |
 |---|---|---|
 | 1 | Mini-map menus | **This folder.** Six add-ons drawn and specced, decisions made, issues filed. |
-| 2 | Options panel | Later. Rows and sub-rows are already specified in the Build Reference. |
+| 2 | Options panels | **This folder** (Wave 2: Options Panels, below). Nine add-ons surveyed, drawn and specced; Options-Kit built in `addon-kits/Options-Kit/`; decisions proposed, awaiting the maintainer. |
 | 3 | The add-ons' own windows | Later. |
 | 4 | Lines added to the game's tooltips | Later. |
 | 5 | Chat prints and sent messages | Later. |
@@ -16,7 +16,10 @@ It grows in waves, one surface at a time:
 
 | File | What it is |
 |---|---|
-| `README.md` | This: foundations, components, patterns, decisions, and the order of work. |
+| `README.md` | This: foundations, components, patterns, decisions, and the order of work. Wave 1's sit under the top-level headings; Wave 2's under Wave 2: Options Panels. |
+| `Options Panels/` | `Options-Kit.md`, the kit's spec, and one spec per add-on: its panel tree, root page, `ns.FEATURES`, each panel's changes, its move onto the kit, its strings, and how to check it in game. |
+| `Options Panels.html` | The board: every add-on's Settings tree and pages drawn from its code, Today beside Proposed, clickable, with the kit's components and the decisions. Open it next to all four mock files. |
+| `options-mock.css`, `options-mock.js` | The options mock kit. Draws AceConfig tables in the Blizzard Settings window at the game's sizes, and `GO.kit` mirrors Options-Kit's helpers. Loads after `menu-mock.css` and `menu-mock.js` (Wave 2 → Using the Options Mock Kit). |
 | `Mini-map Menus/` | One spec per add-on: its tooltip today, its menu row by row, its clicks, its strings, and how to check it in game. |
 | `Mini-map Menus.html` | The board: every mini-map tooltip drawn from its code beside the menu it becomes, clickable, with scenario switches. Open it in a browser next to `menu-mock.css` and `menu-mock.js`. |
 | `menu-mock.css`, `menu-mock.js` | The mock kit. Draws Menu-Kit entries and old-style GameTooltip lines at the game's sizes. Any wireframe pass that draws a mini-map menu builds from these instead of redrawing one (Using the Mock Kit, below). |
@@ -195,3 +198,139 @@ A wireframe pass that draws a mini-map menu loads `menu-mock.css` and `menu-mock
 ```
 
 `GG.tooltip(host, lines)` draws an old-style tooltip for a Current view; `GG.icon(hue)` draws a stand-in icon, never game art; `GG.money(copper)` draws coins. The file's header lists every option.
+
+## Wave 2: Options Panels
+
+Every Active add-on's options panels, surveyed file by file from GitHub `main`, drawn in `Options Panels.html` and specced in `Options Panels/`. The Profiles panel is inherited (stock AceDBOptions, Style Guide → OPTIONS PANEL → Profiles Panel), Feedback & Support is a mandated template, and Diagnostic Tools has its own section: this wave draws all three in the tree and touches none of them. It covers everything else: the root page, the feature panels and their sub-panels.
+
+### What the Survey Found
+
+Nine add-ons, about 28,000 lines of options code, one shared idea and nine copies of it:
+
+- **The same helpers, grown apart.** Every add-on carries `OptionsHeader`, `OptionsDesc`, `OptionsSpacer` and `OptionsRowLabel`, but the sub-option row has four signatures, the Example line five, the feature switch six names, and toggles-two-to-a-line four shapes, three of them sitting exactly on the wrap edge (Options-Kit.md → Why a Kit).
+- **Features Mirror is one add-on deep.** Tracking Eye alone has `ns.FEATURES`. Five others keep a table of their own under another name with other fields; three re-declare each switch on the root page and again on its panel, and in two of those the copies have different setters, so the panel that wasn't touched goes stale.
+- **One Refresh is one add-on deep.** Tracking Eye alone has `ns.RefreshSettings`. Elsewhere a setter notifies its own panel, a hand-picked other, or nothing.
+- **Visible drift:** Examples flush in five add-ons and indented in three; a parent-off line red in one, silver with a red word in another, absent in seven; four Reset shapes; sub-panel titles naming their parent in three of nine; tree sidebars of 176 and 180; speakers of 16 and 18; Features sections holding descriptions, status lines, icons, gold group switches or blank lines.
+- **Good ideas worth sharing,** now in the kit: GogoLoot's measured toggle rows, Tracking Eye's registration, Magic Eraser's item list and status line, Thanks for the Buff's page gate, Pretty Wide Quest Log's tooltip on a caption, Control Freak's disabled-at-default Reset, Good to Go's item check.
+
+### Foundations
+
+**The window.** AceConfigDialog draws each panel on a canvas in the Blizzard Options/Settings interface: the tree on the left, the page on the right, the page's group `name` as its gold title. 1 width unit is 170 points, so `ns.OPTIONS_ROW_WIDTH` (3.4) is 578 points, the width every row spends.
+
+**Color.** On a panel:
+
+| Role | Use |
+|---|---|
+| TITLE | Section headers, the page title, nothing else. Labels and captions are white. |
+| BODY | Descriptions, captions, labels. |
+| HELP | Sub-option captions, status lines, the `Example:` label, a list's one-word tag, the copy caption, a key binding's what-it-does line. |
+| INFO | Slash commands, click names, an editable message's tokens. |
+| OFF | Only a warning line: the settings mean nothing will happen (none ticked, too long to send). |
+| MUTED | Not bound, Loading, a disabled caption. |
+
+Class names in their class color; items in their quality color.
+
+**Type.** `fontSize = "medium"` everywhere. Never small; never large (a large line is a header).
+
+**Spacing.** Spacer, header, spacer, description, spacer: every section, every panel (`Kit.Section`). Widths come from the grid (Options-Kit.md → The Grid), never typed as literals; a row's cells total `ROW_WIDTH`.
+
+### Components
+
+Options-Kit's pieces (`Options Panels/Options-Kit.md` → API), each drawn in the board's Components section:
+
+| Piece | Kit | What it is |
+|---|---|---|
+| Section | `Kit.Section` | Spacer, gold header, spacer, description, spacer |
+| Primary toggle | AceConfig `toggle`, `width = "full"` | A setting on its own line |
+| Label row | `Kit.LabelRow` | A white caption (2.1) beside its dropdown, slider or box (1.3) |
+| Sub-option row | `Kit.SubRow`, `Kit.SubToggleRow`, `Kit.SubLabelRow` | Indented, silver caption, under the control it belongs to, hidden while that's off |
+| Switch and its setting | `Kit.ToggleRow` | A switch with its one setting beside it, a sound's speaker past the row's end; a caption too long sends them to the line below |
+| Pairs | `Kit.Pairs`, `Kit.FeatureSwitches` | Short switches two to a line (1.6 each) |
+| Feature switch | `Kit.FeatureSwitch` | One Enable switch from `ns.FEATURES`, drawn on the root page and atop its panel |
+| Status line | `Kit.StatusLine` | Silver, shown only while something elsewhere changes this page |
+| Warning line | `Kit.WarningLine` | Red, shown only while nothing will happen |
+| Example | `Kit.Example` | Silver `Example:` and the finished line in its own colors, indented under its control |
+| Reset row | `Kit.ResetRow` | A caption and a Reset button in the control column, gray at default |
+| Sound preview | `Kit.SoundPreview` | A 16-point speaker past the row's end |
+| Item list | `Kit.ItemList` | Add from Bags, Add Item, one row per item, Restore and Clear at the foot |
+| Tree pane | `Kit.PrepareTree`, `TREE_ROW_WIDTH` | A 176-point sidebar, a 2.5 pane, opening on the current character |
+| Sub-panel title | `Kit.SubPanelTitle` | "Farm Mode > Abilities" |
+
+### Patterns
+
+- **Root page.** Description, Enable Welcome Message, Enable Mini-map Button (with a button), Features, any tool rows, Key Bindings, /Commands. Nothing else (Style Guide → Main Page Layout).
+- **Features section.** `ns.FEATURES` switches, two to a line, menu order, Enable captions. No description, status line, icon, group heading or blank line inside it.
+- **Feature panel.** Description; its Enable switch (`Kit.FeatureSwitch`); then its sections, all hidden while it's off (`Kit.HideAllExcept`), so a switched-off feature shows only what it is and how to turn it on.
+- **Sub-panel.** A list or separate tool under its feature, titled "Feature > Sub-panel". It stays in the tree while the feature is off and opens with a silver status line naming the switch (Decision 7).
+- **A control and what belongs to it.** One setting rides on the switch's line (`ToggleRow`); anything more sits on sub-rows under it; an Example closes the group, indented, and everything leaves while the switch is off.
+- **Hidden or disabled.** Hidden: belongs to a switch that's off. Disabled: the player can't change it here and now (not the leader, a reload pending, nothing to pick, already the default).
+- **Tree group.** A per-character or per-item page set: 176 sidebar, `TREE_ROW_WIDTH` rows, the description above the tree, opening on home every time.
+- **Long checklist.** Past 64 boxes, AceConfig toggles stall the UI on every click; one custom widget pools its checkboxes and writes without a rebuild (Thanks for the Buff's emote grid).
+- **Live widget.** A preview or editor that must update per keystroke is a `description` with a custom `dialogControl` that saves without an AceConfig redraw (Play It Forward's mail editor and badge preview).
+- **Panel files.** One file per panel, `Options/Options-[Panel].lua`; a panel with several files gets a subfolder, `Options/[Feature]/`, with its helpers in `Options-[Feature]-Utilities.lua` (Good to Go).
+
+### Order of Work
+
+Each add-on's spec in `Options Panels/` is the maintainer's work order, as Wave 1's are: the UX Review draws it as the add-on's Proposed panels, and no other pass acts on one. The kit is done; Magic Eraser proves it, then smallest to largest:
+
+| Order | Spec | Options code | Biggest change |
+|---|---|---|---|
+| 0 | [Options-Kit](Options%20Panels/Options-Kit.md) | (the kit) | **Done:** `addon-kits/Options-Kit/`, sync script, CI check, smoke test |
+| 1 | [Magic Eraser](Options%20Panels/Magic%20Eraser.md) | 2,313 lines | The proof; real items in its Examples |
+| 2 | [Tracking Eye](Options%20Panels/Tracking%20Eye.md) | 1,500 | `click` and `gate` on `ns.FEATURES` |
+| 3 | [Play It Forward](Options%20Panels/Play%20It%20Forward.md) | 1,830 | One switch per feature; two resets ask first |
+| 4 | [Water Dispenser](Options%20Panels/Water%20Dispenser.md) | 1,885 | `ns.FEATURES`; Dispensed Items under Dispense |
+| 5 | [Pretty Wide Quest Log](Options%20Panels/Pretty%20Wide%20Quest%20Log.md) | 2,186 | Sub-panels through `AddToBlizOptions` |
+| 6 | [Thanks for the Buff](Options%20Panels/Thanks%20for%20the%20Buff.md) | 2,820 | Sub-panel titles; the composer on the grid |
+| 7 | [Control Freak](Options%20Panels/Control%20Freak.md) | 3,452 | Features as three blocks; Examples follow Print |
+| 8 | [Good to Go](Options%20Panels/Good%20to%20Go.md) | 5,424 | `FEATURE_SWITCHES` into `ns.FEATURES`; the kit's item list |
+| 9 | [GogoLoot](Options%20Panels/GogoLoot.md) | 6,300 | Features in menu order; silver feature-off notes |
+
+### Decisions
+
+**Proposed, awaiting the maintainer.** 1–4 and 14–16 change nothing a player sees; the rest do, so each takes the maintainer's yes before any spec that cites it is built (Style Guide: a rule that changes what players see).
+
+1. **One Options-Kit in Common-Core,** copied unchanged into `Options/Options-Kit.lua` and checked byte for byte by CI. *Built.*
+2. **`ns.FEATURES` in every add-on with a Features section,** in the kit's record shape; the root page, each panel's Enable switch and the menu build from it.
+3. **One Refresh in every add-on,** menu or not: the kit's `ns.RefreshSettings`. Today Style Guide → One Refresh binds only add-ons with a menu.
+4. **Every panel registers through `Kit.RegisterPanel`** as its builder function; sub-panels nest by category ID; every ID is captured, so `ns:OpenOptionsPanel(key)` opens any panel.
+5. **The Features section holds only the switches:** `ns.FEATURES`, two to a line, Enable captions. No description, status line, icon, group heading or blank line.
+6. **An Example sits under the control it shows, indented, and leaves while that control is off.**
+7. **A sub-panel whose feature is off stays in the tree and opens with a silver status line naming the switch.**
+8. **Sub-panel page titles read "Parent > Child"** in every add-on.
+9. **Red only for a warning line** (nothing will happen). Status lines, including the parent-off line, are silver.
+10. **One Reset shape:** a row of its own, the button in the control column, gray while there's nothing to reset, confirmed when it discards more than one value.
+11. **One sound preview:** a 16-point speaker past the row's end, one tooltip wording.
+12. **Tree sidebars are 176 points** (Magic Eraser and Play It Forward are 180).
+13. **Key binding rows on the grid:** caption 2.1, bound key 0.75, Set Key 0.55, totalling 3.4; the what-it-does line silver.
+14. **The kit's five strings take one key in every add-on** (Options-Kit.md → Strings), renamed in `enUS.lua` only. Other keys keep their names; new keys take `_DESCRIPTION` for a tooltip.
+15. **GogoLoot's item-list extras stay its own** (filter, add line, New, sections, all README-Notes); `Kit.ItemList` is Magic Eraser's shape until the maintainer wants them in the kit.
+16. **Order of work** as the table above.
+
+### Using the Options Mock Kit
+
+A wireframe pass that draws an options panel loads all four mock files beside its page and writes the panel as the Lua would, with `GO.kit` standing in for `ns.OptionsKit`:
+
+```html
+<link rel="stylesheet" href="menu-mock.css">
+<link rel="stylesheet" href="options-mock.css">
+<div class="gg" id="panel"></div>
+<script src="menu-mock.js"></script>
+<script src="options-mock.js"></script>
+<script>
+  var K = GO.kit, on = true;
+  GO.settings(document.getElementById("panel"), [
+    { label: "Water Dispenser", build: function () {
+      return { type: "group", name: "Water Dispenser", args: {
+        desc: K.Desc("Hands out water and food when a trade opens.", 1),
+        header: K.Header("Features", 3),
+        switches: K.Pairs(4, null, [
+          { type: "toggle", name: "Enable Dispense", get: () => on, set: (_, v) => { on = v; } },
+        ]),
+      } };
+    }, children: [{ label: "Dispense", build: { type: "group", name: "Dispense", args: {} } }] },
+  ]);
+</script>
+```
+
+`GO.page(host, group)` draws one page without the window. Every arg takes AceConfig's own keys; `c` tags a widget for the board's overlay. The file's header lists every option.

@@ -66,6 +66,7 @@ Repo-Name/
 ├── Locales/
 │   └── enUS.lua                    Source of truth; the full set ships beside it — see LOCALIZATION
 ├── Options/
+│   ├── Options-Kit.lua             Once the add-on is on Options-Kit — copied unchanged from Common-Core (OPTIONS PANEL → Options-Kit)
 │   ├── Options-Utilities.lua
 │   ├── Options-General.lua
 │   ├── Options-{Feature-Name}.lua  Optional — one file per feature panel
@@ -104,6 +105,7 @@ Live reference: **Tracking Eye** — the folder layout, end to end, mini-map men
 |`Features/Menu-Kit.lua`|With the button. The menu renderer, copied unchanged from the live reference; reads only `ns.PALETTE`.|
 |`Features/Minimap-Menu.lua`|With the button. What goes in the menu: its feature blocks, flyouts and Options row.|
 |`Diagnostics/`|The Diagnostic Tools framework and panel, with the add-on's own manifests and context probe in `Manifests.lua` — see DIAGNOSTIC TOOLS. Self-contained English strings. No gameplay logic.|
+|`Options/Options-Kit.lua`|Once the add-on is on Options-Kit. The shared options pieces, copied unchanged from Common-Core's `addon-kits/Options-Kit/`, first in the TOC's Options group; CI checks it byte for byte.|
 |`Options/Options.lua`|AceConfig registration, Blizzard panel wiring, panel navigation, slash commands. Nothing else.|
 |`Options/Options-Utilities.lua`|Shared options infrastructure: widget helpers, shared list builders, custom AceGUI widgets, item-cache warming.|
 |`Options/Options-General.lua`|The root General panel. No reset controls (see SAVED VARIABLES → Reset).|
@@ -1036,7 +1038,7 @@ More Features (C_TITLE, only if the add-on has set-and-forget features)
 
 ### Features Mirror
 
-**The menu and the options panel's Features section are one list.** Every switch in the root panel's Features section (OPTIONS PANEL → Main Page Layout) is in the menu, under the same name, and every feature in the menu has a switch there. One table in the add-on (`ns.FEATURES`, in `Options/Options-Utilities.lua`) names each feature's setting, switch caption and description, whether it's a block, and its click; the Features section and the menu both build from it, so they can't drift.
+**The menu and the options panel's Features section are one list.** Every switch in the root panel's Features section (OPTIONS PANEL → Main Page Layout) is in the menu, under the same name, and every feature in the menu has a switch there. One table in the add-on (`ns.FEATURES`, in `Options/Options-Utilities.lua`) names each feature's setting, switch caption and description, whether it's a block, and its click; the Features section and the menu both build from it, so they can't drift. Every add-on with a Features section keeps it, menu or not, in Options-Kit's record shape (`References/Design System/Options Panels/Options-Kit.md` → Features); the kit's `Kit.FeatureSwitch` draws each switch on the root page and atop its panel from the same record.
 
 - **A block or a compact row.** A feature players turn on and off mid-session is a full block. Every other feature is a compact `toggle` row under a gold **More Features** heading, last before Options: the feature's name on the left, On or Off on the right, its switch's caption and description as the tooltip.
 - **Same order.** The Features section lists the block features first, in the menu's order, then the More Features ones, in the menu's order. Two to a line, left to right.
@@ -1050,7 +1052,7 @@ Live: Tracking Eye's `ns.FEATURES` in `Options/Options-Utilities.lua` feeds the 
 
 ### One Refresh
 
-**Every change shows everywhere at once.** One function, `ns.RefreshSettings()` in `Features/Utilities.lua`, calls `AceConfigRegistry:NotifyChange` for every panel in `ns.OPTIONS_REGISTRY`, redraws the open menu (`ns.RefreshMenu()`, a no-op while it's closed) and updates the button's icon (`ns.UpdateMinimapIcon()`, where the add-on has a live one). It binds every add-on with a mini-map menu; one without a menu keeps notifying its own panels. Every writer ends in it, and none notifies a single panel by hand:
+**Every change shows everywhere at once.** One function, `ns.RefreshSettings()`, defined by Options-Kit (in `Features/Utilities.lua` in an add-on not yet on the kit), calls `AceConfigRegistry:NotifyChange` for every panel in `ns.OPTIONS_REGISTRY`, redraws the open menu (`ns.RefreshMenu()`, a no-op while it's closed) and updates the button's icon (`ns.UpdateMinimapIcon()`, where the add-on has a live one). It binds every add-on with a mini-map menu, and every add-on on Options-Kit, menu or not, since the kit brings it; an add-on with neither keeps notifying its own panels until its spec moves it. Every writer ends in it, and none notifies a single panel by hand:
 
 - every options `set`, through the shared option helpers;
 - every menu row and every button click (the kit's `afterChange`);
@@ -1190,9 +1192,24 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 Row, sub-row and item-list construction: `References/Style Guide - Build Reference.md` → OPTIONS PANEL.
 
+Drawn: `References/Design System/Options Panels.html`, every add-on's tree and pages, Today beside Proposed, and every kit piece. **An add-on with an options spec** has it in `References/Design System/Options Panels/{Add-on Name}.md`. The specs are the maintainer's work orders, as the mini-map menu specs are: the UX Review draws one as the add-on's Proposed panels, its feature prompt builds to it, and no other pass acts on one. Where a spec and this section disagree, this section wins.
+
+### Options-Kit
+
+**Every add-on's panels are built from one shared kit**, `Options/Options-Kit.lua`, copied unchanged from Common-Core's [`addon-kits/Options-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Options-Kit) and checked byte for byte by CI (COMMON-CORE → Shared kits). It loads first in the TOC's Options group and reads only names every add-on already defines (`ns.PALETTE`, `ns.L`, `ns.db`, `ns.OPTIONS_REGISTRY`, `ns.FEATURES`, `ns:PrintMessage`). Its spec, with the whole API, is `References/Design System/Options Panels/Options-Kit.md`.
+
+- **It owns the grid** and publishes it as `ns.OPTIONS_*` (Build Reference → Label-Beside-Control Rows), so `Data/Data.lua` no longer defines it.
+- **It owns the helpers** this section and the Build Reference name: headers, descriptions, spacers, labels, rows and sub-rows, switch rows, pairs, feature switches, status, warning and Example lines, Reset rows, the item list and its ItemLink widget.
+- **It owns the plumbing:** `ns.RefreshSettings` (MINIMAP MENU → One Refresh), panel registration (`Kit.RegisterPanel`), `ns:OpenOptionsPanel(key)` with the Combat Guard, and `ns.IsOptionsPanelOpen()`.
+- **Never edit a copy.** A change is a Common-Core commit, then `scripts/sync-addon-kits.sh` into each add-on.
+- **What only one add-on has stays in it,** built from kit pieces: Control Freak's alert section, Thanks for the Buff's emote grid and whisper composer, Play It Forward's mail editor, GogoLoot's filter grid and item-list extras.
+- **The kit's strings take one key in every add-on,** handed over once through `Kit.SetText`: `SAMPLE_EXAMPLE`, `LOADING_ITEM`, `OPTIONS_SOUND_PREVIEW_DESCRIPTION`, `OPTIONS_RESET`, `CHAT_OPTIONS_IN_COMBAT`. An add-on moving onto the kit renames its keys in `enUS.lua` only and lists each old → new key in its prompt; the Localization Review carries every locale across. New option keys take `_DESCRIPTION` for a tooltip; existing keys keep their names.
+
+Existing add-ons move onto the kit through their spec, in the Design System's order of work, never in a sweep. Until an add-on has, the Standard Helpers below are its own copies, and they match the kit's bodies.
+
 ### Standard Helpers
 
-Defined once in `Options/Options-Utilities.lua` and shared by every panel file. Dot-defined (no `self`), matching the panel builders.
+The kit's `Kit.Header`, `Kit.Desc`, `Kit.Spacer` and `Kit.Label`. An add-on not yet on the kit defines them once in `Options/Options-Utilities.lua` and shares them with every panel file, dot-defined (no `self`), matching the panel builders:
 
 ```lua
 function ns.OptionsHeader(text, order, hidden)
@@ -1224,6 +1241,7 @@ Every section header is a real AceConfig `header` — no panel draws its own fro
 
 - Each panel file exposes one builder (`ns.Build{FeatureName}Options`) returning an AceConfig group. Its `name` is `L["ADDON_TITLE"]`, the Full Name (ADD-ON NAMES), for the root panel and a `TAB_*` locale key for a feature panel, or the GlobalStrings constant when the panel is named for a Blizzard UI label (GAME NAMES); the Profiles panel's arrives already localized from AceDBOptions-3.0, and the Diagnostics panel's comes from its strings table.
 - `Options/Options.lua` registers every builder against its `ns.OPTIONS_REGISTRY` name and wires `AddToBlizOptions(registryName, name, L["ADDON_TITLE"])` — the third argument must match the root panel's display name exactly.
+- **On the kit, each panel registers through `Kit.RegisterPanel(key, builder, displayName, parentKey)`:** its builder function (never a built table, so every repaint rebuilds it), nested under the root, or under `parentKey`'s captured category ID for a sub-panel. Every panel's frame and category ID are kept, so `ns:OpenOptionsPanel(key)` opens any panel. Nothing reaches around `AddToBlizOptions` to build a canvas or write into `AceConfigDialog.BlizOptions` by hand.
 - **Registration is deferred, never file-scope.** The Profiles builder calls `AceDBOptions:GetOptionsTable(ns.db)`, and `ns.db` doesn't exist until the SavedVariables init point, so file-scope registration crashes on load. Wrap all registration in `ns.RegisterOptionsPanels()` and call it from `Features/Core.lua` immediately after `AceDB:New`.
 - **Lists and separate tools get sub-panels.** A list of abilities or items moves off its feature's panel onto a sub-panel of its own, registered with that panel's category ID (the second value its own `AddToBlizOptions` returned) as the parent, since only the root panel resolves by display name; the feature panel keeps the feature's own settings, such as its sound and Example line. A panel holding several separate tools gives each tool a sub-panel, leaving only the settings the tools share on the parent.
 - **Child-panel order is fixed:** General (root) → feature panels, each followed by its sub-panels → Profiles → Feedback & Support → Diagnostic Tools last. That order is the order of `AddToBlizOptions` calls.
@@ -1588,13 +1606,14 @@ AceGUI-3.0 loads through its `.xml`. The last two lines ship only with a mini-ma
 **Every add-on is built on [Common-Core](https://github.com/Gogo1951/Common-Core), which holds the shared CI and release logic for all Gogo add-ons; its README is the source of truth wherever this section and it differ.** Nothing in it ships to players. Its `.github/workflows/package.yml` and `ci.yml` are reusable workflows: add-ons call them and never copy their logic.
 
 - **Shared files.** `addon-files/` holds the files every add-on carries an exact copy of: `.github/workflows/package.yml` and `.github/workflows/ci.yml` (thin callers), `.gitignore` and `.gitattributes`. `scripts/sync-addon-files.sh <add-on folder>` copies them in, and CI fails an add-on whose copy differs. They change only in Common-Core, then get synced to every add-on: never edit one inside an add-on.
+- **Shared kits.** `addon-kits/<Kit>/` holds code an add-on adopts whole: today `Options-Kit` (OPTIONS PANEL → Options-Kit). A kit's folders mirror the add-on's own paths. `scripts/sync-addon-kits.sh --adopt <Kit> <add-on folder>` copies one in the first time; a plain run refreshes every kit each add-on has adopted. An add-on holding any of a kit's files has adopted it, and CI fails it if any of them differs. They change only in Common-Core.
 - **Per add-on, written by hand:** `.pkgmeta`, `.luacheckrc`, the TOCs, `LICENSE` and the README files.
 
 ### What CI Enforces
 
 On every PR and every push to `main`, Common-Core's CI checks that:
 
-1. The shared files match `addon-files/`.
+1. The shared files match `addon-files/`, and every kit the add-on has adopted matches `addon-kits/`.
 2. Git stores every file with LF line endings.
 3. Every folder in `Includes/Libraries/` is listed under `.pkgmeta` externals, and every external is committed.
 4. `luac5.1 -p` passes on every Lua file outside `Includes/`.

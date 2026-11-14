@@ -272,7 +272,7 @@
 			case "execute": {
 				var b = document.createElement("button");
 				b.type = "button";
-				b.className = "go-execute" + (opt.image ? " icon" : "");
+				b.className = "go-execute" + (opt.image ? " icon" + (opt.image === "speaker" ? " speaker" : "") : "");
 				b.innerHTML = opt.image ? "" : name;
 				b.setAttribute("aria-label", name || call(opt.desc, info) || "button");
 				b.addEventListener("click", function () {
@@ -500,86 +500,172 @@
 	function color(key, text) {
 		return '<span style="color:#' + (P[key] || key) + '">' + text + "</span>";
 	}
+	// Each mirrors the Lua call of the same name: same arguments, same order,
+	// same table back. Settings come from the board's own state, so Get / Set
+	// take getter and setter functions instead of a store and a path.
+	var GRID_PAIR = (GRID.ROW - 0.2) / 2;
+	function row(order, hidden, cells, c) {
+		var args = {};
+		cells.forEach(function (cell, i) {
+			if (!cell) return;
+			cell.order = i + 1;
+			args["cell" + (i + 1)] = cell;
+		});
+		return { type: "group", name: "", inline: true, order: order, hidden: hidden, args: args, c: c };
+	}
 	var kit = {
 		GRID: GRID,
 		Color: color,
 		Header: function (text, order, hidden) {
-			return { type: "header", name: color("TITLE", text), order: order, hidden: hidden, c: "kit" };
+			return { type: "header", name: color("TITLE", text), order: order, hidden: hidden };
 		},
 		Desc: function (text, order, hidden) {
-			return { type: "description", name: text, fontSize: "medium", order: order, hidden: hidden, c: "kit" };
+			return { type: "description", name: text, fontSize: "medium", order: order, hidden: hidden };
 		},
 		Spacer: function (order, hidden) {
 			return { type: "description", name: " ", order: order, hidden: hidden };
 		},
-		RowLabel: function (text, order, width) {
-			return { type: "description", name: text, fontSize: "medium", width: width || GRID.LABEL, order: order, c: "row" };
+		// Writes spacer, header, spacer[, desc, spacer] into args; returns the next order.
+		Section: function (args, keyPrefix, order, title, description, hidden) {
+			args[keyPrefix + "Space0"] = kit.Spacer(order, hidden);
+			args[keyPrefix + "Header"] = kit.Header(title, order + 0.1, hidden);
+			args[keyPrefix + "Space1"] = kit.Spacer(order + 0.2, hidden);
+			if (description) {
+				args[keyPrefix + "Desc"] = kit.Desc(description, order + 0.3, hidden);
+				args[keyPrefix + "Space2"] = kit.Spacer(order + 0.4, hidden);
+			}
+			return order + 1;
+		},
+		Label: function (text, order, width, desc) {
+			return { type: "description", name: text, desc: desc, fontSize: "medium", width: width || GRID.LABEL, order: order };
 		},
 		SubLabel: function (text) {
 			return color("HELP", text);
 		},
-		SubRow: function (order, hidden, controls) {
-			var args = { indent: { type: "description", name: " ", width: GRID.SUB_INDENT, order: 1 } };
-			controls.forEach(function (control, i) {
-				control.order = i + 2;
-				args["control" + (i + 1)] = control;
-			});
-			return { type: "group", name: "", inline: true, order: order, hidden: hidden, args: args, c: "sub" };
+		Row: function (order, hidden, cells) {
+			return row(order, hidden, cells, "row");
 		},
-		// A label-beside-control row: the label, then the control with name ""
-		// and the rest of the row.
-		LabelRow: function (order, text, control, labelWidth, hidden) {
-			var lw = labelWidth || GRID.LABEL;
+		SubRow: function (order, hidden, cells) {
+			var r = row(order, hidden, cells, "sub");
+			r.args.indent = { type: "description", name: " ", width: GRID.SUB_INDENT, order: 0 };
+			return r;
+		},
+		LabelRow: function (order, hidden, caption, control, desc) {
 			control.name = "";
-			control.width = control.width || Number((GRID.ROW - lw).toFixed(3));
-			control.order = 2;
-			return {
-				type: "group",
-				name: "",
-				inline: true,
-				order: order,
-				hidden: hidden,
-				c: "row",
-				args: { label: kit.RowLabel(text, 1, lw), control: control },
-			};
+			control.width = GRID.CONTROL;
+			return row(order, hidden, [kit.Label(caption, null, GRID.LABEL, desc || control.desc), control], "row");
 		},
-		// A full-width primary toggle.
-		Toggle: function (order, name, desc, get, set, hidden, disabled) {
-			return { type: "toggle", name: name, desc: desc, width: "full", order: order, get: get, set: set, hidden: hidden, disabled: disabled };
+		SubLabelRow: function (order, hidden, caption, control, desc) {
+			control.name = "";
+			control.width = GRID.CONTROL;
+			return kit.SubRow(order, hidden, [kit.Label(kit.SubLabel(caption), null, GRID.LABEL - GRID.SUB_INDENT, desc || control.desc), control]);
 		},
-		// Switches two to a line, each pair its own unnamed inline group.
-		SwitchPairs: function (order, toggles, hidden) {
+		SubToggleRow: function (order, hidden, toggle) {
+			toggle.name = kit.SubLabel(toggle.name);
+			toggle.width = GRID.ROW - GRID.SUB_INDENT - 0.2;
+			return kit.SubRow(order, hidden, [toggle]);
+		},
+		Pairs: function (order, hidden, toggles) {
 			var args = {};
-			var pairWidth = (GRID.ROW - 0.2) / 2;
 			for (var i = 0; i < toggles.length; i += 2) {
-				var pair = {};
-				[toggles[i], toggles[i + 1]].forEach(function (t, j) {
-					if (!t) return;
-					t.width = pairWidth;
-					t.order = j + 1;
-					pair["toggle" + (j + 1)] = t;
+				[toggles[i], toggles[i + 1]].forEach(function (t) {
+					if (t) t.width = GRID_PAIR;
 				});
-				args["row" + (i / 2 + 1)] = { type: "group", name: "", inline: true, order: i / 2 + 1, args: pair };
+				args["pair" + (i / 2 + 1)] = row(i / 2 + 1, null, [toggles[i], toggles[i + 1]]);
 			}
 			return { type: "group", name: "", inline: true, order: order, hidden: hidden, args: args, c: "feature" };
 		},
-		StatusLine: function (order, text, hidden) {
-			return { type: "description", name: typeof text === "function" ? text : color("HELP", text), fontSize: "medium", order: order, hidden: hidden, c: "status" };
+		// A switch with its one setting beside it and a speaker past the end; both
+		// leave while it's off. The mock always fits the caption (the Lua measures).
+		ToggleRow: function (order, toggle, extras) {
+			extras = extras || {};
+			var off = function () {
+				return !toggle.get();
+			};
+			var args = { toggle: toggle };
+			toggle.order = 1;
+			if (!extras.control && !extras.preview) {
+				toggle.width = "full";
+			} else {
+				toggle.width = GRID.LABEL;
+				if (extras.control) {
+					extras.control.name = "";
+					extras.control.width = GRID.CONTROL;
+					extras.control.order = 2;
+					extras.control.hidden = off;
+					args.control = extras.control;
+				} else {
+					args.controlSpace = { type: "description", name: " ", width: GRID.CONTROL, order: 2, hidden: off };
+				}
+				if (extras.preview) {
+					extras.preview.order = 3;
+					extras.preview.hidden = off;
+					args.preview = extras.preview;
+				}
+			}
+			return { type: "group", name: "", inline: true, order: order, hidden: extras.hidden, args: args, c: "row" };
 		},
-		Example: function (order, line, hidden) {
+		SoundPreview: function (play) {
+			return { type: "execute", name: "", desc: "Play this sound now, whether or not the sound is turned on.", image: "speaker", width: 0.15, func: play || function () {} };
+		},
+		// The feature's Enable switch: caption and tooltip from the board's feature record.
+		FeatureSwitch: function (feature, order, width) {
+			return { type: "toggle", name: feature.caption, desc: feature.desc, order: order, width: width || "full", get: feature.get, set: function (_, v) { feature.set(v); }, c: "feature" };
+		},
+		FeatureSwitches: function (order, features) {
+			return kit.Pairs(order, null, features.map(function (f) {
+				return kit.FeatureSwitch(f);
+			}));
+		},
+		StatusLine: function (getText, order) {
 			return {
 				type: "description",
 				name: function () {
-					return color("HELP", "Example: ") + (typeof line === "function" ? line() : line);
+					var t = getText();
+					return t ? color("HELP", t) : "";
 				},
 				fontSize: "medium",
 				order: order,
-				hidden: hidden,
-				c: "example",
+				hidden: function () {
+					return getText() == null;
+				},
+				c: "status",
 			};
 		},
-		Reset: function (order, name, desc, func, confirm) {
-			return { type: "execute", name: name, desc: desc, order: order, func: func, confirm: !!confirm, c: "reset" };
+		WarningLine: function (text, isWrong, order) {
+			return {
+				type: "description",
+				name: function () {
+					return color("OFF", typeof text === "function" ? text() : text);
+				},
+				fontSize: "medium",
+				order: order,
+				hidden: function () {
+					return !isWrong();
+				},
+				c: "status",
+			};
+		},
+		Example: function (order, hidden, getLine) {
+			var r = kit.SubRow(order, hidden, [
+				{
+					type: "description",
+					name: function () {
+						return color("HELP", "Example: ") + getLine();
+					},
+					fontSize: "medium",
+					width: GRID.ROW - GRID.SUB_INDENT,
+				},
+			]);
+			r.c = "example";
+			return r;
+		},
+		ResetRow: function (order, hidden, caption, desc, isDefault, reset, confirmText) {
+			var r = row(order, hidden, [
+				kit.Label(caption || " ", null, GRID.LABEL),
+				{ type: "execute", name: "Reset", desc: desc, width: GRID.CONTROL, disabled: isDefault, confirm: !!confirmText, confirmText: confirmText, func: reset },
+			], "reset");
+			return r;
 		},
 		SubPanelTitle: function (parentName, name) {
 			return parentName + " > " + name;

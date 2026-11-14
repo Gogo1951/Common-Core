@@ -4,6 +4,8 @@ The Style Guide's rules for building options rows and diagnostics, moved here ve
 
 ## OPTIONS PANEL
 
+Options-Kit builds every shape in this section (Style Guide → OPTIONS PANEL → Options-Kit): `Kit.Label` and `Kit.LabelRow` the label-beside-control row, `Kit.SubRow`, `Kit.SubLabel`, `Kit.SubLabelRow` and `Kit.SubToggleRow` the sub-option rows, `Kit.ToggleRow` a switch beside its one setting, and `Kit.ItemList` the item list. An add-on on the kit calls those; the rules below are what they do, and bind an add-on not yet on it.
+
 ### Label-Beside-Control Rows
 
 A control that needs a caption sits **beside** its label on one line, never stacked under it. AceConfig renders a widget's own `name` above it, so the row is built from two args instead: a `ns.OptionsRowLabel` cell, then the control with `name = ""` ordered immediately after. They flow onto one line because their widths total exactly one row.
@@ -37,7 +39,7 @@ Live reference: **Magic Eraser** — Bag-Space Warnings' threshold slider for th
 
 ### Item Lists
 
-An add-on that lets the player build a list of items renders it through one shared builder, `ns:BuildItemListOptions` in `Options/Options-Utilities.lua`. The panel supplies only the labels, the source table, and the `onAdd` / `onRemove` / `onRestore` callbacks. A list whose items each carry more settings than one per-row control can hold is instead a `tree` group with a page per item, and of this section only the Rules bind it. Shape, in order:
+An add-on that lets the player build a list of items renders it through one shared builder: Options-Kit's `Kit.ItemList`, or `ns:BuildItemListOptions` in `Options/Options-Utilities.lua` in an add-on not yet on the kit. The panel supplies only the labels, the source table, and the `onAdd` / `onRemove` / `onRestore` callbacks. A list whose items each carry more settings than one per-row control can hold is instead a `tree` group with a page per item, and of this section only the Rules bind it. Shape, in order:
 
 1. **Add from Bags** — optional; a label row whose `select` lists each distinct carried item not already on the list, since the bags close when the options open.
 2. **Add item** — a label row whose control is an `input` that parses what the player typed or dragged in, calls `onAdd`, and returns `""` from `get` so the box clears itself.

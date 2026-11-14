@@ -12,8 +12,8 @@ The shared renderer every mini-map menu is built on, moved into Common-Core so a
 
 | Today, in Tracking Eye | v2 |
 |---|---|
-| `Features/Menu-Kit.lua`: plate, rows, layout | `addon-kits/Menu-Kit/Menu-Kit.lua` here, unchanged in spirit |
-| `Includes/Images/Menu-Plate.tga` | `addon-kits/Menu-Kit/Menu-Plate.tga` here |
+| `Features/Menu-Kit.lua`: plate, rows, layout | `addon-kits/Menu-Kit/Features/Menu-Kit.lua` here, unchanged in spirit |
+| `Includes/Images/Menu-Plate.tga` | `addon-kits/Menu-Kit/Includes/Images/Menu-Plate.tga` here |
 | `Minimap-Menu.lua`: `CreatePanel` for menu and flyout, `UISpecialFrames`, `PositionMenu`, `PositionFlyout`, the `OnUpdate` close timer, `OnHide`, `RenderFlyout`, `ns.ShowMenu`, `ns.HideMenu`, `ns.RefreshMenu`, `ns.IsMenuShown`, `ns.IsMenuFrame`, `ns.OpenFlyout`, `menu.onEnterRow` | Into the kit, behind `Kit.CreateMenu` |
 | `Minimap-Menu.lua`: `AddFeature` | Into the kit as `Kit.FeatureBlock` |
 | `Minimap-Menu.lua`: `OptionTooltip`, `Toggle`, `Section`, `Separator`, `OnOff` | Into the kit as small helpers |
@@ -68,14 +68,14 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 
 ## Distribution
 
-1. The kit and plate live in `addon-kits/Menu-Kit/` here.
-2. `scripts/sync-addon-files.sh` copies them into each add-on that has `Features/Menu-Kit.lua` (`Features/` and `Includes/Images/`), and leaves add-ons without one alone.
-3. `ci.yml` gains a check: an add-on that has `Features/Menu-Kit.lua` must match `addon-kits/Menu-Kit/Menu-Kit.lua` byte for byte, plate included, like the shared-files check.
+1. The kit and plate live in `addon-kits/Menu-Kit/` here, in folders that mirror an add-on's (`Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga`), as Options-Kit's do.
+2. **Already built, for every kit:** `scripts/sync-addon-kits.sh` copies a kit into each add-on that holds any of its files and leaves the rest alone (`--adopt Menu-Kit` the first time), and the reusable `ci.yml`'s **Shared kits match Common-Core** check fails an add-on whose copy differs, plate included. Dropping the two files into `addon-kits/Menu-Kit/` is all Menu-Kit needs.
+3. Tracking Eye, which already carries `Features/Menu-Kit.lua`, counts as adopted the moment the kit lands: its next CI run fails until it's synced, so land the kit and Tracking Eye's move together.
 4. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, copies the kit from `addon-kits/Menu-Kit/` instead of Tracking Eye on GitHub.
 
 ## Done When
 
 - [ ] `addon-kits/Menu-Kit/` holds the kit and plate; StyLua, luacheck and `luac5.1 -p` pass on it.
-- [ ] The sync script and the CI check are in, and CI passes on Common-Core.
+- [x] The sync script and the CI check are in (`scripts/sync-addon-kits.sh`, built with Options-Kit).
 - [ ] Tracking Eye runs on v2 with nothing visible changed (`Tracking Eye.md`). That's the proof.
 - [ ] Style Guide → MINIMAP MENU's live references point at `addon-kits/Menu-Kit/`.

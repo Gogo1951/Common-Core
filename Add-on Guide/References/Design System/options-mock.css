@@ -424,6 +424,12 @@
 	text-shadow: 0 0 2px #000;
 }
 
+.go-execute.icon.speaker::before {
+	content: "\266A"; /* stands in for Interface\\Common\\VoiceChat-Speaker */
+	font-size: 16px;
+	color: var(--gg-title);
+}
+
 /* color */
 .go-color {
 	display: flex;
