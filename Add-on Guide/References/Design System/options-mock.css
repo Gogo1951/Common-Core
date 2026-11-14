@@ -1,0 +1,553 @@
+/*
+  Gogo Design System: options panel mock styles.
+
+  Draws the Blizzard Options/Settings interface with an add-on's AceConfig-3.0
+  panels in it, at the sizes the game draws them, so every wireframe pass that
+  shows an options panel builds from the same pieces:
+
+    .go-settings   The Settings window: the category tree beside one page
+    .go-page       One AceConfig panel: its title, then its widgets in rows
+    .go-*          One AceGUI widget each (header, description, toggle, select,
+                   range, input, execute, color, multiselect, inline group, tabs)
+
+  Load after menu-mock.css: it reuses the .gg palette, the stand-in font and the
+  GameTooltip look. 1 CSS px stands for 1 game point. AceConfigDialog sizes a
+  widget at 170 points per width unit (Options-Kit → Width Units), so
+  ns.OPTIONS_ROW_WIDTH (3.4) is 578 points. Icons are drawn stand-ins, never
+  game art.
+*/
+
+.go-settings {
+	display: inline-grid;
+	grid-template-columns: 176px minmax(0, 640px);
+	max-width: 100%;
+	box-sizing: border-box;
+	background: rgba(6, 6, 8, 0.96);
+	border: 1px solid #5a5040;
+	border-radius: 4px;
+	box-shadow: 0 0 0 1px #000, 0 8px 24px rgba(0, 0, 0, 0.6);
+	font-size: 12px;
+	line-height: 14px;
+	color: var(--gg-body);
+	vertical-align: top;
+	overflow: hidden;
+}
+@media (max-width: 720px) {
+	.go-settings {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.go-settings .go-tree {
+		border-right: 0;
+		border-bottom: 1px solid #3a342a;
+		max-height: 168px;
+	}
+}
+
+/* ------------------------------------------------------------------------ */
+/* The category tree                                                        */
+/* ------------------------------------------------------------------------ */
+
+.go-tree {
+	padding: 8px 0;
+	border-right: 1px solid #3a342a;
+	background: rgba(20, 18, 14, 0.9);
+	overflow-y: auto;
+}
+.go-tree button {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 3px 8px;
+	border: 0;
+	background: none;
+	color: var(--gg-body);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.go-tree button.addon {
+	color: var(--gg-title);
+}
+.go-tree button.depth1 {
+	padding-left: 24px;
+}
+.go-tree button.depth2 {
+	padding-left: 40px;
+}
+.go-tree button:hover {
+	background: rgba(255, 255, 255, 0.08);
+}
+.go-tree button[aria-current="true"] {
+	background: rgba(255, 209, 0, 0.18);
+}
+.go-tree button:focus-visible {
+	outline: 1px solid var(--gg-title);
+	outline-offset: -1px;
+}
+.go-tree .other {
+	padding: 3px 8px;
+	color: var(--gg-muted);
+}
+
+/* ------------------------------------------------------------------------ */
+/* One page                                                                 */
+/* ------------------------------------------------------------------------ */
+
+.go-page {
+	box-sizing: border-box;
+	padding: 16px 16px 24px;
+	min-width: 0;
+	max-height: 720px;
+	overflow: auto;
+}
+.go-page.flat {
+	max-height: none;
+}
+.go-title {
+	font-size: 16px; /* GameFontNormalLarge */
+	line-height: 20px;
+	color: var(--gg-title);
+	margin-bottom: 8px;
+}
+.go-flow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center; /* AceGUI's Flow layout centers a row's widgets on it */
+	row-gap: 3px;
+	width: 578px; /* ns.OPTIONS_ROW_WIDTH x 170 */
+	max-width: 100%;
+}
+.go-w {
+	position: relative;
+	box-sizing: border-box;
+	min-width: 0;
+	padding-right: 0;
+}
+.go-w.full {
+	flex: 0 0 100%;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Widgets                                                                  */
+/* ------------------------------------------------------------------------ */
+
+/* header: gold label between two lines */
+.go-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 18px;
+	color: var(--gg-title);
+	white-space: nowrap;
+}
+.go-header::before,
+.go-header::after {
+	content: "";
+	flex: 1 1 0;
+	height: 1px;
+	background: linear-gradient(90deg, rgba(150, 140, 120, 0.15), rgba(150, 140, 120, 0.6), rgba(150, 140, 120, 0.15));
+}
+.go-header.bare::before {
+	flex: 0 0 0;
+}
+
+/* description */
+.go-desc {
+	color: var(--gg-body);
+	font-size: 12px; /* fontSize "medium": GameFontHighlight */
+	line-height: 15px;
+	overflow-wrap: anywhere;
+}
+.go-desc.small {
+	font-size: 10px;
+	line-height: 12px;
+}
+.go-desc.large {
+	font-size: 16px;
+	line-height: 19px;
+}
+.go-desc.blank {
+	height: 14px; /* ns.OptionsSpacer: one blank medium line */
+}
+.go-desc .go-img {
+	vertical-align: -3px;
+	margin-right: 4px;
+}
+
+/* toggle */
+.go-toggle {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-height: 24px;
+	cursor: pointer;
+	user-select: none;
+}
+.go-box {
+	flex: none;
+	position: relative;
+	width: 16px;
+	height: 16px;
+	margin: 4px;
+	border: 1px solid #8a7a50;
+	border-radius: 2px;
+	background: linear-gradient(#141414, #2a2a2a);
+	box-shadow: inset 0 0 0 1px #000;
+}
+.go-toggle.on .go-box::after {
+	content: "";
+	position: absolute;
+	left: 3px;
+	top: 1px;
+	width: 9px;
+	height: 5px;
+	border-left: 3px solid var(--gg-title);
+	border-bottom: 3px solid var(--gg-title);
+	transform: rotate(-48deg);
+	filter: drop-shadow(0 0 1px #000);
+}
+.go-toggle .go-label {
+	color: var(--gg-body);
+	overflow-wrap: anywhere;
+}
+.go-toggle.disabled {
+	cursor: default;
+}
+.go-toggle.disabled .go-label {
+	color: var(--gg-muted);
+}
+.go-toggle.disabled .go-box {
+	opacity: 0.5;
+}
+.go-toggle:focus-visible {
+	outline: 1px solid var(--gg-title);
+	outline-offset: 1px;
+}
+
+/* the gold label AceGUI draws above a dropdown, slider or edit box */
+.go-cap {
+	display: block;
+	height: 18px;
+	font-size: 10px; /* GameFontNormalSmall */
+	line-height: 18px;
+	color: var(--gg-title);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.go-range .go-cap {
+	text-align: center;
+	font-size: 12px; /* GameFontNormal */
+}
+
+/* select */
+.go-select {
+	display: flex;
+	align-items: center;
+	height: 24px;
+	margin: 1px 0;
+	padding: 0 4px 0 12px;
+	border: 1px solid #3c3c3c;
+	border-radius: 3px;
+	background: linear-gradient(#1c1c1c, #0c0c0c);
+	color: var(--gg-body);
+	cursor: pointer;
+}
+.go-select span {
+	flex: 1 1 auto;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.go-select::after {
+	content: "";
+	flex: none;
+	width: 20px;
+	height: 20px;
+	border-radius: 3px;
+	background:
+		linear-gradient(135deg, transparent 50%, #e8c050 50%) 6px 8px / 5px 5px no-repeat,
+		linear-gradient(225deg, transparent 50%, #e8c050 50%) 10px 8px / 5px 5px no-repeat,
+		linear-gradient(#6a1a12, #3a0a06);
+	transform: rotate(0deg);
+}
+.go-w.disabled .go-select,
+.go-w.disabled .go-input,
+.go-w.disabled .go-slider {
+	opacity: 0.5;
+	cursor: default;
+}
+.go-menu {
+	position: absolute;
+	z-index: 30;
+	left: 0;
+	right: 0;
+	padding: 8px 4px;
+	background: rgba(8, 8, 12, 0.97);
+	border: 1px solid #8c8c9c;
+	border-radius: 4px;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+}
+.go-menu button {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+	width: 100%;
+	padding: 2px 8px 2px 24px;
+	border: 0;
+	background: none;
+	color: var(--gg-body);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	position: relative;
+}
+.go-menu button:hover {
+	background: rgba(80, 140, 255, 0.25);
+}
+.go-menu button[aria-checked="true"]::before {
+	content: "";
+	position: absolute;
+	left: 8px;
+	top: 6px;
+	width: 7px;
+	height: 3px;
+	border-left: 2px solid var(--gg-title);
+	border-bottom: 2px solid var(--gg-title);
+	transform: rotate(-48deg);
+}
+
+/* range */
+.go-slider {
+	position: relative;
+	height: 16px;
+	margin: 0 4px;
+	border: 1px solid #3c3c3c;
+	border-radius: 8px;
+	background: #0c0c0c;
+}
+.go-slider i {
+	position: absolute;
+	top: -3px;
+	width: 10px;
+	height: 20px;
+	margin-left: -5px;
+	border-radius: 2px;
+	background: linear-gradient(#e8e0c8, #9a9078);
+	box-shadow: 0 0 0 1px #000;
+}
+.go-range-foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 16px;
+	font-size: 10px;
+	color: var(--gg-help);
+	padding: 0 4px;
+}
+.go-range-foot b {
+	font-weight: 400;
+	min-width: 40px;
+	padding: 0 4px;
+	border: 1px solid #3c3c3c;
+	border-radius: 2px;
+	background: #0c0c0c;
+	color: var(--gg-body);
+	text-align: center;
+}
+
+/* input */
+.go-input {
+	display: flex;
+	align-items: center;
+	height: 24px;
+	margin: 1px 0;
+	padding: 0 8px;
+	border: 1px solid #3c3c3c;
+	border-radius: 3px;
+	background: rgba(0, 0, 0, 0.6);
+	color: var(--gg-body);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.go-input.multi {
+	height: auto;
+	min-height: 64px;
+	align-items: flex-start;
+	padding: 6px 8px;
+	white-space: pre-wrap;
+	font: 11px/14px var(--gg-font);
+}
+.go-input.placeholder {
+	color: var(--gg-muted);
+}
+
+/* execute */
+.go-execute {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 24px;
+	padding: 0 12px;
+	border: 1px solid #1a0402;
+	border-radius: 4px;
+	background: linear-gradient(#a8200c, #6a0e04 55%, #4a0802);
+	box-shadow: inset 0 1px 0 rgba(255, 200, 120, 0.35), 0 0 0 1px rgba(200, 160, 60, 0.5);
+	color: var(--gg-title);
+	font: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+.go-execute:hover {
+	filter: brightness(1.2);
+}
+.go-execute.icon {
+	width: 24px;
+	padding: 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+}
+.go-execute.icon::before {
+	content: "×";
+	font-size: 18px;
+	line-height: 16px;
+	color: #e05040;
+	text-shadow: 0 0 2px #000;
+}
+
+/* color */
+.go-color {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 24px;
+}
+.go-swatch {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	margin: 4px;
+	border: 1px solid #d0d0d0;
+	box-shadow: 0 0 0 1px #000;
+}
+
+/* item link (Build Reference → Item Lists: ADDON_NAME .. "_ItemLink") */
+.go-itemlink {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-height: 24px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.go-itemlink .gg-icon {
+	width: 18px;
+	height: 18px;
+}
+.go-tag {
+	color: var(--gg-help);
+	white-space: nowrap;
+}
+
+/* inline group */
+.go-group {
+	box-sizing: border-box;
+	width: 100%;
+}
+.go-group > .go-group-title {
+	display: block;
+	height: 18px;
+	color: var(--gg-title);
+	line-height: 18px;
+	white-space: nowrap;
+}
+.go-group > .go-group-box {
+	box-sizing: border-box;
+	padding: 8px 10px;
+	border: 1px solid rgba(160, 160, 170, 0.45);
+	border-radius: 6px;
+	background: rgba(24, 24, 28, 0.55);
+}
+.go-group > .go-group-box > .go-flow {
+	width: auto;
+}
+.go-group.bare > .go-group-box {
+	padding: 0;
+	border: 0;
+	background: none;
+}
+
+/* tabs */
+.go-tabs {
+	width: 100%;
+}
+.go-tabbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	padding-left: 8px;
+}
+.go-tabbar button {
+	padding: 6px 12px 4px;
+	border: 1px solid rgba(160, 160, 170, 0.45);
+	border-bottom: 0;
+	border-radius: 6px 6px 0 0;
+	background: rgba(30, 28, 24, 0.9);
+	color: var(--gg-title);
+	font: inherit;
+	cursor: pointer;
+}
+.go-tabbar button[aria-selected="true"] {
+	background: rgba(60, 54, 40, 0.95);
+	color: var(--gg-body);
+}
+.go-tabbody {
+	padding: 10px;
+	border: 1px solid rgba(160, 160, 170, 0.45);
+	border-radius: 0 6px 6px 6px;
+	background: rgba(24, 24, 28, 0.55);
+}
+.go-tabbody > .go-flow {
+	width: auto;
+}
+
+/* AceConfigDialog's tooltip: name in gold, desc in white */
+.go-tip {
+	position: absolute;
+	z-index: 40;
+	pointer-events: none;
+}
+
+/* the region a page is too wide for, drawn as the game would clip it */
+.go-overflow {
+	outline: 1px dashed rgba(255, 90, 90, 0.8);
+	outline-offset: 1px;
+}
+
+/* ------------------------------------------------------------------------ */
+/* Components overlay (the board's Show components switch)                  */
+/* ------------------------------------------------------------------------ */
+
+.gg-annotate .go-w[data-c] {
+	box-shadow: inset 3px 0 0 var(--c, transparent);
+	background: color-mix(in srgb, var(--c, transparent) 10%, transparent);
+}
+.gg-annotate .go-w[data-c="kit"] { --c: #3fa7ff; }
+.gg-annotate .go-w[data-c="feature"] { --c: #e0a030; }
+.gg-annotate .go-w[data-c="sub"] { --c: #b07cff; }
+.gg-annotate .go-w[data-c="row"] { --c: #00e0c0; }
+.gg-annotate .go-w[data-c="list"] { --c: #8bd450; }
+.gg-annotate .go-w[data-c="example"] { --c: #f2e05a; }
+.gg-annotate .go-w[data-c="status"] { --c: #ff9a3c; }
+.gg-annotate .go-w[data-c="reset"] { --c: #ff5a8a; }
+.gg-annotate .go-w[data-c="drift"] { --c: #ff3b3b; }
