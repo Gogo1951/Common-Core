@@ -1,13 +1,14 @@
 # Tracking Eye: Mini-map Menu
 
-**State:** converted to a menu; the conversion dropped the button's four clicks. This brings them back and moves the menu onto Menu-Kit v2.
+**State:** live on `main` ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): the clicks are back on their rows, with More Features, the Features section and one refresh. Still to do: the Code section's move onto Menu-Kit v2, once the kit lands in Common-Core.
+**Live code:** [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`), [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`).
 **Needs first:** `Menu-Kit.md`.
 **Labels:** `Type: Design`, `Area: Features`.
-**Issue:** [Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31). Close it with the PR that builds this.
+**Issue:** [Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31). Closed by [Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32).
 
-## Today
+## Before This Spec
 
-The menu on `main` (`Features/Minimap-Menu.lua`): Persistent Tracking with its pick list, Toggle and Clear Tracking; Farm Mode with its flyout; Automatic Target Tracking (only for a character with an ability a hunt can cast); the Options row reading `Tracking Eye Options … Open`. Hover or Left-Click opens it. No other click does anything.
+The menu before Tracking-Eye#32 (`Features/Minimap-Menu.lua`): Persistent Tracking with its pick list, Toggle and Clear Tracking; Farm Mode with its flyout; Automatic Target Tracking (only for a character with an ability a hunt can cast); the Options row reading `Tracking Eye Options … Open`. Hover or Left-Click opens it. No other click does anything.
 
 Before the menu (commit `fbcd7e3`), the tooltip's clicks were:
 

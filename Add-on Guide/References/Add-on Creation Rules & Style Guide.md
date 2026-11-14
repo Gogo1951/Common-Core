@@ -969,7 +969,7 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 ## MINIMAP MENU
 
-Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer) and [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it), until Menu-Kit v2 lands in Common-Core's `addon-kits/Menu-Kit/`; from then on the kit is copied from there.
+Live reference: **Tracking Eye**, live on `main` with every rule below in play — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer), [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it: the click table, feature blocks, flyouts, More Features and placement), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) (the button handing its clicks to the menu), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`) and [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`). Its menu machinery still sits in `Minimap-Menu.lua` until Menu-Kit v2 lands in Common-Core's `addon-kits/Menu-Kit/`; from then on the kit is copied from there. Each section below names the live code that shows it.
 
 Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **Each add-on's conversion is specced** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, and tracked by a GitHub issue in that add-on's repo; build to the spec. Menu-Kit v2 itself is `Mini-map Menus/Menu-Kit.md`, and comes first.
 
@@ -998,6 +998,8 @@ Drawn: `References/Design System/Mini-map Menus.html`, every row kind and patter
 - **Left-Click opens and holds the menu** on a button whose Left-Click has no job. On one that has a job (Magic Eraser erases), Left-Click does it and hover alone opens the menu.
 - **Not every row has a click.** Choice and flyout rows, and a block added after the button's clicks ran out, are rows only. A click never moves to a different job without the maintainer's say-so: players have it in their hands.
 - **A click redraws the open menu,** as a row's click does.
+
+Live: Tracking Eye's `CLICKS` table, `ns.RunButtonClick` and `ClickRow` in `Features/Minimap-Menu.lua`, and `ns.HandleLauncherClick` in `Features/Minimap-Button.lua`.
 
 ### Layout
 
@@ -1044,6 +1046,8 @@ More Features (C_TITLE, only if the add-on has set-and-forget features)
 - **A confirm is kept.** A switch that asks before turning off on the options panel asks the same from its menu row.
 - **Not everything in the menu is a feature.** Item highlights, live reports, and a setting inside a feature that players flip mid-session (Good to Go's Buff Food & Scrolls) can be blocks with no Features switch of their own. A master switch (Blocks Beyond Features) mirrors whatever the root panel draws for it.
 
+Live: Tracking Eye's `ns.FEATURES` in `Options/Options-Utilities.lua` feeds the root panel's Features section (`ns.OptionsFeatureSwitchRows`), each feature panel's Enable switch (`ns.OptionsFeatureSwitch`) and the menu's More Features rows (`BuildMainEntries` in `Features/Minimap-Menu.lua`).
+
 ### One Refresh
 
 **Every change shows everywhere at once.** One function, `ns.RefreshSettings()` in `Features/Utilities.lua`, calls `AceConfigRegistry:NotifyChange` for every panel in `ns.OPTIONS_REGISTRY`, redraws the open menu (`ns.RefreshMenu()`, a no-op while it's closed) and updates the button's icon (`ns.UpdateMinimapIcon()`, where the add-on has a live one). Every writer ends in it, and none notifies a single panel by hand:
@@ -1054,6 +1058,8 @@ More Features (C_TITLE, only if the add-on has set-and-forget features)
 - `ns:ApplyProfile`, after a profile switch, reset or copy.
 
 A change that also has side effects (registering events, a chat line) does them first, then refreshes.
+
+Live: Tracking Eye's `ns.RefreshSettings` in `Features/Utilities.lua`, reached from the menu through `AfterChange` in `Features/Minimap-Menu.lua`. It has no live icon, so it has no `ns.UpdateMinimapIcon` call.
 
 ### Placement
 
@@ -1070,6 +1076,8 @@ A change that also has side effects (registering events, a chat line) does them 
 - **The flyout opens on the same side** the menu opened toward, 16 points away (`Kit.FLYOUT_GAP`), rising 8 so its first row meets its title.
 - **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
 - **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
+
+Live: Tracking Eye's `PositionMenu` and `PositionFlyout` in `Features/Minimap-Menu.lua`.
 
 ### Flyouts
 
@@ -1090,6 +1098,8 @@ A flyout holds a feature's secondary settings and opens beside its title, on the
 - **Empty while the feature is off.** The flyout's settings mean nothing then, as on the options panel, so the arrow goes too.
 - **A live status goes at the top, as a section.** Farm Mode's flyout opens with a gold Farm Mode Status heading, Active or Paused on the right, and while paused, a gray note saying why. The main block only carries the short state word.
 - **Sections group, separators set apart.** A gold section label over a list; a thin line before a few unrelated extras.
+
+Live: Tracking Eye's `FLYOUTS.farm` (status first, then sections, then a separator before the extras) and `FLYOUTS.persistent` (empty on most characters) in `Features/Minimap-Menu.lua`.
 
 ### Row Kinds
 
@@ -1126,7 +1136,7 @@ A tooltip carries more than feature blocks. Each kind has one shape in the menu 
 
 ### The Pick-List Exception
 
-When picking from a set is the feature's main job, the list lives in the block, between the description and the Toggle row, so the first pick is one click, not two menus deep. Tracking Eye's Persistent Tracking lists the abilities this character knows as choice rows, with a blue Clear Tracking row after Toggle only while something is picked. The list shows even while the feature is off, since a pick still casts the ability now; the feature only decides whether it comes back. Its flyout keeps only the class-gated overrides, so on most characters it's empty and the title has no arrow.
+When picking from a set is the feature's main job, the list lives in the block, between the description and the Toggle row, so the first pick is one click, not two menus deep. Tracking Eye's Persistent Tracking lists the abilities this character knows as choice rows, with a blue Clear Tracking row after Toggle only while something is picked. The list shows even while the feature is off, since a pick still casts the ability now; the feature only decides whether it comes back. Its flyout keeps only the class-gated overrides, so on most characters it's empty and the title has no arrow. Live: `PersistentPickRows` and `PersistentClearRows` in Tracking Eye's `Features/Minimap-Menu.lua`.
 
 ### Behavior
 
@@ -1150,7 +1160,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 0. **Read the add-on's spec** in `References/Design System/Mini-map Menus/`, and its GitHub issue. The spec says every row, click and string; the steps below say how.
 1. **Copy `Features/Menu-Kit.lua` unchanged** into `Features/`, after `Features/Utilities.lua` in the TOC. Copy `Includes/Images/Menu-Plate.tga`. The kit knows nothing about the add-on; it reads only `ns.PALETTE`.
-2. **Write `Features/Minimap-Menu.lua`** from Tracking Eye's: `Kit.SetToggleText(L["MENU_ON"], L["MENU_OFF"])` once at load, one `AddFeature` call per feature a player turns on and off mid-session, a `FLYOUTS[key]` builder for each feature with settings, and the Options row last.
+2. **Write `Features/Minimap-Menu.lua`** from [Tracking Eye's](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua): `Kit.SetToggleText(L["MENU_ON"], L["MENU_OFF"])` once at load, the `CLICKS` table (Button Clicks), one `AddFeature` call per feature a player turns on and off mid-session, a `FLYOUTS[key]` builder for each feature with settings, the More Features rows from `ns.FEATURES`, and the Options row last.
 3. **Map the old tooltip lines:**
 
    | Old tooltip | Menu |
@@ -1163,7 +1173,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
    | `[Short Name] Options` + Shift + Middle-Click | `[Short Name] Options` `action` row, `Shift + Middle-Click` on its right |
 
 4. **Keep the translations.** The strings the kit reads take one set of names in every add-on, renamed with every locale's text kept: `MENU_ON`, `MENU_OFF`, `MENU_TOGGLE`, `MENU_OPEN`, `MENU_MORE` (`%d more`), `MENU_MORE_FEATURES` (`More Features`), `MENU_PAUSED` (`Paused`), `MENU_OPTIONS` (`[Short Name] Options`) and the click names `MENU_CLICK_LEFT`, `MENU_CLICK_RIGHT`, `MENU_CLICK_MIDDLE`, `MENU_CLICK_SHIFT_LEFT`, `MENU_CLICK_SHIFT_RIGHT`, `MENU_CLICK_SHIFT_MIDDLE` (only those the add-on uses). An add-on new to `MENU_ON` / `MENU_OFF` copies every locale's text from Tracking Eye's, and one new to `MENU_MORE` from GogoLoot's. Every other tooltip string keeps its key, or comes back from git with its translations, rather than being written fresh. Option rows reuse the options' own keys.
-5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `ns.ShowMenu(self, nil, "hover")`, and `OnLeave` does nothing, since the menu closes itself. `OnClick` looks the click up in the click table (Button Clicks), runs its function and redraws the menu; a Left-Click with no entry calls `ns.ShowMenu(self, nil, "click")`. Remove the tooltip code, and keep every click it named.
+5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `ns.ShowMenu(self, nil, "hover")`, and `OnLeave` does nothing, since the menu closes itself. `OnClick` looks the click up in the click table (Button Clicks), runs its function and redraws the menu; a Left-Click with no entry calls `ns.ShowMenu(self, nil, "click")`, as [Tracking Eye's](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) `ns.HandleLauncherClick` does. Remove the tooltip code, and keep every click it named.
 6. **Gate the rows.** For each class, race or profession row, add an `IsPlayerSpell` check in the menu only. Leave the options panel alone.
 7. **Check it in game** on at least three classes, one of which can't use any gated row, and with a controller:
    - Each class sees only its own rows; the options panel still shows all of them.

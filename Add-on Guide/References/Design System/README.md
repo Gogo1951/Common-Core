@@ -88,7 +88,7 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus two this 
 
 ## Patterns
 
-Built from the components, in the order a menu runs top to bottom.
+Built from the components, in the order a menu runs top to bottom. **See them live in Tracking Eye** ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua)): header, feature blocks, the pick list, a follow-up action, flyouts with a live status, More Features, the Options footer and both ways. Style Guide → MINIMAP MENU names the function behind each.
 
 - **Header.** Full Name and version, then one spacer. (The tooltips used two blank lines.)
 - **Feature block.** Title with its state on the right, one description sentence, any rows of its own, the blue **Toggle**, then any follow-up action that applies right now. Every feature a player turns on and off mid-session gets one. Its Toggle's tooltip is the feature's Enable option, name and description.
@@ -108,6 +108,8 @@ Built from the components, in the order a menu runs top to bottom.
 
 Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. Build in this order: the kit, then Tracking Eye (which proves it), then smallest to largest.
 
+**Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on the kit it has always carried. Build every other add-on with it open beside the spec; its move onto Menu-Kit v2 follows the kit into `addon-kits/Menu-Kit/`.
+
 | Order | Spec | Issue |
 |---|---|---|
 | 1 | [Menu-Kit v2](Mini-map%20Menus/Menu-Kit.md) | [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3) |
@@ -120,7 +122,7 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 
 | Add-on | Today | In the menu |
 |---|---|---|
-| Tracking Eye | Menu (the draft); its four old clicks were dropped | The same menu with the clicks back on their rows: Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click), Options (Shift + Middle-Click). Left-Click opens and holds the menu. |
+| Tracking Eye | **Live.** Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2, once the kit lands. |
 | Water Dispenser | Tooltip: one feature, one report, 2 clicks | One feature block and the Dispense Report. The first to convert. |
 | Control Freak | Tooltip: three features, 4 clicks | All Alerts as a master switch, then the three feature blocks. |
 | GogoLoot | Tooltip: four features, a report, 5 clicks | Locked Items, then four feature blocks; the roll read-back as value rows. |

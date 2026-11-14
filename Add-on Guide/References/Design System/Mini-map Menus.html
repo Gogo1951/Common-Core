@@ -133,7 +133,7 @@ tbody tr:hover { background: var(--panel); }
 
 	<section class="band" id="glance">
 		<h2>At a Glance</h2>
-		<p>Six add-ons draw something on hover over their mini-map button. Tracking Eye already draws a menu; the other five draw a tooltip whose click hints use four buttons and Shift. Each row below is a component the board tags when <b>Show components</b> is on.</p>
+		<p>Six add-ons draw something on hover over their mini-map button. Tracking Eye's menu is live; the other five draw a tooltip whose click hints use four buttons and Shift. Each row below is a component the board tags when <b>Show components</b> is on.</p>
 		<div class="tablewrap"><table id="inventory"></table></div>
 	</section>
 
@@ -229,7 +229,7 @@ function mItem(hue, name, quality, count, right, rc) { return { kind: "item", ic
 // ---------------------------------------------------------------------------
 var ADDONS = [];
 
-// --- Tracking Eye: already a menu ------------------------------------------------
+// --- Tracking Eye: live menu ----------------------------------------------------
 (function () {
 	var CLASSES = {
 		HUNTER: { name: "Hunter (Dwarf, Mining)", pick: ["Find Minerals", "Find Treasure", "Track Beasts", "Track Demons", "Track Dragonkin", "Track Elementals", "Track Giants", "Track Hidden", "Track Humanoids", "Track Undead"], farmExtra: [], hunt: true, override: "Hunter: Track Humanoids in Battlegrounds", conditions: ["Hunter: Aspect of the Cheetah", "Hunter: Aspect of the Pack"] },
@@ -251,8 +251,8 @@ var ADDONS = [];
 	function flag(k, d) { return s.flags[k] === undefined ? d : s.flags[k]; }
 	function flip(k, d) { s.flags[k] = !flag(k, d); }
 	ADDONS.push({
-		id: "te", hue: 150, name: "Tracking Eye", tag: "Menu (draft)", isMenu: true, state: s, features: features,
-		blurb: "Already converted: Today is the live draft on main, drawn row for row from <code>Features/Minimap-Menu.lua</code>. The conversion dropped the old tooltip's four button shortcuts; Proposed brings them back on the rows they belong to.",
+		id: "te", hue: 150, name: "Tracking Eye", tag: "Menu (live)", isMenu: true, state: s, features: features,
+		blurb: "Live: Proposed is what Tracking Eye ships on main (<a href=\"https://github.com/Gogo1951/Tracking-Eye/pull/32\">Tracking-Eye#32</a>), drawn row for row from <a href=\"https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua\"><code>Features/Minimap-Menu.lua</code></a>. Today is the first draft, before the old tooltip's four button shortcuts came back on their rows.",
 		scenarios: [
 			{ key: "cls", label: "Character", options: [["HUNTER", "Hunter"], ["DRUID", "Druid"], ["WARRIOR", "Warrior"]] },
 			{ key: "persistent", label: "Persistent", options: [[true, "On"], [false, "Off"]] },

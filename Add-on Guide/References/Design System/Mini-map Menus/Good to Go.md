@@ -2,6 +2,7 @@
 
 **State:** tooltip. The tallest, and the last to convert.
 **Needs first:** `Menu-Kit.md`.
+**Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/Good-to-Go#18](https://github.com/Gogo1951/Good-to-Go/issues/18). Close it with the PR that builds this.
 
