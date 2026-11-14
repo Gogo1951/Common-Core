@@ -26,6 +26,10 @@ Run the prompt's phases in order. Don't skip one, and don't begin the report unt
 
 Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal and good outcome.
 
+## Report-only passes
+
+**A pass whose write scope is "nothing" never edits code or any add-on file, whatever the maintainer approves** (the preamble's `README-Notes.md` record aside). A Build button, a "yes", "looks good" or "build it" is an approval of the change, not permission to make it. The pass ends with its report and its fix or feature prompts; code changes only when the maintainer pastes a prompt back. If the maintainer asks the pass itself to write code, say so in one line and give the prompt instead.
+
 ## Standing scope — true in every pass
 
 - **Only the launch folder exists.** A pass works in the add-on folder Claude Code was launched in (the scaffold: the folder it creates), reading only this guide and the web beside it. Every other folder on disk — this add-on's copies in the other game clients, every `WTF` folder, every other add-on — doesn't exist for it: never list, read, compare, sync, or mention one, and never spend a thought, finding, question, or fix prompt on one. The Copy to Other Flavors block below is the one exception, and the maintainer runs it. Whether those copies are current is the maintainer's business. The other exception is what the maintainer hands over or asks for in so many words, in this session (an uploaded report, a look at saved variables): the template can read the other copies and `WTF` for exactly that, so do what was asked, nothing more.
