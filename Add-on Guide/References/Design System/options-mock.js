@@ -137,7 +137,7 @@
 		w.className = "go-w";
 		var px = widthOf(opt);
 		if (px == null) w.classList.add("full");
-		else w.style.flex = "0 0 " + px + "px";
+		else w.style.flex = "0 1 " + px + "px"; // shrinks only where the board is narrower than the game's pane
 		if (disabled) w.classList.add("disabled");
 		if (opt.c) w.dataset.c = opt.c;
 		var get = function () {
@@ -452,8 +452,10 @@
 		(function walk(list, depth, prefix) {
 			list.forEach(function (node, i) {
 				var path = prefix ? prefix + "." + i : String(i);
-				flat.push({ node: node, depth: depth, path: path });
-				if (node.children) walk(node.children, depth + 1, path);
+				// The add-on's root panel is the top entry; every other panel is its child.
+				var d = depth === 0 && i > 0 ? 1 : depth;
+				flat.push({ node: node, depth: d, path: path });
+				if (node.children) walk(node.children, d + 1, path);
 			});
 		})(tree, 0, "");
 
@@ -464,7 +466,7 @@
 			flat.forEach(function (f) {
 				var b = document.createElement("button");
 				b.type = "button";
-				b.className = "depth" + f.depth + (f.depth === 0 ? " addon" : "");
+				b.className = "depth" + f.depth + (f.path === "0" ? " addon" : "");
 				b.innerHTML = f.node.label;
 				b.title = String(f.node.label).replace(/<[^>]+>/g, "");
 				b.setAttribute("aria-current", String(f.path === selected));

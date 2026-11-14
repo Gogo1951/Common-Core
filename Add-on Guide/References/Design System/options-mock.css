@@ -77,6 +77,9 @@
 .go-tree button.depth2 {
 	padding-left: 40px;
 }
+.go-tree button.depth3 {
+	padding-left: 56px;
+}
 .go-tree button:hover {
 	background: rgba(255, 255, 255, 0.08);
 }

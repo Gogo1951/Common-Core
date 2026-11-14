@@ -1,0 +1,1012 @@
+<title>Options Panels</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="menu-mock.css">
+<link rel="stylesheet" href="options-mock.css">
+<style>
+/* One dark look in either theme, as the Mini-map Menus board: the pages sit beside the game's own Settings window. Layout: a long reference page, one band per add-on, Today and Proposed in one window behind a switch. */
+:root {
+	--bg: #14130f;
+	--panel: #1d1b16;
+	--line: #34302a;
+	--fg: #ece6da;
+	--dim: #a59d8f;
+	--gold: #e8bf3a;
+	--display: "Marcellus", Georgia, serif;
+	--body: "Inter", system-ui, sans-serif;
+	--mono: "JetBrains Mono", ui-monospace, monospace;
+	color-scheme: dark;
+}
+:root:not([data-theme="light"]), :root[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+.page { max-width: 1280px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: 44px; line-height: 1.1; color: var(--gold); }
+h2 { font-size: 28px; line-height: 1.2; }
+h3 { font-size: 18px; color: var(--gold); }
+p { margin: 0; max-width: 72ch; }
+a { color: #7fc8ff; }
+code { font: 13px var(--mono); color: #f0d98a; }
+.eyebrow { font: 500 12px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.lede { color: var(--dim); font-size: 17px; }
+header.top { display: grid; gap: 16px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.try { display: grid; gap: 4px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; max-width: 80ch; }
+.try b { color: var(--gold); font-weight: 500; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.bar nav { display: flex; flex-wrap: wrap; gap: 4px; }
+.bar nav a { padding: 4px 8px; border-radius: 4px; color: var(--fg); text-decoration: none; font-size: 13px; }
+.bar nav a:hover { background: var(--panel); }
+.switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--dim); cursor: pointer; margin-left: auto; }
+.switch input { accent-color: var(--gold); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--dim); }
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend i { width: 12px; height: 12px; border-radius: 2px; background: var(--c); }
+
+section.band { display: grid; gap: 16px; padding-block: 32px; border-bottom: 1px solid var(--line); scroll-margin-top: 64px; min-width: 0; }
+.band-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+.tag { font-size: 12px; padding: 2px 8px; border-radius: 16px; border: 1px solid var(--line); color: var(--dim); }
+.tag.first { border-color: #4a6a3a; color: #b6dc8f; }
+
+.seg { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.seg > span { font-size: 12px; color: var(--dim); margin-right: 4px; }
+.seg button { font: 13px var(--body); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 4px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+.seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.stage { min-width: 0; overflow-x: auto; padding: 16px; border-radius: 4px; background: radial-gradient(120% 90% at 20% 10%, rgba(92, 120, 70, .45), transparent 60%), linear-gradient(160deg, #26301f, #1b1d16 55%, #2a2418); }
+.note { font-size: 13px; color: var(--dim); }
+
+ol.changes { margin: 0; padding-left: 24px; display: grid; gap: 8px; max-width: 86ch; }
+ol.changes li::marker { color: var(--gold); font-family: var(--display); }
+.kind { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; margin-right: 4px; }
+.kind.seen { border-color: #6a5a2a; color: #e8c86a; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-weight: 500; color: var(--dim); white-space: nowrap; }
+td.v { text-align: center; color: var(--fg); white-space: nowrap; }
+td.v.ok { color: #b6dc8f; }
+td.v.no { color: #6a645a; }
+tbody tr:hover { background: var(--panel); }
+
+.catalog { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; } /* one page wide: the game's pane is 578 points, and narrower rows would wrap where the game's never do */
+.card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; min-width: 0; align-content: start; }
+.card p { font-size: 14px; color: var(--dim); }
+.card .stage { padding: 8px; }
+.card .go-page { padding: 8px; }
+
+.decisions { display: grid; gap: 16px; }
+.decision { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 16px; border-left: 2px solid var(--gold); background: var(--panel); min-width: 0; }
+.decision b { font-weight: 600; }
+.decision.code { border-left-color: #5a7a9a; }
+.pill { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 0 6px; border-radius: 8px; border: 1px solid var(--line); color: var(--dim); margin-left: 8px; }
+.pill.seen { border-color: #6a5a2a; color: #e8c86a; }
+.pill.done { border-color: #4a6a3a; color: #b6dc8f; }
+.ba { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.ba > div { min-width: 0; }
+.ba .label { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="page gg">
+	<header class="top">
+		<div class="eyebrow">Gogo Design System · Wave 2</div>
+		<h1>Options Panels</h1>
+		<p class="lede">Every Active add-on's options panels, drawn from its code on GitHub <code>main</code>, in the Settings window as the game draws it. Flip <b>Today</b> and <b>Proposed</b> to see the same page before and after Options-Kit. The switches work: tick one on the root page and its panel follows.</p>
+		<div class="try"><b>How to review</b><span>Each add-on's window shows its whole tree. The root page and the panels that change most are drawn in full; the rest name what changes and point at the spec. Turn on <b>Show components</b> to see which kit piece draws each row, and which rows today break a rule (red). Profiles, Feedback &amp; Support and Diagnostic Tools are inherited or templated: they sit in every tree and nothing here touches them. Decisions 5 to 13 change what players see and wait for the maintainer's yes.</span></div>
+		<div class="legend" id="legend"></div>
+	</header>
+
+	<div class="bar">
+		<nav>
+			<a href="#glance">At a Glance</a>
+			<a href="#me">Magic Eraser</a>
+			<a href="#te">Tracking Eye</a>
+			<a href="#pif">Play It Forward</a>
+			<a href="#wd">Water Dispenser</a>
+			<a href="#pwql">PWQL</a>
+			<a href="#tftb">TFTB</a>
+			<a href="#cf">Control Freak</a>
+			<a href="#gtg">Good to Go</a>
+			<a href="#gl">GogoLoot</a>
+			<a href="#components">Components</a>
+			<a href="#decisions">Decisions</a>
+		</nav>
+		<label class="switch"><input type="checkbox" id="annotate"> Show components</label>
+	</div>
+
+	<section class="band" id="glance">
+		<h2>At a Glance</h2>
+		<p>Nine add-ons, about 28,000 lines of options code. Every one carries the same four helpers; past those, they have grown apart. Green is the shape Options-Kit takes.</p>
+		<div class="tablewrap"><table id="inventory"></table></div>
+	</section>
+
+	<div id="bands"></div>
+
+	<section class="band" id="components">
+		<h2>Components</h2>
+		<p>Options-Kit's pieces (<code>Options Panels/Options-Kit.md</code> → API), each drawn with the call that builds it. Every one is already in <code>addon-kits/Options-Kit/</code>.</p>
+		<div class="catalog" id="catalog"></div>
+	</section>
+
+	<section class="band" id="decisions">
+		<h2>Decisions</h2>
+		<p>What drawing nine add-ons side by side turned up. <b>Proposed, awaiting the maintainer.</b> Blue edges change only code; gold edges change what a player sees, so each takes a yes before any spec that cites it is built.</p>
+		<div class="decisions" id="decisionList"></div>
+	</section>
+</div>
+
+<script src="menu-mock.js"></script>
+<script src="options-mock.js"></script>
+<script>
+(function () {
+"use strict";
+var K = GO.kit, G = GO.GRID, C = K.Color, icon = GG.icon;
+
+// ---------------------------------------------------------------------------
+// Overlay legend
+// ---------------------------------------------------------------------------
+var COMPONENTS = [
+	["feature", "Feature switches", "#e0a030"],
+	["row", "Label and switch rows", "#00e0c0"],
+	["sub", "Sub-options", "#b07cff"],
+	["example", "Examples", "#f2e05a"],
+	["status", "Status and warning lines", "#ff9a3c"],
+	["reset", "Reset rows", "#ff5a8a"],
+	["list", "Lists", "#8bd450"],
+	["drift", "Breaks a rule today", "#ff3b3b"],
+];
+document.getElementById("legend").innerHTML = COMPONENTS.map(function (c) {
+	return '<span><i style="--c:' + c[2] + '"></i>' + c[1] + "</span>";
+}).join("");
+document.getElementById("annotate").addEventListener("change", function (e) {
+	document.querySelector(".page").classList.toggle("gg-annotate", e.target.checked);
+});
+
+// ---------------------------------------------------------------------------
+// Small builders for Today pages, in AceConfig's own shape
+// ---------------------------------------------------------------------------
+function toggle(name, get, set, width, extra) {
+	var t = { type: "toggle", name: name, width: width || "full", get: get, set: function (_, v) { set(v); } };
+	for (var k in extra || {}) t[k] = extra[k];
+	return t;
+}
+function select(values, get, set, width, extra) {
+	var s = { type: "select", name: "", values: values, get: get, set: function (_, v) { set(v); }, width: width || G.CONTROL };
+	for (var k in extra || {}) s[k] = extra[k];
+	return s;
+}
+function exec(name, width, extra) {
+	var e = { type: "execute", name: name, width: width, func: function () {} };
+	for (var k in extra || {}) e[k] = extra[k];
+	return e;
+}
+function flat(cells, c) { // a row laid out flat today, tagged
+	return { type: "group", name: "", inline: true, args: cells.reduce(function (a, cell, i) { cell.order = i + 1; a["c" + i] = cell; return a; }, {}), c: c };
+}
+function group(name, args) { return { type: "group", name: name, args: args }; }
+function seq(list) { // ordered args from a list, keys generated
+	var args = {};
+	list.forEach(function (arg, i) { if (arg) { arg.order = i + 1; args["a" + i] = arg; } });
+	return args;
+}
+function stateful(s, key) {
+	return [function () { return !!s[key]; }, function (v) { s[key] = v; }];
+}
+function commands(cmd) {
+	return [K.Spacer(), K.Header("/Commands"), K.Spacer(), K.Desc(C("INFO", cmd) + "  Opens the Options Interface for this add-on.")];
+}
+function rootHead(desc, welcome, minimap, s) {
+	var list = [K.Desc(desc), K.Spacer()];
+	var w = stateful(s, "welcome");
+	list.push(toggle(welcome || "Enable Welcome Message", w[0], w[1]));
+	if (minimap) {
+		var m = stateful(s, "minimap");
+		list.push(toggle("Enable Mini-map Button", m[0], m[1]));
+	}
+	return list;
+}
+// Features flat at width w (today's drift shape)
+function flatFeatures(features, w) {
+	var cells = features.map(function (f) { return toggle(f.caption, f.get, function (v) { f.set(v); }, w, { desc: f.desc }); });
+	var g = flat(cells, "drift");
+	return g;
+}
+function features(a) { // the add-on's feature records, wired to its state
+	return a.features.map(function (f) {
+		return { caption: f[1], desc: f[2], get: function () { return !!a.s[f[0]]; }, set: function (v) { a.s[f[0]] = v; } };
+	});
+}
+function keyRow(caption, key, what, today, todayLabel) {
+	if (today) {
+		return [
+			flat([K.Label(C("INFO", caption), null, todayLabel || 1.9), K.Label(C("TEXT", key), null, 0.85), exec("Set Key", 0.55)], "drift"),
+			K.Desc(C("HELP", what)),
+		];
+	}
+	return [
+		K.Row(null, null, [K.Label(C("INFO", caption), null, G.LABEL), K.Label(C("TEXT", key), null, 0.75), exec("Set Key", 0.55)]),
+		K.Desc(C("HELP", what)),
+	];
+}
+function stub(title, lines) {
+	return function () {
+		return group(title, seq([K.Desc(C("HELP", "Not drawn in full here.") + " " + lines)]));
+	};
+}
+function inherited(name) {
+	return { label: name, build: group(name, seq([K.Desc(C("HELP", "Inherited or templated: drawn in every tree, untouched by this wave."))])) };
+}
+function tail() { return [inherited("Profiles"), inherited("Feedback & Support"), inherited("Diagnostic Tools")]; }
+function itemLink(hue, name, q) { return icon(hue) + C("q:" + (q || "common"), "[" + name + "]"); }
+
+// ---------------------------------------------------------------------------
+// The add-ons
+// ---------------------------------------------------------------------------
+var ADDONS = [];
+
+// ----- Magic Eraser ---------------------------------------------------------
+ADDONS.push({
+	id: "me", name: "Magic Eraser", tag: "First: proves the kit", first: true,
+	blurb: "The Style Guide's live reference for the main page, item lists, sub-option rows, status lines and Feedback &amp; Support. Its helpers are the kit's starting point, so moving onto the kit changes the least here, which is why it goes first.",
+	s: { welcome: true, minimap: true, autoVendEnabled: true, bankRetrievalEnabled: false, valueCapEnabled: true, manualDeleteAutoFillEnabled: true, eraseConfirmEnabled: true, tintJunkEnabled: true, questAlertsEnabled: true, bagsFullNudgeEnabled: true, report: "summary" },
+	features: [
+		["autoVendEnabled", "Enable Auto-Vend", "Turns selling at merchants on or off. Items on your Protect List are never sold."],
+		["bankRetrievalEnabled", "Enable Bank Retrieval"], ["valueCapEnabled", "Enable Maximum Value to Erase"],
+		["manualDeleteAutoFillEnabled", "Enable Manual Delete Assistance"], ["eraseConfirmEnabled", "Enable Erase Confirmation"],
+		["tintJunkEnabled", "Enable Junk Item Tint"], ["questAlertsEnabled", "Enable Quest Item Alerts"], ["bagsFullNudgeEnabled", "Enable Bag-Space Warnings"],
+	],
+	root: function (a, proposed) {
+		var f = features(a);
+		var list = rootHead("Erase junk and free up bag space instantly. Clear completed quest items, outgrown consumables, vendor trash, and grays with a click of the mini-map button. A curated junk list keeps what you need safe, while Auto-Vend sells the rest at your next merchant.", null, true, a.s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer(), K.Pairs(null, null, f.map(function (x) { return K.FeatureSwitch(x); })));
+		list.push(K.Spacer(), K.Header("Key Bindings"), K.Spacer());
+		list = list.concat(keyRow("Erase Lowest-Value Item", "Not Bound", "Erases your Lowest-Value Item, the one the mini-map button shows.", !proposed));
+		return group("Magic Eraser", seq(list.concat(commands("/eraser"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var reports = { summary: "Summary", items: "Each Item", off: "Nothing" };
+		var vend = function () { return !!s.autoVendEnabled; };
+		var exampleBody = proposed
+			? function () { return C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Sold 4 items for ") + GG.money(1260) + C("TEXT", ": ") + itemLink(25, "Chipped Claw", "poor") + C("TEXT", " x3, ") + itemLink(40, "Broken Fang", "poor"); }
+			: function () { return C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Sold 4 items for ") + GG.money(1260) + C("TEXT", ": Example Item x3, Example Item"); };
+		var merchant = function () {
+			var list = [K.Desc("Sells junk the moment you open a merchant, and fetches what you need from the bank."), K.Spacer(), K.Header("Auto-Vend"), K.Spacer()];
+			var sw = K.FeatureSwitch(features(a)[0]);
+			if (proposed) {
+				list.push(K.ToggleRow(null, sw, { control: select(reports, function () { return s.report; }, function (v) { s.report = v; }) }));
+				list.push(K.Example(null, function () { return !vend() || s.report === "off"; }, exampleBody));
+			} else {
+				sw.width = G.LABEL;
+				list.push(flat([sw, select(reports, function () { return s.report; }, function (v) { s.report = v; }, G.CONTROL, { hidden: function () { return !vend(); } })], "row"));
+				list.push(K.Spacer());
+				var ex = K.Desc(C("HELP", "Example: ") + exampleBody()); ex.c = "drift"; ex.hidden = function () { return !vend() || s.report === "off"; };
+				list.push(ex);
+			}
+			list.push(K.Spacer(), K.Header("Bank Retrieval"), K.Spacer(), K.FeatureSwitch(features(a)[1]));
+			list.push(K.StatusLine(function () { return s.bagsFullNudgeEnabled ? "Bag-Space Warnings keeps 2 bag slots free, so Bank Retrieval fills up to 2 slots fewer." : null; }));
+			return group("Merchant &amp; Bank", seq(list));
+		};
+		return [
+			{ label: "Magic Eraser", build: function () { return a.root(a, proposed); } },
+			{ label: "Erasing", build: stub("Erasing", "Unchanged in shape. Maximum Value and Manual Delete become ToggleRow; the none-checked line a WarningLine."), children: [
+				{ label: "Erase List", build: stub(proposed ? "Erasing &gt; Erase List" : "Erase List", "Kit.ItemList on a 176 tree (today 180), Promote column, Restore and Clear at the foot.") },
+				{ label: "Protect List", build: stub(proposed ? "Erasing &gt; Protect List" : "Protect List", "Kit.ItemList, Promote column, Clear.") },
+			] },
+			{ label: "Merchant &amp; Bank", build: merchant },
+			{ label: "Alerts &amp; Tints", build: stub("Alerts &amp; Tints", "Bag-Space Warnings' slider becomes SubLabelRow. The tint picker keeps its README-Notes shape.") },
+		].concat(tail());
+	},
+	focus: "Merchant &amp; Bank",
+	changes: [
+		["seen", "Examples name real items in their quality color, indented under the control they show (Merchant &amp; Bank). Today: <code>Example Item</code>, flush."],
+		["code", "One <code>Kit.FeatureSwitch</code> per feature, root and panel: fixes Bag-Space Warnings' root copy skipping the repaint its panel copy does."],
+		["seen", "Sub-panel titles: Erasing &gt; Erase List, Erasing &gt; Protect List. Tree sidebars 176 (today 180)."],
+		["seen", "Key binding row on the grid: 2.1 + 0.75 + 0.55 (today 3.3)."],
+		["code", "Onto the kit: the item list, cache, ItemLink widget and helpers come from <code>Options-Kit.lua</code>; One Refresh replaces hand repaints."],
+	],
+});
+
+// ----- Tracking Eye -------------------------------------------------------
+ADDONS.push({
+	id: "te", name: "Tracking Eye", tag: "Live reference: Features Mirror",
+	blurb: "The only add-on with <code>ns.FEATURES</code>, <code>ns.RefreshSettings</code> and sub-panel titles; its registration is the kit's. Little changes to look at: two columns move onto the grid, and the Example tucks under its dropdown.",
+	s: { welcome: true, minimap: true, hook: false, persistentTracking: true, farmMode: true, targetTracking: false, comeAndGetIt: true, freePlacement: true, output: "PARTY" },
+	features: [
+		["persistentTracking", "Enable Persistent Tracking"], ["farmMode", "Enable Farm Mode"], ["targetTracking", "Enable Automatic Target Tracking"],
+		["comeAndGetIt", "Enable Come &amp; Get It", "Stays quiet in combat and in instances, so the chat box never grabs your keyboard mid-fight."], ["freePlacement", "Enable Free Placement Mode"],
+	],
+	root: function (a, proposed) {
+		var s = a.s, f = features(a);
+		var list = rootHead("Mini-map tracking menu and auto switcher for herb and ore gathering. Cycles Find Herbs and Find Minerals while you farm, restores tracking after death, and tracks targeted creatures while questing. Supports every tracking ability. Never miss a node.", null, true, s);
+		list[3].disabled = function () { return !!s.freePlacement; };
+		var h = stateful(s, "hook");
+		list.push(toggle("Use the Default Tracking Button", h[0], h[1]));
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer(), K.Pairs(null, null, f.map(function (x) { return K.FeatureSwitch(x); })));
+		list.push(K.Spacer(), K.Header("Key Bindings"), K.Spacer());
+		list = list.concat(keyRow("Cycle Farm Mode Ability", "Not Bound", "Jump to the next tracking ability with one key, even with Farm Mode off.", !proposed));
+		return group("Tracking Eye", seq(list.concat(commands("/te"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var outputs = { PARTY: "Party", SAY: "Say", CHANNEL1: "General" };
+		var line = function () { return '<span style="color:#aaaaff">[Party] [' + C(GG.CLASS.DRUID, "Aero") + "]: " + "Come &amp; get it! " + itemLink(100, "Peacebloom", "common") + '<span style="color:#aaaaff"> in Teldrassil</span></span>'; };
+		var cgi = function () {
+			var on = function () { return !!s.comeAndGetIt; };
+			var list = [K.Desc("Found an herb you can't pick, a mineral vein you can't mine, or a locked treasure chest with no Rogue in sight? Right-click it, and Come &amp; Get It tells the people around you."), K.Spacer(), K.FeatureSwitch(features(a)[3])];
+			if (proposed) {
+				list.push(K.LabelRow(null, function () { return !on(); }, "Default Output", select(outputs, function () { return s.output; }, function (v) { s.output = v; })));
+				list.push(K.Row(null, function () { return !on(); }, [K.Label(" ", null, G.LABEL), K.Label(C("HELP", "General reaches only your current layer."), null, G.CONTROL)]));
+				list.push(K.Example(null, function () { return !on(); }, line));
+			} else {
+				var g = flat([K.Label("Default Output", null, G.LABEL), select(outputs, function () { return s.output; }, function (v) { s.output = v; }), K.Label(" ", null, G.LABEL), K.Label(C("HELP", "General reaches only your current layer."), null, G.CONTROL)], "row");
+				g.hidden = function () { return !on(); };
+				var ex = K.Desc(C("HELP", "Example: ") + line()); ex.hidden = g.hidden; ex.c = "drift";
+				list.push(g, ex);
+			}
+			return group("Come &amp; Get It", seq(list));
+		};
+		var free = function () {
+			var on = function () { return !!s.freePlacement; };
+			var list = [K.Desc("Moves the button off the mini-map to anywhere on screen."), K.Spacer(), K.FeatureSwitch(features(a)[4])];
+			var shape = select({ round: "Round", square: "Square" }, function () { return "round"; }, function () {});
+			var size = { type: "range", name: "", min: 0.25, max: 3, step: 0.05, isPercent: true, get: function () { return 1; }, set: function () {} };
+			if (proposed) {
+				list.push(K.SubLabelRow(null, function () { return !on(); }, "Icon Shape", shape));
+				list.push(K.SubLabelRow(null, function () { return !on(); }, "Icon Size", size));
+			} else {
+				shape.width = 1.0; size.width = 1.9;
+				var r1 = K.SubRow(null, function () { return !on(); }, [K.Label(K.SubLabel("Icon Shape"), null, 0.9), shape]); r1.c = "drift";
+				var r2 = K.SubRow(null, function () { return !on(); }, [K.Label(K.SubLabel("Icon Size"), null, 0.9), size]); r2.c = "drift";
+				list.push(r1, r2);
+			}
+			return group("Free Placement Mode", seq(list));
+		};
+		return [
+			{ label: "Tracking Eye", build: function () { return a.root(a, proposed); } },
+			{ label: "Persistent Tracking", build: stub("Persistent Tracking", "Override rows become SubToggleRow. Unchanged to look at.") },
+			{ label: "Farm Mode", build: stub("Farm Mode", "Cycle Speed moves into the 1.3 control column (today 1.8 + 1.6)."), children: [
+				{ label: "Abilities", build: stub("Farm Mode &gt; Abilities", "Unchanged: class-grouped spell toggles.") },
+			] },
+			{ label: "Automatic Target Tracking", build: stub("Automatic Target Tracking", "Unchanged.") },
+			{ label: "Come &amp; Get It", build: cgi },
+			{ label: "Free Placement Mode", build: free },
+		].concat(tail());
+	},
+	focus: "Come &amp; Get It",
+	changes: [
+		["seen", "Come &amp; Get It's Example sits under the dropdown, indented (Decision 6)."],
+		["seen", "Free Placement's Icon Shape and Icon Size move into the shared 1.3 control column (today a 0.9 caption, rows totalling 2.0 and 2.9)."],
+		["seen", "Key binding row on the grid."],
+		["code", "<code>ns.FEATURES</code> gains <code>click</code> and <code>gate</code>, so the menu's blocks can read it too."],
+		["code", "Its <code>ns.RefreshSettings</code>, registration and opener move into the kit unchanged."],
+	],
+});
+
+// ----- Play It Forward ----------------------------------------------------
+ADDONS.push({
+	id: "pif", name: "Play It Forward", tag: "Live reference: Combat Guard",
+	blurb: "No mini-map button. Its Features switches and its panels each declare their own toggle for the same setting, three flat at exactly 1.7 on the wrap edge, and two resets discard more than one value without asking.",
+	s: { welcome: true, includeGear: true, includeConsumables: true, shareStats: false, subject: "A gift from a friend", body: "Found these in my bags and thought of you. Pay it forward!" },
+	features: [["includeGear", "Distribute Gear"], ["includeConsumables", "Distribute Consumables"], ["shareStats", "Share Badge of Generosity"]],
+	root: function (a, proposed) {
+		var f = features(a);
+		var list = rootHead("Mail outgrown BoE gear, food, potions, scrolls, oils, and stones to your alts, guildmates, and leveling players, and gear nobody can use to your enchanter to disenchant. Every gift goes to the class it suits best. Pay it forward, one green at a time.", null, false, a.s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer());
+		if (proposed) {
+			var named = [["Enable Gear Giving"], ["Enable Consumable Giving"], ["Enable Badge of Generosity"]];
+			list.push(K.Pairs(null, null, f.map(function (x, i) { return K.FeatureSwitch({ caption: named[i][0] + C("HELP", "*"), desc: x.desc, get: x.get, set: x.set }); })));
+			list.push(K.Desc(C("HELP", "* Placeholder names: the maintainer words them.")));
+		} else {
+			list.push(flatFeatures(f, 1.7));
+		}
+		return group("Play It Forward", seq(list.concat(commands("/pif"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var mail = function () {
+			var list = [K.Desc("What your gifts say when they arrive."), K.Spacer(),
+				{ type: "input", name: "Subject", get: function () { return s.subject; }, set: function () {}, width: "full" },
+				{ type: "input", name: "Message", multiline: true, get: function () { return s.body; }, set: function () {}, width: "full" }, K.Spacer()];
+			var reset = function () { s.subject = "A gift from a friend"; s.body = "Found these in my bags and thought of you. Pay it forward!"; };
+			if (proposed) {
+				list.push(K.ResetRow(null, null, "Restore Default", "Puts the subject and message back as they shipped.", function () { return s.subject === "A gift from a friend" && s.body.indexOf("Found these") === 0; }, reset, "Restore the default subject and message? Your text is lost."));
+			} else {
+				var e = exec("Restore Default", 1, { func: reset }); e.c = "drift";
+				list.push(e);
+			}
+			return group("Mail Message Text", seq(list));
+		};
+		return [
+			{ label: "Play It Forward", build: function () { return a.root(a, proposed); } },
+			{ label: "What to Give Away", build: stub("What to Give Away", "The panel draws the same Kit.FeatureSwitch as the root page instead of its own toggle; Distribute Gear's rarity rides with it as ToggleRow.") },
+			{ label: "Recipients", build: stub("Recipients", "Unchanged. Restore Defaults becomes ResetRow, still confirmed."), children: [
+				{ label: "My Alts", build: stub(proposed ? "Recipients &gt; My Alts" : "My Alts", "176 tree (today 180); Gear Levels as rows, not flat.") },
+				{ label: "My Guilds", build: stub(proposed ? "Recipients &gt; My Guilds" : "My Guilds", "Removing a guild asks first: it carries per-member settings.") },
+			] },
+			{ label: "Mail Message Text", build: mail },
+			{ label: "Badge of Generosity", build: stub("Badge of Generosity", "Unchanged.") },
+		].concat(tail());
+	},
+	focus: "Mail Message Text",
+	changes: [
+		["seen", "Features: pairs at 1.6 (today flat at 1.7) and Enable captions. Today's captions are verbs, so the maintainer words three feature names (Decision 5)."],
+		["seen", "Mail Message Text's Restore Default becomes a Reset row that asks first: it discards the subject and the message."],
+		["seen", "Removing a guild asks first. Sub-panel titles name Recipients."],
+		["code", "One switch per feature: the panels stop re-declaring the root page's toggles, and the mail window's top bar ends in <code>ns.RefreshSettings</code>."],
+	],
+});
+
+// ----- Water Dispenser ----------------------------------------------------
+ADDONS.push({
+	id: "wd", name: "Water Dispenser", tag: "Tree changes",
+	blurb: "A one-level tree of built tables, no <code>ns.FEATURES</code>, no shared refresh: two settings have two different setters. Dispensed Items, a list that belongs to Dispense, sits beside it in the tree instead of under it.",
+	s: { welcome: true, minimap: true, dispense: true, announce: true, inventory: true, bags: false, party: true, combat: true },
+	features: [
+		["dispense", "Enable Dispense", "Automatically fills the trade window when a trade opens, based on your settings."],
+		["announce", "Enable Announcement Macro"], ["inventory", "Show Inventory in Player Tooltips"], ["bags", "Show Bag Tooltips for Dispensed Items"],
+	],
+	root: function (a, proposed) {
+		var f = features(a);
+		var list = rootHead("Effortless mage and warlock consumable distribution. Auto-fill trade windows with conjured water, food, and healthstones at the right rank and amount for each player. Add any item, from Hourglass Sand to potions, and distribute a raid's worth in seconds.", null, true, a.s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer());
+		if (proposed) {
+			f[2].caption = "Enable Inventory Tooltips"; f[3].caption = "Enable Bag Tooltips";
+			list.push(K.Pairs(null, null, f.map(function (x) { return K.FeatureSwitch(x); })));
+		} else {
+			list.push(flatFeatures(f, 1.7));
+		}
+		return group("Water Dispenser", seq(list.concat(commands("/wd"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var line = function () { return C("TITLE", "Water Dispenser") + C("SEPARATOR", " // ") + C("TEXT", "Gave ") + C(GG.CLASS.WARRIOR, "Prima") + C("TEXT", " 20 ") + itemLink(200, "Conjured Crystal Water") + C("TEXT", "."); };
+		var dispense = function () {
+			var on = function () { return !!s.dispense; };
+			var list = [K.Desc(proposed ? "Who gets what, and how it lands in their bags." : "Automatically fills the trade window when a trade opens, based on your settings."), K.Spacer()];
+			if (!proposed) list[0].c = "drift";
+			list.push(K.FeatureSwitch(features(a)[0]));
+			var p = stateful(s, "party");
+			list.push(K.SubToggleRow(null, function () { return !on(); }, toggle("Party", p[0], p[1])));
+			list.push(K.SubToggleRow(null, function () { return !on(); }, toggle("Raid", p[0], p[1])));
+			if (proposed) list.push(K.Example(null, function () { return !on(); }, line));
+			else { var ex = K.SubRow(null, function () { return !on(); }, [K.Desc(C("HELP", "Example: ") + line())]); ex.args.cell1.width = 3.085; list.push(ex); }
+			var c = stateful(s, "combat");
+			var hidden = proposed ? function () { return !on(); } : undefined;
+			list.push(K.Spacer(null, hidden), K.Header("Combat", null, hidden), K.Spacer(null, hidden), toggle("Enable Combat Notifications", c[0], c[1], "full", { hidden: hidden }));
+			if (proposed) list.push(K.Example(null, function () { return !on() || !s.combat; }, function () { return C("TITLE", "Water Dispenser") + C("SEPARATOR", " // ") + C("TEXT", "Trade canceled: you entered combat."); }));
+			else { var ex2 = K.Desc(C("HELP", "Example: ") + C("TITLE", "Water Dispenser") + C("SEPARATOR", " // ") + C("TEXT", "Trade canceled: you entered combat.")); ex2.c = "drift"; list.push(ex2); }
+			return group("Dispense", seq(list));
+		};
+		var items = { label: "Dispensed Items", build: stub(proposed ? "Dispense &gt; Dispensed Items" : "Dispensed Items", "Tree pane on Kit.TREE_ROW_WIDTH (today a file-local 2.4 / 1.0 / 1.4) and a 176 sidebar.") };
+		var tree = [{ label: "Water Dispenser", build: function () { return a.root(a, proposed); } }];
+		if (proposed) tree.push({ label: "Dispense", build: dispense, children: [items] });
+		else tree.push({ label: "Dispense", build: dispense }, items);
+		tree.push({ label: "Announcements", build: stub("Announcements", "Unchanged: the preview keeps its README-Notes shape.") });
+		tree.push({ label: "Inventory Tooltips", build: stub("Inventory Tooltips", "Its two switches become the same Kit.FeatureSwitch the root page draws, ending the duplicate setters.") });
+		return tree.concat(tail());
+	},
+	focus: "Dispense",
+	changes: [
+		["seen", "Dispensed Items moves under Dispense, titled Dispense &gt; Dispensed Items (Lists and separate tools get sub-panels)."],
+		["seen", "Features: pairs at 1.6 (today flat at 1.7) and Enable captions: Enable Inventory Tooltips, Enable Bag Tooltips."],
+		["seen", "Dispense: Examples leave with their toggle; the Combat section hides with Dispense; the intro stops repeating the switch's tooltip."],
+		["code", "<code>ns.FEATURES</code> is new; one <code>Kit.FeatureSwitch</code> per feature ends two pairs of duplicate setters; One Refresh replaces hand repaints."],
+	],
+});
+
+// ----- Pretty Wide Quest Log ---------------------------------------------
+ADDONS.push({
+	id: "pwql", name: "Pretty Wide Quest Log", tag: "Sub-panels",
+	blurb: "No mini-map button. Its sub-panels bypass <code>AddToBlizOptions</code> with a hand-built Settings canvas; its Features toggles are flat at exactly 1.7 with a reload line among them. Its font sections, reload watcher and indented Examples are patterns others borrow.",
+	s: { welcome: true, wql: true, qol: true, markers: true, route: true, arrow: true, face: "Friz Quadrata", size: 13, outline: "NONE", shadow: true, pending: true },
+	features: [["wql", "Enable Wide Quest Log"], ["qol", "Enable Quality of Life"], ["markers", "Enable Waypoint Markers"], ["route", "Enable Quest Route"], ["arrow", "Enable Quest Arrow"]],
+	root: function (a, proposed) {
+		var s = a.s, f = features(a);
+		var list = rootHead("Wide quest log and quest helper for leveling: a quest route through the quests you pick, a waypoint arrow, quest levels, tags, rewards, quest chains, a quest map, and party quest sharing. Works with Questie, Spoken, VoiceOver, and ElvUI.", null, false, s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer());
+		if (proposed) {
+			var order = [f[0], f[2], f[3], f[4], f[1]];
+			list.push(K.Pairs(null, null, order.map(function (x) { return K.FeatureSwitch(x); })));
+		} else {
+			list.push(flatFeatures(f, 1.7));
+			var st = K.StatusLine(function () { return s.pending ? "Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface." : null; }); st.c = "drift";
+			list.push(st);
+		}
+		list.push(K.Spacer(), K.Header("Key Bindings"), K.Spacer());
+		list = list.concat(keyRow("Use Quest Item", "Not Bound", "Uses the item on the Quest Arrow's first Use Item button, the same as clicking it, in combat too.", !proposed, 2.0));
+		return group("Pretty Wide Quest Log", seq(list.concat(commands("/pwql"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var defaults = function () { return s.face === "Friz Quadrata" && s.size === 13 && s.outline === "NONE" && s.shadow; };
+		var reset = function () { s.face = "Friz Quadrata"; s.size = 13; s.outline = "NONE"; s.shadow = true; };
+		var faces = { "Friz Quadrata": "Friz Quadrata", Arial: "Arial Narrow", Morpheus: "Morpheus", Skurri: "Skurri" };
+		var outlines = { NONE: "None", OUTLINE: "Outline", THICKOUTLINE: "Thick Outline" };
+		var questList = function () {
+			var list = [K.Desc("How the quest list on the left of the log sorts and draws."), K.StatusLine(function () { return s.pending ? "Enable Wide Quest Log takes effect after a reload, offered when you close the Options Interface." : null; })];
+			list.push(K.Spacer(), K.Header("Font"), K.Spacer());
+			var face = select(faces, function () { return s.face; }, function (v) { s.face = v; });
+			var size = { type: "range", name: "", min: 8, max: 20, step: 1, get: function () { return s.size; }, set: function (_, v) { s.size = v; } };
+			var outline = select(outlines, function () { return s.outline; }, function (v) { s.outline = v; });
+			var sh = stateful(s, "shadow");
+			list.push(K.LabelRow(null, null, "Font", face, "The typeface the quest list draws in."), K.LabelRow(null, null, "Size", size), K.LabelRow(null, null, "Outline", outline), toggle("Shadow", sh[0], sh[1]));
+			if (proposed) {
+				list.push(K.ResetRow(null, null, "Reset Font", "Puts every font setting in this section back as it shipped.", defaults, reset, "Reset the quest list's font, size, outline and shadow?"));
+			} else {
+				var r = flat([K.Label(" ", null, 2.15), exec("Reset Font", 1.25, { func: reset })], "drift");
+				list.push(r);
+			}
+			return group(proposed ? "Wide Quest Log &gt; Quest List" : "Quest List", seq(list));
+		};
+		var sub = function (parent, name, note) { return { label: name, build: stub(proposed ? parent + " &gt; " + name : name, note) }; };
+		return [
+			{ label: "Pretty Wide Quest Log", build: function () { return a.root(a, proposed); } },
+			{ label: "Wide Quest Log", build: stub("Wide Quest Log", "The reload line moves here from the root page."), children: [
+				{ label: "Quest List", build: questList },
+				sub("Wide Quest Log", "Quest Details", "Font section only."),
+				sub("Wide Quest Log", "Window &amp; Map", "Scale sliders on LabelRow; Reset Window becomes ResetRow."),
+				sub("Wide Quest Log", "NPC Dialogue", "Unchanged."),
+			] },
+			{ label: "Maps &amp; Objectives", build: stub("Maps &amp; Objectives", "Unchanged; its sub-panels' needs-markers line is the silver parent-off line."), children: [
+				sub("Maps &amp; Objectives", "Mini-map", "Size beside its switch as ToggleRow."),
+				sub("Maps &amp; Objectives", "Zone Map", "Unchanged."),
+				sub("Maps &amp; Objectives", "Continent &amp; World Map", "Size beside its switch as ToggleRow."),
+			] },
+			{ label: "Quest Route", build: stub("Quest Route", "Unchanged.") },
+			{ label: "Quest Arrow", build: stub("Quest Arrow", "Its Reset already sits as a label beside its button: the ResetRow shape.") },
+			{ label: "Quality of Life", build: stub("Quality of Life", "Examples already indented: become Kit.Example. Sound row as ToggleRow with the speaker.") },
+		].concat(tail());
+	},
+	focus: "Quest List",
+	changes: [
+		["seen", "Every font section's Reset Font becomes a Reset row that asks first, gray while the font is already the default."],
+		["seen", "Sub-panel titles name their parent: Wide Quest Log &gt; Quest List."],
+		["seen", "Features: pairs at 1.6 in tree order (Quality of Life last); the reload line moves to Wide Quest Log's own panels."],
+		["code", "Sub-panels register through <code>AddToBlizOptions</code> by category ID; the hand-built canvas goes."],
+	],
+});
+
+// ----- Thanks for the Buff -----------------------------------------------
+ADDONS.push({
+	id: "tftb", name: "Thanks for the Buff", tag: "Live reference: on-panel lines",
+	blurb: "The reference for the whisper composer, and home of the emote grid: a pooled-checkbox widget built because about 255 AceConfig toggles froze the UI on every click. No mini-map button. Sub-panel titles don't name their parent.",
+	s: { welcome: true, strangers: true, goodNews: true, wave: false, priest: true, druid: true },
+	features: [["strangers", "Enable Give Thanks"], ["goodNews", "Enable Good News"], ["wave", "Enable Wave to Friends"]],
+	root: function (a, proposed) {
+		var f = features(a);
+		var list = rootHead("Auto thank players who buff you with an emote or whisper, tell players what you just cast on them, greet friends and guildmates with a wave as you pass them, and thank anyone you target with one click of your Thank You macros.", null, false, a.s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer());
+		if (!proposed) { var d = K.Desc("Turn each feature on or off here, or on its own panel."); d.c = "drift"; list.push(d, K.Spacer()); }
+		list.push(K.Pairs(null, null, f.map(function (x) { return K.FeatureSwitch(x); })));
+		list = list.concat(commands("/tftb"));
+		list.push(K.Spacer(), K.Header("Looking for Other Features?"), K.Spacer(), K.Desc("Some features have moved to our new add-on, Good to Go. Find it on CurseForge or Wago."));
+		return group("Thanks for the Buff (TFTB)", seq(list));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var tracked = function () {
+			var classes = proposed ? [["DRUID", "Druid", "Mark of the Wild"], ["MAGE", "Mage", "Arcane Intellect"], ["PALADIN", "Paladin", "Blessing of Kings"], ["PRIEST", "Priest", "Power Word: Fortitude"]] : [["DRUID", "Druid", "Mark of the Wild"], ["MAGE", "Mage", "Arcane Intellect"], ["PALADIN", "Paladin", "Blessing of Kings"], ["PRIEST", "Priest", "Power Word: Fortitude"]];
+			var list = [K.Desc("The spells Good News tells players about when you cast them.")];
+			classes.forEach(function (c, i) {
+				var t = stateful(s, c[0].toLowerCase());
+				list.push({ type: "group", name: C(GG.CLASS[c[0]], c[1]), inline: true, args: { t: toggle(icon(i * 60 + 20) + " " + c[2], t[0], t[1]) } });
+			});
+			if (!proposed) list.push(K.Desc(C("HELP", "Classes sort by class token today (DRUID, HUNTER …), which reads in English order on every client; proposed sorts by the localized name.")));
+			return group(proposed ? "Good News &gt; Tracked Abilities" : "Tracked Abilities", seq(list));
+		};
+		return [
+			{ label: "Thanks for the Buff (TFTB)", build: function () { return a.root(a, proposed); } },
+			{ label: "Give Thanks", build: stub("Give Thanks", "Praise Limits rows on LabelRow; Sound with Kit.SoundPreview; the print Example through the print helper."), children: [
+				{ label: "Emotes List", build: stub(proposed ? "Give Thanks &gt; Emotes List" : "Emotes List", "Unchanged: the emote grid is the pattern for checklists past 64 boxes.") },
+				{ label: "Ignored Buffs", build: stub(proposed ? "Give Thanks &gt; Ignored Buffs" : "Ignored Buffs", "Unchanged spell list; Kit.PrepareTree for its sidebar.") },
+			] },
+			{ label: "Good News", build: stub("Good News", "Who on LabelRow; the composer on the grid."), children: [{ label: "Tracked Abilities", build: tracked }] },
+			{ label: "Thank You Button", build: stub("Thank You Button", "Unchanged.") },
+			{ label: "Wave to Friends", build: stub("Wave to Friends", "The Custom List's off line turns silver (Decision 9).") },
+		].concat(tail());
+	},
+	focus: "Tracked Abilities",
+	changes: [
+		["seen", "Sub-panel titles name their parent: Good News &gt; Tracked Abilities, Give Thanks &gt; Emotes List."],
+		["seen", "Features loses its description line."],
+		["seen", "Tracked Abilities sorts classes by localized name."],
+		["seen", "The whisper composer's language row moves into the shared columns; Too Long becomes a WarningLine; its Reset a ResetRow."],
+		["code", "<code>ns.FEATURE_SWITCHES</code> becomes <code>ns.FEATURES</code> with dotted settings; <code>NotifyAllPanels</code> goes."],
+	],
+});
+
+// ----- Control Freak -----------------------------------------------------
+ADDONS.push({
+	id: "cf", name: "Control Freak", tag: "Live reference: rows and Examples",
+	blurb: "The deepest tree, built from one alert section builder whose slots every alert panel fills. Its root page carries three gold block switches over sixteen indented children with spell icons; nothing calls a shared refresh.",
+	s: { welcome: true, minimap: true, enabled: true, monitoring: true, naughty: true, tanking: false, taunts: true, interrupts: true, fears: true, incap: true, deaths: true, peer: false, mages: true, monkeys: true, pets: true, priests: false, cold: true, armor: true, role: "TANK", tauntsOn: true },
+	features: [["monitoring", "Enable Monitoring"], ["naughty", "Enable Naughty List"], ["tanking", "Enable Tanking Tools"]],
+	root: function (a, proposed) {
+		var s = a.s;
+		var list = rootHead("Combat announcer for taunts, interrupts, fears, tank deaths, bad pets, parries, armor debuffs, and other critical fight events. Track who taunted, what failed, who interrupted a cast, and what happened with customizable alerts.", null, true, s);
+		var k = stateful(s, "enabled");
+		list.push(K.Spacer(), K.Header("Master Switch"), K.Spacer());
+		var off = function () { return !s.enabled; };
+		if (proposed) {
+			list.push(toggle("Enable Control Freak", k[0], k[1], "full", { desc: "Turn every Control Freak alert on or off." }));
+			list.push(K.Spacer(null, off), K.Header("Features", null, off), K.Spacer(null, off));
+			var p = K.Pairs(null, off, features(a).map(function (x) { return K.FeatureSwitch(x); }));
+			list.push(p);
+		} else {
+			var ks = toggle("Enable Control Freak", k[0], k[1], 1.6); ks.c = "drift";
+			list.push(flat([ks], "drift"));
+			list.push(K.Spacer(null, off), K.Header("Features", null, off));
+			var block = function (key, name, kids) {
+				var b = stateful(s, key);
+				var out = [toggle(C("TITLE", name), b[0], b[1], "full", { hidden: off, c: "drift" })];
+				var cells = kids.map(function (kd, i) {
+					var t = stateful(s, kd[0]);
+					return toggle(icon(i * 45 + 10) + " " + kd[1], t[0], t[1], 1.6, { disabled: function () { return !s[key]; } });
+				});
+				for (var i = 0; i < cells.length; i += 2) {
+					var r = K.SubRow(null, off, [cells[i], cells[i + 1]]); r.c = "drift";
+					out.push(r);
+				}
+				return out;
+			};
+			list = list.concat(block("monitoring", "Monitoring", [["taunts", "Taunts"], ["interrupts", "Interrupts"], ["fears", "Fears"], ["incap", "Incapacitated"], ["deaths", "Tank Deaths"], ["peer", "Peer Pressure"]]));
+			list = list.concat(block("naughty", "Naughty List", [["mages", "Bad Mages"], ["monkeys", "Bad Parry Monkeys"], ["pets", "Bad Pets"], ["priests", "Bad Priests"]]));
+			list = list.concat(block("tanking", "Tanking Tools", [["cold", "Cold Openers"], ["armor", "Armor Debuffs"]]));
+		}
+		return group("Control Freak", seq(list.concat(commands("/freak"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var taunts = function () {
+			var on = function () { return !!s.tauntsOn; };
+			var ladder = { TANK: "As a Tank", ANY: "In Any Role" };
+			var list = [K.StatusLine(function () { return !s.monitoring ? C("TITLE", "Monitoring") + " is " + (proposed ? "off" : C("OFF", "off")) + ", so nothing on this page fires. Its switch is on the Control Freak page." : null; }), K.Desc("Alerts when a taunt lands, misses, or an area taunt goes out."), K.Spacer()];
+			var t = stateful(s, "tauntsOn");
+			var sw = toggle("Enable Taunts", t[0], t[1], G.LABEL);
+			if (proposed) list.push(K.ToggleRow(null, sw, { control: select(ladder, function () { return s.role; }, function (v) { s.role = v; }) }));
+			else list.push(flat([sw, select(ladder, function () { return s.role; }, function (v) { s.role = v; })], "drift"));
+			var sound = toggle("Play Sound", function () { return true; }, function () {}, G.LABEL);
+			var sounds = { RAID: "Raid Warning", BELL: "Alarm Clock" };
+			if (proposed) {
+				list.push(K.Spacer(null, function () { return !on(); }), K.Header("Successful Taunts", null, function () { return !on(); }));
+				list.push(K.ToggleRow(null, sound, { control: select(sounds, function () { return "RAID"; }, function () {}), preview: K.SoundPreview(), hidden: function () { return !on(); } }));
+				list.push(K.Example(null, function () { return !on(); }, function () { return C("TITLE", "Control Freak") + C("SEPARATOR", " // ") + C(GG.CLASS.WARRIOR, "Prima") + C("TEXT", " taunted ") + C("TEXT", "Ragnaros") + C("TEXT", "."); }));
+			} else {
+				list.push(K.Spacer(null, function () { return !on(); }), K.Header("Successful Taunts", null, function () { return !on(); }));
+				var sp = { type: "execute", name: "", image: "speaker", width: 0.15, func: function () {} };
+				var r = K.SubRow(null, function () { return !on(); }, [toggle(K.SubLabel("Play Sound"), function () { return true; }, function () {}, G.LABEL - G.SUB_INDENT), select(sounds, function () { return "RAID"; }, function () {}, G.CONTROL), sp]); r.c = "drift";
+				list.push(r);
+				var ex = K.Desc(C("HELP", "Example: ") + C("TITLE", "Control Freak") + C("SEPARATOR", " // ") + C(GG.CLASS.WARRIOR, "Prima") + C("TEXT", " taunted Ragnaros.")); ex.c = "drift";
+				list.push(ex);
+			}
+			return group("Taunts", seq(list));
+		};
+		var tab = function (name) { return { label: name, build: stub(name, "Its alert sections fill Control Freak's own builder; inside it, the sound row, sample and whisper cooldown change as Taunts shows.") }; };
+		var tracked = function (parent) { return { label: "Tracked Abilities", build: stub(parent + " &gt; Tracked Abilities", "Unchanged.") }; };
+		return [
+			{ label: "Control Freak", build: function () { return a.root(a, proposed); } },
+			{ label: "Monitoring", build: stub("Monitoring", "Group page (README-Notes)."), children: [
+				{ label: "Taunts", build: taunts, children: [tracked("Taunts")] }, tab("Interrupts"), tab("Fears"), tab("Incapacitated"), tab("Tank Deaths"), tab("Peer Pressure"),
+			] },
+			{ label: "Naughty List", build: stub("Naughty List", "Group page (README-Notes)."), children: [tab("Bad Mages"), tab("Bad Parry Monkeys"), tab("Bad Pets"), tab("Bad Priests")] },
+			{ label: "Tanking Tools", build: stub("Tanking Tools", "Unchanged."), children: [tab("Cold Openers"), tab("Armor Debuffs")] },
+		].concat(tail());
+	},
+	focus: "Control Freak",
+	changes: [
+		["seen", "Root Features holds what the menu holds: Enable Monitoring, Enable Naughty List, Enable Tanking Tools, two to a line. The sixteen child switches stay on their tabs (Decision 5); the maintainer may keep them as pairs below instead."],
+		["seen", "Enable Control Freak full width (today a lone 1.6 pair)."],
+		["seen", "The role ladder leaves with its feature's switch; the sound row ends at 3.4 with the 16-point speaker past it; the Example sits under the rows it shows and leaves when nothing would print or send."],
+		["seen", "The quiet status line stays silver throughout: no red Off word (Decision 9)."],
+		["code", "<code>ns.FEATURES</code> built from <code>FEATURE_GROUPS</code>; every set ends in <code>ns.RefreshSettings</code> (most end in nothing today)."],
+	],
+});
+
+// ----- Good to Go --------------------------------------------------------
+ADDONS.push({
+	id: "gtg", name: "Good to Go", tag: "Feature subfolders",
+	blurb: "Organised as a feature subfolder per panel. It already registers every panel as a function, keeps every category ID and names each sub-panel's parent. Its Features section splits into two groups with a blank line between.",
+	s: { welcome: true, minimap: true, buffDuty: true, restocker: true, spellbook: true, macros: true, rankWatch: false, inventory: true, readiness: true },
+	features: [["buffDuty", "Enable Buff Duty"], ["restocker", "Enable Restocker"], ["spellbook", "Enable Enhanced Spellbook"], ["macros", "Enable Consumable Macros"], ["rankWatch", "Enable Rank Watch"], ["inventory", "Enable Inventory Report"], ["readiness", "Enable Readiness Report"]],
+	root: function (a, proposed) {
+		var f = features(a);
+		var list = rootHead("Auto-updating macros for your best food, water, potions, and healthstones, a Restock List that auto-buys and banks reagents and ammo, click-to-cast missing buffs, and mouseover macros for every spell.", null, true, a.s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer());
+		var sw = f.map(function (x, i) { var t = K.FeatureSwitch(x); if (i === 2 || i === 3) t.confirm = true; return t; });
+		if (proposed) {
+			list.push(K.Pairs(null, null, sw));
+		} else {
+			list.push(K.Pairs(null, null, sw.slice(0, 5)));
+			var gap = K.Spacer(); gap.c = "drift";
+			list.push(gap, K.Pairs(null, null, sw.slice(5)));
+		}
+		list.push(K.Spacer(), K.Header("Key Bindings"), K.Spacer());
+		list = list.concat(keyRow("Use Best Food", "CTRL-F", "Eats the best food in your bags.", false));
+		if (!proposed) list[list.length - 2] = flat([K.Label(C("INFO", "Use Best Food"), null, G.LABEL), K.Label(C("TEXT", "CTRL-F"), null, 0.65), exec("Set Key", 0.55)], "drift");
+		list = list.concat(commands("/gtg"));
+		list.push(K.Spacer(), K.Desc(C("INFO", "/restock") + "  Opens the Restock List."));
+		return group("Good to Go", seq(list));
+	},
+	panels: function (a, proposed) {
+		var sub = function (parent, name) { return { label: name, build: stub(parent + " &gt; " + name, "Unchanged.") }; };
+		return [
+			{ label: "Good to Go", build: function () { return a.root(a, proposed); } },
+			{ label: "Buff Duty", build: stub("Buff Duty", "Status line, warning line, When rows as ToggleRow, the party Example through Kit.SentLine."), children: [sub("Buff Duty", "Group Buffs"), sub("Buff Duty", "Self-Buffs"), sub("Buff Duty", "Weapon Buffs")] },
+			{ label: "Restocker", build: stub("Restocker", "Sound row as ToggleRow with Kit.SoundPreview.") },
+			{ label: "Enhanced Spellbook", build: stub("Enhanced Spellbook", "Delete-macros buttons in the control column, still confirmed.") },
+			{ label: "Consumable Macros", build: stub("Consumable Macros", "IconCheckBox widget stays."), children: [sub("Consumable Macros", "Class &amp; Race"), { label: "Ignore List", build: stub("Consumable Macros &gt; Ignore List", "Kit.ItemList replaces Good to Go's own builder.") }] },
+			{ label: "Rank Watch", build: stub("Rank Watch", "Track All / Track None gain tooltips."), children: [sub("Rank Watch", "Reported Ranks"), sub("Rank Watch", "Ignored Players")] },
+			{ label: "Inventory Report", build: stub("Inventory Report", "Unchanged.") },
+			{ label: "Readiness Report", build: stub("Readiness Report", "Its double-width Reset becomes a ResetRow, still confirmed.") },
+		].concat(tail());
+	},
+	focus: "Good to Go",
+	changes: [
+		["seen", "Features: no blank line between the two groups; menu order (Decision 5)."],
+		["seen", "Key binding rows on the grid (today caption 2.1, key 0.65, Set Key 0.55)."],
+		["seen", "Track All / Track None gain tooltips; Readiness Report's Reset and Enhanced Spellbook's delete buttons sit in the control column."],
+		["code", "<code>FEATURE_SWITCHES</code> becomes <code>ns.FEATURES</code> (<code>confirmOff</code> → <code>confirm</code>, <code>notifies</code> goes); its own item list gives way to <code>Kit.ItemList</code>."],
+	],
+});
+
+// ----- GogoLoot ----------------------------------------------------------
+ADDONS.push({
+	id: "gl", name: "GogoLoot", tag: "Last: gives the most to the kit",
+	blurb: "The largest options surface and the source of the kit's row family and Example renderers. Its child panels open with a red line while their parent is off, its Examples stay while their toggle is off, and Speedy Loot leads Features.",
+	s: { welcome: true, minimap: true, speedyLoot: true, autoGreed: false, autoOpen: true, lootToasts: true, lootSounds: true, lootNotifications: true, autoMasterLoot: false, rollMacro: false, overrides: true },
+	features: [["speedyLoot", "Enable Speedy Loot"], ["autoGreed", "Enable Automated Rolls"], ["autoOpen", "Enable Automated Opening"], ["lootToasts", "Enable Loot Toasts"], ["lootSounds", "Enable Loot Sounds"], ["lootNotifications", "Enable Loot Announcements"], ["autoMasterLoot", "Enable Automated Master Looting"], ["rollMacro", "Enable Roll Macro"]],
+	root: function (a, proposed) {
+		var f = features(a);
+		var list = rootHead("Speedy auto loot empties corpses without the loot window, auto rolls Need, Greed, or Pass by quality, and master looting hands out drops for you. Clams, containers, and unlocked lockboxes open on their own. Loot faster, pull sooner.", null, true, a.s);
+		list.push(K.Spacer(), K.Header("Features"), K.Spacer());
+		if (proposed) {
+			var order = [f[1], f[2], f[5], f[0], f[3], f[4], f[6], f[7]];
+			list.push(K.Pairs(null, null, order.map(function (x) { return K.FeatureSwitch(x); })));
+		} else {
+			var p = K.Pairs(null, null, f.map(function (x) { return K.FeatureSwitch(x); }));
+			Object.keys(p.args).forEach(function (k) { Object.keys(p.args[k].args).forEach(function (c) { p.args[k].args[c].width = 1.7; }); });
+			p.c = "drift";
+			list.push(p);
+		}
+		return group("GogoLoot", seq(list.concat(commands("/gogo"))));
+	},
+	panels: function (a, proposed) {
+		var s = a.s;
+		var overrides = function () {
+			var rollsOff = function () { return !s.autoGreed; };
+			var list = [K.Desc("Items that always roll your way, whatever the quality rule says.")];
+			if (proposed) list.push(K.StatusLine(function () { return rollsOff() ? "These settings aren't being used while " + C("TITLE", "Automated Rolls") + C("HELP", " is off.") : null; }));
+			else { var n = K.Desc(C("OFF", "These settings aren't being used while Automated Rolls is off.")); n.hidden = function () { return !rollsOff(); }; n.c = "drift"; list.push(n); }
+			list.push(K.Spacer());
+			var o = stateful(s, "overrides");
+			list.push(toggle("Enable Item Overrides", o[0], o[1]));
+			var rowsArgs = {};
+			[[300, "Onyxia Hide Backpack", "epic", "Need"], [120, "Lava Core", "rare", "Greed"]].forEach(function (it, i) {
+				rowsArgs["r" + i] = K.Row(i + 1, null, [{ type: "input", name: "", dialogControl: "X_ItemLink", itemLink: icon(it[0]) + C("q:" + it[2], it[1]), width: G.ROW - G.REMOVE - 0.7 }, select({ Need: "Need", Greed: "Greed", Pass: "Pass" }, function () { return it[3]; }, function () {}, 0.7), { type: "execute", name: "", image: "remove", width: G.REMOVE, func: function () {} }]);
+			});
+			list.push(K.Spacer(), { type: "group", name: "", inline: true, args: rowsArgs, c: "list" });
+			return group(proposed ? "Automated Rolls &gt; Item Overrides" : "Item Overrides", seq(list));
+		};
+		var sub = function (parent, name, note) { return { label: name, build: stub(proposed ? parent + " &gt; " + name : name, note) }; };
+		return [
+			{ label: "GogoLoot", build: function () { return a.root(a, proposed); } },
+			{ label: "Speedy Loot", build: stub("Speedy Loot", "Unchanged.") },
+			{ label: "Automated Rolls", build: stub("Automated Rolls", "Its Examples leave while their toggle is off (Decision 6)."), children: [
+				{ label: "Item Overrides", build: overrides }, sub("Automated Rolls", "Character Rules", "Class line becomes a header; tooltips for the catch-all and Reset."),
+			] },
+			{ label: "Automated Opening", build: stub("Automated Opening", "Unchanged."), children: [sub("Automated Opening", "Openables List", "Silver feature-off line."), sub("Automated Opening", "Lockboxes", "Unchanged.")] },
+			{ label: "Loot Toasts", build: stub("Loot Toasts", "Reset Position becomes ResetRow."), children: [sub("Loot Toasts", "Filters", "Unchanged grid (README-Notes).")] },
+			{ label: "Loot Sounds", build: stub("Loot Sounds", "Speaker at 16 points (today 18).") },
+			{ label: "Loot Announcements", build: stub("Loot Announcements", "Examples leave with their toggle.") },
+			{ label: "Automated Master Looting", build: stub("Automated Master Looting", "AddLabeledRow becomes Kit.LabelRow."), children: [sub("Automated Master Looting", "Ignore List", "Silver feature-off line.")] },
+			{ label: "Roll Macro", build: stub("Roll Macro", "Unchanged.") },
+		].concat(tail());
+	},
+	focus: "Item Overrides",
+	changes: [
+		["seen", "Feature-off lines turn silver and name the switch in gold (Decisions 7 and 9). Today they are red."],
+		["seen", "Features in the menu's order, blocks first (Automated Rolls, Automated Opening, Loot Announcements); always two to a line."],
+		["seen", "Examples leave while their own toggle is off (Decision 6). Sub-panel titles name their parent."],
+		["code", "Its row family and Example renderers are now the kit's; <code>ns.FEATURES</code> replaces eight switch builders; its item-list extras stay its own (Decision 15)."],
+	],
+});
+
+// ---------------------------------------------------------------------------
+// Bands
+// ---------------------------------------------------------------------------
+function pathOf(tree, label) {
+	var found = null;
+	(function walk(list, prefix) {
+		list.forEach(function (n, i) {
+			var p = prefix ? prefix + "." + i : String(i);
+			if (!found && n.label === label) found = p;
+			if (n.children) walk(n.children, p);
+		});
+	})(tree, "");
+	return found || "0";
+}
+function labelAt(tree, path) {
+	var node = null, list = tree;
+	path.split(".").forEach(function (i) { node = list[+i]; list = node && node.children || []; });
+	return node ? node.label : null;
+}
+
+var host = document.getElementById("bands");
+ADDONS.forEach(function (a) {
+	var band = document.createElement("section");
+	band.className = "band";
+	band.id = a.id;
+	band.innerHTML =
+		'<div class="band-head"><h2>' + a.name + '</h2><span class="tag' + (a.first ? " first" : "") + '">' + a.tag + "</span></div>" +
+		"<p>" + a.blurb + "</p>" +
+		'<div class="seg" role="group" aria-label="View"><span>View</span><button type="button" data-v="today">Today</button><button type="button" data-v="proposed">Proposed</button></div>' +
+		'<div class="stage"></div>' +
+		'<p class="note">Spec: <code>Options Panels/' + a.name + '.md</code>. Pages drawn in full: the root page and ' + a.focus + ".</p>" +
+		"<h3>What Changes</h3>" +
+		'<ol class="changes">' + a.changes.map(function (c) { return '<li><span class="kind' + (c[0] === "seen" ? " seen" : "") + '">' + (c[0] === "seen" ? "Players see" : "Code") + "</span> " + c[1] + "</li>"; }).join("") + "</ol>";
+	host.appendChild(band);
+	var view = "proposed";
+	var sel = a.focus;
+	var stage = band.querySelector(".stage");
+	function render() {
+		band.querySelectorAll(".seg button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === view)); });
+		stage.innerHTML = "";
+		var tree = a.panels(a, view === "proposed");
+		GO.settings(stage, tree, { selected: pathOf(tree, sel), onSelect: function (p) { sel = labelAt(tree, p) || sel; } });
+	}
+	band.querySelectorAll(".seg button").forEach(function (b) {
+		b.addEventListener("click", function () { view = b.dataset.v; render(); });
+	});
+	render();
+});
+
+// ---------------------------------------------------------------------------
+// At a Glance
+// ---------------------------------------------------------------------------
+var IDS = ["me", "te", "pif", "wd", "pwql", "tftb", "cf", "gtg", "gl"];
+var HEAD = { me: "Magic Eraser", te: "Tracking Eye", pif: "Play It Forward", wd: "Water Dispenser", pwql: "PWQL", tftb: "TFTB", cf: "Control Freak", gtg: "Good to Go", gl: "GogoLoot" };
+var ROWS = [
+	["<code>ns.FEATURES</code>", { te: ["●", 1] }, "Every add-on with a Features section", "·"],
+	["<code>ns.RefreshSettings</code>", { te: ["●", 1] }, "The kit's, in every add-on", "·"],
+	["Mini-map", { te: "menu", wd: "tooltip", cf: "tooltip", gl: "tooltip", me: "tooltip", gtg: "tooltip" }, "Wave 1 converts the tooltips", "none"],
+	["Features layout", { me: ["pairs 1.6", 1], te: ["pairs 1.6", 1], tftb: "pairs + desc", gtg: "pairs + gap", cf: "gold blocks", wd: "flat 1.7", pwql: "flat 1.7 + status", pif: "flat 1.7", gl: "measured" }, "Pairs at 1.6, switches only", ""],
+	["Examples", { me: "flush", te: "flush", tftb: "flush", cf: "flush", gtg: "flush", gl: ["indented", 1], pwql: ["indented", 1], wd: "mixed", pif: "—" }, "Indented under their control", ""],
+	["Parent-off line", { gl: "red", cf: "silver, red Off", pwql: ["silver", 1] }, "Silver status line", "none"],
+	["Sub-panel titles name the parent", { te: ["yes", 1], cf: ["yes", 1], gtg: ["yes", 1], wd: "(no sub-panels)" }, "Every add-on", "no"],
+	["Panels as builder functions", { te: ["all", 1], gl: ["all", 1], gtg: ["all", 1], pwql: ["all", 1] }, "Every panel", "some"],
+	["Tree sidebar", { me: "180", pif: "180", gtg: ["176", 1], tftb: ["176", 1] }, "176", "—"],
+	["Sound preview", { cf: "18", gl: "18", tftb: ["16", 1], gtg: ["16", 1], pwql: ["16", 1] }, "16, past the row's end", "—"],
+	["Key binding row", { me: "3.3", te: "3.3", gtg: "3.3", pwql: "3.4" }, "2.1 + 0.75 + 0.55", "—"],
+];
+document.getElementById("inventory").innerHTML =
+	"<thead><tr><th>Piece</th>" + IDS.map(function (id) { return "<th>" + HEAD[id] + "</th>"; }).join("") + "<th>Options-Kit</th></tr></thead><tbody>" +
+	ROWS.map(function (r) {
+		return "<tr><td>" + r[0] + "</td>" + IDS.map(function (id) {
+			var v = r[1][id];
+			var ok = Array.isArray(v) && v[1];
+			var text = Array.isArray(v) ? v[0] : v;
+			return '<td class="v' + (ok ? " ok" : text ? "" : " no") + '">' + (text || r[3] || "·") + "</td>";
+		}).join("") + '<td class="v ok">' + r[2] + "</td></tr>";
+	}).join("") + "</tbody>";
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+var demo = { on: true, sound: true, mode: "PARTY", text: "Thanks for the buff!", picked: false };
+var modes = { PARTY: "Party", SAY: "Say", NEVER: "Never" };
+var CATALOG = [
+	["Kit.Section", "Spacer, gold header, spacer, description, spacer: the shape every section on every panel opens with.", function () {
+		var args = {}; K.Section(args, "s", 1, "Bag-Space Warnings", "Warns you before your bags fill up."); return args;
+	}],
+	["Kit.LabelRow", "A white caption in the 2.1 label column beside its dropdown, slider or box in the 1.3 control column, so every control on every panel lines up. With a tooltip, hovering the caption shows it too.", function () {
+		return seq([K.LabelRow(null, null, "Default Output", select(modes, function () { return demo.mode; }, function (v) { demo.mode = v; }), "Where Come &amp; Get It sends its line."), K.LabelRow(null, null, "Icon Size", { type: "range", name: "", min: 0.25, max: 3, step: 0.05, isPercent: true, get: function () { return 1; }, set: function () {} })]);
+	}],
+	["Kit.SubRow · SubToggleRow · SubLabelRow", "A sub-option: indented, silver caption, under the control it belongs to, gone while that control is off. A sub-row caption pays for its indent, so its control keeps the shared column.", function () {
+		var t = [function () { return demo.on; }, function (v) { demo.on = v; }];
+		var off = function () { return !demo.on; };
+		return seq([toggle("Enable Bag-Space Warnings", t[0], t[1]), K.SubToggleRow(null, off, toggle("Warn in Combat", function () { return true; }, function () {})), K.SubLabelRow(null, off, "Free Slots", { type: "range", name: "", min: 1, max: 10, step: 1, get: function () { return 2; }, set: function () {} })]);
+	}],
+	["Kit.ToggleRow", "A switch with its one setting on the same line, and a sound's speaker past the row's end. Both leave while it's off. In game the kit measures the caption: one too long for the label column (German, French) sends the setting to the line below, still in its column.", function () {
+		return seq([K.ToggleRow(null, toggle("Play a Sound", function () { return demo.sound; }, function (v) { demo.sound = v; }), { control: select({ RAID: "Raid Warning", BELL: "Alarm Clock" }, function () { return "RAID"; }, function () {}), preview: K.SoundPreview() }), K.ToggleRow(null, toggle("Enable Auto-Vend", function () { return demo.on; }, function (v) { demo.on = v; }), { control: select({ s: "Summary", i: "Each Item" }, function () { return "s"; }, function () {}) })]);
+	}],
+	["Kit.FeatureSwitches", "The root page's Features: <code>ns.FEATURES</code>, two to a line at 1.6, in the menu's order, Enable captions. Each is the same <code>Kit.FeatureSwitch</code> its own panel draws.", function () {
+		var f = ["Enable Persistent Tracking", "Enable Farm Mode", "Enable Automatic Target Tracking", "Enable Come &amp; Get It", "Enable Free Placement Mode"].map(function (c, i) { return { caption: c, get: function () { return i !== 2; }, set: function () {} }; });
+		return seq([K.Header("Features"), K.Spacer(), K.FeatureSwitches(null, f)]);
+	}],
+	["Kit.StatusLine · Kit.WarningLine", "Silver: something elsewhere changes what this page does (a parent switched off, a reload pending, slots held back). Red, only: the settings mean nothing will happen. Both show only while true.", function () {
+		return seq([K.StatusLine(function () { return C("TITLE", "Automated Rolls") + C("HELP", " is off, so nothing on this page runs. Its switch is on the GogoLoot page."); }), K.Spacer(), K.WarningLine("Tick at least one kind of junk, or nothing will be erased.", function () { return true; })]);
+	}],
+	["Kit.Example", "The finished line, in the colors of where it goes, under the control that decides it, indented like a sub-option. Only <code>Example:</code> is silver. Built through the feature's own builder, so a reworded message rewords its Example.", function () {
+		return seq([K.LabelRow(null, null, "Announce", select(modes, function () { return demo.mode; }, function (v) { demo.mode = v; })), K.Example(null, function () { return demo.mode === "NEVER"; }, function () {
+			return demo.mode === "SAY" ? '<span style="color:#ffffff">[' + C(GG.CLASS.DRUID, "Aero") + "] says: Taunt missed on Ragnaros!</span>" : '<span style="color:#aaaaff">[Party] [' + C(GG.CLASS.DRUID, "Aero") + ']: Taunt missed on <img alt="" style="width:12px;height:12px;vertical-align:-2px;background:#eee;border-radius:50%"> Ragnaros!</span>';
+		})]);
+	}],
+	["Kit.ResetRow", "A Reset on its own row, the button in the control column under the controls it resets, gray while there's nothing to reset, asking first when it discards more than one value.", function () {
+		return seq([{ type: "input", name: "Message", get: function () { return demo.text; }, set: function () {}, width: "full" }, K.ResetRow(null, null, "Reset Message", "Puts the message back as it shipped.", function () { return demo.text === "Thanks for the buff!"; }, function () { demo.text = "Thanks for the buff!"; })]);
+	}],
+	["Kit.ItemList", "Add from Bags, Add Item, one row per item sorted by name (its icon, colored link and tooltip; an optional tag and action; a remove icon), then Restore Defaults and Clear List at the foot.", function () {
+		var r = function (hue, name, q, tag) { return K.Row(null, null, [{ type: "input", name: "", dialogControl: "X_ItemLink", itemLink: icon(hue) + C("q:" + q, name), width: G.ROW - G.REMOVE - (tag ? 0.55 : 0) }, tag ? K.Label(C("HELP", tag), null, 0.55) : null, { type: "execute", name: "", image: "remove", width: G.REMOVE, func: function () {} }].filter(Boolean)); };
+		var list = [K.LabelRow(null, null, "Add from Bags", select({ x: "" }, function () {}, function () {})), K.LabelRow(null, null, "Add Item", { type: "input", name: "", get: function () { return ""; }, set: function () {} }), K.Spacer(), r(25, "Chipped Claw", "poor"), r(270, "Light Leather", "common", "Protected"), r(100, "Linen Cloth", "common"), K.Spacer(), K.Row(null, null, [exec("Restore Defaults"), exec("Clear List")])];
+		var g = seq(list); return g;
+	}],
+	["Kit.Pairs · SubPanelTitle · PrepareTree", "Short switches two to a line. A sub-panel's title names its parent (\"Farm Mode &gt; Abilities\"). A tree's sidebar is 176 points and opens on the current character.", function () {
+		return seq([K.Desc(C("TITLE", K.SubPanelTitle("Farm Mode", "Abilities"))), K.Spacer(), K.Pairs(null, null, [toggle("Mounted", function () { return true; }, function () {}), toggle("Not Mounted", function () { return true; }, function () {}), toggle("In a City", function () { return false; }, function () {}), toggle("Resting", function () { return false; }, function () {})])]);
+	}],
+];
+var cat = document.getElementById("catalog");
+CATALOG.forEach(function (c) {
+	var card = document.createElement("div");
+	card.className = "card";
+	card.innerHTML = "<h3><code>" + c[0] + "</code></h3><p>" + c[1] + '</p><div class="stage"></div>';
+	cat.appendChild(card);
+	GO.page(card.querySelector(".stage"), function () { return { type: "group", name: "", args: c[2]() }; }, { flat: true });
+});
+
+// ---------------------------------------------------------------------------
+// Decisions
+// ---------------------------------------------------------------------------
+function ba(beforeArgs, afterArgs, beforeLabel, afterLabel) {
+	return { before: beforeArgs, after: afterArgs, bl: beforeLabel || "Today", al: afterLabel || "Proposed" };
+}
+var d6 = { print: true };
+var d10 = { face: "Arial" };
+var DECISIONS = [
+	[1, "code", "One Options-Kit in Common-Core", "Copied unchanged into <code>Options/Options-Kit.lua</code>, checked byte for byte by CI. <span class=\"pill done\">Built</span>"],
+	[2, "code", "<code>ns.FEATURES</code> in every add-on with a Features section", "In the kit's record shape. The root page, each panel's Enable switch and the menu build from it. Today: Tracking Eye only."],
+	[3, "code", "One Refresh in every add-on", "The kit's <code>ns.RefreshSettings</code>, menu or not. Today the Style Guide binds only add-ons with a menu, and eight of nine notify panels by hand or not at all."],
+	[4, "code", "Every panel through <code>Kit.RegisterPanel</code>", "As its builder function, nested by category ID, every ID kept, so <code>ns:OpenOptionsPanel(key)</code> opens any panel."],
+	[5, "seen", "The Features section holds only the switches", "<code>ns.FEATURES</code>, two to a line, Enable captions. No description, status line, icon, group heading or blank line. Each add-on's band shows its own before and after on its root page (Control Freak's changes most)."],
+	[6, "seen", "Examples sit under their control, indented, and leave with it", "Five add-ons draw them flush; GogoLoot keeps them while their toggle is off. Untick Print in each to compare.", function () {
+		var t = function () { return d6.print; }, s = function (v) { d6.print = v; };
+		var line = function () { return C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Erased ") + icon(25) + C("q:poor", "[Chipped Claw]") + C("TEXT", "."); };
+		var ex = K.Desc(C("HELP", "Example: ") + line()); ex.c = "drift";
+		return ba(seq([toggle("Print What Was Erased", t, s), K.Spacer(), ex]), seq([toggle("Print What Was Erased", t, s), K.Example(null, function () { return !d6.print; }, line)]));
+	}],
+	[7, "seen", "A sub-panel whose feature is off stays, with a silver line naming the switch", "Today GogoLoot draws the line red; Control Freak silver with a red Off; seven add-ons show nothing, so a page of settings nobody is using reads as live.", function () {
+		var red = K.Desc(C("OFF", "These settings aren't being used while Automated Rolls is off.")); red.c = "drift";
+		return ba(seq([red, K.Spacer(), toggle("Enable Item Overrides", function () { return true; }, function () {})]), seq([K.StatusLine(function () { return C("TITLE", "Automated Rolls") + C("HELP", " is off, so these settings aren't being used. Its switch is on the GogoLoot page."); }), K.Spacer(), toggle("Enable Item Overrides", function () { return true; }, function () {})]));
+	}],
+	[8, "seen", "Sub-panel titles read \"Parent &gt; Child\"", "Tracking Eye, Control Freak and Good to Go do; six don't, so Thanks for the Buff's page reads a bare \"Tracked Abilities\". Every band's tree shows the proposed titles."],
+	[9, "seen", "Red only for a warning line", "Status lines, the parent-off line included, are silver. Red means nothing will happen: none ticked, too long to send."],
+	[10, "seen", "One Reset shape", "Today four: a right-aligned 1.25 button (PWQL), a label beside its button (PWQL's arrow), a lone normal-width button (Play It Forward), a double-width one (Good to Go). Proposed: a row of its own, the button in the control column, gray at default, asking first when it discards more than one value.", function () {
+		var f = select({ Arial: "Arial Narrow", Friz: "Friz Quadrata" }, function () { return d10.face; }, function (v) { d10.face = v; });
+		var f2 = select({ Arial: "Arial Narrow", Friz: "Friz Quadrata" }, function () { return d10.face; }, function (v) { d10.face = v; });
+		return ba(seq([K.LabelRow(null, null, "Font", f), flat([K.Label(" ", null, 2.15), exec("Reset Font", 1.25, { func: function () { d10.face = "Friz"; } })], "drift")]),
+			seq([K.LabelRow(null, null, "Font", f2), K.ResetRow(null, null, "Reset Font", "Puts the font back.", function () { return d10.face === "Friz"; }, function () { d10.face = "Friz"; }, "Reset the font, size, outline and shadow?")]));
+	}],
+	[11, "seen", "One sound preview", "A 16-point speaker past the row's end, playing whether or not the sound is on, with one tooltip: \"Play this sound now, whether or not the sound is turned on.\" Today 18 points in Control Freak and GogoLoot."],
+	[12, "seen", "Tree sidebars are 176 points", "Magic Eraser and Play It Forward use 180, off the Spacing Scale."],
+	[13, "seen", "Key binding rows on the grid", "Caption 2.1, bound key 0.75, Set Key 0.55: 3.4. Today 3.3 in three add-ons.", function () {
+		return ba(seq(keyRow("Cycle Farm Mode Ability", "Not Bound", "Jump to the next tracking ability with one key, even with Farm Mode off.", true)), seq(keyRow("Cycle Farm Mode Ability", "Not Bound", "Jump to the next tracking ability with one key, even with Farm Mode off.", false)));
+	}],
+	[14, "code", "The kit's strings take one key everywhere", "<code>SAMPLE_EXAMPLE</code>, <code>LOADING_ITEM</code>, <code>OPTIONS_SOUND_PREVIEW_DESCRIPTION</code>, <code>OPTIONS_RESET</code>, <code>CHAT_OPTIONS_IN_COMBAT</code>; renamed in <code>enUS.lua</code> only, the Localization Review carrying every locale."],
+	[15, "code", "GogoLoot's item-list extras stay its own", "Filter, add line, New, sections: all README-Notes. <code>Kit.ItemList</code> is Magic Eraser's shape until the maintainer wants them in the kit."],
+	[16, "code", "Order of work", "The kit (done), Magic Eraser (proves it), then smallest to largest: Tracking Eye, Play It Forward, Water Dispenser, Pretty Wide Quest Log, Thanks for the Buff, Control Freak, Good to Go, GogoLoot."],
+];
+var dl = document.getElementById("decisionList");
+DECISIONS.forEach(function (d) {
+	var el = document.createElement("div");
+	el.className = "decision" + (d[1] === "code" ? " code" : "");
+	el.innerHTML = "<div><b>" + d[0] + ". " + d[2] + '</b><span class="pill' + (d[1] === "seen" ? " seen" : "") + '">' + (d[1] === "seen" ? "Players see it" : "Code only") + "</span></div><p>" + d[3] + "</p>";
+	dl.appendChild(el);
+	if (d[4]) {
+		var pair = d[4]();
+		var wrap = document.createElement("div");
+		wrap.className = "ba";
+		wrap.innerHTML = '<div><div class="label">' + pair.bl + '</div><div class="stage b"></div></div><div><div class="label">' + pair.al + '</div><div class="stage a"></div></div>';
+		el.appendChild(wrap);
+		var pages = [];
+		var redrawBoth = function () { pages.forEach(function (p) { p.redraw(); }); };
+		pages.push(GO.page(wrap.querySelector(".b"), function () { return { type: "group", name: "", args: d[4]().before }; }, { flat: true, onDraw: function () {} }));
+		pages.push(GO.page(wrap.querySelector(".a"), function () { return { type: "group", name: "", args: d[4]().after }; }, { flat: true }));
+		wrap.addEventListener("click", function () { setTimeout(redrawBoth, 0); });
+	}
+});
+})();
+</script>
