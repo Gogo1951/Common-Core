@@ -1,6 +1,6 @@
 # Common Core
 
-Shared build, release, CI and issue setup for every Gogo add-on: Come & Get It, Connoisseur & Restocker, Control Freak, GogoLoot, Good to Go, Magic Eraser, Open Sesame, Play It Forward, Pretty Wide Quest Log, Thanks for the Buff, Tracking Eye and Water Dispenser. It also holds the [Add-on Guide](Add-on%20Guide/Start%20Here.md), the prompts and rules every add-on is built and reviewed by.
+Shared build, release, CI and issue setup for every active Gogo add-on: Control Freak, GogoLoot, Good to Go, Magic Eraser, Play It Forward, Pretty Wide Quest Log, Thanks for the Buff, Tracking Eye and Water Dispenser. Retired add-ons, and the active add-on each was rolled into, are listed in the [Complete List](Add-on%20Guide/References/Gogo%20Add-ons%20Complete%20List.md#active-and-retired). It also holds the [Add-on Guide](Add-on%20Guide/Start%20Here.md), the prompts and rules every add-on is built and reviewed by.
 
 Nothing in this repo ships to players.
 
@@ -48,9 +48,9 @@ The release workflow deliberately has no GitHub token; the comment in `package.y
 
 - **The Add-on Guide:** a pass that proposes a guide change ends with a triage line; paste it into a session launched in `~/Common-Core`, where `Add-on Guide/References/Guide Feedback Triage Prompt.md` applies what you approve and pushes it to `main`. The guide is public, so no real names, personal emails or user-named local paths go in it.
 - **Release or CI logic:** edit `.github/workflows/` here. Every add-on picks it up on its next run, so try a dry run (and a CI run on any add-on) afterwards.
-- **A shared file** (`addon-files/`): edit it here, then copy it into every add-on and commit there. `scripts/sync-addon-files.sh ../Open-Sesame ../GogoLoot ...` does the copy. Until an add-on has the new copy, its CI fails the "Shared files match" check, which is the reminder.
+- **A shared file** (`addon-files/`): edit it here, then copy it into every add-on and commit there. `scripts/sync-addon-files.sh ../Magic-Eraser ../GogoLoot ...` does the copy. Until an add-on has the new copy, its CI fails the "Shared files match" check, which is the reminder.
 - **Issue forms:** edit them in `addon-files/.github/ISSUE_TEMPLATE/`, copy them into this repo's own `.github/ISSUE_TEMPLATE/` (which runs Common-Core's own "New issue" page), then sync the add-ons as above.
-- **Issue labels:** edit the list in `scripts/sync-labels.sh`, then run it on Common-Core and every add-on: `scripts/sync-labels.sh Gogo1951/Common-Core Gogo1951/Open-Sesame Gogo1951/GogoLoot ...`. It deletes every label not in the list, so a renamed label is a delete plus a create, and the open issues need relabeling afterwards.
+- **Issue labels:** edit the list in `scripts/sync-labels.sh`, then run it on Common-Core and every add-on: `scripts/sync-labels.sh Gogo1951/Common-Core Gogo1951/Magic-Eraser Gogo1951/GogoLoot ...`. It deletes every label not in the list, so a renamed label is a delete plus a create, and the open issues need relabeling afterwards.
 - **A new add-on:** run the sync script on it, copy `addon-starters/.github/ISSUE_TEMPLATE/config.yml` in and fill in its name, CurseForge page and Discord invite, run `scripts/sync-labels.sh` on it, add a `.luacheckrc`, and set the repo settings below.
 
 ## Issues

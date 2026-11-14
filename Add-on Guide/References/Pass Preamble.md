@@ -12,7 +12,7 @@ Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edi
 
 - `References/Add-on Creation Rules & Style Guide.md` — the rules. Authoritative wherever it speaks. Read all of it, unless your prompt names the sections to read.
 - `References/Style Guide - Build Reference.md` — the same rules for building options rows and diagnostics; read it when your prompt names it.
-- `References/Gogo Add-ons Complete List.md` — per-add-on facts (names, IDs, links, categories, markers, slash commands). Note the add-on's row.
+- `References/Gogo Add-ons Complete List.md` — per-add-on facts (status, names, IDs, links, categories, markers, slash commands). Note the add-on's row. If its Status is Retired, stop and ask the maintainer before any work, unless they already named this add-on for this pass (Complete List → Active and retired).
 - The add-on's `README-Notes.md` — where it departs from the guide; Style Guide → README-NOTES says how it binds the pass. An add-on without one has no exceptions.
 - The add-on's `README-Technical.md`, when it has more than the step-00 stub — the map of the code that step 10 writes for Claude: where things live, how they connect, the traps. Read it before the code, and let it tell you where to look. It never stands in for reading the code a finding rests on, and where the two disagree the code wins (Standing scope).
 

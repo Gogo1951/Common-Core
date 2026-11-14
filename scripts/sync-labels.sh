@@ -6,7 +6,7 @@
 # Every issue carries at least one Area, one Priority and one Type label; the
 # issue-labels workflow fills in any group a new issue opens without.
 # Needs the GitHub CLI (gh), signed in with access to each repo.
-# Usage: scripts/sync-labels.sh Gogo1951/Open-Sesame Gogo1951/GogoLoot ...
+# Usage: scripts/sync-labels.sh Gogo1951/Magic-Eraser Gogo1951/GogoLoot ...
 set -euo pipefail
 [ $# -gt 0 ] || { echo "Usage: $0 <owner/repo> [...]"; exit 1; }
 
