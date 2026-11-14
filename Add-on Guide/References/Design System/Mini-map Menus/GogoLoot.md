@@ -55,8 +55,8 @@ Shift + Middle-Click
 | Loot Announcements | status | `TAB_ANNOUNCEMENTS` | On / Off | | always |
 | | description | `MINIMAP_ANNOUNCEMENTS_DESCRIPTION` | | | |
 | Toggle | action | `MENU_TOGGLE` | Shift + Left-Click | ShiftLeftButton | |
-| More Features | status | `MENU_MORE_FEATURES` | | | always |
-| Each set-and-forget feature | toggle | Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting, Roll Macro | On / Off | | always; tooltip is the switch's caption and description |
+| More Features | submenu | `MENU_MORE_FEATURES` | `MENU_FEATURE_COUNT_ON`, `MENU_FEATURE_COUNT_OFF`, then the arrow | | always |
+| Each set-and-forget feature, in its flyout | toggle | Speedy Loot, Loot Toasts, Loot Sounds, Automated Master Looting, Roll Macro | On / Off | | always; tooltip is the switch's caption and description |
 | Options | action | `MENU_OPTIONS` | Shift + Middle-Click | ShiftMiddleButton | always |
 
 **When the loot windows come back:** Tradable Loot is a live report under Locked Items (item rows with the time left on the right in its window colors, `Kit.List` at 8). A `Loot Master & Loot Tracker` block (status with `MINIMAP_TO_HAND_OUT` on the right, `MINIMAP_LOOT_WINDOWS_DESCRIPTION`, an `MENU_OPEN` action naming Middle-Click) comes before Options.

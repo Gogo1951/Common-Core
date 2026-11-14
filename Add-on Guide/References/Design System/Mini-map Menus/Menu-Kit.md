@@ -6,7 +6,7 @@ The shared renderer every mini-map menu is built on, moved into Common-Core so a
 - **Rules:** Style Guide → MINIMAP MENU.
 - **Pieces:** `../README.md` → Components, Patterns, Kit Changes (Menu-Kit v2).
 - **Drawn:** `../Mini-map Menus.html`.
-- **Starts from:** Tracking Eye's [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) and the generic half of its [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua), on GitHub `main`.
+- **Starts from:** Tracking Eye's [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) and the generic half of its [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua), on GitHub `main`. Magic Eraser's [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua) builds the same flyout by hand (copy the flyout block from either), plus the More Features flyout and count and the hover-only right side (`ApplyHoverIcons`).
 
 ## What Moves Where
 
@@ -17,6 +17,8 @@ The shared renderer every mini-map menu is built on, moved into Common-Core so a
 | `Minimap-Menu.lua`: `CreatePanel` for menu and flyout, `UISpecialFrames`, `PositionMenu`, `PositionFlyout`, the `OnUpdate` close timer, `OnHide`, `RenderFlyout`, `ns.ShowMenu`, `ns.HideMenu`, `ns.RefreshMenu`, `ns.IsMenuShown`, `ns.IsMenuFrame`, `ns.OpenFlyout`, `menu.onEnterRow` | Into the kit, behind `Kit.CreateMenu` |
 | `Minimap-Menu.lua`: `AddFeature` | Into the kit as `Kit.FeatureBlock` |
 | `Minimap-Menu.lua`: `OptionTooltip`, `Toggle`, `Section`, `Separator`, `OnOff` | Into the kit as small helpers |
+| Magic Eraser's `Minimap-Menu.lua`: `FLYOUTS.features`, `AddMoreFeatures` | Into the kit as `Kit.MoreFeatures` |
+| Magic Eraser's `Minimap-Menu.lua`: `ApplyHoverIcons` and its hooks | Into the kit's row drawing, as the `rightOnHover` entry flag |
 | `Minimap-Menu.lua`: tracking rows, flyouts, the Blizzard tracking-button hook | Stays in Tracking Eye |
 
 ## API
@@ -28,6 +30,8 @@ local Kit = ns.MenuKit
 Kit.SetText({
 	on = L["MENU_ON"], off = L["MENU_OFF"], toggle = L["MENU_TOGGLE"],
 	more = L["MENU_MORE"], -- "%d more"
+	moreFeatures = L["MENU_MORE_FEATURES"], -- "More Features"
+	featuresOn = L["MENU_FEATURE_COUNT_ON"], featuresOff = L["MENU_FEATURE_COUNT_OFF"], -- "%d On", "%d Off"
 	count = L["ITEM_QUANTITY"], -- "x%d"; optional, default "x%d"
 	clicks = {
 		LeftButton = L["MENU_CLICK_LEFT"], RightButton = L["MENU_CLICK_RIGHT"], MiddleButton = L["MENU_CLICK_MIDDLE"],
@@ -61,7 +65,8 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 - **Colors** take a palette key or a six-digit hex (class colors, quality colors).
 - **`MAX_WIDTH = 320`** for the menu and every flyout. The left text of every row wraps within what's left after its right side and the 16-point gap, and the row grows to the wrapped height; the right side never wraps and stays level with the first line. Measured across all six add-ons and 11 locales, 55 of 682 rows ran past 320 on one line, worst 465, and none does with wrapping (`../README.md` → Will It Fit).
 - **Defaults:** `action` is INFO left and MUTED right. The `hint` kind goes; nothing uses it once the Options row is an action row.
-- **`Kit.MoreFeatures(entries, features)`** appends the gold More Features heading and one compact toggle per set-and-forget feature from the add-on's `ns.FEATURES`, gated and confirmed as its switch is (Features Mirror).
+- **`Kit.MoreFeatures(entries, features)`** appends the More Features `submenu` row and builds its flyout: one compact toggle per set-and-forget feature from the add-on's `ns.FEATURES`, gated and confirmed as its switch is (Features Mirror). The row's right side counts the flyout's switches, `4 On, 3 Off` (On count ON, comma TEXT, Off count MUTED), then the arrow; block features aren't counted.
+- **`rightOnHover = true`** on any entry shows its right side only while the row is hovered. The kit still measures it, so the menu never changes width on hover. A click-to-remove list row uses it for its delete icon (Style Guide → MINIMAP MENU → Blocks Beyond Features, Editable list).
 - **`afterChange`** is the add-on's `ns.RefreshSettings` in every add-on (One Refresh).
 - **Placement** is the kit's (Placement): corner to opposite corner, 2 points apart, by screen halves, flyout and row tooltips on the same side.
 - **Any LDB display works.** The anchor is whatever frame called `OnEnter`: the mini-map button, or a Titan Panel or ChocolateBar plugin.
@@ -77,5 +82,5 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 
 - [ ] `addon-kits/Menu-Kit/` holds the kit and plate; StyLua, luacheck and `luac5.1 -p` pass on it.
 - [x] The sync script and the CI check are in (`scripts/sync-addon-kits.sh`, built with Options-Kit).
-- [ ] Tracking Eye runs on v2 with nothing visible changed (`Tracking Eye.md`). That's the proof.
+- [ ] Tracking Eye runs on v2 with nothing visible changed but More Features, which moves into its flyout (`Tracking Eye.md`). That's the proof.
 - [ ] Style Guide → MINIMAP MENU's live references point at `addon-kits/Menu-Kit/`.

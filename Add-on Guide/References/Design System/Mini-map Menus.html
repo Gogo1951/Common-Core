@@ -304,7 +304,7 @@ var ADDONS = [];
 					tip: { title: "Enable Automatic Target Tracking", body: "Never switches in combat, so adds can't hijack your tracking. Looting a corpse won't switch it either." },
 					toggle: function () { s.target = !s.target; render(); } }));
 			}
-			if (proposed) e = e.concat(moreFeatures(features(), render));
+			if (proposed) e = e.concat(moreFeatures(features(), render, flyouts));
 			return { entries: e.concat(mFooter("Tracking Eye", !proposed)), flyouts: flyouts };
 		},
 		changes: [
@@ -327,7 +327,7 @@ var ADDONS = [];
 			{ block: true, caption: "Enable Auto-Vend", get: function () { return s.vend; }, set: function (v) { s.vend = v; } },
 			flagFeature(s, "bank", "Enable Bank Retrieval", "Bank Retrieval", true),
 			flagFeature(s, "cap", "Enable Maximum Value to Erase", "Maximum Value to Erase", false),
-			flagFeature(s, "manual", "Enable Manual Delete Assistance", "Manual Delete Assistance", true),
+			flagFeature(s, "manual", "Enable Skip Typing DELETE", "Skip Typing DELETE", true),
 			flagFeature(s, "confirm", "Enable Erase Confirmation", "Erase Confirmation", false),
 			flagFeature(s, "tint", "Enable Junk Item Tint", "Junk Item Tint", true),
 			flagFeature(s, "quest", "Enable Quest Item Alerts", "Quest Item Alerts", true),
@@ -386,19 +386,27 @@ var ADDONS = [];
 			else e.push({ kind: "description", left: "You'll have to manually erase something if you want to free up more space.", c: "message" });
 			if (s.protect) {
 				e.push({ kind: "status", left: "Protect List", c: "report" });
-				PROTECTED.forEach(function (p) { e.push(mItem(p[2], p[0], p[1], 1, null)); });
-				e.push(action("Clear Protect List", function () { s.protect = false; render(); }, null, "Middle-Click"));
+				PROTECTED.forEach(function (p) {
+					var row = mItem(p[2], p[0], p[1], 1, '<span class="gg-remove"></span>');
+					row.rightOnHover = true;
+					row.tooltip = { title: p[0], body: "Click to remove it from your Protect List." };
+					row.onClick = function () { s.protect = false; render(); };
+					e.push(row);
+				});
+				e.push(action("Clear Protect List", function () { s.protect = false; render(); }, { title: "Clear Protect List", body: "Asks Yes or No first, in the options page's Clear List words." }, "Middle-Click"));
 			}
-			e = e.concat(moreFeatures(features(), render));
-			return { entries: e.concat(mFooter("Magic Eraser")) };
+			var flyouts = {};
+			e = e.concat(moreFeatures(features(), render, flyouts));
+			return { entries: e.concat(mFooter("Magic Eraser")), flyouts: flyouts };
 		},
 		changes: [
 			["layout", "Lowest-Value Item becomes a heading, an <b>item row</b> (proposed kind) with the value on the right, and <b>Erase … Left-Click</b> and <b>Protect … Right-Click</b> action rows. Every click on the button does what it does today."],
 			["layout", "Auto-Vend is a standard feature block, its Toggle row naming Shift + Right-Click."],
 			["layout", "Clutter Report's slots, items and value become a <b>value row</b> (proposed kind), nothing to click."],
-			["layout", "Protect List lists item rows, and a <b>Clear Protect List … Middle-Click</b> action row, still one click with no confirmation."],
+			["behavior", "Protect List lists item rows; <b>click one to remove it</b>, with a chat line saying so. Its delete icon shows only while the row is hovered, and the menu keeps its width."],
+			["behavior", "<b>Clear Protect List … Middle-Click</b> asks Yes or No first, in the options page's Clear List words; with nothing listed it doesn't ask."],
 			["copy", "Disabled in red becomes Off in gray; the bags-clean congratulation keeps its green."],
-			["layout", "<b>Features mirror.</b> The main page's other seven feature switches join the menu as compact rows under More Features, in the same order."],
+			["layout", "<b>Features mirror.</b> The main page's other seven feature switches join the menu in the <b>More Features flyout</b>, in the same order. The More Features row counts them: <i>4 On, 3 Off</i>."],
 		],
 	});
 })();
@@ -545,7 +553,7 @@ var ADDONS = [];
 				IGNORED.forEach(function (p) { e.push(mItem(p[2], p[0], p[1], 1, null)); });
 				e.push(action("Clear Ignore List", function () { s.ignore = false; render(); }, null, "Middle-Click"));
 			}
-			e = e.concat(moreFeatures(features(), render));
+			e = e.concat(moreFeatures(features(), render, flyouts));
 			return { entries: e.concat(mFooter("GtG")), flyouts: flyouts };
 		},
 		changes: [
@@ -618,8 +626,9 @@ var ADDONS = [];
 			var op = s.opening === "off" ? ["Off", "MUTED"] : s.opening === "paused" ? ["Paused", "MUTED"] : ["On", "ON"];
 			e = e.concat(feature({ title: "Automated Opening", bind: "Right-Click", state: op, desc: "Opens clams, crates, coin purses, and unlocked lockboxes in your bags.", toggle: function () { s.opening = s.opening === "off" ? "on" : "off"; render(); } }));
 			e = e.concat(feature({ title: "Loot Announcements", bind: "Shift + Left-Click", state: onOff(s.ann), desc: "Posts trade summaries and master loot hand-outs to chat.", toggle: function () { s.ann = !s.ann; render(); } }));
-			e = e.concat(moreFeatures(features(), render));
-			return { entries: e.concat(mFooter("GogoLoot")) };
+			var flyouts = {};
+			e = e.concat(moreFeatures(features(), render, flyouts));
+			return { entries: e.concat(mFooter("GogoLoot")), flyouts: flyouts };
 		},
 		changes: [
 			["layout", "Three click hints become Toggle rows, each naming its click on the right, and those clicks still work on the button."],
@@ -757,8 +766,9 @@ var ADDONS = [];
 				e.push(mItem(200, "Conjured Crystal Water", "common", 1, "60"));
 				e.push(mItem(35, "Conjured Cinnamon Roll", "common", 1, "40"));
 			}
-			e = e.concat(moreFeatures(features(), render));
-			return { entries: e.concat(mFooter("Water Dispenser")) };
+			var flyouts = {};
+			e = e.concat(moreFeatures(features(), render, flyouts));
+			return { entries: e.concat(mFooter("Water Dispenser")), flyouts: flyouts };
 		},
 		changes: [
 			["layout", "Dispense is a standard feature block, its Toggle row naming Left-Click, which still flips it on the button."],
@@ -771,15 +781,19 @@ var ADDONS = [];
 // ---------------------------------------------------------------------------
 // Bands: scenario chips, Today, Proposed, What Changes
 // ---------------------------------------------------------------------------
-// Features Mirror: set-and-forget features as compact rows under More Features, last before Options.
-function moreFeatures(features, render) {
+// Features Mirror: set-and-forget features as toggles in the More Features flyout, its row last before Options.
+// The row counts them: the On count green, the comma white, the Off count gray.
+function moreFeatures(features, render, flyouts) {
 	var rest = (features || []).filter(function (f) { return !f.block && !f.master; });
 	if (!rest.length) return [];
-	var e = [{ kind: "status", left: "More Features", c: "feature" }];
-	rest.forEach(function (f) {
-		e.push({ kind: "toggle", left: f.label, on: f.get(), c: "feature", tooltip: { title: f.caption, body: f.confirm ? "Asks before turning off, as its switch does." : "The same switch as the options panel's Features section." }, onClick: function () { f.set(!f.get()); render(); } });
-	});
-	return e;
+	flyouts.more = function () {
+		return rest.map(function (f) {
+			return { kind: "toggle", left: f.label, on: f.get(), c: "feature", tooltip: { title: f.caption, body: f.confirm ? "Asks before turning off, as its switch does." : "The same switch as the options panel's Features section." }, onClick: function () { f.set(!f.get()); render(); } };
+		});
+	};
+	var on = rest.filter(function (f) { return f.get(); }).length;
+	var count = paint(on + " On", "ON") + paint(",", "TEXT") + " " + paint(rest.length - on + " Off", "MUTED");
+	return [{ kind: "submenu", submenu: "more", left: "More Features", right: count, c: "feature" }];
 }
 // The root panel's Features section, built from the same list: blocks first in menu order, then the rest.
 function optionsPanel(host, features, render, log) {

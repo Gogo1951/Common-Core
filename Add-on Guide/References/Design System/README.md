@@ -78,7 +78,7 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus the two M
 |---|---|---|---|
 | `header` | Full Name, TITLE | Version, MUTED | First row, always |
 | `status` | Title, TITLE | State | A feature with no flyout, or any heading with nothing to click |
-| `submenu` | Title, TITLE | State, then the arrow | A feature whose flyout has something to show |
+| `submenu` | Title, TITLE | State, then the arrow | A feature whose flyout has something to show; More Features, with its count |
 | `section` | Label, TITLE | Optional state | A group's heading inside a flyout |
 | `description` | BODY, wraps at 320 | — | What a feature does. With `leftColor = "ON"`, a success line. |
 | `note` | MUTED, wraps at 256 | — | A reason, an empty list, *N more* |
@@ -91,7 +91,7 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus the two M
 
 ## Patterns
 
-Built from the components, in the order a menu runs top to bottom. **See them live in Tracking Eye** ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua)): header, feature blocks, the pick list, a follow-up action, flyouts with a live status, More Features, the Options footer and both ways. Style Guide → MINIMAP MENU names the function behind each.
+Built from the components, in the order a menu runs top to bottom. **See them live in Tracking Eye** ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua)): header, feature blocks, the pick list, a follow-up action, flyouts with a live status, the Options footer and both ways; **and in Magic Eraser** ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua)): the item highlight, live reports, the editable list and the More Features flyout. Style Guide → MINIMAP MENU names the function behind each.
 
 - **Header.** Full Name and version, then one spacer. (The tooltips used two blank lines.)
 - **Feature block.** Title with its state on the right, one description sentence, any rows of its own, the blue **Toggle**, then any follow-up action that applies right now. Every feature a player turns on and off mid-session gets one. Its Toggle's tooltip is the feature's Enable option, name and description.
@@ -101,9 +101,11 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 - **Short right, wrapping left.** A title row's right side is a state word; any other right side a number, money, a ratio, a slot name or a click. A long left side wraps; nothing widens a menu or flyout past 320 (Will It Fit, below).
 - **Item highlight.** A heading, the item row, then an action row per thing you can do to it (Magic Eraser's Lowest-Value Item: Erase, Protect).
 - **Live report.** A heading over item or value rows that change with the bags or the group: Clutter Report, Dispense Report, Locked Items. A feature's own report sits inside its block, with no count beside the title (the Restocker's orders). Up to 8 rows, then a gray *N more*.
+- **Editable list.** A list the player builds: one click-to-remove item row per entry, a delete icon on its right only while hovered (`rightOnHover`), the item's own tooltip plus a HELP line. Removing prints a chat line; Clear asks Yes or No first, unless the list is empty (Magic Eraser's Protect List).
 - **Message line.** One wrapping line that stands in for a report: green when the news is good (bags clean, fully stocked), a gray note when it's just empty or off.
 - **Master switch.** An add-on-wide switch gets the first block. While it's off, the blocks it silences hide and a note says why (Control Freak's All Alerts).
 - **Reference flyout.** Notes about something else's clicks (Good to Go's macros) go in a flyout of value rows behind a class-colored title, each reading job first and click second in gray (`Conjure … Right-Click`), so the menu only holds rows you click here.
+- **More Features.** One `submenu` row, last before Options, its set-and-forget switches in a flyout. Its right side counts them, `4 On, 3 Off`: the On count green, the comma white, the Off count gray. Block features aren't counted.
 - **Options footer.** Spacer, separator, the `[Short Name] Options` action row naming `Shift + Middle-Click`. Last, always.
 - **Both ways.** Every action is a row a controller can click, and the button keeps every click it had. The row names its click on the right in gray: the old tooltip line `Right-Click … Clear Tracking` becomes `Clear Tracking … Right-Click`, the same two strings with the sides swapped. One table per add-on names each action's click and function; the row and the button's `OnClick` both read it, so they can't drift apart. Hover opens the menu. Left-Click opens and holds it, unless Left-Click has a job of its own (Magic Eraser erases), in which case hover alone opens it. Six clicks: Left, Right and Middle, plain or with Shift; Shift + Middle-Click is always Options. Style Guide → MINIMAP MENU → Button Clicks.
 
@@ -112,6 +114,8 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. **They are the maintainer's work orders** (Style Guide → MINIMAP MENU): the UX Review draws one as the add-on's Proposed menu, and no other pass acts on one. The maintainer's order of work: the kit, then Tracking Eye (which proves it), then smallest to largest.
 
 **Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on the kit it has always carried. It is the reference every other conversion copies from, read on GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu); its move onto Menu-Kit v2 follows the kit into `addon-kits/Menu-Kit/`.
+
+**Magic Eraser's menu is live** ([Gogo1951/Magic-Eraser#52](https://github.com/Gogo1951/Magic-Eraser/pull/52)), on a copy of Tracking Eye's kit: the reference for the More Features flyout, click-to-remove list rows and a Clear that asks first.
 
 | Order | Spec | Issue |
 |---|---|---|
@@ -129,7 +133,7 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 | Water Dispenser | Tooltip: one feature, one report, 2 clicks | One feature block and the Dispense Report. The first to convert. |
 | Control Freak | Tooltip: three features, 4 clicks | All Alerts as a master switch, then the three feature blocks. |
 | GogoLoot | Tooltip: four features, a report, 5 clicks | Locked Items, then three feature blocks and More Features; the roll read-back as value rows. |
-| Magic Eraser | Tooltip: an item highlight, a feature, two reports, 5 clicks | Lowest-Value Item with Erase and Protect, Auto-Vend, Clutter Report, Protect List. Left-Click still erases. |
+| Magic Eraser | **Live.** Erase (Left-Click), Protect (Right-Click), Clear Protect List (Middle-Click, asks first), Auto-Vend (Shift + Right-Click) and Options on their rows; click-to-remove Protect List rows; More Features in a flyout with its count | The same menu on Menu-Kit v2, once the kit lands. |
 | Good to Go | Tooltip: an item highlight, three features, class notes, two reports, 7 clicks | Current Food, three feature blocks (Restock List carrying its report), class items, a *[Class] Macros* flyout, Ignore List. |
 
 ## Kit Changes (Menu-Kit v2)
@@ -139,6 +143,7 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 3. **Two row kinds:** `item` and `value` (Components). Colors take a raw six-digit hex as well as a palette key, for quality and class colors.
 4. **The click table moves into the kit.** An action entry names its click, and the kit draws that click's name on the row's right in MUTED and routes the button's `OnClick` to the same function. The API is `Mini-map Menus/Menu-Kit.md` → API. `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
 5. **One canonical copy, in Common-Core.** The kit and its plate move to `addon-kits/Menu-Kit/` here, are copied into each add-on with a mini-map button, and CI checks every copy matches, the way `addon-files/` works today. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, then copies it from Common-Core instead of Tracking Eye on GitHub.
+6. **Flyouts and hover-only right text.** Tracking Eye and Magic Eraser both build flyouts by hand; the kit takes them (Kit Change 1), with `Kit.MoreFeatures` drawing the More Features row, its count and its flyout, and a `rightOnHover` entry flag that shows a row's right side only on hover without changing the menu's width. The API is `Mini-map Menus/Menu-Kit.md` → API.
 
 ## Will It Fit
 
@@ -175,6 +180,10 @@ All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 
 13. **Control Freak's Shift + Right-Click toggles All Alerts.**
 14. **Good to Go's rows need no combat guard.**
+
+15. **More Features goes in a flyout**, behind one row that counts its switches On and Off.
+16. **An editable list's rows remove on click**, and its Clear asks first.
+17. **Every list edit prints a chat line**, the same sentence from the row, the button and the key binding.
 
 ## Using the Mock Kit
 

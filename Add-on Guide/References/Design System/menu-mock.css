@@ -215,6 +215,38 @@
 	gap: 4px;
 }
 
+/* Right side shown only while the row is hovered (rightOnHover); still laid out, so the menu keeps its width. */
+.gg-row .r.hover-only {
+	visibility: hidden;
+}
+.gg-row:hover .r.hover-only,
+.gg-row:focus-visible .r.hover-only {
+	visibility: visible;
+}
+
+/* The delete icon on a click-to-remove row (UI-GroupLoot-Pass-Up), drawn as a stand-in. */
+.gg-remove {
+	display: inline-block;
+	position: relative;
+	width: 12px;
+	height: 12px;
+}
+.gg-remove::before,
+.gg-remove::after {
+	content: "";
+	position: absolute;
+	left: 5px;
+	top: 0;
+	width: 2px;
+	height: 12px;
+	background: #e04030;
+	filter: drop-shadow(0 0 1px #000);
+	transform: rotate(45deg);
+}
+.gg-remove::after {
+	transform: rotate(-45deg);
+}
+
 /* Blizzard's submenu arrow and check mark, drawn as stand-ins. */
 .gg-arrow {
 	width: 0;

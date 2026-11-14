@@ -9,7 +9,7 @@
 
   Menu entries are Menu-Kit's (Style Guide → MINIMAP MENU → Row Kinds):
     { kind, left, right, leftColor, rightColor, on, selected, submenu,
-      onClick, tooltip, c }
+      rightOnHover, onClick, tooltip, c }
   plus the two kinds the Design System proposes, `item` and `value`
   (README → Proposed Kit Changes). Colors are ns.PALETTE keys (TITLE, INFO,
   BODY, HELP, TEXT, ON, OFF, SEPARATOR, MUTED), a quality (q:poor … q:epic),
@@ -285,7 +285,7 @@
 				}
 				if (rightText) {
 					var r = document.createElement("span");
-					r.className = "r";
+					r.className = "r" + (entry.rightOnHover ? " hover-only" : "");
 					r.innerHTML = rightText;
 					row.appendChild(r);
 				}

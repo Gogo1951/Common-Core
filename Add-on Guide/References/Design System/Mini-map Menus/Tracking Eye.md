@@ -1,8 +1,8 @@
 # Tracking Eye: Mini-map Menu
 
-**State:** live on `main` ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): the clicks are back on their rows, with More Features, the Features section and one refresh. Still to do: the Code section's move onto Menu-Kit v2, the maintainer's once the kit lands in Common-Core; nothing a player sees changes.
+**State:** live on `main` ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): the clicks are back on their rows, with More Features, the Features section and one refresh. Still to do: the Code section's move onto Menu-Kit v2, the maintainer's once the kit lands in Common-Core; the one change a player sees is More Features moving into its flyout.
 **Live code:** [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`), [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`).
-**Next:** its move onto Menu-Kit v2 (`Menu-Kit.md`).
+**Next:** its move onto Menu-Kit v2 (`Menu-Kit.md`), where `Kit.MoreFeatures` puts More Features in a flyout with its count (Style Guide → MINIMAP MENU → Features Mirror).
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31). Closed by [Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32).
 
