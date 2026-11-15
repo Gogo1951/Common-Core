@@ -32,7 +32,7 @@ Do not touch code before Phase 3, and do not begin Phase 3 until the Phase 2 ans
 
 4. **Verify — required.** Script it where possible:
     - **Parse whole assignments, not physical lines** (Style Guide → LOCALIZATION → Reading Locale Files).
-    - **No dangling code references** — no `.lua`/XML reference points at a key that was renamed or removed. Match **bare string literals** as well as `L["KEY"]`: keys reached through a manifest field (`mapping.formatKey`, `channel.labelKey`, and the like) never appear in the explicit `L["…"]` form, so an `L["KEY"]`-only scan wrongly flags them as unused.
+    - **No dangling code references** — no `.lua`/XML reference points at a key that was renamed or removed. Match **bare string literals** as well as `L["KEY"]`: keys reached through a manifest field (`mapping.formatKey`, `channel.labelKey`, and the like) never appear in the explicit `L["…"]` form, so an `L["KEY"]`-only scan wrongly flags them as unused. Skip `.claude/`, whose worktrees hold old copies of the code.
     - **Placeholders** — every changed value keeps the count, type, and order its call sites pass.
     - **Parse** — `enUS.lua` and every touched code file still parse, through `stylua --syntax lua51`, `luac -p` and luacheck.
     If anything fails, fix it before finishing.
