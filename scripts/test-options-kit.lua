@@ -194,7 +194,7 @@ end)
 local line = ex.args.lines.args.cell1.name()
 check(
 	ex.args.space
-		and ex.args.label.name():find("Example:")
+		and ex.args.label.name():find("Example|r$")
 		and line:find("Aero")
 		and line:find("UI%-RaidTargetingIcon_4"),
 	"Example: spacer, its own label line, then the sent line with You and the marker icon"
@@ -203,6 +203,44 @@ local two = Kit.Example(4, nil, function()
 	return { "one", "two" }
 end)
 check(two.args.lines.args.cell1.name() == "one\ntwo", "Example takes several lines, one under the other")
+for _, old in ipairs({ "Example: %s", "Beispiel : %s", "\231\164\186\228\190\139\239\188\154%s" }) do
+	Kit.SetText({ example = old })
+	local label = Kit.Example(5, nil, function()
+		return ""
+	end).args.label.name()
+	check(
+		not label:find(":") and not label:find("\239\188\154") and not label:find(" |r"),
+		"Example label drops a locale's colon: " .. old
+	)
+end
+Kit.SetText({ example = "Example" })
+-- Tint reopens its color only where the text closes more than it opened, so the color stack never grows.
+local function MaxDepth(text)
+	local depth, deepest = 0, 0
+	for code in text:gmatch("|(.)") do
+		if code == "c" then
+			depth = depth + 1
+			deepest = math.max(deepest, depth)
+		elseif code == "r" then
+			depth = depth - 1
+		end
+	end
+	return deepest, depth
+end
+local coins = "|cffffffff5|r|cffffd700g|r |cffffffff3|r|cffc7c7cfs|r |cffffffff9|r|cffeda55fc|r"
+local printed = "|cff00bbffMagic Eraser|r: |cffffffffSold 9 items for " .. coins .. ".|r"
+local joined = table.concat({ Kit.PrintedLine(printed), Kit.PrintedLine(printed) }, "\n")
+local deepest, open = MaxDepth(joined)
+check(deepest <= 3 and open == 0, "PrintedLine: two joined lines stay shallow and close every color they open")
+check(
+	Kit.PrintedLine(printed) == "|cffFFFFFF" .. printed .. "|r",
+	"PrintedLine leaves a line that closes its own colors untouched inside its tint"
+)
+check(Kit.Tint("TITLE", "a|rb") == "|cffFFD100a|r|cffFFD100b|r", "Tint reopens after a stray |r")
+check(Kit.Tint("TITLE", "a||rb") == Kit.Color("TITLE", "a||rb"), "Tint leaves an escaped pipe alone")
+local sent = Kit.SentLine("PARTY", "Need " .. items[6948][2] .. " x2 " .. items[6948][2])
+deepest, open = MaxDepth(sent)
+check(deepest <= 3 and open == 0, "SentLine with links stays shallow")
 local lr = Kit.LabelRow(5, nil, "Output", { type = "select" }, nil, "Reaches only your layer.")
 check(
 	lr.args.row and lr.args.helper.args.cell2.width == Kit.CONTROL_WIDTH,

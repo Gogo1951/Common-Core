@@ -947,7 +947,7 @@ var CATALOG = [
 			return [C("TITLE", "Magic Eraser") + C("SEPARATOR", " // ") + C("TEXT", "Clutter Report: 9 bag slots, worth ") + GG.money(264), C("TEXT", "4 ") + icon(25) + C("q:poor", "[Chipped Claw]") + C("TEXT", ", 3 ") + icon(40) + C("q:poor", "[Broken Fang]")];
 		})]);
 	}],
-	["Kit.Example", "The finished line, in the colors of where it goes, closing its control's field set: a spacer above, the silver <code>Example:</code> label on its own line, the message indented under it. Built through the feature's own builder, so a reworded message rewords its Example.", function () {
+	["Kit.Example", "The finished line, in the colors of where it goes, closing its control's field set: a spacer above, the silver <code>Example</code> label on its own line, no colon, the message indented under it. Built through the feature's own builder, so a reworded message rewords its Example.", function () {
 		return seq([K.LabelRow(null, null, "Announce", select(modes, function () { return demo.mode; }, function (v) { demo.mode = v; })), K.Example(null, function () { return demo.mode === "NEVER"; }, function () {
 			return demo.mode === "SAY" ? '<span style="color:#ffffff">[' + C(GG.CLASS.DRUID, "Aero") + "] says: Taunt missed on Ragnaros!</span>" : '<span style="color:#aaaaff">[Party] [' + C(GG.CLASS.DRUID, "Aero") + ']: Taunt missed on <img alt="" style="width:12px;height:12px;vertical-align:-2px;background:#eee;border-radius:50%"> Ragnaros!</span>';
 		})]);

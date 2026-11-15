@@ -49,7 +49,7 @@ local Kit = ns.OptionsKit
 
 -- Once at load, in Options/Options-Utilities.lua: every string the kit draws.
 Kit.SetText({
-	example = L["SAMPLE_EXAMPLE"], -- "Example: %s"
+	example = L["SAMPLE_EXAMPLE"], -- "Example"
 	loading = L["LOADING_ITEM"], -- "Loading ID: %d"
 	soundPreview = L["OPTIONS_SOUND_PREVIEW_DESCRIPTION"],
 	inCombat = L["CHAT_OPTIONS_IN_COMBAT"],
@@ -97,7 +97,7 @@ Widths are AceConfig units (170 points each), so they sit outside the Spacing Sc
 | `Kit.ToggleRow(order, toggle, { control, preview, helper, hidden })` | inline group | A switch with its one setting beside it, a sound's speaker past the end and a helper line under the setting; all leave while it's off; a caption too long for the label column (measured) sends them to the line below |
 | `Kit.SoundPreview(play)` | execute | The speaker for `ToggleRow` |
 | `Kit.HideAllExcept(args, isHidden, keep)` | — | Hides a page behind its switch, keeping the named args, composed with each arg's own `hidden` |
-| `Kit.Color(key, text)`, `Kit.Tint(key, text)` | string | Palette key or hex; `Tint` reopens the color after every `\|r` |
+| `Kit.Color(key, text)`, `Kit.Tint(key, text)` | string | Palette key or hex; `Tint` reopens the color only where a `\|r` closes more than the text opened, so the color stack never grows |
 
 ### Settings
 
@@ -138,8 +138,8 @@ ns.FEATURES = {
 |---|---|---|
 | `Kit.StatusLine(getText, order)` | Silver | Only while `getText()` returns text: something elsewhere changes what this page does |
 | `Kit.WarningLine(text, isWrong, order)` | Red | Only while `isWrong()`: the settings mean nothing will happen |
-| `Kit.Example(order, hidden, getLines)` | A spacer, the silver `Example:` label on its own line, then the line, or each line of a list, indented and aligned | Last in its control's field set, whenever that control is on |
-| `Kit.PrintedLine(printLine)` | A print, retinted after each link | Pass the add-on's print helper's finished string |
+| `Kit.Example(order, hidden, getLines)` | A spacer, the silver `Example` label on its own line (a trailing colon in the locale is trimmed), then the line, or each line of a list, indented and aligned | Last in its control's field set, whenever that control is on |
+| `Kit.PrintedLine(printLine)` | A print in TEXT; a helper that closes its own colors passes through unchanged inside the tint | Pass the add-on's print helper's finished string |
 | `Kit.SentLine("PARTY" or "WHISPER", message)` | `[Party] [You]: …` or `[You] whispers: …` in the player's channel color, markers as icons | |
 | `Kit.You()`, `Kit.ClassColor(classFile)`, `Kit.Markers(text)` | The current character in class color; a class's hex; `{rtN}` as icons | |
 
@@ -183,7 +183,7 @@ The kit reads five strings, one name in every add-on. An add-on renames its exis
 
 | Key | enUS | Renamed from |
 |---|---|---|
-| `SAMPLE_EXAMPLE` | `Example: %s` | `OPTIONS_EXAMPLE` (Magic Eraser, GogoLoot) |
+| `SAMPLE_EXAMPLE` | `Example` | `OPTIONS_EXAMPLE` (Magic Eraser, GogoLoot) |
 | `LOADING_ITEM` | `Loading ID: %d` | `SAMPLE_LOADING_ITEM` (Tracking Eye), `ITEM_LOADING` (GogoLoot) |
 | `OPTIONS_SOUND_PREVIEW_DESCRIPTION` | `Play this sound now, whether or not the sound is turned on.` (Control Freak's) | `ALERT_SOUND_PREVIEW_DESC` (Control Freak), `NOTIFICATIONS_SOUND_PREVIEW_DESCRIPTION` (Thanks for the Buff), `OPTIONS_RESTOCKER_SOUND_PREVIEW` (Good to Go), `ZONE_SHARE_SOUND_PREVIEW` (Pretty Wide Quest Log); the one wording replaces theirs |
 | `OPTIONS_RESET` | `Reset` | new; Control Freak reads the GlobalString `RESET` |

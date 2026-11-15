@@ -859,6 +859,8 @@ end
 
 Slash commands inside printed messages are wrapped in `C_INFO`.
 
+**A report with a total prints the total first, then the per-item lines.** Hold the detail lines until the total is known (Magic Eraser's Auto-Vend holds each sale line until the merchant closes, then prints the summary and the sales under it). Its Example follows the same order.
+
 ### Sent Messages (Other Players)
 
 All cross-player chat routes through one entry point so the marker, name, and separator are handled in one place.
@@ -1345,7 +1347,7 @@ descCommands = ns.OptionsDesc(
   Question Label                      Field
       Sub-option rows, if any
   -- spacer
-  Example:
+  Example
       Message
       Message, line 2
   ```
@@ -1380,9 +1382,11 @@ Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks f
 
 **Every feature that prints or sends a chat line shows one Example line on its panel, drawn exactly as the line will arrive with the settings the player has chosen.** An Example shows the line the player will see most often, such as a typical line from the body of a longer report, never its title or header; a feature that prints a short block together (a two-line report) may show those lines, one under the other. The player should see the finished line, colors, links and marks included, before it happens.
 
-- **It closes the field set of the control it shows** (`Kit.Example`): a spacer, then the silver `Example:` label on a line of its own, then the message line or lines under it, indented like a sub-option and aligned with each other. It comes after the control's helper line and sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows. The label is `SAMPLE_EXAMPLE` with nothing in its `%s`.
+- **About two rendered lines, at most.** Two messages that are the same message with a different reason (Magic Eraser's "can now be erased" for a completed quest and for a quest you can never take) show as one. Show several only when how they look together matters, such as a total over its detail line (MESSAGES → Print Outs).
+
+- **It closes the field set of the control it shows** (`Kit.Example`): a spacer, then the silver `Example` label on a line of its own, no colon, then the message line or lines under it, indented like a sub-option and aligned with each other. It comes after the control's helper line and sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows. The label is `SAMPLE_EXAMPLE`.
 - **The Example follows the selected option.** It is drawn in the form the current setting picks: a Print setting shows the print, an Announce setting shows party chat, and nothing shows a destination the player hasn't chosen. Give it a function `name` so it redraws the moment the dropdown changes. When a feature has several rows with their own dropdowns, the Example follows the row its line belongs to: a line about the player's own cast follows the player's row, a line about someone else's follows the others' row.
-- **The label is silver, the lines are not.** `L["SAMPLE_EXAMPLE"] = "Example: %s"` is drawn with nothing in its `%s`, trailing space trimmed, as its own `C_HELP` line. The lines under it carry their own colors.
+- **The label is silver, the lines are not.** `L["SAMPLE_EXAMPLE"] = "Example"`, the bare word in every locale, drawn as its own `C_HELP` line; the kit trims a trailing colon from a locale that still has one. The lines under it carry their own colors.
 - **Draw the line in the colors of where it goes:**
 
 |Where the line goes|Drawn as|Color|
@@ -1397,7 +1401,7 @@ Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks f
 - **Bosses come from Molten Core and Blackwing Lair.** Every raider knows them, and a real boss reads as a real alert where "Boss Name" reads as unfinished UI. Their names differ by client, so they live in the locale (`L["SAMPLE_BOSS_*"]`, with a TRANSLATORS note to use the client's exact name).
 - **A spell or item is a real link, never a placeholder.** Build it from an ID in the flavor's data: a spell in the client's spell-link blue (`ns.SPELL_LINK_COLOR`, `71D5FF`), an item in its quality color (Item-quality colors, COLORS). The ID is something the feature really handles, such as a quest item for an eraser or a tank's own taunt for a taunt alert. Words like "Item Link", "Example Item" or "Some Spell" never appear. An item's link can be nil on first ask; the function `name` fills it in on the next redraw, the way GAME NAMES → Traps describes for items that load late.
 - **A target marker is drawn as the mark.** A sent line carries `{rtN}`, which the receiving client turns into the icon, so the Example swaps the token for its `|T...|t` texture. A line about a mob puts the skull on it, since that is what a real raid does.
-- **Re-open the line's color after every `|r`.** A chat frame falls back to the channel's color when a link closes; a panel falls back to white, so tint the line again after each `|r` it holds.
+- **Re-open the line's color only where it would fall back to white** (`Kit.Tint`, which `Kit.PrintedLine` and `Kit.SentLine` use). A panel falls back to white, not the channel's color, when a `|r` closes more than the line opened; a link or coin color the line opens and closes itself returns to the line's color on its own. Never re-open after every `|r`: the game keeps open colors on a short stack, and on a two-line Example the extra opens push the second line's coins to white.
 - **Render it through the feature's own builder**, the call that prints or sends the real line (`ns:BuildAnnounceMessage`, the print helper), with the same parts the feature passes. Never hand-copy the text: rewording a message must change its Example too. Game names come from the client by ID.
 - **A whisper gets its own Example**, under the toggle that sends it, drawn as the whisper the other player receives.
 

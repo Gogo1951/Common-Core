@@ -692,7 +692,7 @@
 				c: "status",
 			};
 		},
-		// Spacer, the silver Example: label on its own line, then the message
+		// Spacer, the silver Example label on its own line (no colon), then the message
 		// line or lines indented under it.
 		Example: function (order, hidden, getLines) {
 			return {
@@ -704,7 +704,7 @@
 				c: "example",
 				args: {
 					space: kit.Spacer(1),
-					label: { type: "description", name: color("HELP", "Example:"), fontSize: "medium", order: 2 },
+					label: { type: "description", name: color("HELP", "Example"), fontSize: "medium", order: 2 },
 					lines: kit.SubRow(3, null, [
 						{
 							type: "description",

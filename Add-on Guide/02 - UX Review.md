@@ -46,6 +46,7 @@ A tooltip the add-on draws on hover over its own mini-map button, arrow or frame
 - Only this character's rows show; the options panel still shows every setting.
 - A controller's cursor reaches every row and flyout.
 - The menu and the root panel's Features section are one list: same features, same order, same names, the rest under More Features (Features Mirror).
+- More Features is one row that opens a flyout, its switches counted On and Off on the row. That's the design, not a hidden setting: don't flag it, or ask for its switches back in the main menu.
 - The menu opens from the button's corner per Style Guide → MINIMAP MENU → Placement.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
@@ -71,12 +72,12 @@ Every options panel is built from Options-Kit, the shared kit in Common-Core's `
   -- spacer
   Question Label                      Field
   -- spacer
-  Example:
+  Example
       Message
       Message, line 2
   ```
 
-- **Examples** close their field set: a spacer, `Example:` on its own line in silver, the message line or lines indented under it, drawn as they'll arrive with real names and links. Each leaves while its control is off.
+- **Examples** close their field set: a spacer, `Example` on its own line in silver with no colon, the message line or lines indented under it, drawn as they'll arrive with real names and links, about two lines at most, a report's total before its details. Each leaves while its control is off.
 - **Hidden or gray:** a setting under a switch that's off is hidden; gray only means the player can't change it here and now.
 - **Sub-panels:** the page title names the parent ("Farm Mode > Abilities"). While the parent feature is off, the sub-panel stays and opens with a silver line naming the switch.
 - **Colors:** status lines silver; red only for a warning that nothing will happen; headers gold, captions white.

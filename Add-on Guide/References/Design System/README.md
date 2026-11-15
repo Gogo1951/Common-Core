@@ -232,7 +232,7 @@ Nine add-ons, about 28,000 lines of options code, one shared idea and nine copie
 |---|---|
 | TITLE | Section headers, the page title, nothing else. Labels and captions are white. |
 | BODY | Descriptions, captions, labels. |
-| HELP | Sub-option captions, status lines, the `Example:` label, a list's one-word tag, the copy caption, a key binding's what-it-does line. |
+| HELP | Sub-option captions, status lines, the `Example` label, a list's one-word tag, the copy caption, a key binding's what-it-does line. |
 | INFO | Slash commands, click names, an editable message's tokens. |
 | OFF | Only a warning line: the settings mean nothing will happen (none ticked, too long to send). |
 | MUTED | Not bound, Loading, a disabled caption. |
@@ -260,7 +260,7 @@ Options-Kit's pieces (`Options Panels/Options-Kit.md` → API), each drawn in th
 | Feature switch | `Kit.FeatureSwitch` | One Enable switch from `ns.FEATURES`, drawn on the root page and atop its panel |
 | Status line | `Kit.StatusLine` | Silver, shown only while something elsewhere changes this page |
 | Warning line | `Kit.WarningLine` | Red, shown only while nothing will happen |
-| Example | `Kit.Example` | A spacer, the silver `Example:` label on its own line, then the finished line or lines in their own colors, indented and aligned |
+| Example | `Kit.Example` | A spacer, the silver `Example` label on its own line, then the finished line or lines in their own colors, indented and aligned |
 | Reset row | `Kit.ResetRow` | A caption and a Reset button in the control column, gray at default |
 | Sound preview | `Kit.SoundPreview` | A 16-point speaker past the row's end |
 | Item list | `Kit.ItemList` | Add from Bags, Add Item, one row per item, Restore and Clear at the foot |
@@ -284,7 +284,7 @@ Options-Kit's pieces (`Options Panels/Options-Kit.md` → API), each drawn in th
   -- spacer
   Question Label                      Field
   -- spacer
-  Example:
+  Example
       Message
       Message, line 2
   ```
@@ -301,7 +301,7 @@ Each add-on's spec in `Options Panels/` is the maintainer's work order, as Wave 
 | Order | Spec | Options code | Biggest change |
 |---|---|---|---|
 | 0 | [Options-Kit](Options%20Panels/Options-Kit.md) | (the kit) | **Done:** `addon-kits/Options-Kit/`, sync script, CI check, smoke test |
-| 1 | [Magic Eraser](Options%20Panels/Magic%20Eraser.md) | 2,313 lines | The proof; real items in its Examples |
+| 1 | [Magic Eraser](Options%20Panels/Magic%20Eraser.md) | 2,313 lines | **Live on the kit.** The proof; real items in its Examples |
 | 2 | [Tracking Eye](Options%20Panels/Tracking%20Eye.md) | 1,500 | `click` and `gate` on `ns.FEATURES` |
 | 3 | [Play It Forward](Options%20Panels/Play%20It%20Forward.md) | 1,830 | One switch per feature; two resets ask first |
 | 4 | [Water Dispenser](Options%20Panels/Water%20Dispenser.md) | 1,885 | `ns.FEATURES`; Dispensed Items under Dispense |
