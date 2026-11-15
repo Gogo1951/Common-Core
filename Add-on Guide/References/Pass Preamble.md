@@ -52,7 +52,7 @@ Each issue's fix prompt is copy-and-run ready: a fenced code block (no language 
 
 ## Batch apply
 
-When a report contains at least one issue, follow the last issue with a one-sentence **Batch apply** note telling the maintainer they can paste any subset of the fix prompts back in a single message — edited or reordered — together with the line below, and each will run one at a time with the same rigor. Give that line by itself in a fenced code block:
+When a report contains at least one fix or feature prompt (`Issue N` or `Feature N`), follow the last one with a one-sentence **Batch apply** note telling the maintainer they can paste any subset of the prompts back in a single message — edited or reordered — together with the line below, and each will run one at a time with the same rigor. Give that line by itself in a fenced code block:
 
 ```
 Apply these in dependency order, one at a time; after each, run stylua --syntax lua51 + luac + luacheck (+ a sanity check where relevant) and stop and report if anything fails; give me a one-line status per issue, then tell me they're done and give me the Copy to Other Flavors command.
