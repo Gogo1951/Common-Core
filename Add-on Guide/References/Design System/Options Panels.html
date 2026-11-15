@@ -751,7 +751,7 @@ ADDONS.push({
 			{ label: "Restocker", build: stub("Restocker", "Sound row as ToggleRow with Kit.SoundPreview.") },
 			{ label: "Enhanced Spellbook", build: stub("Enhanced Spellbook", "Delete-macros buttons in the control column, still confirmed.") },
 			{ label: "Consumable Macros", build: stub("Consumable Macros", "IconCheckBox widget stays."), children: [sub("Consumable Macros", "Class &amp; Race"), { label: "Ignore List", build: stub("Consumable Macros &gt; Ignore List", "Kit.ItemList replaces Good to Go's own builder.") }] },
-			{ label: "Rank Watch", build: stub("Rank Watch", "Track All / Track None gain tooltips."), children: [sub("Rank Watch", "Reported Ranks"), sub("Rank Watch", "Ignored Players")] },
+			{ label: "Rank Watch", build: stub("Rank Watch", "Unchanged."), children: [sub("Rank Watch", "Reported Ranks"), sub("Rank Watch", "Ignored Players")] },
 			{ label: "Inventory Report", build: stub("Inventory Report", "Unchanged.") },
 			{ label: "Readiness Report", build: stub("Readiness Report", "Its double-width Reset becomes a ResetRow, still confirmed.") },
 		].concat(tail());
@@ -760,7 +760,7 @@ ADDONS.push({
 	changes: [
 		["seen", "Features: no blank line between the two groups; menu order (Decision 5)."],
 		["seen", "Key binding rows on the grid (today caption 2.1, key 0.65, Set Key 0.55)."],
-		["seen", "Track All / Track None gain tooltips; Readiness Report's Reset and Enhanced Spellbook's delete buttons sit in the control column."],
+		["seen", "Readiness Report's Reset and Enhanced Spellbook's delete buttons sit in the control column."],
 		["code", "<code>FEATURE_SWITCHES</code> becomes <code>ns.FEATURES</code> (<code>confirmOff</code> → <code>confirm</code>, <code>notifies</code> goes); its own item list gives way to <code>Kit.ItemList</code>."],
 	],
 });

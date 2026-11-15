@@ -30,7 +30,7 @@ Right-Click                                          Conjure   (silver)
 Target a lower-level player to conjure for their level.
 Mana Gem Macro …
 Restocker Report                   (while the Restocker is on)
-  [icon] Arcane Powder                                  4/20   (over 8: a count; stocked: green line; empty list: body line)
+  [icon] Arcane Powder                                  4/20   (out, then low; over 8: a count; stocked: green line; short but nothing low or out: gray line; empty list: body line)
 Ignore List                        (while this character's list has items)
   [icon] Conjured Sweet Roll                                   (over 8: a count)
 Middle-Click                               Clear Ignore List
@@ -55,8 +55,9 @@ Shift + Middle-Click
 | Toggle | action | `MENU_TOGGLE` | Shift + Left-Click | ShiftLeftButton | |
 | Restocker | status | the feature's name, as the root panel's switch names it | On / Off, never a count | | always |
 | | description | `MENU_RESTOCKER_DESCRIPTION` | | | |
-| Each order | item | `ns.GetItemLabel(itemID)` | `MINIMAP_RESTOCKER_ITEM_COUNT` have/wanted, BODY | | Restocker on; `Kit.List`, 8 max, from `ns.BuildGroceryList()` |
+| Each order | item | `ns.GetItemLabel(itemID)` | `MINIMAP_RESTOCKER_ITEM_COUNT` have/wanted, BODY | | Restocker on; `Kit.List`, 8 max, from `ns.BuildRestockReminderLists()`: out rows, then low rows |
 | Stocked | description, `leftColor = "ON"` | `MINIMAP_RESTOCKER_STOCKED` | | | on, list has rows, nothing to buy |
+| Nothing Low | note | `MINIMAP_RESTOCKER_NOTHING_LOW` (Nothing is low or out.) | | | on, list is short but nothing is low or out |
 | Empty | note | `MINIMAP_RESTOCKER_EMPTY` | | | on, list has no rows |
 | Toggle | action | `MENU_TOGGLE` | | none (all six clicks are taken) | tooltip is the Restocker's Enable switch |
 | Open | action | `MENU_OPEN` | Shift + Right-Click | ShiftRightButton | Restocker on |
@@ -123,7 +124,7 @@ On a mage, a rogue, a hunter and a warrior:
 
 - [ ] Each click in Button Clicks does its job with the menu open and closed, with the same chat lines as today.
 - [ ] Buff Food reads the waiting label in gray while its When to Use doesn't hold.
-- [ ] Restock List: orders listed (8 max, then *N more*), stocked, empty and off each draw as specified; Toggle and Open work.
+- [ ] Restock List: orders listed (out, then low; 8 max, then *N more*), stocked, nothing low, empty and off each draw as specified; Toggle and Open work.
 - [ ] Each class sees its own macro flyout and items; a warrior sees neither.
 - [ ] The Spellbook page's macro tooltips still show their notes.
 - [ ] A controller's cursor reaches every row and the flyout.

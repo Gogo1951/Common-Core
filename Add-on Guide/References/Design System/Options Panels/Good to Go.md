@@ -40,7 +40,6 @@ The caption keys mix three families today (`BUFF_DUTY_ENABLE`, `OPTIONS_RESTOCKE
 - **Enhanced Spellbook:** the two delete-macros buttons keep their confirm; width moves from 1.5 to `Kit.CONTROL_WIDTH` beside a caption (`Kit.ResetRow` shape without the gray, Decision 10).
 - **Consumable Macros:** the IconCheckBox widget stays. Mode selects become `Kit.ToggleRow` or `Kit.SubLabelRow`.
 - **Ignore List:** `Kit.ItemList` (Good to Go's own builder goes; the kit's adds the existence check Good to Go's has, and Clear). The profile-scoped tree stays; `Kit.PrepareTree` sets its 176 sidebar.
-- **Rank Watch > Tracked:** Track All and Track None gain their `desc` tooltips (Helper Text Lives in the Tooltip: every control carries its label and one explanation).
 - **Readiness Report:** its Reset becomes `Kit.ResetRow` (today `width = "double"`), still ungated and confirmed.
 
 ## Onto the Kit
@@ -54,7 +53,7 @@ The caption keys mix three families today (`BUFF_DUTY_ENABLE`, `OPTIONS_RESTOCKE
 
 ## Strings
 
-`OPTIONS_RESTOCKER_SOUND_PREVIEW` → `OPTIONS_SOUND_PREVIEW_DESCRIPTION`; `OPTIONS_RESET` joins; the Track All / Track None tooltips are new.
+`OPTIONS_RESTOCKER_SOUND_PREVIEW` → `OPTIONS_SOUND_PREVIEW_DESCRIPTION`; `OPTIONS_RESET` joins.
 
 ## Keeps
 
