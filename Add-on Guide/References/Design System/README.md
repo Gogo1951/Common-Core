@@ -132,7 +132,7 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 | Tracking Eye | **Live.** Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2, once the kit lands. |
 | Water Dispenser | Tooltip: one feature, one report, 2 clicks | One feature block and the Dispense Report. The first to convert. |
 | Control Freak | Tooltip: three features, 4 clicks | All Alerts as a master switch, then the three feature blocks. |
-| GogoLoot | Tooltip: four features, a report, 5 clicks | Locked Items, then three feature blocks and More Features; the roll read-back as value rows. |
+| GogoLoot | **Live.** Locked Items, then Automated Rolls (Left-Click), Automated Opening (Right-Click) and Loot Announcements (Shift + Left-Click) with the roll read-back as value rows, More Features in a flyout, and Options (Shift + Middle-Click); Shift + Right-Click held for the Master Looting Window | The same menu on Menu-Kit v2, once the kit lands. |
 | Magic Eraser | **Live.** Erase (Left-Click), Protect (Right-Click), Clear Protect List (Middle-Click, asks first), Auto-Vend (Shift + Right-Click) and Options on their rows; click-to-remove Protect List rows; More Features in a flyout with its count | The same menu on Menu-Kit v2, once the kit lands. |
 | Good to Go | Tooltip: an item highlight, three features, class notes, two reports, 7 clicks | Current Food, three feature blocks (Restock List carrying its report), class items, a *[Class] Macros* flyout, Ignore List. |
 
