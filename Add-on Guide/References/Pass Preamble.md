@@ -88,7 +88,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 
 **After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` needs Validate Data reports, which exist only once step 4 is tested in game, so the maintainer runs its prompt after that test; step 4 says first whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no prompt. Step 7's prompt for step 8 comes with one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
 
-In the Claude desktop app, offer each one with the app's suggest-task tool (its card has a button that starts it): one card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Also print that line in its own fenced block, so it can be pasted where no card shows:
+Offer each one with the suggest-task tool (`spawn_task`; its card has a button that starts the pass) whenever it is in your tool list. Look for it by name before writing the reply, since it can load partway through a session; don't decide from which app you think you're in. One card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Also print that line in its own fenced block, so it can be pasted where no card shows:
 
 ```
 Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it as the request. Session Prep already ran in this folder; skip it.
