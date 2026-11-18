@@ -222,14 +222,14 @@ Default **item/spell lists** live in the flavor folders (DATA → Flavor Folders
 
 **How the data was made goes in one block comment at the end of the file**, titled `How We Got the Data`, under six headings that are always present, in this order. A heading with nothing under it reads `None.`, so a reader knows it was checked rather than forgotten. A file declaring more than one table keeps one block and names the table wherever its notes or query differ. **Only the Data Review lays these files out or edits their comments**; every other pass leaves them alone.
 
-- **Last Validated** — the date the Data Review last applied a Validate Data report from this client to the file, then the client and build from the report header. Without one it reads `Never.`, or `Never. Copied from Data/TBC/.` for a file copied from another folder; a pass line that predates dates keeps its client and build after `Undated`. **In a folder a TOC lists, a date over six months old, or none, is a finding.**
+- **Last Validated** — the date the Data Review last checked the file against this client's own data, then the source (`wago.tools`, or `Validate Data` for an in-game report) and the client and build it read. Without one it reads `Never.`, or `Never. Copied from Data/TBC/.` for a file copied from another folder; a pass line that predates dates keeps its client and build after `Undated`. **In a folder a TOC lists, a date over six months old, or none, is a finding.**
 - **Notes** — the most important part, so write it for a person, not a database. Plain-English bullets saying what belongs in the table and why: what the rows have in common, what's left out and why, and what each computed field means and which code reads it. "Quest items that drop in multiples, so the player can end up with a spare after the turn-in," never the flag bits that find them. Hand-picked IDs and the reason they're hand-picked go here too. Notes is never `None.`: a file that arrives without them gets them written from its rows and the code that reads them.
 - **SQL (CMaNGOS)** — the real query that pulled the rows, written against the CMaNGOS schema, after a line naming the database it ran against (`classic-db`, `tbc-db`, `wotlk-db`), so the table stays regenerable. Never a reconstruction: a query nobody ran to build these rows is fiction. Without one, the heading holds `TODO: Add SQL Query`, a sanctioned marker that never blocks release.
 - **Wowhead** — the URL of every Wowhead listing the rows came from or were checked against. A URL is a pointer, not a regenerable query, so it never stands in for the SQL.
 - **wago.tools** — the URL of every wago.tools table the rows came from or were checked against, at the build used: `https://wago.tools/db2/{Table}?build={Client}.{Build}`.
 - **QuestieDB** — the URL of every QuestieDB raw table the rows were checked against (Data Review → phase 3).
 
-No source is trusted across flavors: the Anniversary client renumbered items and abilities that a CMaNGOS database still lists under their old IDs. So a query or URL from another flavor's source is a lead, and only a Validate Data report from this client earns a Last Validated date.
+No source is trusted across flavors: the Anniversary client renumbered items and abilities that a CMaNGOS database still lists under their old IDs. So a query or URL from another flavor's source is a lead, and only this client's own tables at a named build, or its own Validate Data report, earn a Last Validated date.
 
 ```lua
 local _, ns = ...
@@ -248,7 +248,7 @@ ns.ALLOWED_DELETE_AMMO = {
 How We Got the Data
 
 Last Validated
-	2026-10-04, WoW Forever 1.60.1.70205
+	2026-10-04, wago.tools, WoW Forever 1.60.1.70205
 
 Notes
 	- Every arrow and bullet on this client, leaving out test, monster, deprecated and placeholder items.
@@ -977,7 +977,7 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 Live reference: **Tracking Eye**, live on `main` with every rule below in play — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer), [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it: the click table, feature blocks, flyouts, More Features and placement), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) (the button handing its clicks to the menu), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`) and [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`). **Magic Eraser** shows what Tracking Eye doesn't: the More Features flyout and its count, click-to-remove list rows, and a Clear that asks first ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua)). Both add-ons' menu machinery still sits in `Minimap-Menu.lua` until Menu-Kit v2 lands in Common-Core's `addon-kits/Menu-Kit/`; from then on the kit is copied from there. Each section below names the live code that shows it.
 
-Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **An add-on with a conversion spec** has it in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, tracked by a GitHub issue in that add-on's repo. **The specs are the maintainer's work orders:** the UX Review draws one as the add-on's Proposed menu (Menus, Not Tooltips) and its feature prompt builds to it; no other pass acts on one. Where a spec and this section disagree, this section wins. Menu-Kit v2 (`Mini-map Menus/Menu-Kit.md`) is Common-Core work the maintainer runs, never a pass's; until it lands, every conversion copies Tracking Eye's kit from GitHub (Moving a Tooltip to a Menu, step 1).
+Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **An add-on with a conversion spec** has it in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, tracked by a GitHub issue in that add-on's repo. **The specs are the maintainer's work orders:** the UX Review draws one as the add-on's Proposed menu (Menus, Not Tooltips) and its feature prompt builds to it; no other pass acts on one. Once a spec's State opens with `live`, the order is done and the add-on's code is the record. Where a spec and this section disagree, this section wins. Menu-Kit v2 (`Mini-map Menus/Menu-Kit.md`) is Common-Core work the maintainer runs, never a pass's; until it lands, every conversion copies Tracking Eye's kit from GitHub (Moving a Tooltip to a Menu, step 1).
 
 **Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
@@ -1200,7 +1200,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 Row, sub-row and item-list construction: `References/Style Guide - Build Reference.md` → OPTIONS PANEL.
 
-Drawn: `References/Design System/Options Panels.html`, every add-on's tree and pages, Today beside Proposed, and every kit piece. **An add-on with an options spec** has it in `References/Design System/Options Panels/{Add-on Name}.md`. The specs are the maintainer's work orders, as the mini-map menu specs are: the UX Review draws one as the add-on's Proposed panels, its feature prompt builds to it, and no other pass acts on one. Where a spec and this section disagree, this section wins.
+Drawn: `References/Design System/Options Panels.html`, every add-on's tree and pages, Today beside Proposed, and every kit piece. **An add-on with an options spec** has it in `References/Design System/Options Panels/{Add-on Name}.md`. The specs are the maintainer's work orders, as the mini-map menu specs are: the UX Review draws one as the add-on's Proposed panels, its feature prompt builds to it, and no other pass acts on one. Once a spec's State opens with `live`, the order is done and the add-on's code is the record. Where a spec and this section disagree, this section wins.
 
 ### Options-Kit
 

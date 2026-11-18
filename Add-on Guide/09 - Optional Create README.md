@@ -7,10 +7,10 @@
 ## Workflow — five phases (0–4), all required
 
 0. **Read** — the preamble's Read first list, then the add-on's `README.md` (the local file is the raw source; Session Prep pulled it from `main`), its TOCs, `Locales/enUS.lua`, and enough of the code to know what a player gets.
-1. **Research** — the Related Add-ons candidates (section 9), and from them the search vocabulary for the pitch.
+1. **Research** — the Pairs With candidates (section 9).
 2. **Clarify** — only what the record doesn't answer (Style Guide → ASKING THE MAINTAINER). A better pitch over an already-synced one is asked here, as a proposal (Sync duty). An empty phase is normal.
 3. **Write** — `README.md` in the section order below, the pitch last; an infographic for each feature block without an image; every copy of the pitch when it changed.
-4. **Report** — a few lines in chat: what changed, any infographic to convert and upload, the pitch surfaces rewritten, if any, and any clones the research found (Clones of Gogo1951's Add-ons). Then Guide Feedback.
+4. **Report** — a few lines in chat: what changed, any infographic to convert and upload, and the pitch surfaces rewritten, if any. Then Guide Feedback.
 
 ## Voice & Tone
 
@@ -52,7 +52,7 @@ One to three sentences, **255 characters max**, written to be found in CurseForg
 
 **SEO rules:**
 
-- Pack in terms users actually search for. Pull these from the Related Add-ons list — read their titles, descriptions, and tags, and steal the vocabulary that recurs.
+- Pack in terms users actually search for: the words a player types to find what this add-on does.
 - Cover the obvious nouns *and* their synonyms (e.g., "tracking," "minimap tracking," "find herbs," "find ore," "gathering").
 - **Do not name WoW flavors** (Classic, SoD, Forever, Anniversary, Cata Classic, MoP Classic, Retail) in the pitch — not even "Works with Classic and Anniversary." That information lives in Testing & Localization Status, and only there. The pitch sells value; flavor support is metadata.
 - Avoid author-commentary framing like "A smarter X for Y." Lead with what users search for, not with editorializing.
@@ -129,7 +129,7 @@ Numbered list, 4-6 steps.
 - Step 1 is always Install (plain text, not bolded) with **both** the CurseForge and Wago links inline — e.g. *Install the add-on, ideally using [CurseForge](URL) or [Wago](URL).* Pull both URLs from the master list (`References/Gogo Add-ons Complete List.md`).
 - When the add-on has options, step 2 opens them: the slash command, and the mini-map menu when there is a button (Tracking Eye: *Type `/te`, or pick Tracking Eye Options in the mini-map menu, to open the Options Interface.*). This is the README's one mention of a slash command.
 - Last step is a short, funny outcome line in the user's voice, italicised with underscores and in straight quotes (`_"..."_`): a play on a movie line or meme, themed to what the add-on actually does. Examples:
-  - GogoLoot // _"Zug zug your way to record Naxx clears."_
+  - GogoLoot // _"If you ain't first, you're last."_
   - Magic Eraser // _"But wait, there's more bag space!"_
   - Good to Go // _"I love it when a plan comes together."_
   - Tracking Eye // _"All your nodes are belong to us."_
@@ -209,60 +209,27 @@ Always present, verbatim except the GitHub URL. CurseForge and Wago live in Setu
 
 ### 9. `## Related Add-ons`
 
-Research add-ons that overlap with this one. Search broadly — aim to surface **15-20 candidates** — then cut to the cap below before writing.
+**Pairs With only:** add-ons that work well alongside this one. No overlaps or alternatives; where two add-ons really conflict, the add-on checks for the other in game instead.
 
-**Cap: 5 entries per status color.** Selection order within each color:
+**Cap: 5 entries.** Selection order:
 
-1. **Gogo1951's own add-ons first.** They always make the cut when they genuinely belong in that color.
-2. **Then highest usage.** Read the Total Downloads figure off each candidate's CurseForge listing and keep the biggest. Downloads are the tiebreaker — not your read of which is the closest competitor, and not a desire to cover one of each feature. A candidate with no CurseForge listing has no figure to read and ranks below every candidate that has one.
-3. **Fewer than five is fine.** A color with three honest entries stays at three; never pad to the cap.
+1. **Gogo1951's own add-ons first,** when they genuinely pair with this one.
+2. **Then highest usage.** Read the Total Downloads figure off each candidate's CurseForge listing and keep the biggest. A candidate with no CurseForge listing ranks below every one that has one.
+3. **Fewer than five is fine.** Never pad to the cap.
 
-**Overlaps and Alternatives need at least 10,000 Total Downloads** on the candidate's CurseForge listing, which keeps the flood of new, AI-generated add-ons out of the list. A candidate below the floor, or with no CurseForge listing, is dropped, however close a match it is. Only two kinds of add-on skip the floor: Gogo1951's own, and one the maintainer names for the list. Pairs With has no floor.
+**Nothing in History appears here too.** History is the ancestry; this is what to run beside it.
 
-**Nothing in History appears here too.** History is the ancestry; this is the current landscape.
+**Where to look:** Gogo1951's own add-ons (`References/Gogo Add-ons Complete List.md`), add-ons this one's code reads or checks for, and the add-ons its players are known to run beside it. No competitor search.
 
-**Where to look:**
-
-- CurseForge — search the relevant category and the add-on's keywords.
-- GitHub — search by topic tag (e.g., `wow-addon`, `wow-classic`) and by feature name.
-- The "See also" / "Related" sections on the top 2-3 results from above.
-- WoWInterface — older add-ons that never moved to CurseForge live here.
-
-**Search broadly.** Don't just search the add-on's name. For each distinct thing the add-on does, run a *separate* search using user-facing terms — synonyms, slang, item types it touches, pain points it solves. An auto-clam-opener should turn up under "clam," "auto open," "lockbox," "container," and any well-known competitor name in that niche (e.g., "clam pulp"). If you can think of an obvious competitor and it's not in your results, search for it directly by name. **Missing the biggest competitor is the most common failure mode in this section.**
-
-**Filter to live add-ons on our flavors.** Every entry runs on at least one client the add-on ships a TOC for and was updated within the last 12 months, both read off its listing. An abandoned competitor, however famous, belongs in History if it's an ancestor, or nowhere.
+**Filter to live add-ons on our flavors.** Every entry runs on at least one client the add-on ships a TOC for and was updated within the last 12 months, both read off its listing.
 
 **Take each URL from the listing's address bar, never from the add-on's title.** CurseForge slugs freeze at the original title, and a guessed slug that works today through a redirect breaks silently later.
 
-**Format:** one `###` sub-section per color in the order below, skipping any color with no entries. Inside each, one `*` bullet per add-on, alphabetical by add-on name. Escape Markdown characters in author names (`enshadowed\_`).
+**Format:** one `### 🟢 Pairs With` sub-section, skipped with the whole section when it has no entries. Inside it, one `*` bullet per add-on, alphabetical by add-on name. Escape Markdown characters in author names (`enshadowed\_`).
 
 > ### 🟢 Pairs With
 >
 > * oscarucb's [RaidBuffStatus](https://www.curseforge.com/wow/addons/raidbuffstatus)
->
-> ### 🟡 Overlaps
->
-> * Galeina's [Consumable Checker](https://www.curseforge.com/wow/addons/consumable-checker)
->
-> ### 🔴 Alternatives
->
-> * ollidiemaus's [Auto Potion](https://www.curseforge.com/wow/addons/auto-potion)
-
-### Clones of Gogo1951's Add-ons
-
-The research turns up clones too: new add-ons, usually AI-generated, that rebuild one of Gogo1951's add-ons instead of sending it a PR. **A clone never goes in the README, whatever its downloads; it goes in the Phase 4 report**, so the maintainer can decide whether to leave a comment. Report a clone of this add-on, and of any other Gogo1951 add-on that turns up along the way. Never post, comment or contact anyone yourself.
-
-**What makes a clone:** it does the same job as one of Gogo1951's add-ons, feature for feature, and it appeared after ours. Most also show a name that plays on ours, a small download count, an AI-written description (emoji headers, stacked dashes, generic feature lists), or a new author with nothing else published. A long-standing competitor with its own approach is not a clone, however close it is.
-
-**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste.
-
-> Hey mate! I noticed quite a bit of overlap between your add-on and {Full Name}. I've already built a lot of that functionality, and I'd love to hear what you have in mind for yours.
->
-> {CurseForge URL}
->
-> Want to work on it together? I'm happy to show you around the code and help you get your ideas into {Full Name}. PRs are always welcome! Come say hi on Discord sometime. I'm always up for talking WoW add-ons or software development. Cheers! (=
->
-> https://discord.gg/eh8hKq992Q
 
 ## What Doesn't Belong Here
 

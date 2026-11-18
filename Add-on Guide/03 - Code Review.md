@@ -15,8 +15,12 @@ It runs after `02 - UX Review.md` and its feature prompts, so it reviews the who
 
 Apply two standards together:
 1. **The Style Guide** (`References/Add-on Creation Rules & Style Guide.md`) — authoritative wherever it speaks.
-2. **Your own judgment** on everything it doesn't cover — correctness, taint and secure-frame usage, event-registration efficiency, combat-time performance, in-combat reads that go secret on WoW Forever's Retail engine (Style Guide → COMPATIBILITY), frame and memory leaks, SavedVariables hygiene, deprecated/removed API for the target client, and localization patterns.
-The guide is the floor: catch everything it catches, then catch more. If your judgment conflicts with the guide on a style matter, follow the guide but flag the disagreement.
+2. **Your own judgment** on what it doesn't cover — correctness, taint and secure-frame usage, event-registration efficiency, combat-time performance, in-combat reads that go secret on WoW Forever's Retail engine (Style Guide → COMPATIBILITY), frame and memory leaks, SavedVariables hygiene, deprecated/removed API for the target client, and localization patterns — held to the bar below.
+If your judgment conflicts with the guide on a style matter, follow the guide but flag the disagreement.
+
+**The bar: every finding is one of two kinds.** A Style Guide rule the code breaks, named by its section; or a defect with a concrete failure: what the player does, on which flavor, and what goes wrong or quietly breaks. Nothing else is a finding: not working code that could be written another way, not an edge case no player can reach, not a worry with no failure to name.
+
+**Same code, same report.** Run twice on unchanged code, this review lists the same issues; run after its fix prompts, it finds nothing new in what they wrote. Before reporting, reread each finding against the bar and drop any you wouldn't raise again on a second read. Zero issues is the expected result once the last review's fixes have run.
 
 **Reference check — required before any finding that changes what players see** (Style Guide, opening rules). A Live reference that does the opposite of its rule is a Phase 2 question, never a finding.
 
@@ -38,7 +42,7 @@ Its fix prompt copies the reference code word for word, adds both tests where th
 
 Always run **luacheck** over the add-on in Phase 1 (`Includes/` excluded, per the repo's `.luacheckrc` — Style Guide → LINTING). Its warnings are ordinary findings; a missing `.luacheckrc` is one too.
 
-Always run one explicit **comment-accuracy sweep**. Every comment must describe what the code actually does now; a comment that contradicts current behavior is a finding. The fix corrects or deletes the comment, never the code (Style Guide → COMMENTS). Also flag the obvious noise — commented-out code, decorative banners, and comments that only restate the code — per Style Guide → COMMENTS. Sanctioned `TODO:` markers are exempt; leave them. The `Data/{Game}/` files' comments belong to the Data Review, so this sweep skips them. The volume trim is its own pass (`References/Code Comment Cleanup Prompt.md`), so flag only what's wrong or clearly noise.
+Always run one explicit **comment-accuracy sweep**. Every comment must describe what the code actually does now; a comment that contradicts current behavior is a finding. The fix corrects or deletes the comment, never the code (Style Guide → COMMENTS). Also flag commented-out code and decorative banners, per Style Guide → COMMENTS. Sanctioned `TODO:` markers are exempt; leave them. The `Data/{Game}/` files' comments belong to the Data Review, so this sweep skips them. The volume trim is its own pass (`References/Code Comment Cleanup Prompt.md`), so flag only what's wrong or clearly noise.
 
 Always run one explicit **game-name sweep** against Style Guide → GAME NAMES, which is the full specification. Two parts:
 
@@ -51,7 +55,7 @@ grep -rn "GetSpellName\|GetSpellSubtext\|GetItemInfo\|GetSkillLineInfo\|GetTrade
 
 For each hit that is matched against something the client shows, check that both sides are the same kind of record (a spell name searched in the skill list finds nothing in frFR — GAME NAMES → Match the Record Kind), and that no ID-returning API was available instead. A mismatch is a finding even when enUS works. Its fix prompt must include GAME NAMES → Checking a New Lookup, steps 1–3, and must not claim it works in-game until step 4 is done.
 
-Always run one explicit **performance sweep** over the add-on's hot paths — `OnUpdate` handlers, `COMBAT_LOG_EVENT_UNFILTERED` and other high-frequency events, and anything that runs per-frame or in combat. Flag: table or closure allocation inside a hot path (hoist it out), `string.format`/string building done every frame when it could be cached or event-driven, polling where an event would do, repeated `C_Item.GetItemInfo`/API calls that static data could replace (see Style Guide → DATA; a name is never stored, so cache the looked-up one instead, per GAME NAMES), and unbounded growth in a cache or event buffer. Combat-time work that could be deferred to a dirty-flag replay is a finding. These are judgment calls rather than guide rules — mark them reduced-confidence where the impact depends on how hot the path really is.
+Always run one explicit **performance sweep** over the add-on's hot paths — `OnUpdate` handlers, `COMBAT_LOG_EVENT_UNFILTERED` and other high-frequency events, and anything that runs per-frame or in combat. Flag: table or closure allocation inside a hot path (hoist it out), `string.format`/string building done every frame when it could be cached or event-driven, polling where an event would do, repeated `C_Item.GetItemInfo`/API calls that static data could replace (see Style Guide → DATA; a name is never stored, so cache the looked-up one instead, per GAME NAMES), and unbounded growth in a cache or event buffer. Combat-time work that could be deferred to a dirty-flag replay is a finding. Report one only on a path hot enough for a player to feel it (every frame, every combat-log event, a loop in combat), naming that path; a cost that depends on how often an ordinary path might run is not a finding.
 
 Always run one explicit **Options-panel-open sweep**. Find the routing with:
 
@@ -77,7 +81,7 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 
 ## Report format
 
-Open with a 2–3 sentence summary. Then list the issues, most worth fixing first — no severity labels except **Blocker** where the Pass Preamble names one (a missing target TOC), listed first; no category groupings. Keep the report tight: the description and the fix prompt are the whole issue; no padding, no restating the obvious.
+Open with a 2–3 sentence summary, then the skim list (Pass Preamble → Report format — skim list). Then list the issues, most worth fixing first — no severity labels except **Blocker** where the Pass Preamble names one (a missing target TOC), listed first. Keep the report tight: the description and the fix prompt are the whole issue; no padding, no restating the obvious.
 Skip trivial style observations the guide doesn't address; within scope, report everything it does address regardless of triviality.
 
 **Trim `README-Notes.md` first.** Before Phase 2, delete every entry in it that doesn't matter (Style Guide → README-NOTES → Only what matters), in `## Exceptions` and `## Decisions` alike, without asking. What they covered becomes ordinary findings, and the report says in one line which labels went.

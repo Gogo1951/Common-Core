@@ -39,6 +39,16 @@ Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal
 - **Line endings are a closed subject** — never inspected, measured, restored, or reported, in any form. Common-Core's CI owns them (Style Guide → COMMON-CORE → Line Endings).
 - **Optional passes (steps 0, 5, 9, 10, 11 and the `Optional - …` prompts) are never launch gates.**
 
+## Report format — skim list
+
+**Every report that lists issues or feature prompts opens with a skim list**, right after its opening summary or verdict, whatever the pass's own report format says next: one line per item, its `Issue N` or `Feature N` and a few plain words, in up to three groups in this order, each left out when empty.
+
+1. **Bugs in Code** — something is broken, and the fix restores what was meant.
+2. **Improvements to Code** — less memory, better performance or easier upkeep, with nothing a player sees.
+3. **UX Changes Needed** — anything a player would see or feel beyond fixing a break: chat, UI, defaults, timing. Said in player terms, naming the flavor where only one is affected. These need the maintainer's care, so one never hides in the other two groups.
+
+The items themselves follow in the pass's own order.
+
 ## Report format — fix prompts
 
 Each issue's fix prompt is copy-and-run ready: a fenced code block (no language tag) containing **only** the prompt text, beginning with `Issue N: short title` on its own line.
@@ -86,7 +96,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
 
-**After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` needs Validate Data reports, which exist only once step 4 is tested in game, so the maintainer runs its prompt after that test; step 4 says first whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no prompt. Step 7's prompt for step 8 comes with one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
+**After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no prompt. Step 7's prompt for step 8 comes with one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
 
 Offer each one as a card with a button that starts it. The maintainer asks for these cards, so a card is part of the request, not a side task. Use the app's start-session tool when you have one, as an offer (its card asks *New session* or *Do it here*); otherwise use the suggest-task tool (`spawn_task`). Either can load partway through a session, so look for both by name just before the final reply, and don't decide from which app you think you're in. One card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Also print that line in its own fenced block, so it can be pasted where no card shows:
 

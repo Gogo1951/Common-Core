@@ -24,7 +24,7 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
     For each, note its layout in game points and every size or gap that is off the Style Guide's Spacing Scale (2, 4, 8, 16, 32, 64, 128), its colors and fonts, its strings in the locale's exact words, and what each control does.
 
-2. **Research the landscape (optional).** Find what similar add-ons offer that this one doesn't, the way `09 - Optional Create README.md` → Related Add-ons searches: start from the README's Related Add-ons list, search beyond it with that section's broad search, and keep only add-ons on a flavor this one ships, updated within the last 12 months. Look hardest for well-known competitors the list misses. For each, note the features ours lacks that fit this add-on's scope and the Style Guide. **Ideas only, never code:** never read, copy or adapt another add-on's source, since licenses vary. Take the feature from its listing or README and design it fresh. Clones of Gogo1951's add-ons that turn up are reported in chat the way that section's Clones of Gogo1951's Add-ons says, comment included, before phase 3's questions.
+2. **Research the landscape (optional).** Find what similar add-ons offer that this one doesn't. Search CurseForge, Wago, GitHub and WoWInterface with a separate search for each thing the add-on does, in the words players use (synonyms, slang, the item types it touches, the pain it solves), and search any obvious competitor by name: missing the biggest one is the usual failure. Keep only add-ons on a flavor this one ships, updated within the last 12 months. For each, note the features ours lacks that fit this add-on's scope and the Style Guide. **Ideas only, never code:** never read, copy or adapt another add-on's source, since licenses vary. Take the feature from its listing or README and design it fresh. Clones of Gogo1951's add-ons that turn up are reported in chat per Clones of Gogo1951's Add-ons (below), comment included, before phase 3's questions.
 
 3. **Find the last wireframe, then ask a few broad questions.** List the maintainer's artifacts and look for the title `{Add-on Name} UX Wireframes`. If one exists, read it and any comments on it: it keeps its link across reruns, tester feedback in its comments counts as a candidate below, and a change the last run marked **Try first** comes back as a candidate with whatever testers said about it. Then ask **at most four broad questions, in one round**, about direction, never one per change: who the add-on is mostly for, what players trip over, how bold the redesign may be, how far its scope may grow, anything off-limits. Skip any the record already answers; zero questions is fine.
 
@@ -32,11 +32,27 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
 5. **Read the choices and output.** Read the approvals back (Wireframe Build → Approvals). Each **Build** gets a feature prompt (below). **Try first** gets nothing yet: the page keeps it as an *idea* for testers, and the next run brings it back. Each **Drop** is left alone and not recorded; a later run may suggest it again. A change with no choice is listed in one line and left alone. A note the maintainer wrote on a card changes that change: write their version into its feature prompt. Choices the maintainer gives in chat count the same as the page's buttons: write each one to `approvals` so a rerun shows it. **A Build is an approval, never a go-ahead to code:** this pass ends with the feature prompts, and nothing is built until the maintainer pastes them back.
 
+## Clones of Gogo1951's Add-ons
+
+Phase 2's research turns up clones too: new add-ons, usually AI-generated, that rebuild one of Gogo1951's add-ons instead of sending it a PR. **A clone goes in chat, never in the README or the wireframe**, so the maintainer can decide whether to leave a comment. Report a clone of this add-on, and of any other Gogo1951 add-on that turns up along the way. Never post, comment or contact anyone yourself.
+
+**What makes a clone:** it does the same job as one of Gogo1951's add-ons, feature for feature, and it appeared after ours. Most also show a name that plays on ours, a small download count, an AI-written description (emoji headers, stacked dashes, generic feature lists), or a new author with nothing else published. A long-standing competitor with its own approach is not a clone, however close it is.
+
+**Report each clone** in one table: add-on, author, link, Total Downloads, created date, a line on why it reads as a clone, and **where a comment can go**. Open the listing to check that: CurseForge comments if the Comments tab is open, else GitHub issues if it links a repo with issues on, else "nowhere to comment". Under the table, print the comment below with its placeholders filled in for the add-on it copies, ready to paste.
+
+> Hey mate! I noticed quite a bit of overlap between your add-on and {Full Name}. I've already built a lot of that functionality, and I'd love to hear what you have in mind for yours.
+>
+> {CurseForge URL}
+>
+> Want to work on it together? I'm happy to show you around the code and help you get your ideas into {Full Name}. PRs are always welcome! Come say hi on Discord sometime. I'm always up for talking WoW add-ons or software development. Cheers! (=
+>
+> https://discord.gg/eh8hKq992Q
+
 ## Menus, Not Tooltips
 
 A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Its feature prompt builds it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
 
-**When the add-on has a spec** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, that spec is the Proposed menu, and its open GitHub issue is the change: draw it as written, give it one *layout* card that names the issue, and don't redesign it. Report anything the code has gained since the spec was written as a finding in Guide Feedback, so the spec is updated.
+**When the add-on has a spec** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, that spec is the Proposed menu, and its open GitHub issue is the change: draw it as written, give it one *layout* card that names the issue, and don't redesign it. **Once its State opens with `live`, the work order is done:** the code is the record, reviewed like any other add-on's menu, and what the code has gained since is never a finding or a reason to update the spec. Anything the spec still lists as to do stays the maintainer's.
 
 **Every UX Review checks the menu**, converted or not, against these, and each miss is a change. They are what a player sees; how the code behind it is built (One Refresh, Building the Button, row widths) is the Code Review's.
 
@@ -55,7 +71,7 @@ Lines the add-on adds to the game's own tooltips (items, units, spells) stay too
 
 Every options panel is built from Options-Kit, the shared kit in Common-Core's `addon-kits/Options-Kit/`, and laid out per Style Guide → OPTIONS PANEL, which holds the root page, the section and field-set layout, Example lines, sub-panels, Reset rows and the kit itself. Its pieces and patterns are drawn in `References/Design System/Options Panels.html` and named in the Design System README → Wave 2: Options Panels.
 
-**When the add-on has a spec** in `References/Design System/Options Panels/{Add-on Name}.md`, that spec is the Proposed panels, and its GitHub issue, once filed, is the change: draw it as written, give it one *layout* card that names the spec, and don't redesign it. Report anything the code has gained since the spec was written as a finding in Guide Feedback, so the spec is updated. The add-on's move onto the kit is part of that change; a Build never asks for a helper the kit already has.
+**When the add-on has a spec** in `References/Design System/Options Panels/{Add-on Name}.md`, that spec is the Proposed panels, and its GitHub issue, once filed, is the change: draw it as written, give it one *layout* card that names the spec, and don't redesign it. Once its State opens with `live`, it is done, as a menu spec is (Menus, Not Tooltips). The add-on's move onto the kit is part of that change; a Build never asks for a helper the kit already has.
 
 **Every UX Review checks the panels**, on the kit or not, against these, and each miss is a change. They are what a player sees; how the code behind it is built (Options-Kit, One Refresh, registration, `ns.FEATURES`) is the Code Review's.
 
