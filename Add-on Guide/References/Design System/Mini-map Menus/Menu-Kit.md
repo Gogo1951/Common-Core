@@ -3,7 +3,7 @@
 The shared renderer every mini-map menu is built on, moved into Common-Core so all six add-ons copy one file. **The maintainer's work, in a session launched in `~/Common-Core`:** it lands before the add-ons move onto v2. A session in an add-on folder never builds or edits it; until it lands, every conversion copies Tracking Eye's kit from GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 
 - **Issue:** [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3), open until `addon-kits/Menu-Kit/` holds the kit. It was closed on 2026-11-14 with no PR and nothing landed; reopened 2026-11-19.
-- **Where the kit is today:** v1, byte for byte the same `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga` on `main` in Tracking Eye, GogoLoot, Magic Eraser and Good to Go. Tracking Eye's is the one a change goes to (Style Guide → MINIMAP MENU, Never edit a copy).
+- **Where the kit is today:** v1, byte for byte the same `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga` on `main` in Tracking Eye, GogoLoot and Magic Eraser. Tracking Eye's is the one a change goes to (Style Guide → MINIMAP MENU, Never edit a copy). **Good to Go's copy is ahead:** it adds what Style Guide → MENUS asks of every menu, working in game, and v2 takes it in: `Kit.FLYOUT_OVERLAP` (a flyout 12 points inside its menu, replacing `FLYOUT_GAP`'s 16-point gap), an entry's `submenu` on any row with the arrow in its own column, `Kit.AddPlate` (the plate alone, for a window), `Kit.OpenContextMenu` and `Kit.AddMenuHeader` (the game's `MenuUtil` menus in the kit's dress, a skin's backdrop cleared) and `Kit.PlatePullout` (an AceGUI dropdown's list on the plate).
 - **Rules:** Style Guide → MINIMAP MENU.
 - **Pieces:** `../README.md` → Components, Patterns, Kit Changes (Menu-Kit v2).
 - **Drawn:** `../Mini-map Menus.html`.
@@ -72,7 +72,7 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 - **`afterChange`** is the add-on's `ns.RefreshSettings` in every add-on (One Refresh).
 - **Placement** is the kit's (Placement): corner to opposite corner, 2 points apart, by screen halves, flyout and row tooltips on the same side.
 - **Any LDB display works.** The anchor is whatever frame called `OnEnter`: the mini-map button, or a Titan Panel or ChocolateBar plugin.
-- **Every menu, not only the mini-map's.** `Kit.CreateMenu` also opens a right-click menu or a window's own menu off any frame, with the header naming what was clicked and the anchoring and closing of Style Guide → MENUS, so an add-on's other menus move off the game's `MenuUtil` onto the kit's panels.
+- **Every menu, not only the mini-map's.** `Kit.CreateMenu` also opens a menu or flyout off any frame, with the header naming what was clicked and the anchoring and closing of Style Guide → MENUS. Good to Go's `Kit.OpenContextMenu`, `Kit.AddMenuHeader` and `Kit.PlatePullout` come across unchanged in what they draw, so a right-click menu on the game's menus and a dropdown's list keep looking like the kit's panels.
 
 ## Distribution
 

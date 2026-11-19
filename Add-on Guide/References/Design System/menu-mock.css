@@ -105,11 +105,21 @@
 .gg-menu-wrap {
 	display: inline-flex;
 	align-items: flex-start;
-	gap: 0; /* Kit.FLYOUT_GAP: flush, the flyout touches its menu */
+	gap: 0;
 	vertical-align: top;
 }
 .gg-menu-wrap.left {
 	flex-direction: row-reverse; /* on the right half of the screen the menu, and its flyout, open left */
+}
+/* A flyout overlaps its menu as the game's own submenus do: 12 points inside its edge (Kit.FLYOUT_OVERLAP), drawn above it. */
+.gg-flyout {
+	position: relative;
+	z-index: 1;
+	margin-left: -12px;
+}
+.gg-menu-wrap.left > .gg-flyout {
+	margin-left: 0;
+	margin-right: -12px;
 }
 
 .gg-menu {
@@ -255,6 +265,10 @@
 	border-bottom: 5px solid transparent;
 	border-left: 6px solid #f0c000;
 	filter: drop-shadow(0 0 1px #000);
+}
+/* A row with no arrow keeps the arrow's room in a panel that has one, so the values line up in one column. */
+.gg-arrow.room {
+	visibility: hidden;
 }
 .gg-check {
 	display: inline-block;

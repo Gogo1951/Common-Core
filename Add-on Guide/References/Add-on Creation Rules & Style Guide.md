@@ -975,18 +975,51 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 ## MENUS
 
-**Every menu looks and works the same, in every add-on.** A mini-map menu, a right-click menu, a window's own menu and a dropdown's list are one thing to a player, so they are one thing in the code: Menu-Kit's panels on Pretty Wide Quest Log's plate, with one set of row kinds, colors, type, spacing and behavior. MINIMAP MENU → Layout's type and color rules, Flyouts, Row Kinds, Behavior and The Look bind every menu; this section adds what a menu that doesn't hang off a mini-map button needs.
+**Every menu and sub-menu looks and works the same, in every add-on.** A mini-map menu, a right-click menu, a flyout off a window's line and a dropdown's list are one thing to a player, so they wear one dress: Pretty Wide Quest Log's plate, with one set of row kinds, colors, type, spacing and behavior. MINIMAP MENU → Layout's type and color rules, Row Kinds, Behavior and The Look bind every menu; this section is what holds for all of them, and MINIMAP MENU adds what only a mini-map menu needs.
 
-Live reference: **Pretty Wide Quest Log's Quest Arrow menu**, the menu every other one is measured against — [`Features/Routes/Routes-Arrow-Menu.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu.lua) (what goes in it, opening and closing) and [`Features/Routes/Routes-Arrow-Menu-Panel.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu-Panel.lua) (the plates, rows and flyout).
+Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and rows ([`Features/Routes/Routes-Arrow-Menu-Panel.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu-Panel.lua)), and **Good to Go** for every kind of menu, all drawn by its `Features/Menu-Kit.lua`: the mini-map menu (`Features/Minimap-Menu.lua`), a window's flyout (`Features/Buff-Duty/Buff-Duty-Options-Menu.lua`, off the Options line `Features/Buff-Duty/Buff-Duty-Frame.lua` draws), right-click menus on the game's menus (`Features/Enhanced-Spellbook/Macro-Menu.lua`) and dropdown lists (`Features/Restocker/Restocker-Window-Menus.lua`).
 
-- **Drawn by the kit, never by the game's menus.** Every menu is built from `Kit.CreatePanel` and kit entries. Never Blizzard's `MenuUtil` / `Menu`, `UIDropDownMenu` / `EasyMenu`, or an AceGUI dropdown's pullout outside the options panel. Skin add-ons redraw those: ElvUI strips the game's menus, lays its own square backdrop under them, swaps their checkboxes and turns their arrow, so the same menu looks different on every install, and a fix laid over a skin breaks with the skin's next update. The kit's panels are the add-on's own frames, which no skin touches. The one exception is the options panel's AceConfig dropdowns, which belong to the Settings window (OPTIONS PANEL).
-- **The header names what was clicked.** The first row is the thing's name in C_TITLE on the left and the add-on's Short Name in C_MUTED on the right (`Quest Arrow … PWQL`, `Attack … GtG`), then a spacer. A mini-map menu's header stays the Full Name and version (MINIMAP MENU → Layout).
-- **Flyouts touch their menu.** A flyout opens flush against the edge of the menu it came from, no gap between the two plates, its first row level with the row that opens it, on the side away from the screen edge. `Kit.FLYOUT_GAP` is 0. A flyout set apart reads as a second menu.
-- **One row kind per job.** A row that opens a flyout is a `submenu` row: its label C_TITLE, the current value C_MUTED on its right, then the arrow. A row that opens a window or panel, or does one thing, is an `action` row in C_INFO. A setting is a `toggle` or `choice` row: no checkboxes, radio buttons or boxes.
-- **Spacers group, one separator closes.** Groups of rows sit apart by a spacer, never a line. The actions at the foot (Duplicate, Delete, Reset) sit under a spacer and one separator, as Options does in a mini-map menu. A flyout holding more than one group opens each with a gold `section` heading (`What to Route`, `Also Route`).
-- **Opens beside what was clicked.** The menu hangs 8 points off the frame clicked (`SPACE.NEAR`), below it, or above it where the screen hasn't the room, clamped to the screen at strata `DIALOG`. It closes when the cursor leaves it, its flyout and that frame, on Escape, and on a pick.
+### One Look, Three Ways to Draw It
 
-**Until Menu-Kit v2 lands**, an add-on opens its own panels for these menus, as PWQL does, with the kit it already carries (MINIMAP MENU → Never edit a copy of the kit); `Kit.CreateMenu` then takes the anchoring and closing over (`References/Design System/Mini-map Menus/Menu-Kit.md`).
+- **The kit's own panels** (`Kit.CreatePanel` and kit entries) for a menu the add-on lays out itself: the mini-map menu, a flyout off a window's line, a short menu off a button.
+- **The game's menus in the kit's dress** (`Kit.OpenContextMenu`, `Kit.AddMenuHeader`) for a right-click menu built on nested sub-menus, switches and choices (the Spellbook's macro menu). The kit lays its plate after the menu opens, and on each sub-menu as it opens, so it lands after any skin add-on has had its turn: ElvUI strips the game's menus, lays its own square backdrop under them, swaps their checkboxes and turns their arrow. The kit clears that backdrop, restyles every row to the kit's kinds below, and hands the pooled frame back as it found it when the menu closes. Never open `MenuUtil.CreateContextMenu`, `UIDropDownMenu` or `EasyMenu` bare.
+- **An AceGUI dropdown's list** in the add-on's own window takes the plate in place of its border (`Kit.PlatePullout`) and gives the border back on release, since AceGUI pools that frame for every add-on. The options panel's AceConfig dropdowns belong to the Settings window and stay as they are (OPTIONS PANEL).
+- **One opacity.** Every plate is the same art at the same 80% (`PLATE_ALPHA`), and nothing sits under it: a skin's backdrop goes clear, so no menu reads darker than another and a sub-menu never reads darker than the menu it came from.
+
+### The Header
+
+- **It names what was clicked.** The first row is the thing's name in C_TITLE on the left and the add-on's Short Name in C_MUTED on the right (`Quest Arrow … PWQL`, `Attack … GtG`, `Settings … GtG`), then a spacer.
+- **A mini-map menu's header** stays the Full Name and version (MINIMAP MENU → Layout).
+- **A flyout or a dropdown's list needs none.** It opens from a row, a window's line or a field that already names it, so it starts with its first row or section (Buff Duty's Options flyout opens on Show in Window).
+
+### Groups
+
+- **Spacers group, never lines.** Groups of rows sit apart by a spacer (16 points). When a menu holds more than one kind of thing, a gold `section` heading opens each group (`Show in Window`, `Consumables`, `Weapon Buffs`).
+- **One line closes.** The actions at the foot (Duplicate and Delete, All Buff Duty Settings, Options) sit under a spacer and one separator. That is the menu's only line; a sub-menu may set a few unrelated extras apart with one too (MINIMAP MENU → Flyouts).
+
+### Rows
+
+- **A row that opens a sub-menu** has its label in C_TITLE and, on its right in C_MUTED, what is set inside it (`Stop Attack`, `68 / 255`, `Character`), then the arrow. With nothing set inside, the right side is the arrow alone.
+- **A switch with options of its own keeps its switch look:** name white, On in C_ON, then the arrow (gray name and Off in C_MUTED while it's off). A click flips it; hovering opens its sub-menu (Buff Duty's Your Target opens Include NPCs, Buff Food the buff food in your bags).
+- **The arrow has its own column.** In a menu where any row has an arrow, every row's right side ends where the arrow's room begins, so an On without an arrow lines up with an On beside one.
+- **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: its click, or what it touches (`Delete … Used on 1 Bar`, `All Buff Duty Settings … Click`).
+- **Switches and choices, never boxes.** A setting is a `toggle` (its name, On or Off) or a `choice` (the pick white with a check mark, the rest gray). No checkbox, radio button or box is drawn, on the kit's panels or on the game's dressed menus.
+- **Icons at line height.** An item or spell row puts its icon before its name, one space, the icon, then the name (`|T…:0|t`).
+
+### Sub-menus
+
+- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 12 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET + TEXT_INSET`, where a row's text ends), drawn over it, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 8). Never a gap and never flush: a sub-menu set apart reads as a second menu.
+- **Hovering the row opens it**, and a click does too, unless the row is a switch, whose click flips it. Hovering any other clickable row closes it. The row keeps its highlight while its sub-menu is open.
+- **The side away from the screen edge**, decided once when the menu opens; a sub-menu of a sub-menu goes the same way.
+- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 12 points, measured from the line's right end, level with it.
+- **A change keeps it open.** A switch or a setting's choice redraws in place, so the player sees the new value (Macro Storage). A pick that acts, casting, opening a window or going somewhere, closes it.
+
+### Opening and Closing
+
+- **A right-click menu** opens where the game opens its own, at the cursor. **A menu off a button or a line** opens beside it, on the side away from the screen edge (MINIMAP MENU → Placement for the mini-map button), clamped to the screen at strata `DIALOG`.
+- **It closes** 0.4 seconds after the cursor leaves it, its sub-menus and the frame that opened it, on Escape (its frame named and in `UISpecialFrames`), and on a pick that acts.
+
+**Until Menu-Kit v2 lands**, an add-on opens these menus with the kit it already carries (MINIMAP MENU → Never edit a copy of the kit); `Kit.CreateMenu` then takes the anchoring and closing over (`References/Design System/Mini-map Menus/Menu-Kit.md`).
 
 ## MINIMAP MENU
 
@@ -994,7 +1027,7 @@ Live reference: **Tracking Eye**, live on `main` with every rule below in play �
 
 Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **An add-on with a conversion spec** has it in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, tracked by a GitHub issue in that add-on's repo. **The specs are the maintainer's work orders:** the UX Review draws one as the add-on's Proposed menu (Menus, Not Tooltips) and its feature prompt builds to it; no other pass acts on one. Once a spec's State opens with `live`, the order is done and the add-on's code is the record. Where a spec and this section disagree, this section wins. Menu-Kit v2 (`Mini-map Menus/Menu-Kit.md`) is Common-Core work the maintainer runs, never a pass's; until it lands, every conversion copies Tracking Eye's kit from GitHub (Moving a Tooltip to a Menu, step 1).
 
-**Never edit a copy of the kit.** Until v2 lands, Tracking Eye's `Features/Menu-Kit.lua` is the one kit: a kit change goes there first, by PR, then is copied unchanged into every add-on that holds the kit (today GogoLoot, Magic Eraser and Good to Go). That PR is the maintainer's, never a pass's (Pass Preamble → Standing scope): a pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change. Once v2 lands, a change is a Common-Core commit and a sync, as Options-Kit's is.
+**Never edit a copy of the kit.** Until v2 lands, Tracking Eye's `Features/Menu-Kit.lua` is the one kit: a kit change goes there first, by PR, then is copied unchanged into every add-on that holds the kit (today GogoLoot, Magic Eraser and Good to Go). **Good to Go's copy is ahead of it:** it carries the pieces MENUS needs (the sub-menu overlap, a switch's own sub-menu and the arrow column, `Kit.AddPlate`, `Kit.OpenContextMenu` and `Kit.AddMenuHeader`, `Kit.PlatePullout`), which go to Tracking Eye's kit by the maintainer's PR and then out to every copy. Until then, a pass never flags Good to Go's copy for differing, and never copies those pieces into another add-on by hand. That PR is the maintainer's, never a pass's (Pass Preamble → Standing scope): a pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change. Once v2 lands, a change is a Common-Core commit and a sync, as Options-Kit's is.
 
 **Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
@@ -1098,7 +1131,7 @@ Live: Tracking Eye's `ns.RefreshSettings` in `Features/Utilities.lua`, reached f
 | Bottom left | Above, to the right | `BOTTOMLEFT` → `TOPRIGHT` |
 
 - **Halves decide it**, measured from the button's center against `UIParent` at its effective scale, once when the menu opens; it doesn't jump while open.
-- **The flyout opens on the same side** the menu opened toward, flush against it with no gap (`Kit.FLYOUT_GAP`, 0; MENUS → Flyouts touch their menu), rising 8 so its first row meets its title.
+- **The flyout opens on the same side** the menu opened toward, overlapping it by 12 points (`Kit.FLYOUT_OVERLAP`; MENUS → Sub-menus), rising 8 so its first row meets its title.
 - **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
 - **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
 
@@ -1146,7 +1179,7 @@ Live: Tracking Eye's `FLYOUTS.farm` (status first, then sections, then a separat
 
 Until Menu-Kit v2, an item row is an `action` or `status` row with the icon and colored name written into `left`, and a value row a `status` row with `leftColor = "BODY"`.
 
-**Choice, toggle, item and value rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry `tooltip`, a `function(GameTooltip)`, shown beside it under the cursor, and `rightOnHover = true`, which shows its right side only while the row is hovered; the right side is still measured, so the menu's width never changes on hover. `rightOnHover` is Menu-Kit v2's; until then, `ApplyHoverIcons` in Magic Eraser's `Features/Minimap-Menu.lua` works around the kit.
+**Choice, toggle, item and value rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry `tooltip`, a `function(GameTooltip)`, shown beside it under the cursor; `submenu`, the key of a flyout its hover opens, keeping its own look with the arrow after its right side (MENUS → Rows); and `rightOnHover = true`, which shows its right side only while the row is hovered; the right side is still measured, so the menu's width never changes on hover. `rightOnHover` is Menu-Kit v2's; until then, `ApplyHoverIcons` in Magic Eraser's `Features/Minimap-Menu.lua` works around the kit.
 
 ### Blocks Beyond Features
 
@@ -1170,7 +1203,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 - **Hover opens it; Left-Click opens and holds it.** Hovering the button opens the menu the way the tooltip did. It closes 0.4 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A button whose Left-Click has a job (Button Clicks) does that job instead, and hover alone opens the menu.
 - **Escape closes it.** Name the menu frame and add it to `UISpecialFrames`.
 - **Hovering a title opens its flyout**, and clicking it does too. Hovering any other clickable row closes the flyout.
-- **A pick closes the menu; a switch keeps it open.** Choosing from a set is done; flipping switches often comes in runs.
+- **A pick that acts closes the menu; a switch or a setting's choice keeps it open** (MENUS → Sub-menus). Casting or opening something is done; flipping switches often comes in runs.
 - **A change redraws in place.** Every change, from anywhere, ends in `ns.RefreshSettings()` (One Refresh), so the open options panel, the menu and the button all show the new value.
 - **Read the cursor from `GetCursorPosition`**, not `IsMouseOver`, so a controller's virtual cursor counts (`Kit.IsCursorOver`).
 - **Tooltips reuse the option's strings.** A switch's tooltip is its option's name and description; a spell row's is the spell.

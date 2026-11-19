@@ -54,7 +54,7 @@
 		DESCRIPTION_MAX_WIDTH: 320,
 		MAX_WIDTH: 320, // no row widens the menu past this; a long left side wraps
 		INSETS: 2 * (8 + 4), // TEXT_INSET + ROW_INSET, both sides
-		FLYOUT_GAP: 0, // Flush: the flyout touches its menu (Style Guide → MENUS)
+		FLYOUT_OVERLAP: 12, // ROW_INSET + TEXT_INSET: the flyout's edge sits this far inside its menu's (Style Guide → MENUS)
 		FLYOUT_RISE: 8, // SPACE.NEAR
 	};
 
@@ -259,10 +259,15 @@
 		panel.className = "gg-menu";
 		host.appendChild(panel);
 
+		// Any row may open a submenu (a switch with options of its own keeps its look); with any arrow in the panel, every value keeps the arrow's room.
+		var hasArrow = entries.some(function (entry) {
+			return entry.kind === "submenu" || !!entry.submenu;
+		});
+
 		entries.forEach(function (entry) {
 			var row = document.createElement("div");
 			var kind = entry.kind;
-			var clickable = !!entry.onClick || kind === "submenu";
+			var clickable = !!entry.onClick || kind === "submenu" || !!entry.submenu;
 			row.className =
 				"gg-row " +
 				kind +
@@ -278,10 +283,10 @@
 				l.innerHTML = paint(shown.left || "", shown.lc);
 				row.appendChild(l);
 				var rightText = shown.right;
-				if (kind === "submenu") {
-					rightText = (rightText ? paint(rightText, shown.rc) : "") + '<span class="gg-arrow"></span>';
+				if (kind === "submenu" || entry.submenu) {
+					rightText = (rightText ? paint(rightText, shown.rc) + " " : "") + '<span class="gg-arrow"></span>';
 				} else if (rightText !== undefined && rightText !== null) {
-					rightText = paint(rightText, shown.rc);
+					rightText = paint(rightText, shown.rc) + (hasArrow ? ' <span class="gg-arrow room"></span>' : "");
 				}
 				if (rightText) {
 					var r = document.createElement("span");
