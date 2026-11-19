@@ -24,6 +24,8 @@ The first review of the cycle: how the add-on looks and reads to a player, and w
 
     For each, note its layout in game points and every size or gap that is off the Style Guide's Spacing Scale (2, 4, 8, 16, 32, 64, 128), its colors and fonts, its strings in the locale's exact words, and what each control does.
 
+    When the code matches every row of an add-on's spec (`References/Design System/Mini-map Menus/` or `Options Panels/`), list flipping its State to `live` as a routine data item in Guide Feedback.
+
 2. **Research the landscape (optional).** Find what similar add-ons offer that this one doesn't. Search CurseForge, Wago, GitHub and WoWInterface with a separate search for each thing the add-on does, in the words players use (synonyms, slang, the item types it touches, the pain it solves), and search any obvious competitor by name: missing the biggest one is the usual failure. Keep only add-ons on a flavor this one ships, updated within the last 12 months. For each, note the features ours lacks that fit this add-on's scope and the Style Guide. **Ideas only, never code:** never read, copy or adapt another add-on's source, since licenses vary. Take the feature from its listing or README and design it fresh. Clones of Gogo1951's add-ons that turn up are reported in chat per Clones of Gogo1951's Add-ons (below), comment included, before phase 3's questions.
 
 3. **Find the last wireframe, then ask a few broad questions.** List the maintainer's artifacts and look for the title `{Add-on Name} UX Wireframes`. If one exists, read it and any comments on it: it keeps its link across reruns, tester feedback in its comments counts as a candidate below, and a change the last run marked **Try first** comes back as a candidate with whatever testers said about it. Then ask **at most four broad questions, in one round**, about direction, never one per change: who the add-on is mostly for, what players trip over, how bold the redesign may be, how far its scope may grow, anything off-limits. Skip any the record already answers; zero questions is fine.
@@ -118,7 +120,7 @@ Shared by this pass and `Optional - Create UX Wireframes.md`. Load the artifact-
 - **Try this.** Per view, a short list of tasks for testers.
 - **Approvals.** Load the artifact-capabilities skill, and declare `db` and `user` with a rule that only the owner writes the `approvals` collection. Each card carries **Build**, **Try first** and **Drop** buttons and a note box, shown only to the owner; everyone else sees the cards read-only. A choice writes `approvals/{change-id}`, where the id is a short stable slug for the change, never its number, so a rerun shows a carried-over change's earlier choice. Read them back with the `ArtifactData` tool (`list` on `approvals`), taking only the ids on the current page.
 
-Publish to the existing link if the calling pass found one, otherwise as a new private artifact.
+Publish to the existing link if the calling pass found one, otherwise as a new private artifact. Only this pass and `Optional - Create UX Wireframes.md` publish to the `{Add-on Name} UX Wireframes` link. Any other design round publishes its own page titled `{Add-on Name} {Window} Design`.
 
 ## Feature prompts
 

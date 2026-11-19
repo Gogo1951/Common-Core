@@ -1,6 +1,6 @@
 # Good to Go: Mini-map Menu
 
-**State:** tooltip. The tallest, and the last to convert.
+**State:** live ([Gogo1951/Good-to-Go#41](https://github.com/Gogo1951/Good-to-Go/pull/41)): the menu in `Features/Minimap-Menu.lua` is built and goes past this spec.
 **Kit:** Tracking Eye's, copied from GitHub until Menu-Kit v2 lands (`Menu-Kit.md`, the maintainer's work). Until then the Code section's v2 names (an entry's `click` key, `OnClick` going to the kit) are built with Tracking Eye's `CLICKS` table and `ns.HandleLauncherClick` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 **Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
