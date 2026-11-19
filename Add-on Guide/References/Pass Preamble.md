@@ -22,6 +22,10 @@ Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edi
 
 Run the prompt's phases in order. Don't skip one, and don't begin the report until the clarify phase has closed.
 
+## Every reply — plain words
+
+**Every reply to the maintainer is written for a non-developer,** not only a report's issue descriptions. Keep it to a few short lines in player words: say what happens in game — what a player sees, or what now works — not how the code does it. No function, file or variable names unless the maintainer asks for them. When something needs deciding, end with a yes/no question (Asking questions, below). A report keeps its own format, its prose in the same plain words; the text inside fix and feature prompts and command blocks is written for Claude or for running, and keeps its own rules.
+
 ## Asking questions
 
 Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal and good outcome.
