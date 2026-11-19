@@ -654,7 +654,8 @@ function Kit.Example(order, hidden, getLines)
 					type = "description",
 					name = function()
 						local lines = getLines()
-						return type(lines) == "table" and table.concat(lines, "\n") or lines
+						-- A blank line between lines, so each reads as its own chat line.
+						return type(lines) == "table" and table.concat(lines, "\n\n") or lines
 					end,
 					fontSize = "medium",
 					width = Kit.ROW_WIDTH - Kit.SUB_INDENT_WIDTH,

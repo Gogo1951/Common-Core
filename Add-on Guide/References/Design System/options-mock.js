@@ -710,7 +710,7 @@
 							type: "description",
 							name: function () {
 								var l = getLines();
-								return Array.isArray(l) ? l.join("<br>") : l;
+								return Array.isArray(l) ? l.join("<br><br>") : l;
 							},
 							fontSize: "medium",
 							width: GRID.ROW - GRID.SUB_INDENT,

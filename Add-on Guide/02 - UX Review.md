@@ -92,10 +92,11 @@ Every options panel is built from Options-Kit, the shared kit in Common-Core's `
   -- spacer
   Example
       Message
+
       Message, line 2
   ```
 
-- **Examples** close their field set: a spacer, `Example` on its own line in silver with no colon, the message line or lines indented under it, drawn as they'll arrive with real names and links, about two lines at most, a report's total before its details. Each leaves while its control is off.
+- **Examples** close their field set: a spacer, `Example` on its own line in silver with no colon, the message line or lines indented under it, a blank line apart, drawn as they'll arrive with real names and links, about two lines at most, a report's total before its details. Each leaves while its control is off.
 - **Hidden or gray:** a setting under a switch that's off is hidden; gray only means the player can't change it here and now.
 - **Sub-panels:** the page title names the parent ("Farm Mode > Abilities"). While the parent feature is off, the sub-panel stays and opens with a silver line naming the switch.
 - **Colors:** status lines silver; red only for a warning that nothing will happen; headers gold, captions white.

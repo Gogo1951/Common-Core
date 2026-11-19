@@ -138,7 +138,7 @@ ns.FEATURES = {
 |---|---|---|
 | `Kit.StatusLine(getText, order)` | Silver | Only while `getText()` returns text: something elsewhere changes what this page does |
 | `Kit.WarningLine(text, isWrong, order)` | Red | Only while `isWrong()`: the settings mean nothing will happen |
-| `Kit.Example(order, hidden, getLines)` | A spacer, the silver `Example` label on its own line (a trailing colon in the locale is trimmed), then the line, or each line of a list, indented and aligned | Last in its control's field set, whenever that control is on |
+| `Kit.Example(order, hidden, getLines)` | A spacer, the silver `Example` label on its own line (a trailing colon in the locale is trimmed), then the line, or each line of a list, indented, aligned and a blank line apart | Last in its control's field set, whenever that control is on |
 | `Kit.PrintedLine(printLine)` | A print in TEXT; a helper that closes its own colors passes through unchanged inside the tint | Pass the add-on's print helper's finished string |
 | `Kit.SentLine("PARTY" or "WHISPER", message)` | `[Party] [You]: …` or `[You] whispers: …` in the player's channel color, markers as icons | |
 | `Kit.You()`, `Kit.ClassColor(classFile)`, `Kit.Markers(text)` | The current character in class color; a class's hex; `{rtN}` as icons | |

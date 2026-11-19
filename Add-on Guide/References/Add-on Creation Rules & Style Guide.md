@@ -1352,6 +1352,7 @@ descCommands = ns.OptionsDesc(
   -- spacer
   Example
       Message
+
       Message, line 2
   ```
 
@@ -1387,7 +1388,7 @@ Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks f
 
 - **About two rendered lines, at most.** Two messages that are the same message with a different reason (Magic Eraser's "can now be erased" for a completed quest and for a quest you can never take) show as one. Show several only when how they look together matters, such as a total over its detail line (MESSAGES → Print Outs).
 
-- **It closes the field set of the control it shows** (`Kit.Example`): a spacer, then the silver `Example` label on a line of its own, no colon, then the message line or lines under it, indented like a sub-option and aligned with each other. It comes after the control's helper line and sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows. The label is `SAMPLE_EXAMPLE`.
+- **It closes the field set of the control it shows** (`Kit.Example`): a spacer, then the silver `Example` label on a line of its own, no colon, then the message line or lines under it, indented like a sub-option and aligned with each other, a blank line apart so each reads as its own chat line and a wrapped line never runs into the next. The kit draws the gap; never add it by hand. A tooltip Example keeps the tooltip's own rows tight. It comes after the control's helper line and sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows. The label is `SAMPLE_EXAMPLE`.
 - **The Example follows the selected option.** It is drawn in the form the current setting picks: a Print setting shows the print, an Announce setting shows party chat, and nothing shows a destination the player hasn't chosen. Give it a function `name` so it redraws the moment the dropdown changes. When a feature has several rows with their own dropdowns, the Example follows the row its line belongs to: a line about the player's own cast follows the player's row, a line about someone else's follows the others' row.
 - **The label is silver, the lines are not.** `L["SAMPLE_EXAMPLE"] = "Example"`, the bare word in every locale, drawn as its own `C_HELP` line; the kit trims a trailing colon from a locale that still has one. The lines under it carry their own colors.
 - **Draw the line in the colors of where it goes:**
