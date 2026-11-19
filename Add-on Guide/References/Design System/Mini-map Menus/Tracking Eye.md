@@ -58,7 +58,7 @@ Flyouts (Persistent Tracking's class overrides, Farm Mode's status, abilities, c
 - **Retire:** `OPEN` (only the Options row read it).
 - **New:** `MENU_MORE_FEATURES` "More Features", in every locale; other add-ons take its translations from here on GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 4). `MENU_MORE` "%d more" comes with the v2 move (the kit needs it; Tracking Eye's lists never reach 8 today).
 
-## Code (the Menu-Kit v2 move: the maintainer's, once Common-Core#3 lands; nothing a player sees)
+## Code (the Menu-Kit v2 move: the maintainer's, now that the kit is in Common-Core's `addon-kits/Menu-Kit/`; nothing a player sees)
 
 - `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`: replaced by Common-Core's copy.
 - `Features/Minimap-Menu.lua`: drop the machinery the kit now owns (`Menu-Kit.md` → What Moves Where); build with `Kit.CreateMenu`, `Kit.FeatureBlock` and `Kit.OptionsRow`; add `click` to the three actions above.

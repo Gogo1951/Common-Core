@@ -113,9 +113,9 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 
 Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. **They are the maintainer's work orders** (Style Guide → MINIMAP MENU): the UX Review draws one as the add-on's Proposed menu, and no other pass acts on one. The maintainer's order of work: the kit, then Tracking Eye (which proves it), then smallest to largest.
 
-**Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on the kit it has always carried. It is the reference every other conversion copies from, read on GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu); its move onto Menu-Kit v2 follows the kit into `addon-kits/Menu-Kit/`.
+**Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on v1 of the kit. It is the menu every conversion follows row for row, read on GitHub; the kit itself comes from Common-Core's `addon-kits/Menu-Kit/` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu). Its move onto Menu-Kit v2 is next.
 
-**Magic Eraser's menu is live** ([Gogo1951/Magic-Eraser#52](https://github.com/Gogo1951/Magic-Eraser/pull/52)), on a copy of Tracking Eye's kit: the reference for the More Features flyout, click-to-remove list rows and a Clear that asks first.
+**Magic Eraser's menu is live** ([Gogo1951/Magic-Eraser#52](https://github.com/Gogo1951/Magic-Eraser/pull/52)), on v1 of the kit: the reference for the More Features flyout, click-to-remove list rows and a Clear that asks first.
 
 | Order | Spec | Issue |
 |---|---|---|
@@ -129,11 +129,11 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 
 | Add-on | Today | In the menu |
 |---|---|---|
-| Tracking Eye | **Live.** Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2, once the kit lands. |
+| Tracking Eye | **Live.** Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2, which has landed; its move is next. |
 | Water Dispenser | Tooltip: one feature, one report, 2 clicks | One feature block and the Dispense Report. The first to convert. |
 | Control Freak | Tooltip: three features, 4 clicks | All Alerts as a master switch, then the three feature blocks. |
-| GogoLoot | **Live.** Locked Items, then Automated Rolls (Left-Click), Automated Opening (Right-Click) and Loot Announcements (Shift + Left-Click) with the roll read-back as value rows, More Features in a flyout, and Options (Shift + Middle-Click); Shift + Right-Click held for the Master Looting Window | The same menu on Menu-Kit v2, once the kit lands. |
-| Magic Eraser | **Live.** Erase (Left-Click), Protect (Right-Click), Clear Protect List (Middle-Click, asks first), Auto-Vend (Shift + Right-Click) and Options on their rows; click-to-remove Protect List rows; More Features in a flyout with its count | The same menu on Menu-Kit v2, once the kit lands. |
+| GogoLoot | **Live.** Locked Items, then Automated Rolls (Left-Click), Automated Opening (Right-Click) and Loot Announcements (Shift + Left-Click) with the roll read-back as value rows, More Features in a flyout, and Options (Shift + Middle-Click); Shift + Right-Click held for the Master Looting Window | The same menu on Menu-Kit v2, which has landed; its move is next. |
+| Magic Eraser | **Live.** Erase (Left-Click), Protect (Right-Click), Clear Protect List (Middle-Click, asks first), Auto-Vend (Shift + Right-Click) and Options on their rows; click-to-remove Protect List rows; More Features in a flyout with its count | The same menu on Menu-Kit v2, which has landed; its move is next. |
 | Good to Go | Tooltip: an item highlight, three features, class notes, two reports, 7 clicks | Current Food, three feature blocks (Restock List carrying its report), class items, a *[Class] Macros* flyout, Ignore List. |
 
 ## Kit Changes (Menu-Kit v2)
