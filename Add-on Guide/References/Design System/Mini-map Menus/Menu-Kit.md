@@ -2,10 +2,12 @@
 
 The shared renderer every mini-map menu is built on, moved into Common-Core so all six add-ons copy one file. **The maintainer's work, in a session launched in `~/Common-Core`:** it lands before the add-ons move onto v2. A session in an add-on folder never builds or edits it; until it lands, every conversion copies Tracking Eye's kit from GitHub (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 
-- **Issue:** [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3).
+- **Issue:** [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3), open until `addon-kits/Menu-Kit/` holds the kit. It was closed on 2026-11-14 with no PR and nothing landed; reopened 2026-11-19.
+- **Where the kit is today:** v1, byte for byte the same `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga` on `main` in Tracking Eye, GogoLoot, Magic Eraser and Good to Go. Tracking Eye's is the one a change goes to (Style Guide → MINIMAP MENU, Never edit a copy).
 - **Rules:** Style Guide → MINIMAP MENU.
 - **Pieces:** `../README.md` → Components, Patterns, Kit Changes (Menu-Kit v2).
 - **Drawn:** `../Mini-map Menus.html`.
+- **The look comes from:** Pretty Wide Quest Log's Quest Arrow menu, [`Features/Routes/Routes-Arrow-Menu-Panel.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu-Panel.lua). v1 was cut from it (the same plate, nine-slice, insets, gold highlight and spacing; its `Route-Menu.tga` is byte for byte `Menu-Plate.tga`), and it has since grown four things v2 asks for, already working in game: a row's `hover` look, measured in both states so the width never moves (`rightOnHover`); an `itemID` row that shows the item's tooltip on hover (`item`); a color given as `{ r, g, b }` as well as a palette key (raw colors); and `Fill`, which lays a panel out again only when what its rows say changes, with the flyout's label keeping its highlight while the flyout is open. Read it before writing those pieces. It stays PWQL's own file: the Quest Arrow and world-map menus aren't mini-map menus.
 - **Starts from:** Tracking Eye's [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) and the generic half of its [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua), on GitHub `main`. Magic Eraser's [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua) builds the same flyout by hand (copy the flyout block from either), plus the More Features flyout and count and the hover-only right side (`ApplyHoverIcons`).
 
 ## What Moves Where
@@ -75,7 +77,7 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 
 1. The kit and plate live in `addon-kits/Menu-Kit/` here, in folders that mirror an add-on's (`Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga`), as Options-Kit's do.
 2. **Already built, for every kit:** `scripts/sync-addon-kits.sh` copies a kit into each add-on that holds any of its files and leaves the rest alone (`--adopt Menu-Kit` the first time), and the reusable `ci.yml`'s **Shared kits match Common-Core** check fails an add-on whose copy differs, plate included. Dropping the two files into `addon-kits/Menu-Kit/` is all Menu-Kit needs.
-3. Tracking Eye, which already carries `Features/Menu-Kit.lua`, counts as adopted the moment the kit lands: its next CI run fails until it's synced, so land the kit and Tracking Eye's move together.
+3. **Every add-on holding either file counts as adopted the moment the kit lands,** and its next CI run fails until it's synced: Tracking Eye, GogoLoot, Magic Eraser and Good to Go carry both files, so land the kit and their moves together. **Play It Forward carries only `Includes/Images/Menu-Plate.tga`** (its reopen button's plate, `Features/UI-Reopen-Button.lua`), with no kit: as the check works today it would fail for a missing `Features/Menu-Kit.lua`. Before landing, either key adoption on `Features/Menu-Kit.lua` alone, or rename Play It Forward's plate.
 4. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, copies the kit from `addon-kits/Menu-Kit/` instead of Tracking Eye on GitHub.
 
 ## Done When
