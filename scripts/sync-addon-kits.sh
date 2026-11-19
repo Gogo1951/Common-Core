@@ -4,11 +4,13 @@
 #
 # A kit's folder mirrors the add-on's own paths (addon-kits/Options-Kit/Options/
 # Options-Kit.lua lands at Options/Options-Kit.lua). An add-on has adopted a kit
-# once any of the kit's files exists in it; a plain run refreshes every kit each
-# add-on has adopted and leaves the rest alone. --adopt <Kit> copies that kit in
-# for the first time (then add its file to the TOC, as the kit's spec says).
+# once any of the kit's Lua files exists in it (art alone doesn't count: Play It
+# Forward borrows Menu-Kit's plate without the kit); a plain run refreshes every
+# kit each add-on has adopted and leaves the rest alone. --adopt <Kit> copies
+# that kit in for the first time (then add its file to the TOC, as the kit's
+# spec says).
 #
-# Usage: scripts/sync-addon-kits.sh [--adopt Options-Kit] ../Magic-Eraser ../GogoLoot ...
+# Usage: scripts/sync-addon-kits.sh [--adopt Menu-Kit] ../Magic-Eraser ../GogoLoot ...
 set -euo pipefail
 KITS="$(cd "$(dirname "$0")/../addon-kits" && pwd)"
 adopt=""
@@ -26,7 +28,7 @@ for target in "$@"; do
     files="$(cd "$kit" && find . -type f | sed 's|^\./||')"
     adopted=""
     while IFS= read -r file; do
-      [ -f "$target/$file" ] && adopted=1
+      case "$file" in *.lua) [ -f "$target/$file" ] && adopted=1 ;; esac
     done <<< "$files"
     [ -n "$adopted" ] || [ "$name" = "$adopt" ] || continue
     while IFS= read -r file; do

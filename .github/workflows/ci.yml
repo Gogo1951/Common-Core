@@ -60,15 +60,19 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           # A kit's folder mirrors the add-on's paths. An add-on that has any of a
-          # kit's files has adopted it, and then every file must match byte for byte.
-          # An add-on that hasn't adopted a kit is left alone.
+          # kit's Lua files has adopted it, and then every file must match byte for
+          # byte, art included. Art alone doesn't adopt a kit: Play It Forward borrows
+          # Menu-Kit's plate for its reopen button without the kit. An add-on that
+          # hasn't adopted a kit is left alone.
           status=0
           for kit in "$RUNNER_TEMP"/common-core/addon-kits/*/; do
             [ -d "$kit" ] || continue
             name=$(basename "$kit")
             files=$(cd "$kit" && find . -type f | sed 's|^\./||')
             adopted=""
-            for file in $files; do [ -f "$GITHUB_WORKSPACE/$file" ] && adopted=1; done
+            for file in $files; do
+              case "$file" in *.lua) [ -f "$GITHUB_WORKSPACE/$file" ] && adopted=1 ;; esac
+            done
             [ -n "$adopted" ] || continue
             for file in $files; do
               if ! cmp -s "$kit/$file" "$GITHUB_WORKSPACE/$file"; then

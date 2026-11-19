@@ -119,7 +119,7 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 
 | Order | Spec | Issue |
 |---|---|---|
-| 1 | [Menu-Kit v2](Mini-map%20Menus/Menu-Kit.md) | [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3) |
+| 1 | [Menu-Kit v2](Mini-map%20Menus/Menu-Kit.md), **landed** in `addon-kits/Menu-Kit/` | [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3) |
 | 2 | [Tracking Eye](Mini-map%20Menus/Tracking%20Eye.md) | [Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31) |
 | 3 | [Water Dispenser](Mini-map%20Menus/Water%20Dispenser.md) | [Gogo1951/Water-Dispenser#25](https://github.com/Gogo1951/Water-Dispenser/issues/25) |
 | 4 | [Control Freak](Mini-map%20Menus/Control%20Freak.md) | [Gogo1951/Control-Freak#25](https://github.com/Gogo1951/Control-Freak/issues/25) |
@@ -137,6 +137,8 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 | Good to Go | Tooltip: an item highlight, three features, class notes, two reports, 7 clicks | Current Food, three feature blocks (Restock List carrying its report), class items, a *[Class] Macros* flyout, Ignore List. |
 
 ## Kit Changes (Menu-Kit v2)
+
+**All six are in Common-Core's `addon-kits/Menu-Kit/`** (`Mini-map Menus/Menu-Kit.md` → API). The add-ons move onto it one by one, Tracking Eye first.
 
 1. **The menu's machinery moves into the kit.** Opening from the button, placing away from the screen edge, the close timer, Escape, flyouts and the public `ns.ShowMenu` / `ns.HideMenu` / `ns.RefreshMenu` are about 250 lines of Tracking Eye's `Minimap-Menu.lua` that know nothing about tracking. They move into `Menu-Kit.lua` as `Kit.CreateMenu{ name, build, flyouts }`, and an add-on's `Minimap-Menu.lua` keeps only its rows.
 2. **`AddFeature` moves into the kit** as `Kit.FeatureBlock`, with the action's label as an argument (Toggle or Open).

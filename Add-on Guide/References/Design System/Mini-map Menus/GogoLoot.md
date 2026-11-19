@@ -1,7 +1,7 @@
 # GogoLoot: Mini-map Menu
 
 **State:** live on GogoLoot's `main`: the menu, with More Features in a flyout, the click table and one refresh. Still to do: the move onto Menu-Kit v2, the maintainer's once the kit lands in Common-Core; nothing a player sees changes.
-**Kit:** Tracking Eye's, copied from GitHub until Menu-Kit v2 lands (`Menu-Kit.md`, the maintainer's work). Until then the Code section's v2 names (an entry's `click` key, `OnClick` going to the kit) are built with Tracking Eye's `CLICKS` table and `ns.HandleLauncherClick` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
+**Kit:** Menu-Kit v2, copied from Common-Core's `addon-kits/Menu-Kit/` (`Menu-Kit.md`; Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1). The Code section's v2 names (an entry's `click` key, `OnClick` going to `menu:HandleClick`) are the kit's own.
 **Live example:** Tracking Eye's menu: [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) for the click table, feature blocks, flyouts and More Features; [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) for the button.
 **Labels:** `Type: Design`, `Area: Features`.
 **Issue:** [Gogo1951/GogoLoot#149](https://github.com/Gogo1951/GogoLoot/issues/149). Close it with the PR that builds this.
