@@ -72,6 +72,7 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 - **`afterChange`** is the add-on's `ns.RefreshSettings` in every add-on (One Refresh).
 - **Placement** is the kit's (Placement): corner to opposite corner, 2 points apart, by screen halves, flyout and row tooltips on the same side.
 - **Any LDB display works.** The anchor is whatever frame called `OnEnter`: the mini-map button, or a Titan Panel or ChocolateBar plugin.
+- **Every menu, not only the mini-map's.** `Kit.CreateMenu` also opens a right-click menu or a window's own menu off any frame, with the header naming what was clicked and the anchoring and closing of Style Guide → MENUS, so an add-on's other menus move off the game's `MenuUtil` onto the kit's panels.
 
 ## Distribution
 

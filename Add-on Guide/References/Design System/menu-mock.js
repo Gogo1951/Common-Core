@@ -54,7 +54,7 @@
 		DESCRIPTION_MAX_WIDTH: 320,
 		MAX_WIDTH: 320, // no row widens the menu past this; a long left side wraps
 		INSETS: 2 * (8 + 4), // TEXT_INSET + ROW_INSET, both sides
-		FLYOUT_GAP: 16, // SPACE.GROUP
+		FLYOUT_GAP: 0, // Flush: the flyout touches its menu (Style Guide → MENUS)
 		FLYOUT_RISE: 8, // SPACE.NEAR
 	};
 

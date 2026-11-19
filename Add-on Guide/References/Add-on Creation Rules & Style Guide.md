@@ -973,6 +973,21 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 -----
 
+## MENUS
+
+**Every menu looks and works the same, in every add-on.** A mini-map menu, a right-click menu, a window's own menu and a dropdown's list are one thing to a player, so they are one thing in the code: Menu-Kit's panels on Pretty Wide Quest Log's plate, with one set of row kinds, colors, type, spacing and behavior. MINIMAP MENU → Layout's type and color rules, Flyouts, Row Kinds, Behavior and The Look bind every menu; this section adds what a menu that doesn't hang off a mini-map button needs.
+
+Live reference: **Pretty Wide Quest Log's Quest Arrow menu**, the menu every other one is measured against — [`Features/Routes/Routes-Arrow-Menu.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu.lua) (what goes in it, opening and closing) and [`Features/Routes/Routes-Arrow-Menu-Panel.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Features/Routes/Routes-Arrow-Menu-Panel.lua) (the plates, rows and flyout).
+
+- **Drawn by the kit, never by the game's menus.** Every menu is built from `Kit.CreatePanel` and kit entries. Never Blizzard's `MenuUtil` / `Menu`, `UIDropDownMenu` / `EasyMenu`, or an AceGUI dropdown's pullout outside the options panel. Skin add-ons redraw those: ElvUI strips the game's menus, lays its own square backdrop under them, swaps their checkboxes and turns their arrow, so the same menu looks different on every install, and a fix laid over a skin breaks with the skin's next update. The kit's panels are the add-on's own frames, which no skin touches. The one exception is the options panel's AceConfig dropdowns, which belong to the Settings window (OPTIONS PANEL).
+- **The header names what was clicked.** The first row is the thing's name in C_TITLE on the left and the add-on's Short Name in C_MUTED on the right (`Quest Arrow … PWQL`, `Attack … GtG`), then a spacer. A mini-map menu's header stays the Full Name and version (MINIMAP MENU → Layout).
+- **Flyouts touch their menu.** A flyout opens flush against the edge of the menu it came from, no gap between the two plates, its first row level with the row that opens it, on the side away from the screen edge. `Kit.FLYOUT_GAP` is 0. A flyout set apart reads as a second menu.
+- **One row kind per job.** A row that opens a flyout is a `submenu` row: its label C_TITLE, the current value C_MUTED on its right, then the arrow. A row that opens a window or panel, or does one thing, is an `action` row in C_INFO. A setting is a `toggle` or `choice` row: no checkboxes, radio buttons or boxes.
+- **Spacers group, one separator closes.** Groups of rows sit apart by a spacer, never a line. The actions at the foot (Duplicate, Delete, Reset) sit under a spacer and one separator, as Options does in a mini-map menu. A flyout holding more than one group opens each with a gold `section` heading (`What to Route`, `Also Route`).
+- **Opens beside what was clicked.** The menu hangs 8 points off the frame clicked (`SPACE.NEAR`), below it, or above it where the screen hasn't the room, clamped to the screen at strata `DIALOG`. It closes when the cursor leaves it, its flyout and that frame, on Escape, and on a pick.
+
+**Until Menu-Kit v2 lands**, an add-on opens its own panels for these menus, as PWQL does, with the kit it already carries (MINIMAP MENU → Never edit a copy of the kit); `Kit.CreateMenu` then takes the anchoring and closing over (`References/Design System/Mini-map Menus/Menu-Kit.md`).
+
 ## MINIMAP MENU
 
 Live reference: **Tracking Eye**, live on `main` with every rule below in play — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer), [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it: the click table, feature blocks, flyouts, More Features and placement), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) (the button handing its clicks to the menu), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`) and [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`). **Magic Eraser** shows what Tracking Eye doesn't: the More Features flyout and its count, click-to-remove list rows, and a Clear that asks first ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua)). Both add-ons' menu machinery still sits in `Minimap-Menu.lua` until Menu-Kit v2 lands in Common-Core's `addon-kits/Menu-Kit/`; from then on the kit is copied from there. Each section below names the live code that shows it.
@@ -1083,7 +1098,7 @@ Live: Tracking Eye's `ns.RefreshSettings` in `Features/Utilities.lua`, reached f
 | Bottom left | Above, to the right | `BOTTOMLEFT` → `TOPRIGHT` |
 
 - **Halves decide it**, measured from the button's center against `UIParent` at its effective scale, once when the menu opens; it doesn't jump while open.
-- **The flyout opens on the same side** the menu opened toward, 16 points away (`Kit.FLYOUT_GAP`), rising 8 so its first row meets its title.
+- **The flyout opens on the same side** the menu opened toward, flush against it with no gap (`Kit.FLYOUT_GAP`, 0; MENUS → Flyouts touch their menu), rising 8 so its first row meets its title.
 - **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
 - **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
 
