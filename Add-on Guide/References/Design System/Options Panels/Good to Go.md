@@ -1,6 +1,6 @@
 # Good to Go: Options Panels
 
-**State:** the second-largest options surface, organised as a feature subfolder per panel under `Options/` plus four shared files (`Options-Utilities.lua`, `Options-Widgets.lua`, `Options-Feature-Switches.lua`, `Options-Item-Lists.lua`). It already registers every panel as a function, keeps every category ID and titles sub-panels "Buff Duty > Self-Buffs". Its `FEATURE_SWITCHES` records (custom get/set, `confirmOff`, `notifies`) are the closest thing to the kit's `ns.FEATURES` outside Tracking Eye.
+**State:** live: every panel in Options/ is built on Options-Kit.lua and passes the Options Panels checks.
 **Live code:** [`Options/Options-Feature-Switches.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options-Feature-Switches.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options-Utilities.lua), [`Options/Options-Item-Lists.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options-Item-Lists.lua), [`Options/Options.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core). Pairs with `Mini-map Menus/Good to Go.md`.
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
