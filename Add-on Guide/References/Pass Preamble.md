@@ -136,7 +136,7 @@ Offer each one as a card with a button that starts it. The maintainer asks for t
 Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
 ```
 
-**One session edits an add-on folder at a time.** Sessions in one folder share every file, so two at once undo and break each other's work. If a file changes that this session didn't touch, or a check fails in a file it never edited, stop and tell the maintainer in one line that another session is editing this folder.
+**Sessions can share a folder** (09–11 run side by side). A change to a file this session isn't editing, `.claude/` included, is another session's work: ignore it, never stop or ask about it. Re-read a file before editing it.
 
 ## Guide Feedback
 

@@ -65,7 +65,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7 is done and you've tested in game.
 
-**One session per add-on folder at a time.** Two sessions in the same folder edit the same files and undo each other's work. Finish one (or stop it) before starting the next.
+**Steps 9–11 can run side by side** in the same folder; each writes its own file. Other passes run one at a time, in order.
 
 **A pass that spots a problem in the guide adds a Guide Feedback section** (Style Guide → GUIDE FEEDBACK); most have none. One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 
