@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "defaultMode": "default",
+    "defaultMode": "bypassPermissions",
     "additionalDirectories": [
       "/Applications/World of Warcraft/_classic_era_/Interface/AddOns/{{ADDON}}",
       "/Applications/World of Warcraft/_classic_era_/WTF",
