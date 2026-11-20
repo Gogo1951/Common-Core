@@ -216,6 +216,8 @@ ns.DATABASE_DEFAULTS = {
 }
 ```
 
+**A macro the add-on writes starts on, never off.**
+
 Under Simple, the same keys live in the `profile` subtable, and `global` is absent unless the add-on keeps reset-proof state (SAVED VARIABLES).
 
 Default **item/spell lists** live in the flavor folders (DATA → Flavor Folders) and seed the saved list once, tracked by a saved flag — or, with no flag, whenever the list is missing or empty — and again on Restore Defaults. New default entries reach a settings map (a spell-toggle map) wherever the user never saved that key, but never an existing seeded list; note them in release notes. A settings map is never refilled on empty: one turned entirely off must survive logins, as must a flagged list the player emptied.
@@ -782,7 +784,7 @@ Two output contexts: prints to the player carry no target marker and use branded
 
 ### Target Marker
 
-The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing a new one. Good to Go and Thanks for the Buff both sign with Star, by the maintainer's choice; no other two share one. **On WoW Forever, group and channel chat refuse marker tokens,** so there only whispers carry the marker; the kit handles it. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
+The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing a new one. Good to Go and Thanks for the Buff both sign with Star, by the maintainer's choice; no other two share one. **On WoW Forever, group chat and numbered channels (`/2`, `/4` and the rest) refuse marker tokens,** so there only whispers carry the marker; the kit handles it. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
 
 ### Print Outs (Player Only)
 
@@ -801,6 +803,7 @@ Local prints use branded colors: `C_INFO` for the Full Name, `C_SEPARATOR` for t
 
 All cross-player chat goes through Chat-Kit, so the marker, name and separator are handled in one place. Roll calls, button whispers and announce macros too: an announce macro's body is built by the kit, and nothing sends around it. How the kit builds, measures, queues and packs each line is in `Chat-Kit.md`.
 
+- **A sent whisper is never echoed back in chat.** The game already shows the player what they whispered; the add-on prints nothing about it.
 - **A group message goes to the group the player is in:** instance chat, then raid, then party. Solo, nothing is sent, so a message that must still land falls back (for example, whispering the relevant player).
 - **`SAY`, `YELL` and numbered channels need a click or key press behind the send** outside instances. From an event, a timer or login the send is blocked as `ADDON_ACTION_BLOCKED`, which `pcall` doesn't see, so these sends only ever run from the player's own input.
 
@@ -1339,7 +1342,7 @@ Live reference: **Water Dispenser** — the Dispense panel's toggles; **Thanks f
 
 **Every feature that prints or sends a chat line shows one Example line on its panel, drawn exactly as the line will arrive with the settings the player has chosen.** An Example shows the line the player will see most often, such as a typical line from the body of a longer report, never its title or header; a feature that prints a short block together (a two-line report) may show those lines, one under the other. The player should see the finished line, colors, links and marks included, before it happens.
 
-- **About two rendered lines, at most.** Two messages that are the same message with a different reason (Magic Eraser's "can now be erased" for a completed quest and for a quest you can never take) show as one. Show several only when how they look together matters, such as a total over its detail line (MESSAGES → Print Outs).
+- **As long as the line really is.** An Example may run past two rendered lines; never cut a line short to fit. Two messages that are the same message with a different reason (Magic Eraser's "can now be erased" for a completed quest and for a quest you can never take) show as one. Show several only when how they look together matters, such as a total over its detail line (MESSAGES → Print Outs).
 
 - **It closes the field set of the control it shows** (`Kit.Example`): a spacer, then the silver `Example` label on a line of its own, no colon, then the message line or lines under it, indented like a sub-option and aligned with each other, a blank line apart so each reads as its own chat line and a wrapped line never runs into the next. The kit draws the gap; never add it by hand. A tooltip Example keeps the tooltip's own rows tight. It comes after the control's helper line and sub-rows, and **leaves while that control is off**, as every setting under a switch does. When nothing would be printed or sent (Print unticked and Announce on Never), no Example shows. The label is `SAMPLE_EXAMPLE`.
 - **The Example follows the selected option.** It is drawn in the form the current setting picks: a Print setting shows the print, an Announce setting shows party chat, and nothing shows a destination the player hasn't chosen. Give it a function `name` so it redraws the moment the dropdown changes. When a feature has several rows with their own dropdowns, the Example follows the row its line belongs to: a line about the player's own cast follows the player's row, a line about someone else's follows the others' row.
@@ -1641,7 +1644,7 @@ Each add-on's `README-Notes.md` lists its **exceptions**: the places it departs 
 
 The single definition of how a pass talks to the maintainer. **The maintainer is not a developer and is short on time: every question is quick to read, quick to answer, and needs no research.** The Diagnostics, Data and Localization Reviews never ask: they decide from their evidence and say what they decided. The one exception is the Data Review's request for an in-game Validate Data run when the tables can't settle something.
 
-- **Never ask permission to do the job.** What the prompt or the maintainer already asked for gets done and reported, never confirmed first, within the pass's write scope; in a pass whose write scope is nothing, done means the fix or feature prompt, never the edit (Pass Preamble → Report-only passes): no "shall I apply these?", "want me to run it?" or "ready to continue?". A question is only for a genuine choice the record can't settle.
+- **Never ask permission to do the job.** What the prompt or the maintainer already asked for gets done and reported, never confirmed first, within the pass's write scope; in a pass whose write scope is nothing, done means the fix or feature prompt, never the edit (Pass Preamble → Report-only passes): no "shall I apply these?", "want me to run it?", "want me to commit?" or "ready to continue?", and never one tacked on at the end of a reply. A question is only for a genuine choice the record can't settle.
 - **Small calls aren't questions.** When a choice is minor or easy to change later, make the sensible call and mention it in one line of the report. Example: a new feature generally starts on, so just ship it on and say so; don't ask.
 - **Look it up first.** Check the record before asking: this guide, the add-on's `README-Notes.md`, its master-list entry, and the code. A README is never the record (Pass Preamble → Standing scope). A question one of those answers is a lookup you skipped.
 - **Always multiple choice.** Use the surface's question tool (a short numbered list only if it has none). 2–4 options, one decision per question, **at most 4 questions per round and one round per pass**. The UX Review's change cards, picked on its wireframe page, don't count toward either. Never a free-text question: when you need a name, a tagline or a link, offer your best 2–3 drafts as options; the maintainer can still type their own.
