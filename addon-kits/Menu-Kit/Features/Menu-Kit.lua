@@ -111,12 +111,12 @@ Kit.REMOVE_ICON = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:0|t"
 
 --[[
     A sub-menu overlaps its menu, as the game's own do: its edge sits
-    FLYOUT_OVERLAP inside the menu's (where a row's text ends), and it rises
-    FLYOUT_RISE so its first row meets the row that opened it. FLYOUT_GAP is
-    v1's name, measured from the row rather than the plate, and negative now:
-    an add-on still placing its own flyout with it gets the overlap too.
+    FLYOUT_OVERLAP inside the menu's (where a row's highlight ends, clear of the
+    arrow), and it rises FLYOUT_RISE so its first row meets the row that opened
+    it. FLYOUT_GAP is v1's name, measured from the row rather than the plate,
+    and 0 now: an add-on still placing its own flyout with it gets the overlap too.
 ]]
-Kit.FLYOUT_OVERLAP = ROW_INSET + TEXT_INSET
+Kit.FLYOUT_OVERLAP = ROW_INSET
 Kit.FLYOUT_RISE = PANEL_INSET
 Kit.FLYOUT_GAP = ROW_INSET - Kit.FLYOUT_OVERLAP
 

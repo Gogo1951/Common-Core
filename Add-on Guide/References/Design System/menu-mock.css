@@ -111,15 +111,15 @@
 .gg-menu-wrap.left {
 	flex-direction: row-reverse; /* on the right half of the screen the menu, and its flyout, open left */
 }
-/* A flyout overlaps its menu as the game's own submenus do: 16 points inside its edge (Kit.FLYOUT_OVERLAP), drawn above it. */
+/* A flyout overlaps its menu as the game's own submenus do: 8 points inside its edge (Kit.FLYOUT_OVERLAP), clear of the arrow, drawn above it. */
 .gg-flyout {
 	position: relative;
 	z-index: 1;
-	margin-left: -16px;
+	margin-left: -8px;
 }
 .gg-menu-wrap.left > .gg-flyout {
 	margin-left: 0;
-	margin-right: -16px;
+	margin-right: -8px;
 }
 
 .gg-menu {

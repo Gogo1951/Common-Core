@@ -287,8 +287,8 @@ Kit.SetText({
 check(Kit.Color("ON", "x") == "|cff33cc33x|r", "Color takes a palette key")
 check(Kit.Color("FF8000", "x") == "|cffff8000x|r", "Color takes a raw hex")
 check(Kit.Color({ 1, 0, 0 }, "x") == "|cffff0000x|r", "Color takes { r, g, b }")
-check(Kit.FLYOUT_OVERLAP == 16 and Kit.FLYOUT_RISE == 12, "sub-menus overlap by 16 and rise 12")
-check(Kit.FLYOUT_GAP == -8, "v1's FLYOUT_GAP, from the row, now overlaps")
+check(Kit.FLYOUT_OVERLAP == 8 and Kit.FLYOUT_RISE == 12, "sub-menus overlap by 8 and rise 12")
+check(Kit.FLYOUT_GAP == 0, "v1's FLYOUT_GAP, from the row, now overlaps")
 
 -- v1: a panel made and filled by the add-on
 local panel = Kit.CreatePanel("TestPanel")
@@ -479,7 +479,7 @@ local flyout = menu.panels[2]
 check(flyout and flyout:IsShown(), "hovering a title opens its flyout")
 check(byText.Feature.locked, "the title keeps its highlight while its flyout is open")
 local place = flyout.points[1]
-check(place[1] == "TOPRIGHT" and place[3] == "TOPLEFT" and place[4] == 8 and place[5] == 12, "it overlaps, rising 12")
+check(place[1] == "TOPRIGHT" and place[3] == "TOPLEFT" and place[4] == 0 and place[5] == 12, "it overlaps, rising 12")
 local deeper = ShownRows(flyout)[3] -- After the spacer the kit puts above a heading
 deeper.scripts.OnEnter(deeper)
 check(menu.panels[3] and menu.panels[3]:IsShown(), "a sub-menu opens a sub-menu")
@@ -603,13 +603,13 @@ line.menu:Hide()
 line.scripts.OnEnter(line)
 local linePoint = line.menu.frame.points[1]
 check(
-	linePoint[1] == "TOPLEFT" and linePoint[3] == "TOPRIGHT" and linePoint[4] == -(16 - 8),
-	"the line's flyout overlaps the window's edge by 16, not the line's end"
+	linePoint[1] == "TOPLEFT" and linePoint[3] == "TOPRIGHT" and linePoint[4] == -(8 - 8),
+	"the line's flyout overlaps the window's edge by 8, not the line's end"
 )
 line.box = { 100, 420, 432, 412 }
 line.menu:Hide()
 line.scripts.OnEnter(line)
-check(line.menu.frame.points[1][4] == -16, "measured from where the line really ends")
+check(line.menu.frame.points[1][4] == -8, "measured from where the line really ends")
 
 -- A gray row with a sub-menu: its arrow gray, and it opens nothing
 local grayMenu = Kit.CreateMenu({

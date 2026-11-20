@@ -967,10 +967,10 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Sub-menus
 
-- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 16 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET + TEXT_INSET`, where a row's text ends), drawn over it, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 12). Never a gap and never flush: a sub-menu set apart reads as a second menu.
+- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 8 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET`, where a row's highlight ends), drawn over it but never over the row's arrow, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 12). Never a gap and never flush: a sub-menu set apart reads as a second menu.
 - **Hovering the row opens it**, and a click does too, unless the row is a switch, whose click flips it. Hovering any other clickable row closes it. The row keeps its highlight while its sub-menu is open.
 - **The side away from the screen edge**, decided once when the menu opens; a sub-menu of a sub-menu goes the same way.
-- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 16 points, measured from the window's edge, level with the line.
+- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 8 points, measured from the window's edge, level with the line.
 - **A change keeps it open.** A switch or a setting's choice redraws in place, so the player sees the new value (Macro Storage). A pick that acts, casting, opening a window or going somewhere, closes it.
 
 ### Opening and Closing
@@ -981,7 +981,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Window-Menus
 
-A small window drawn on the plate that stays open (Good to Go's Buff Duty) is one of the menus. Its header is the window title with the close button (WINDOWS, `Kit.AddWindowHeader`), then its body, then a separator and a blue Options line in the rows' own font with the sub-menu arrow (`Kit.AddOptionsLine`). Hovering or clicking the line opens its flyout, overlapping the window by 16 points as any sub-menu does. Nothing on it is in a smaller font.
+A small window drawn on the plate that stays open (Good to Go's Buff Duty) is one of the menus. Its header is the window title with the close button (WINDOWS, `Kit.AddWindowHeader`), then its body, then a separator and a blue Options line in the rows' own font with the sub-menu arrow (`Kit.AddOptionsLine`). Hovering or clicking the line opens its flyout, overlapping the window by 8 points as any sub-menu does. Nothing on it is in a smaller font.
 
 **Menu-Kit v2 draws all of these**; its calls are in `References/Design System/Mini-map Menus/Menu-Kit.md` → API.
 
@@ -1077,7 +1077,7 @@ Live: Tracking Eye's `ns.RefreshSettings` in `Features/Utilities.lua`, reached f
 | Bottom left | Above, to the right | `BOTTOMLEFT` → `TOPRIGHT` |
 
 - **Halves decide it**, measured from the button's center against `UIParent` at its effective scale, once when the menu opens; it doesn't jump while open.
-- **The flyout opens on the same side** the menu opened toward, overlapping it by 16 points (`Kit.FLYOUT_OVERLAP`; MENUS → Sub-menus), rising 12 so its first row meets its title.
+- **The flyout opens on the same side** the menu opened toward, overlapping it by 8 points (`Kit.FLYOUT_OVERLAP`; MENUS → Sub-menus), rising 12 so its first row meets its title.
 - **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
 - **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
 
