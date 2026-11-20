@@ -35,7 +35,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Reviews that only report: steps 2, 3 and 8** (and `Optional - Create UX Wireframes.md`). They never edit code; you get findings or feature prompts, then one question: *Apply all / Pick which ones / None for now*. Code changes only when you answer it. **Reviews that fix their own area: steps 4–7**, each inside the files its entry names, and nowhere else.
 
-![The pass workflow: 01 to 03 in a line, then 04, the optional 05, 06 and 07, one at a time, then 08, then 09–11 and 12](References/Pass%20Workflow.svg)
+![The pass workflow: 01 to 03 in a line, then 04 → the optional 05 beside 06 → 07, meeting at 08, then 09–11 and 12](References/Pass%20Workflow.svg)
 
 - **`00 - Optional GitHub Cleanup.md`** — Starts a new add-on, or checks an existing one. For a new add-on it builds a complete, loadable skeleton on Common-Core. For an existing one it checks GitHub for every scaffolding file and repo setting. *Changes:* the new add-on's folder; for an existing add-on nothing local, with missing settings given as Run-button commands and corrected files as blocks to paste into GitHub.
 - **`01 - Local Setup.md`** — **Run at the start of every code session you start yourself, before anything else** (step 0 needs only Session Prep step 0). Sessions launched from a pass's Next Pass prompt, and step 12, run only its step 0. Sets the session's permissions, pulls the latest `main` and libraries down, and opens the folder in Sublime Text. *Changes:* the add-on's `.claude/settings.local.json`, its TOCs' version and interface lines, its READMEs and scaffolding files, its libraries, and its git wiring (no commits).
@@ -63,9 +63,9 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7 is done and you've tested in game.
+**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7, and step 5 if it ran, are done and you've tested in game.
 
-**Steps 9–11 can run side by side** in the same folder; each writes its own file. Other passes run one at a time, in order.
+**After step 3 the work runs in two branches, side by side** in the same folder: 4 then 5, and 6 then 7, meeting at 8. **Steps 9–11 also run side by side**; each writes its own file. Other passes run one at a time, in order.
 
 **A pass that spots a problem in the guide adds a Guide Feedback section** (Style Guide → GUIDE FEEDBACK); most have none. One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 

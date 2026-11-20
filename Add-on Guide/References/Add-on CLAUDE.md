@@ -10,6 +10,6 @@ This folder is one of Gogo1951's WoW add-ons. Its guide is Common-Core's `Add-on
 - **Don't guess.** Not sure why something happens? Say so, and give one thing to check in game before changing code. Never change working code to chase a guess, and never state a guess or a code comment as fact.
 - **Check every change** with `stylua --syntax lua51`, `luac -p`, luacheck, and `lua5.1 Tests/Run.lua` when it exists. Say once, at the end, that it hasn't been tried in game.
 - **English you add or change** is translated into every other locale in the same edit, except where a pass's write scope says otherwise.
-- **Other sessions may be working in this folder** (steps 9–11 run side by side). Ignore changes to files you aren't editing, `.claude/` included; never stop or ask about them. Re-read a file before editing it.
+- **Other sessions may be working in this folder** (steps 4–7 and 9–11 run side by side). Ignore changes to files you aren't editing, `.claude/` included; never stop or ask about them. Re-read a file before editing it.
 - **The guide and kit copies are read-only here, and nothing here ever needs to write them** (anything Common-Core's `addon-kits/` holds, anything in the guide). If one needs changing, say what in one line, give a block to paste into a session launched in `~/Common-Core` (Pass Preamble → Kits and the guide change only in Common-Core), and carry on with the work. Never try to write it, and never stop over it.
 - **No branches and no worktrees.** Commit only when the maintainer asks, or in step 12.

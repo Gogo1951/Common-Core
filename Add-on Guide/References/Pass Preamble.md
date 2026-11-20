@@ -119,16 +119,17 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 | Pass done | Prompt for |
 |---|---|
 | `02 - UX Review.md` | `03 - Code Review.md` |
-| `03 - Code Review.md` | `04 - Diagnostics Review.md` |
-| `04 - Diagnostics Review.md` | `05 - Data Review.md` when phase 4 says yes, else `06 - Copy Review.md` |
-| `05 - Data Review.md` | `06 - Copy Review.md` |
+| `03 - Code Review.md` | `04 - Diagnostics Review.md` and `06 - Copy Review.md`, side by side |
+| `04 - Diagnostics Review.md` | `05 - Data Review.md` when phase 4 says yes, else nothing |
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
-| `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
+| `07 - Localization Review.md` | `08 - Prelaunch Review.md`, with one line: start it once any Data Review session has finished too |
 | `08 - Prelaunch Review.md`, verdict **Not ready** | Nothing: once its chosen fixes have run, it checks again **in this same session** and gives its new verdict. Only a blocker another pass owns (stale data → `05 - Data Review.md`) gets that pass's prompt, with one line: then run 08 again |
 | `Optional - Fix a Bug.md` | the pass its report names to re-run, or `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
 
-**One pass at a time, in order.** `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4).
+**After step 3 the work runs in two branches, side by side:** 4 then 5, and 6 then 7, meeting at 8. `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4).
+
+**Only a pass in the table's left column offers a prompt.** 05, 09, 10, 11 and 12 offer none: the pass that started them already offered what comes next.
 
 **Offer each one as a card with a button that starts it in a new session, never as a copy box.** The card is the deliverable. Just before the final reply, find the card tool by name, loading it with `ToolSearch` if it isn't loaded yet: the app's start-session tool if there is one, as an offer (its card asks *New session* or *Do it here*), otherwise the suggest-task tool (`mcp__ccd_session__spawn_task`). One card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Print the line as text only when neither tool exists:
 
@@ -136,7 +137,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
 ```
 
-**Sessions can share a folder** (09–11 run side by side). A change to a file this session isn't editing, `.claude/` included, is another session's work: ignore it, never stop or ask about it. Re-read a file before editing it.
+**Sessions can share a folder** (04–07 and 09–11 run side by side). A change to a file this session isn't editing, `.claude/` included, is another session's work: ignore it, never stop or ask about it. Re-read a file before editing it.
 
 ## Guide Feedback
 
