@@ -210,7 +210,8 @@ for _, old in ipairs({ "Example: %s", "Beispiel : %s", "\231\164\186\228\190\139
 	Kit.SetText({ example = old })
 	local label = Kit.Example(5, nil, function()
 		return ""
-	end).args.label.name()
+	end).args.label
+		.name()
 	check(
 		not label:find(":") and not label:find("\239\188\154") and not label:find(" |r"),
 		"Example label drops a locale's colon: " .. old
