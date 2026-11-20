@@ -1,6 +1,6 @@
 # Pretty Wide Quest Log: Options Panels
 
-**State:** no mini-map button. Its sub-panels bypass `AddToBlizOptions` (a hand-built `BlizOptionsGroup` registered with `Settings.RegisterCanvasLayoutSubcategory` and written into `AceConfigDialog.BlizOptions`), its Features toggles are flat at exactly 1.7 with a status line among them, and its sub-row helper takes a keyed map where every other add-on takes a list. Its font section, reload watcher and Examples-under-their-toggle are the patterns other add-ons borrow.
+**State:** live: every panel in Options/ is built on Options-Kit.lua and passes the Options Panels checks. No mini-map button. Its font section, reload watcher and Examples-under-their-toggle are the patterns other add-ons borrow.
 **Live code:** [`Options/Options.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options.lua), [`Options/Options-General.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options-General.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options-Utilities.lua), [`Options/Options-Fonts.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options-Fonts.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core).
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
