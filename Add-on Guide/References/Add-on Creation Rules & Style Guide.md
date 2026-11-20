@@ -1673,7 +1673,7 @@ How a pass proposes a change to these documents.
 
 **Never report the current state of an add-on as a doc change** — not partially converted, mid-migration, or pending anything. An add-on behind a rule is a code fix in the pass's own report.
 
-**Routine data items ride here too, exempt from the bar and the cap**, because they record a durable per-add-on *fact* rather than criticise the docs: the Prelaunch's row reconciliation, a scaffold's new row, and the like. Give each as its exact proposed edit, ready to apply. A maintainer's rule-change ruling from the pass is doc feedback, asked about on its own at triage, but exempt from the cap.
+**Routine data items ride here too, exempt from the bar and the cap**, because they record a durable per-add-on *fact* rather than criticise the docs: the Prelaunch's row reconciliation, a scaffold's new row, a permission the template lacks (`01 - Local Setup.md` → What a prompt means now), and the like. Give each as its exact proposed edit, ready to apply. A maintainer's rule-change ruling from the pass is doc feedback, asked about on its own at triage, but exempt from the cap.
 
 **Format.** Title the section **Guide Feedback**, with one context-stamp line directly under it: `Generated on [Date] after performing [Pass Name] on [Add-on Name].` Per item: what the doc currently says, what reality is, and the suggested edit. When there is an item, close with one line — *Paste the block below into a new session launched in `~/Common-Core`.* — followed by **one fenced block holding everything that session needs**, since it sees nothing from this one: the triage line, then the stamp and every item, word for word.
 
