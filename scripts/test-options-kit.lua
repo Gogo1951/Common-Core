@@ -202,7 +202,10 @@ check(
 local two = Kit.Example(4, nil, function()
 	return { "one", "two" }
 end)
-check(two.args.lines.args.cell1.name() == "one\ntwo", "Example takes several lines, one under the other")
+check(
+	two.args.lines.args.cell1.name() == "one\n\ntwo",
+	"Example takes several lines, one under the other, a blank line apart"
+)
 for _, old in ipairs({ "Example: %s", "Beispiel : %s", "\231\164\186\228\190\139\239\188\154%s" }) do
 	Kit.SetText({ example = old })
 	local label = Kit.Example(5, nil, function()
