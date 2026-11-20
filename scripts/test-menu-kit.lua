@@ -540,7 +540,10 @@ for index = 1, 10 do
 	listed[index] = { kind = "value", left = "Row " .. index, right = tostring(index) }
 end
 Kit.List(list, listed)
-check(#list == 9 and list[9].kind == "note" and list[9].left == "2 more", "a long list stops at 8, then N more")
+check(#list == 10 and list[10].kind == "value", "a list shows every row by default")
+list = {}
+Kit.List(list, listed, 8)
+check(#list == 9 and list[9].kind == "note" and list[9].left == "2 more", "given a max, it stops there, then N more")
 local context = Kit.CreateMenu({
 	name = "TestContext",
 	build = function()

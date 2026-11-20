@@ -49,7 +49,7 @@ local _, ns = ...
       block:State(label, on)               On green or Off gray on the right
       block:Requirement(label, value, met) White, or red on both sides when met is false
       block:Line(text)                     A silver sentence that wraps
-      block:List(rows)                     Up to 8 rows, then "%d more" gray
+      block:List(rows, max)                Every row, or up to max, then "%d more" gray
       block:Total(label, value)            The bottom row, like a sum (Total … 25), whenever it's called
       block:Done() -> drawn                Draws the block and resizes the tooltip
 
@@ -305,12 +305,14 @@ function Block:Line(text)
 end
 
 --[[
-    Up to LIST_MAX rows, then "%d more" in gray. Each row is { label, value },
-    { label = , value = }, { item = , value = } or { name = , class = , value = }.
+    Every row, or up to max when the add-on gives one, then "%d more" in gray.
+    Each row is { label, value }, { label = , value = }, { item = , value = }
+    or { name = , class = , value = }.
 ]]
-function Block:List(rows)
+function Block:List(rows, max)
 	local count = #rows
-	for index = 1, math.min(count, LIST_MAX) do
+	max = max or count
+	for index = 1, math.min(count, max) do
 		local row = rows[index]
 		if row.item then
 			self:Item(row.item, row.value)
@@ -320,8 +322,8 @@ function Block:List(rows)
 			self:Row(row.label or row[1], row.value or row[2])
 		end
 	end
-	if count > LIST_MAX then
-		AddRow(self, Color("MUTED", format(Text("MENU_MORE", "%d more"), count - LIST_MAX)))
+	if count > max then
+		AddRow(self, Color("MUTED", format(Text("MENU_MORE", "%d more"), count - max)))
 	end
 	return self
 end

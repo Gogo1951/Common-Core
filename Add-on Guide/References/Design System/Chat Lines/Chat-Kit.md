@@ -1,6 +1,6 @@
 # Chat-Kit (Common-Core)
 
-The shared helper every Gogo add-on writes its chat lines through, in Common-Core so every add-on copies one file. It prints to the player and sends to other players in the Style Guide's one format, so the marker, the names, the `//`, the trim, the Forever rule, the whisper queue and the link packing live in one place instead of seven copies of `Features/Announcements.lua`. **Written:** [`addon-kits/Chat-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Chat-Kit) holds `Features/Chat-Kit.lua`, checked by StyLua, luacheck (under every add-on's config), `luac5.1 -p` and `scripts/test-chat-kit.lua` (`lua5.1 scripts/test-chat-kit.lua` from Common-Core). A change to it is the maintainer's work, in a session launched in `~/Common-Core`; a session in an add-on folder never edits it.
+The shared helper every Gogo add-on writes its chat lines through, in Common-Core so every add-on copies one file. It prints to the player and sends to other players in the Style Guide's one format, so the marker, the names, the `//`, the Forever rule, the whisper queue and the link packing live in one place instead of seven copies of `Features/Announcements.lua`. **Written:** [`addon-kits/Chat-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Chat-Kit) holds `Features/Chat-Kit.lua`, checked by StyLua, luacheck (under every add-on's config), `luac5.1 -p` and `scripts/test-chat-kit.lua` (`lua5.1 scripts/test-chat-kit.lua` from Common-Core). A change to it is the maintainer's work, in a session launched in `~/Common-Core`; a session in an add-on folder never edits it.
 
 - **Rules:** Style Guide → MESSAGES, WELCOME MESSAGE, ADD-ON NAMES, COLORS.
 - **Drawn:** `../Chat Lines.html`.
@@ -28,7 +28,7 @@ local Chat = ns.ChatKit
 | `Chat.Print(body)` | `Full Name // Body.` | Full Name (`L.ADDON_TITLE`) in `INFO`, `//` in `SEPARATOR`, body in `TEXT`. The body keeps its punctuation. A nil body prints nothing. |
 | `Chat.PrintLine(body)` | nothing | `Print`'s exact line, for an options panel's Example line. |
 | `Chat.PrintBlock(first, lines)` | `first`, then each of `lines` | A report's total, a list's title or a command help's heading first; **every line carries the name**, never an unbranded continuation. |
-| `Chat.PrintAlert(body)` | `Body // Full Name` | Combat alerts only: the name at the end, as the group reads it, body trimmed as a sent one is. |
+| `Chat.PrintAlert(body)` | `Body // Full Name` | Combat alerts only: the name at the end, as the group reads it. |
 | `Chat.AlertLine(body)` | nothing | `PrintAlert`'s exact line. |
 | `Chat.PrintWarning(body, key)` | `Full Name // Body.` | A login warning for a conflict or a missing add-on this one needs. Never reads the welcome switch. Once a session per `key` (the body when nil). |
 | `Chat.PrintOnce(key, body)` | once a session per key | Returns true when it printed. |
@@ -61,20 +61,19 @@ Each colors its value and then reopens `TEXT`, so the rest of the body stays whi
 
 | Call | Does |
 |---|---|
-| `Chat.Build(formatKey, ...)` | Returns the finished line, **unsent**, so a caller can measure it, or nil for a key with no text or a body the trim empties. `{rtN} Body // Short Name`. Without a channel it builds the group's line. |
+| `Chat.Build(formatKey, ...)` | Returns the finished line, **unsent**, so a caller can measure it, or nil for a key with no text or a blank body. `{rtN} Body // Short Name`. Without a channel it builds the group's line. |
 | `Chat.Send(channel, target, formatKey, ...)` | Builds for `channel` and sends; `WHISPER` goes through the queue. No-ops (returns false) on a nil channel and on a nil message. |
 | `Chat.BuildParts(formatKey, parts, formatArguments, channel)` | The lines a parts list packs into, unsent. |
 | `Chat.SendParts(channel, target, formatKey, parts, formatArguments)` | Packs and sends; returns the lines sent. |
 | `Chat.GroupChannel()` | `INSTANCE_CHAT` (`IsInGroup(LE_PARTY_CATEGORY_INSTANCE)`), then `RAID`, then `PARTY`; nil when solo. Pass `SAY` or `YELL` explicitly, and only from the player's own click or key. |
 | `Chat.Whisper(name, text)` | Queues a **finished** line to one player, as written: build it first for the marker and name. A line sent unbranded on purpose (Thanks for the Buff's Thank You Button) goes straight here. |
-| `Chat.Trim(body)` | Drops the closing `!`, `.`, `?` and full-width `！`, `。`, `？` (all of them, with trailing spaces) and a leading `¡` or `¿`, matched as whole UTF-8 sequences, so no multi-byte letter is ever cut. Every sent body and every alert goes through it. |
 | `Chat.FillTokens(text, tokens)` | `{word}` placeholders filled by plain `gsub` through a function, never format codes, so a stray `%` can't crash. A token the table doesn't hold stays as typed. |
-| `Chat.Draft(text, chatType, target)` | Puts `text` in the player's own chat box: their words, so **no marker, no name, no `//`, no trim**. `chatType` (`SAY`, `PARTY`, `RAID`, `INSTANCE_CHAT`, `GUILD`, `WHISPER` with `target`, ...) picks the box's channel through its slash command. Never opens over a box the player is already typing in. Returns true when it opened. |
+| `Chat.Draft(text, chatType, target)` | Puts `text` in the player's own chat box: their words, so **no marker, no name, no `//`**. `chatType` (`SAY`, `PARTY`, `RAID`, `INSTANCE_CHAT`, `GUILD`, `WHISPER` with `target`, ...) picks the box's channel through its slash command. Never opens over a box the player is already typing in. Returns true when it opened. |
 
 **`formatKey`** is an `L` key, or a table for more:
 
 - `{ key = "L_KEY" }`: the same as the bare key.
-- `{ text = body }`: a body already filled (an editable whisper after `FillTokens`). It is trimmed and signed off but **never formatted**, so the player's `%` is safe.
+- `{ text = body }`: a body already filled (an editable whisper after `FillTokens`). It is signed off but **never formatted**, so the player's `%` is safe.
 - `marker = false`: no marker. **Combat alerts are sent this way**: their bodies already carry the mark that matters.
 - `channel = "WHISPER"`: `Build` and `BuildParts` only, which line to build (it matters on WoW Forever). `Send` takes its channel from its argument.
 - `separator = ", "`: `BuildParts` and `SendParts` only, what joins the parts.
@@ -151,23 +150,22 @@ And from `Data/Data.lua`: `ns.PALETTE` (`INFO`, `SEPARATOR`, `TEXT`, `OFF`, `TIT
 |---|---|---|
 | **Good to Go** | `Features/Announcements.lua`: `GetPrintPrefix`, `ns.BuildPrintLine`, `ns:PrintMessage`, `ns.WarnOnce`, `TrimSentBody`/`SignOff`/`BuildSent`, `ns:BuildAnnounceMessage`, `Send`, the whisper queue (`QueueWhisper`, `Deliver`), `ns:Announce`, `FillTokens`, `ns:GetGroupChatChannel`, `ns:QueueAutomatedWhisper`. `Features/Utilities.lua:67`: `ns.ShowUIError`, `ns.ShowUINotice`. | `Chat.Print`, `Chat.PrintLine`, `Chat.PrintWarning`/`PrintOnce`, `Chat.Build({ text = ... })`, `Chat.Whisper`, `Chat.Send`, `Chat.FillTokens`, `Chat.Notice(body)`. `BuildEditable` (the too-long fallback to the default text) and the whisper builders stay: they know the add-on's fields. |
 | **Thanks for the Buff** | Its own `TrimSentBody`/`SignOff`, `ns:BuildAnnounceMessage`, `ns:Announce`, `ns:Whisper` (unbranded), the Good News whisper queue with its lockdown drop. Prints brand with the **Short Name** today. | The kit's calls; `ns:Whisper` becomes `Chat.Whisper` (queued now too). Prints move to the Full Name. |
-| **GogoLoot** | `ns.BuildPrintMessage`, `ns:PrintMessage`, `ns:BuildAnnounceMessage` (no trim), `ns:Announce`, `ns:AnnounceParts` (packing with `formatArguments`), `ns:GetGroupChatChannel`, `StatusPrint`'s repeat check, `AnnounceItemOnce`, the welcome reading `ns.db.global.showWelcome`. | `Chat.SendParts(channel, target, key, parts, formatArguments)`, `Chat.PrintQuiet` (keyed by the text, or the item ID), `Chat.Welcome()`. The `lootNotifications` master switch stays GogoLoot's: it checks it before calling `Chat.Send`. The loading-screen quiet window (`SetQuiet`) stays GogoLoot's. Sent bodies gain the trim. |
-| **Pretty Wide Quest Log** | `BuildSent` with the WoW Forever marker rule, `ns:BuildAnnounceMessage` (group), `ns:BuildWhisperMessage`, `ns:Announce`, `ns:GetGroupChatChannel`. Prints brand with the **Short Name** today. | `Chat.Build(key, ...)` and `Chat.Build({ key = key, channel = "WHISPER" }, ...)`; the quest-reference fitting stays. Prints move to the Full Name. Sent bodies gain the trim. |
+| **GogoLoot** | `ns.BuildPrintMessage`, `ns:PrintMessage`, `ns:BuildAnnounceMessage`, `ns:Announce`, `ns:AnnounceParts` (packing with `formatArguments`), `ns:GetGroupChatChannel`, `StatusPrint`'s repeat check, `AnnounceItemOnce`, the welcome reading `ns.db.global.showWelcome`. | `Chat.SendParts(channel, target, key, parts, formatArguments)`, `Chat.PrintQuiet` (keyed by the text, or the item ID), `Chat.Welcome()`. The `lootNotifications` master switch stays GogoLoot's: it checks it before calling `Chat.Send`. The loading-screen quiet window (`SetQuiet`) stays GogoLoot's. |
+| **Pretty Wide Quest Log** | `BuildSent` with the WoW Forever marker rule, `ns:BuildAnnounceMessage` (group), `ns:BuildWhisperMessage`, `ns:Announce`, `ns:GetGroupChatChannel`. Prints brand with the **Short Name** today. | `Chat.Build(key, ...)` and `Chat.Build({ key = key, channel = "WHISPER" }, ...)`; the quest-reference fitting stays. Prints move to the Full Name. |
 | **Magic Eraser** | `ns:FormatCurrency` and `ns:FormatCommaNumber` in `Features/Utilities.lua`, used in prints; Auto-Vend's held sale lines under its total. | `Chat.Money(copper)` inside a print; `Chat.PrintBlock(total, sales)`. `ns:FormatCurrency` stays for windows and menus, where the print's `TEXT` reopening has no place. |
-| **Control Freak** | `ns:PrintMessage`, `TrimClosingPeriod`, `ns.BuildAlertLine`/`ns:PrintAlert` (`Body // Control Freak`), `ns:PrintWelcome`, `ns:BuildAnnounceMessage` (no marker, period trim only), `ns:Announce` with its cut-to-fit. | `Chat.PrintAlert`/`Chat.AlertLine`, `Chat.Welcome()`, `Chat.Send(channel, nil, { key = key, marker = false }, ...)`. Its raid-icon texture-to-token swap, `SafeCutLength` and the PARTY-only channel stay its own: build the body, then send `{ text = body, marker = false }`. |
+| **Control Freak** | `ns:PrintMessage`, `TrimClosingPeriod`, `ns.BuildAlertLine`/`ns:PrintAlert` (`Body // Control Freak`), `ns:PrintWelcome`, `ns:BuildAnnounceMessage` (no marker, period trim), `ns:Announce` with its cut-to-fit. | `Chat.PrintAlert`/`Chat.AlertLine`, `Chat.Welcome()`, `Chat.Send(channel, nil, { key = key, marker = false }, ...)`. Its raid-icon texture-to-token swap, `SafeCutLength` and the PARTY-only channel stay its own: build the body, then send `{ text = body, marker = false }`. |
 | **Tracking Eye** | Come and Get It's `ChatFrameUtil.OpenChat` draft with its own slash prefix and active-box check. | `Chat.Draft(announcement, chatType)`. |
 
 ## Checking It in Game
 
 1. `/reload` with the welcome switch on: one line, `Full Name // Version ...`, name blue, `//` gray, body white. Turn the switch off in Options, `/reload`: nothing. Under Per-Character, switch profiles: the switch holds (it's account-wide).
 2. Trigger a print, a report with a total (every line branded, total first) and, in a fight, an alert (`Body // Full Name`).
-3. In a party, send something: `{rtN} Body // Short Name`, no closing punctuation, links clickable. Leave the party and trigger it again: nothing is sent. In a battleground, it goes to instance chat.
-4. Set the client to `esES` and `zhCN` and send a line whose string ends in `!` or `。`: the marks are gone, no letter garbled.
-5. On WoW Forever: the party line has no marker; a whisper does.
-6. Hand out or trade a dozen items with long names: several lines, each complete, none rejected.
-7. Trigger three whispers at once: they arrive about a third of a second apart. In a newer client's boss fight, a whisper waits until the encounter ends (up to 30 seconds), else is dropped.
-8. Click something the add-on refuses: `Short Name // Message` in red, center screen.
-9. Draft a line into the chat box: no marker, no name; with a draft already being typed, nothing happens.
+3. In a party, send something: `{rtN} Body // Short Name`, links clickable. Leave the party and trigger it again: nothing is sent. In a battleground, it goes to instance chat.
+4. On WoW Forever: the party line has no marker; a whisper does.
+5. Hand out or trade a dozen items with long names: several lines, each complete, none rejected.
+6. Trigger three whispers at once: they arrive about a third of a second apart. In a newer client's boss fight, a whisper waits until the encounter ends (up to 30 seconds), else is dropped.
+7. Click something the add-on refuses: `Short Name // Message` in red, center screen.
+8. Draft a line into the chat box: no marker, no name; with a draft already being typed, nothing happens.
 
 ## Done When
 

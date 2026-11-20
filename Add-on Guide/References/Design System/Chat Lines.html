@@ -136,7 +136,7 @@ var STAR = '<svg class="rt" viewBox="0 0 14 14" aria-label="target marker"><path
 
 // The print helper: Full Name in C_INFO, // in C_SEPARATOR, body in C_TEXT (MESSAGES → Print Outs).
 function printed(body) { return p("Add-on Name", "INFO") + " " + p("//", "SEPARATOR") + " " + p(body, "TEXT"); }
-// The sent format: {rtN} Message // Short Name, closing period dropped (MESSAGES).
+// The sent format: {rtN} Message // Short Name (MESSAGES).
 function sent(body) { return STAR + " " + body + " // Short Name"; }
 function who(name, cls) { return "[" + p(name, cls) + "]"; }
 function partyLine(body) { return p("[Party] " + who(ME, ME_CLASS) + ": " + sent(body), "PARTY"); }
@@ -192,7 +192,7 @@ var LINES = [
 		title: "Sent Message (Party)",
 		rule: "MESSAGES → Sent Messages (Other Players)",
 		html: partyLine("Some Message"),
-		note: "<code>{rtN} Message // Short Name</code>, the closing period dropped. The client draws it as party chat with the sender's name; color codes never survive the send, so the whole line is the channel's color.",
+		note: "<code>{rtN} Message // Short Name</code>. The client draws it as party chat with the sender's name; color codes never survive the send, so the whole line is the channel's color.",
 		colors: [sw("PARTY", "ChatTypeInfo.PARTY fallback"), sw("PALADIN", "Sender, class color")],
 	},
 	{

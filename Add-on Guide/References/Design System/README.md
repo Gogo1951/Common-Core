@@ -178,7 +178,7 @@ All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 4. **The menu's machinery moves into the kit** (Kit Change 1), in Common-Core; Tracking Eye moves onto it after.
 5. **The kit lives in Common-Core** (Kit Change 5), copied into each add-on and checked by CI.
 6. **`item` and `value` row kinds** join the kit (Kit Change 3).
-7. **Long lists** show up to 8 rows, then a gray *N more*.
+7. **Long lists** may stop at a number of rows the add-on picks, then a gray *N more*.
 8. **A hunter's ten-row pick list** in Tracking Eye stays as it is.
 9. **Good to Go's macro notes** move to a class-colored reference flyout.
 
@@ -327,7 +327,7 @@ All decided by the maintainer; the Style Guide's OPTIONS PANEL (and SAVED VARIAB
 2. **`ns.FEATURES` in every add-on with a Features section,** in the kit's record shape; the root page, each panel's Enable switch and the menu build from it.
 3. **One Refresh in every add-on,** menu or not: the kit's `ns.RefreshSettings`.
 4. **Every panel registers through `Kit.RegisterPanel`** as its builder function; sub-panels nest by category ID; every ID is captured, so `ns:OpenOptionsPanel(key)` opens any panel.
-5. **The Features section holds only the switches:** `ns.FEATURES`, two to a line, Enable captions. No description, status line, icon, group heading or blank line. Control Freak's holds its three blocks (Monitoring, Naughty List, Tanking Tools); each child keeps its switch on its own tab. Play It Forward's three captions take feature names the maintainer words.
+5. **The Features section holds only the switches:** `ns.FEATURES`, two to a line, Enable captions. Icons allowed; what each does is in its tooltip, so no description, status line, group heading or blank line. Control Freak's holds its three blocks (Monitoring, Naughty List, Tanking Tools); each child keeps its switch on its own tab. Play It Forward's three captions take feature names the maintainer words.
 6. **An Example sits under the control it shows, indented, and leaves while that control is off.**
 7. **A sub-panel whose feature is off stays in the tree and opens with a silver status line naming the switch.**
 8. **Sub-panel page titles read "Parent > Child"** in every add-on.

@@ -38,7 +38,7 @@ And:
 
 - **States:** On in `ON` green, Off in `MUTED` gray, in the add-on's `MENU_ON` and `MENU_OFF`. **Red (`OFF`) only for a requirement the player doesn't meet**, such as `Requires Lockpicking … 175` while short of it. A met requirement reads white, like any row.
 - **Nothing to report, nothing shown.** A block with no rows draws no spacer and no header: the kit waits until the block is done to draw anything.
-- **Lists stop at 8 rows**, then a gray `%d more` (`MENU_MORE`).
+- **A long list may stop** at a number of rows the add-on picks, then a gray `%d more` (`MENU_MORE`).
 - **Two add-ons on one tooltip each keep their own block.** Nothing merges.
 - **Palette colors only,** never `NORMAL_FONT_COLOR` or `GameTooltip_AddNormalLine`.
 
@@ -50,7 +50,7 @@ Lockbox                         GogoLoot      ← TITLE gold … MUTED gray
  Requires Lockpicking                  1      ← BODY … TEXT (red both sides when short)
 ```
 
-Tooltips on the add-on's own widgets carry **no brand**: a gold title, and the add-on's lines under it.
+Tooltips on the add-on's own widgets: a gold title, and the add-on's lines under it.
 
 ## API
 
@@ -90,7 +90,7 @@ Every method returns the block, so calls chain.
 | `block:State(label, on)` | Label white … On green or Off gray |
 | `block:Requirement(label, value, met)` | White, or red on both sides when `met` is `false`. `nil` (not known: a non-Rogue, a client that can't read the skill) reads white |
 | `block:Line(text)` | A silver (`HELP`) sentence that wraps, not indented |
-| `block:List(rows)` | Up to 8 rows, then `%d more` gray. Each row is `{ label, value }`, `{ label = , value = }`, `{ item = , value = }` or `{ name = , class = , value = }` |
+| `block:List(rows, max)` | Every row, or up to `max` when given, then `%d more` gray. Each row is `{ label, value }`, `{ label = , value = }`, `{ item = , value = }` or `{ name = , class = , value = }` |
 | `block:Total(label, value)` | The bottom row, like a sum, however early it's called: `label` white on the left, `value` white on the right (`Total … 25`). `true` or `false` draws On or Off instead |
 | `block:Done()` | Draws it (hooked blocks are drawn for you). True when it drew |
 
@@ -285,7 +285,7 @@ Every add-on already carries these, or takes them with its first kit (Style Guid
 | `ADDON_SHORT_NAME` | the Short Name | Every header's right side. A key the locale lacks reads as missing and falls back (blank, or `On`, `Off`, `%d more`): the kit reads the table raw, since AceLocale answers a missing key with its own name. |
 | `MENU_ON` | `On` | `block:State`, `block:Total(label, true)` |
 | `MENU_OFF` | `Off` | `block:State`, `block:Total(label, false)` |
-| `MENU_MORE` | `%d more` | `block:List` past 8 rows |
+| `MENU_MORE` | `%d more` | `block:List` past its `max` |
 
 Titles, labels and words beside numbers are the add-on's own keys, handed in. Title Case for titles is the caller's job.
 

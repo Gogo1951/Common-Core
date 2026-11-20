@@ -161,9 +161,12 @@ end
 check(allBranded and Visible(printed[4]) == "Good to Go // Item three", "and every line carries the name")
 
 Chat.PrintAlert("{rt8} Taunted Soulflayer.")
-check(Visible(Last(printed)) == "{rt8} Taunted Soulflayer // Good to Go", "PrintAlert: Body // Full Name, trimmed")
+check(
+	Visible(Last(printed)) == "{rt8} Taunted Soulflayer. // Good to Go",
+	"PrintAlert: Body // Full Name, punctuation kept"
+)
 check(Last(printed):find("|cffAAAAAA//|r |cff00BBFFGood to Go|r$") ~= nil, "with the name in INFO at the end")
-check(Chat.AlertLine("Taunted!") == "|cffFFFFFFTaunted|r |cffAAAAAA//|r |cff00BBFFGood to Go|r", "AlertLine unprinted")
+check(Chat.AlertLine("Taunted!") == "|cffFFFFFFTaunted!|r |cffAAAAAA//|r |cff00BBFFGood to Go|r", "AlertLine unprinted")
 
 -- Repeat suppression
 Clear(printed)
@@ -234,35 +237,24 @@ check(Visible(Chat.Money(7)) == "7c" and Visible(Chat.Money(-5)) == "0c", "coppe
 check(Chat.Money(7):find("|cffEDA55Fc|r|cffFFFFFF", 1, true) ~= nil, "the coin letter colored, TEXT again after")
 check(Chat.Slash("/gtg") == "|cff00BBFF/gtg|r|cffFFFFFF", "Slash: INFO, then TEXT again")
 
--- Trim, in several languages
-check(Chat.Trim("Some Message.") == "Some Message", "trim: a closing period")
-check(Chat.Trim("Wait?!  ") == "Wait", "trim: every closing mark and trailing space")
-check(Chat.Trim("¡Hola, Katz!") == "Hola, Katz", "trim es: the opening ¡ and closing !")
-check(Chat.Trim("¿Necesitas agua?") == "Necesitas agua", "trim es: the opening ¿ and closing ?")
-check(Chat.Trim("谢谢Katz。") == "谢谢Katz", "trim zh: the full-width 。")
-check(Chat.Trim("准备好了吗？！") == "准备好了吗", "trim zh: full-width ？ and ！")
-check(Chat.Trim("Привет!") == "Привет", "trim ru: a closing ! after Cyrillic")
-check(Chat.Trim("你好") == "你好" and Chat.Trim("Ça va") == "Ça va", "a multi-byte letter is never cut")
-check(Chat.Trim("Mid. sentence! stays") == "Mid. sentence! stays", "marks inside the body stay")
-
 -- Sent lines
 check(
-	Chat.Build("BUFF_ASK", "Katz") == "{rt1} Katz is missing [Arcane Intellect] // GtG",
+	Chat.Build("BUFF_ASK", "Katz") == "{rt1} Katz is missing [Arcane Intellect]! // GtG",
 	"Build: {rtN} Body // Short Name"
 )
-check(Chat.Build("HELLO_ES", "Katz") == "{rt1} Hola, Katz // GtG", "Build trims es")
-check(Chat.Build("THANKS_ZH", "Katz") == "{rt1} 谢谢Katz // GtG", "Build trims zh")
-check(Chat.Build("QUESTION_ES") == "{rt1} Necesitas agua // GtG", "a format with no arguments")
-check(Chat.Build("FULL_WIDTH") == "{rt1} 准备好了吗 // GtG", "full-width marks drop")
+check(Chat.Build("HELLO_ES", "Katz") == "{rt1} ¡Hola, Katz! // GtG", "Build keeps es punctuation")
+check(Chat.Build("THANKS_ZH", "Katz") == "{rt1} 谢谢Katz。 // GtG", "Build keeps zh punctuation")
+check(Chat.Build("QUESTION_ES") == "{rt1} ¿Necesitas agua? // GtG", "a format with no arguments")
+check(Chat.Build("FULL_WIDTH") == "{rt1} 准备好了吗？！ // GtG", "full-width marks stay")
 check(Chat.Build("NOT_A_MARK") == "{rt1} 你好 // GtG", "and nothing else does")
-check(Chat.Build("RUSSIAN") == "{rt1} Привет // GtG", "ru")
+check(Chat.Build("RUSSIAN") == "{rt1} Привет! // GtG", "ru")
 check(Chat.Build("MISSING") == nil and Chat.Build("EMPTY") == nil, "nil for a key with no text")
-check(Chat.Build("DOTS") == nil, "nil for a body the trim empties")
-check(Chat.Build({ key = "ALERT", marker = false }) == "{rt8} Taunted Soulflayer // GtG", "marker = false: none")
+check(Chat.Build("DOTS") == "{rt1} ... // GtG", "a body is sent as written")
+check(Chat.Build({ key = "ALERT", marker = false }) == "{rt8} Taunted Soulflayer. // GtG", "marker = false: none")
 local link = "|cffa335ee|Hitem:19019::::::::60:::::|h[Thunderfury]|h|r"
 check(Chat.Build("BUFF_ASK", link):find(link, 1, true) ~= nil, "pipes stay: links survive")
 check(
-	Chat.Build({ text = "Got 100% of it, {name}!" }) == "{rt1} Got 100% of it, {name} // GtG",
+	Chat.Build({ text = "Got 100% of it, {name}!" }) == "{rt1} Got 100% of it, {name}! // GtG",
 	"a { text } body is never formatted: a stray % can't break it"
 )
 check(ns:BuildAnnounceMessage("BUFF_ASK", "Katz") == Chat.Build("BUFF_ASK", "Katz"), "ns:BuildAnnounceMessage")
@@ -285,21 +277,21 @@ check(ns:Announce(Chat.GroupChannel(), nil, "BUFF_ASK", "Katz") == false and #se
 check(Chat.Send("PARTY", nil, "MISSING") == false and #sent == 0, "and on a nil message")
 check(Chat.Send("PARTY", nil, "BUFF_ASK", "Katz") == true, "Send to a group")
 check(
-	Last(sent).message == "{rt1} Katz is missing [Arcane Intellect] // GtG" and Last(sent).channel == "PARTY",
+	Last(sent).message == "{rt1} Katz is missing [Arcane Intellect]! // GtG" and Last(sent).channel == "PARTY",
 	"built"
 )
 ns:Announce("RAID", nil, { key = "ALERT", marker = false })
-check(Last(sent).message == "{rt8} Taunted Soulflayer // GtG" and Last(sent).channel == "RAID", "an alert: no marker")
+check(Last(sent).message == "{rt8} Taunted Soulflayer. // GtG" and Last(sent).channel == "RAID", "an alert: no marker")
 local sendChat = C_ChatInfo.SendChatMessage
 C_ChatInfo.SendChatMessage = nil
 Chat.Send("SAY", nil, "RUSSIAN")
-check(Last(legacySent).message == "{rt1} Привет // GtG", "SendChatMessage where C_ChatInfo lacks it")
+check(Last(legacySent).message == "{rt1} Привет! // GtG", "SendChatMessage where C_ChatInfo lacks it")
 C_ChatInfo.SendChatMessage = sendChat
 
 -- WoW Forever: the marker on whispers only
 ns.FLAVOR = "Camelot"
 check(
-	Chat.Build("BUFF_ASK", "Katz") == "Katz is missing [Arcane Intellect] // GtG",
+	Chat.Build("BUFF_ASK", "Katz") == "Katz is missing [Arcane Intellect]! // GtG",
 	"Forever: no marker in group lines"
 )
 check(Chat.Build({ key = "BUFF_ASK", channel = "WHISPER" }, "Katz"):sub(1, 6) == "{rt1} ", "but whispers keep it")
@@ -397,13 +389,13 @@ check(#alone == 3 and alone[2]:find(long, 1, true), "a part too long alone still
 local traded = Chat.BuildParts("TRADE", { "a", "b" }, function(list)
 	return list, "Katz"
 end)
-check(#traded == 1 and traded[1] == "{rt1} Traded a, b to Katz // GtG", "formatArguments places the list")
+check(#traded == 1 and traded[1] == "{rt1} Traded a, b to Katz. // GtG", "formatArguments places the list")
 ns.FLAVOR = "Camelot"
 Advance(1)
 Clear(sent)
 Chat.SendParts("WHISPER", "Aero", "LOOT_LIST", { "a", "b" })
-check(#sent == 1 and sent[1].message == "{rt1} Handed out: a, b // GtG", "Forever: whispered parts keep the marker")
-check(Chat.BuildParts("LOOT_LIST", { "a" })[1] == "Handed out: a // GtG", "group parts don't")
+check(#sent == 1 and sent[1].message == "{rt1} Handed out: a, b. // GtG", "Forever: whispered parts keep the marker")
+check(Chat.BuildParts("LOOT_LIST", { "a" })[1] == "Handed out: a. // GtG", "group parts don't")
 ns.FLAVOR = "Vanilla"
 
 -- Tokens
@@ -419,7 +411,7 @@ check(
 check(Chat.Draft("Copper Vein at 45, 67", "PARTY") == true, "Draft opens the chat box")
 check(Last(opened).text == "/p Copper Vein at 45, 67" and Last(opened).frame == ChatFrame1, "on its channel")
 Chat.Draft("Hello there!")
-check(Last(opened).text == "Hello there!", "as written: no marker, no name, no trim")
+check(Last(opened).text == "Hello there!", "as written: no marker, no name")
 Chat.Draft("Hi", "WHISPER", "Aero")
 check(Last(opened).text == "/w Aero Hi", "a whisper names its target")
 Chat.Draft("Hi", "WHISPER")
@@ -446,7 +438,7 @@ ns.L = setmetatable({ ADDON_TITLE = "Good to Go", BUFF_ASK = "%s is missing [Arc
 	end,
 })
 check(
-	Chat.Build("BUFF_ASK", "Katz") == "{rt1} Katz is missing [Arcane Intellect] // Good to Go",
+	Chat.Build("BUFF_ASK", "Katz") == "{rt1} Katz is missing [Arcane Intellect]! // Good to Go",
 	"no Short Name: the Full Name, not ADDON_SHORT_NAME"
 )
 local _ = ns.L.ADDON_SHORT_NAME -- AceLocale stores a key it was asked for and lacked

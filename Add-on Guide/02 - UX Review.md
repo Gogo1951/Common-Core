@@ -72,7 +72,7 @@ Every options panel is built from Options-Kit, the shared kit in Common-Core's `
 
 **Every UX Review checks the panels**, on the kit or not, against what a player sees in Style Guide → OPTIONS PANEL, and each miss is a change. How the code behind it is built (Options-Kit, One Refresh, registration, `ns.FEATURES`) is the Code Review's.
 
-- **Main Page Layout:** the root page holds its listed rows and nothing else, and Features holds only the switches.
+- **Main Page Layout:** the root page holds its listed rows and nothing else, and Features holds the switches (icons allowed, details in each tooltip).
 - **Widget Conventions:** the section and field-set layout (every caption in the label column, every control in the control column), hidden versus gray, line colors (headers gold, captions white), Reset rows, sound previews and tree sidebars.
 - **Helper Text Lives in the Tooltip** and **Example Lines.**
 - **Panels and Registration:** a sub-panel's title names its parent, and it stays in the tree with its silver line while its feature is off.

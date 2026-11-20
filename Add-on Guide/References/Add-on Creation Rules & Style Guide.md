@@ -771,7 +771,7 @@ Read the version from TOC metadata via `C_AddOns.GetAddOnMetadata`, and store it
 
 ## MESSAGES
 
-Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]` (a combat alert trails it instead, below), and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing `!`, `.` or `?` (full-width ones included) and a leading `¡` or `¿`, in every language. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way Chat-Kit adds the marker, name and separator, so the body stays clean.
+Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]` (a combat alert trails it instead, below), and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way Chat-Kit adds the marker, name and separator, so the body stays clean.
 
 | Context | Channel | Format | Example |
 |---|---|---|---|
@@ -811,7 +811,7 @@ All cross-player chat goes through Chat-Kit, so the marker, name and separator a
 
 **A message sent straight to one player is the player's to word.** A whisper gets a box the player types in, a default they can Reset to, and the add-on sends whatever is saved. It stays fixed text only when its body is data the add-on assembles, such as links packed across several messages, which no template can hold.
 
-- **The wire format doesn't change.** It is still `{rtN} Message // Short Name`. The marker and sign-off are added to whatever the player typed and are never part of the saved text, so they can't be deleted. The same trim applies: closing `!`, `.` and `?` (full-width ones included) and a leading `¡` or `¿` drop off, matched as whole UTF-8 sequences.
+- **The wire format doesn't change.** It is still `{rtN} Message // Short Name`. The marker and sign-off are added to whatever the player typed and are never part of the saved text, so they can't be deleted.
 - **Tokens are `{word}` placeholders**, replaced with `gsub`, never format codes, so a player can't crash the send with a stray `%`. An add-on fills only the tokens it lists on the panel. `{name}` is always the recipient's short name (`Ambiguate(name, "short")`); a spell or item token becomes its link.
 - **Empty saved text sends nothing.** When the filled message runs past `ns.CHAT_MESSAGE_MAX_LENGTH`, the add-on sends the default text in the player's chosen language instead of being rejected, and keeps what they typed.
 - **Two builders, both in `Features/Announcements.lua`.** A fill function builds the message as typed, however long, for measuring. A build function is what sends: nil for empty text, and the default text when it's too long. The Example line, the Too Long check, Send Test to Me and the real send all go through them.
@@ -961,7 +961,6 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **A switch with options of its own keeps its switch look:** name white, On in C_ON, then the arrow (gray name and Off in C_MUTED while it's off). A click flips it; hovering opens its sub-menu (Buff Duty's Your Target opens Include NPCs, Buff Food the buff food in your bags).
 - **The arrow has its own column.** In a menu where any row has an arrow, every row's right side ends where the arrow's room begins, so an On without an arrow lines up with an On beside one.
 - **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: what it touches (`Delete … Used on 1 Bar`).
-- **Switches and choices, never boxes.** A setting is a `toggle` (its name, On or Off) or a `choice` (the pick white with a check mark, the rest gray). No checkbox, radio button or box is drawn, on the kit's panels or on the game's dressed menus.
 - **Icons at line height.** An item or spell row puts its icon before its name, one space, the icon, then the name (`|T…:0|t`).
 - **A row you can't use right now is gray, not hidden,** where the game's own menu would gray it (Share Quest on a quest that can't be shared): both sides C_MUTED, no highlight, no click, its tooltip still shown (`disabled`). A row this character can never use still hides (MINIMAP MENU → Two Homes for Every Setting).
 - **A gesture is named like a click.** An action done by dragging names it on the right in C_MUTED (`Move Quest Arrow … Drag`).
@@ -1030,11 +1029,10 @@ Live: Tracking Eye's `CLICKS` table, `ns.RunButtonClick` and `ClickRow` in `Feat
 - **One type size.** Every row is the same font size; kinds differ by color only, never by a smaller font.
 - **Short on the right.** A title row's right side is a state word: On, Off, Active or Paused. Any other row's right side is a number, money, a have/wanted ratio, a game slot name or a click. A count, a list or a sentence goes in a `note`, which wraps. Measured across all 11 locales, a title with a phrase beside it ran to 465 points.
 - **Long on the left wraps.** No row widens the menu or a flyout past 320 points (`MAX_WIDTH`). A label too long for its row wraps onto a second line, and the right side stays level with its first line.
-- **Every heading is gold.** A feature title, a section label inside a flyout, and a plain status line all read C_TITLE.
+- **Headings are gold** (a feature title, a section label inside a flyout, a plain status line), except a heading that names a window, which takes the three-color window title (WINDOWS: Buff Duty's `Buff Duty // GtG`).
 - **A spacer above every heading.** The kit inserts it, unless the heading opens the panel or already follows a spacer. Never add one by hand before a heading.
 - **State on the right.** On is C_ON. Off is C_MUTED, never red: an off feature sits back, it isn't an error. The words are the add-on's `MENU_ON` and `MENU_OFF`, On and Off in every add-on, never Enabled and Disabled. A feature with more than two states uses Active (C_ON) or Paused (C_MUTED) for the third, never SEPARATOR gray. Why it's paused, or what it's waiting for, goes in a `note` under the description or at the top of its flyout (Good to Go's `Waiting for: Party, Raid`), never on the title row.
 - **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering.
-- **No how-to notes.** No gray line under a row to teach a trick, such as holding Shift to skip a merchant pass. In the menu it's clutter on every open and repeats what the player already saw; the tip goes where it applies (the chat line when the feature runs) and on the options page.
 - **The Toggle row** is blue, says only Toggle, flips the feature's Enable switch, and names the button click that does the same on its right. Its tooltip is that Enable option's name and description.
 - **The arrow.** The kit's thin white chevron (`Menu-Arrow.tga`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
 - **Options last.** A spacer, a separator, then the `[Short Name] Options` action row, naming Shift + Middle-Click. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
@@ -1122,7 +1120,7 @@ A tooltip carries more than feature blocks. Each kind has one shape in the menu 
 
 - **Item highlight.** The item the add-on will act on next: a gold `status` heading, its `item` row, then an `action` row for each thing you can do to it, each naming its click (Magic Eraser's Lowest-Value Item: Erase, Protect).
 - **Live report.** What changes with the bags or the group, such as a total or a list of items: a gold `status` heading over `item` or `value` rows. A report that belongs to one feature sits inside that feature's block, between its description and Toggle, and the title still reads On or Off: no count beside it (Good to Go's orders in its Restocker block). A report the player can grow without limit goes last before Options, so nothing above it moves.
-- **Long lists.** Up to 8 rows, then a `note` saying `%d more` (`MENU_MORE`). Never a list taller than that, never only a count where the rows fit.
+- **Long lists.** A list may stop at a number of rows the add-on picks, then a `note` saying `%d more` (`MENU_MORE`).
 - **Editable list.** A list the player builds (Magic Eraser's Protect List) gets one click-to-remove `item` row per entry. Its right side is a delete icon, shown only while the row is hovered (`rightOnHover`). Its tooltip is the item's own, then a C_HELP line saying what a click does. A Clear row after the list, and any button click doing the same job, asks Yes or No before wiping it, in the same words as the options page's Clear List; with nothing listed, it doesn't ask.
 - **Every list edit says so in chat.** The menu row, the button click and the key binding print the same sentence for the same outcome (added, moved, already there, removed). A removal reads like the line printed when the item was added. However the player asked for it, a list edit is never silent.
 - **Message line.** One wrapping line in place of a report with nothing to show: a `description` in C_ON when the news is good (bags clean, fully stocked), a `note` when it's just empty.
@@ -1192,13 +1190,12 @@ Lines an add-on adds to an item's, a player's or a spell's tooltip.
 - **States read like a menu's:** On in C_ON, Off in C_MUTED. **Red only for a requirement the player doesn't meet** (`Requires Lockpicking … 175`), as the game's own lines are red.
 - **A total or a state goes in a row at the bottom, like a sum** (`Total … 25`), never beside the title.
 - **Nothing to report, no block.** Not even the spacer and header.
-- **Lists stop at 8 rows,** then a C_MUTED `%d more` (`MENU_MORE`).
+- **A long list may stop** at a number of rows the add-on picks, then a C_MUTED `%d more` (`MENU_MORE`).
 - **Two add-ons, two blocks,** each under its own header, never merged.
 - **No modifier keys.** The block is the same with Shift held or not.
 
 ### Tooltips on the Add-on's Own Widgets
 
-- **No brand.** It's the add-on's own window, so nothing names the add-on.
 - **Help is a title, then the body under it:** the title C_TITLE, the body C_BODY with no blank line between, and an optional C_HELP helper line. Every one has a title, even a one-sentence hint.
 - **A game thing keeps its own tooltip.** An item or spell shows the game's tooltip unchanged, then a spacer, a C_TITLE section, then the add-on's lines (Good to Go's macro tiles).
 - **Click hints read `Action … Click`,** the action C_INFO, the click C_MUTED, after one spacer and with no blank lines between, the same as a menu's action row.
@@ -1379,7 +1376,7 @@ Page order of the root General panel, drawn for every add-on in `References/Desi
 6. **Key Bindings**, if any: one row per binding (its caption in C_INFO at 2.1, the bound key at 0.75 in C_TEXT or Not Bound in C_MUTED, a Set Key button at 0.55), then one C_HELP line saying what the key does.
 7. **/Commands**, always.
 
-**Features holds only the switches** (`Kit.FeatureSwitches`): each caption is Enable and the feature's name, in the order above, two to a line. No description line, status line, icon, colored or gold switch, group heading or blank line sits inside it; a line about one feature goes on that feature's panel.
+**Features holds the switches** (`Kit.FeatureSwitches`): each caption is Enable and the feature's name, in the order above, two to a line, with an icon where it helps. What a switch does is in its tooltip, so no description line sits under it; no status line, colored or gold switch, group heading or blank line sits inside it either, and a line about one feature goes on that feature's panel.
 
 **Features never holds a switch for the whole add-on**, such as Enable [Add-on Name]: the game's AddOns list already turns it off. A tool's switch on the root panel binds the same key as the enable toggle on its sub-panel.
 

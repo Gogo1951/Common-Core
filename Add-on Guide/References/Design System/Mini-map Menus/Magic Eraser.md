@@ -77,7 +77,7 @@ Left-Click has a job, so **hover alone opens the menu**. After an erase, a prote
 
 - **Renamed in `enUS.lua`**, every locale carried across: `ACTION_TOGGLE` → `MENU_TOGGLE`, `LEFT_CLICK` / `RIGHT_CLICK` / `MIDDLE_CLICK` / `SHIFT_RIGHT_CLICK` / `SHIFT_MIDDLE_CLICK` → `MENU_CLICK_*`, `MINIMAP_OPTIONS` → `MENU_OPTIONS`, and the Ignore keys → Protect (`ACTION_PROTECT`, `TAB_PROTECT_LIST`, `ACTION_CLEAR_PROTECT_LIST`).
 - **New:** `MENU_ON` / `MENU_OFF`, `MENU_MORE`, `MENU_MORE_FEATURES` "More Features", `MENU_FEATURE_COUNT_ON` "%d On", `MENU_FEATURE_COUNT_OFF` "%d Off", `MENU_UNPROTECT_HINT` "Click to remove it from your Protect List.", `PROTECT_LIST_REMOVED` "Removed %s from your Protect List.", in every locale. Other add-ons take `MENU_FEATURE_COUNT_*` from here (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 4).
-- **Not in the menu:** `AUTO_VEND_SHIFT_HINT`, the hold-Shift-to-skip tip, shows where it applies and on the options page (Style Guide → MINIMAP MENU → Layout, No how-to notes).
+- **Not in the menu:** `AUTO_VEND_SHIFT_HINT`, the hold-Shift-to-skip tip, shows where it applies and on the options page.
 
 ## Features, Refresh and Button
 

@@ -1502,9 +1502,9 @@ function Kit.AfterConfirm()
 	end
 end
 
--- Up to max (LIST_MAX) of rows, then a gray note saying how many more.
+-- Every row, or up to max when the add-on gives one, then a gray note saying how many more.
 function Kit.List(entries, rows, max)
-	max = max or LIST_MAX
+	max = max or #rows
 	for index = 1, math.min(#rows, max) do
 		entries[#entries + 1] = rows[index]
 	end

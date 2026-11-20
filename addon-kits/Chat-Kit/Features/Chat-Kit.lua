@@ -43,7 +43,6 @@ local _, ns = ...
       Chat.SendParts(channel, target, formatKey, parts, formatArguments)
       Chat.GroupChannel()                 INSTANCE_CHAT, RAID, PARTY, or nil when solo
       Chat.Whisper(name, text)            A finished line, queued 0.35 seconds apart
-      Chat.Trim(body)                     The body less its closing ! . ? and opening ¡ ¿
       Chat.FillTokens(text, tokens)       {word} placeholders filled, never format codes
       Chat.Draft(text, chatType, target)  Into the player's own chat box: no marker, no name
 
@@ -168,50 +167,10 @@ function Chat.PrintBlock(first, lines)
 	end
 end
 
---[[
-    Every message to other players drops its closing punctuation, because the
-    name signs off after it. Translations carry their own (Spanish opens with
-    an inverted mark, CJK closes with a full-width one), so the trim covers
-    those too, matched as whole UTF-8 sequences so a multi-byte character is
-    never cut in half.
-]]
-local CLOSING_MARKS = { "!", ".", "?", "\239\188\129", "\227\128\130", "\239\188\159" } -- ! . ? and full-width ！ 。 ？
-local OPENING_MARKS = { "\194\161", "\194\191" } -- ¡ ¿
-
-function Chat.Trim(body)
-	if body == nil then
-		return nil
-	end
-	body = tostring(body)
-	local trimmed = true
-	while trimmed do
-		trimmed = false
-		body = body:gsub("%s+$", "")
-		for _, mark in ipairs(CLOSING_MARKS) do
-			if body:sub(-#mark) == mark then
-				body = body:sub(1, -#mark - 1)
-				trimmed = true
-			end
-		end
-	end
-	trimmed = true
-	while trimmed do
-		trimmed = false
-		body = body:gsub("^%s+", "")
-		for _, mark in ipairs(OPENING_MARKS) do
-			if body:sub(1, #mark) == mark then
-				body = body:sub(#mark + 1)
-				trimmed = true
-			end
-		end
-	end
-	return body
-end
-
 -- A combat alert brands at the end, as the group reads it, so the body's own raid mark is the line's only one.
 function Chat.AlertLine(body)
 	return Color("TEXT")
-		.. Chat.Trim(body)
+		.. tostring(body)
 		.. "|r "
 		.. Color("SEPARATOR")
 		.. SEPARATOR
@@ -418,7 +377,7 @@ end
 --[[
     The finished line for a channel, or nil: for a key with no text, for a
     translation whose placeholders don't fit its arguments (it would throw),
-    and for a body the trim leaves empty. L[key] goes through string.format; a
+    and for a blank body. L[key] goes through string.format; a
     { text } body is the player's own and never does, so a stray % can't
     break it.
     Bodies carry item and spell links, which survive sent chat, so pipes stay.
@@ -437,8 +396,8 @@ local function BuildFor(channel, formatKey, ...)
 		end
 		body = filled
 	end
-	body = Chat.Trim(body)
-	if body == "" then
+	body = tostring(body)
+	if not body:find("%S") then
 		return nil
 	end
 	return Marker(options, channel) .. body .. " " .. SEPARATOR .. " " .. ShortName()
