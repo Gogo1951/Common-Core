@@ -63,7 +63,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7 is done and you've tested in game.
+**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7 is done and you've tested in game.
 
 **Steps 9–11 can run side by side** in the same folder; each writes its own file. Other passes run one at a time, in order.
 
