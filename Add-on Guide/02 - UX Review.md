@@ -52,60 +52,30 @@ Phase 2's research turns up clones too: new add-ons, usually AI-generated, that 
 
 ## Menus, Not Tooltips
 
-A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Its feature prompt builds it per Style Guide → MINIMAP MENU, which holds the layout, the look, the character-level rule (the menu shows only what this character can use; the options panel keeps every setting) and the steps to move a tooltip over.
+A tooltip the add-on draws on hover over its own mini-map button, arrow or frame becomes a menu: every click hint becomes a row the player clicks, so a controller reaches everything, and the button keeps the click, named on that row. Its feature prompt builds it per Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu.
 
 **When the add-on has a spec** in `References/Design System/Mini-map Menus/{Add-on Name}.md`, that spec is the Proposed menu, and its open GitHub issue is the change: draw it as written, give it one *layout* card that names the issue, and don't redesign it. **Once its State opens with `live`, the work order is done:** the code is the record, reviewed like any other add-on's menu, and what the code has gained since is never a finding or a reason to update the spec. Anything the spec still lists as to do stays the maintainer's.
 
-**Every UX Review checks the menu**, converted or not, against these, and each miss is a change. They are what a player sees; how the code behind it is built (One Refresh, Building the Button, row widths) is the Code Review's.
-
-- Every click the button had still does its job, and the row that does the same job names it on the right in gray. No click hint survives outside an action row.
-- On / Off for state, C_MUTED for anything not acting, never red.
-- Item highlights, live reports, long lists, message lines, a master switch and reference notes take their shapes from Style Guide → MINIMAP MENU → Blocks Beyond Features.
-- Only this character's rows show; the options panel still shows every setting.
-- A controller's cursor reaches every row and flyout.
-- The menu and the root panel's Features section are one list: same features, same order, same names, the rest under More Features (Features Mirror).
-- More Features is one row that opens a flyout, its switches counted On and Off on the row. That's the design, not a hidden setting: don't flag it, or ask for its switches back in the main menu.
-- The menu opens from the button's corner per Style Guide → MINIMAP MENU → Placement.
+**Every UX Review checks the menu**, converted or not, and each miss is a change. It checks what a player sees, against Style Guide → MINIMAP MENU: Button Clicks (every click the button had still works and is named on its row; no click hint survives outside an action row), Two Homes for Every Setting (only this character's rows; the options panel keeps every setting), Layout's state words (On / Off, C_MUTED for anything not acting, never red), Features Mirror, Blocks Beyond Features and Placement, and a controller's cursor reaching every row and flyout. How the code behind it is built (One Refresh, Building the Button, row widths) is the Code Review's. More Features, one row opening a flyout with its switches counted On and Off, is the design, not a hidden setting: don't flag it, or ask for its switches back in the main menu.
 
 Lines the add-on adds to the game's own tooltips (items, units, spells) stay tooltip lines.
 
 ## Every Other Menu
 
-Every menu the add-on opens that isn't the mini-map menu (a right-click menu, a flyout off a window's line, a dropdown's list in its own window) is checked against Style Guide → MENUS, and each window's misses become one *layout* change, listing every miss: the plate and its one opacity, the header, spacers between groups and one line before the foot actions, the row kinds (a sub-menu row's value and arrow, a switch keeping its look beside its arrow, the arrow column, gray right sides on actions, no boxes), and sub-menus overlapping their menu. Draw each with the menu mock files, as the mini-map menu is. The options panel's AceConfig dropdowns are the Settings window's, never a change here.
+Every menu the add-on opens that isn't the mini-map menu (a right-click menu, a flyout off a window's line, a dropdown's list in its own window) is checked against everything a player sees in Style Guide → MENUS (One Look, Three Ways to Draw It; The Header; Groups; Rows; Sub-menus; Opening and Closing), and each window's misses become one *layout* change, listing every miss. Draw each with the menu mock files, as the mini-map menu is. The options panel's AceConfig dropdowns are the Settings window's, never a change here.
 
 ## Options Panels
 
-Every options panel is built from Options-Kit, the shared kit in Common-Core's `addon-kits/Options-Kit/`, and laid out per Style Guide → OPTIONS PANEL, which holds the root page, the section and field-set layout, Example lines, sub-panels, Reset rows and the kit itself. Its pieces and patterns are drawn in `References/Design System/Options Panels.html` and named in the Design System README → Wave 2: Options Panels.
+Every options panel is built from Options-Kit, the shared kit in Common-Core's `addon-kits/Options-Kit/`, and laid out per Style Guide → OPTIONS PANEL. Its pieces and patterns are drawn in `References/Design System/Options Panels.html` and named in the Design System README → Wave 2: Options Panels.
 
 **When the add-on has a spec** in `References/Design System/Options Panels/{Add-on Name}.md`, that spec is the Proposed panels, and its GitHub issue, once filed, is the change: draw it as written, give it one *layout* card that names the spec, and don't redesign it. Once its State opens with `live`, it is done, as a menu spec is (Menus, Not Tooltips). The add-on's move onto the kit is part of that change; a Build never asks for a helper the kit already has.
 
-**Every UX Review checks the panels**, on the kit or not, against these, and each miss is a change. They are what a player sees; how the code behind it is built (Options-Kit, One Refresh, registration, `ns.FEATURES`) is the Code Review's.
+**Every UX Review checks the panels**, on the kit or not, against what a player sees in Style Guide → OPTIONS PANEL, and each miss is a change. How the code behind it is built (Options-Kit, One Refresh, registration, `ns.FEATURES`) is the Code Review's.
 
-- **Root page:** description, Enable Welcome Message, Enable Mini-map Button (with a button), Features, any tool rows, Key Bindings, /Commands, nothing else.
-- **Features** holds only the switches: every feature's, two to a line, each caption Enable and the feature's name, in the menu's order (blocks, then More Features). No description, status line, icon, gold switch, heading or blank line inside it.
-- **Sections and field sets:** a section is its header, its summary, then its field sets, with a spacer between every field set and the next. A field set is one control with what belongs to it, sitting tight: one setting on the switch's line, a helper line under the field only where a player needs it before they'd hover, its sub-rows. Every caption sits in the label column and every control in the control column, so dropdowns line up down the page.
-
-  ```
-  Section Header
-  Summary copy
-  -- spacer
-  Question Label                      Field
-                                      Helper text
-  -- spacer
-  Question Label                      Field
-  -- spacer
-  Example
-      Message
-
-      Message, line 2
-  ```
-
-- **Examples** close their field set: a spacer, `Example` on its own line in silver with no colon, the message line or lines indented under it, a blank line apart, drawn as they'll arrive with real names and links, about two lines at most, a report's total before its details. Each leaves while its control is off.
-- **Hidden or gray:** a setting under a switch that's off is hidden; gray only means the player can't change it here and now.
-- **Sub-panels:** the page title names the parent ("Farm Mode > Abilities"). While the parent feature is off, the sub-panel stays and opens with a silver line naming the switch.
-- **Colors:** status lines silver; red only for a warning that nothing will happen; headers gold, captions white.
-- **Reset rows:** one shape, on a row of their own with the button in the control column, gray while there's nothing to reset, asking first when they discard more than one value.
-- **Sizes:** sound previews a 16-point speaker past the row's end; tree sidebars 176 points; key binding rows a caption, the bound key and Set Key filling the row.
+- **Main Page Layout:** the root page holds its listed rows and nothing else, and Features holds only the switches.
+- **Widget Conventions:** the section and field-set layout (every caption in the label column, every control in the control column), hidden versus gray, line colors (headers gold, captions white), Reset rows, sound previews and tree sidebars.
+- **Helper Text Lives in the Tooltip** and **Example Lines.**
+- **Panels and Registration:** a sub-panel's title names its parent, and it stays in the tree with its silver line while its feature is off.
 
 Profiles (inherited), Feedback & Support (templated) and Diagnostic Tools (its own pass) are checked only for being in the tree, in order; their pages are never a change here.
 

@@ -3,7 +3,7 @@
 This folder is the guide for building and maintaining Gogo1951's WoW add-ons: the prompts Claude runs, and the rules they enforce. It lives in [Common-Core](https://github.com/Gogo1951/Common-Core) under `Add-on Guide/`, beside the shared CI and release logic every add-on is built on. Two kinds of files:
 
 - **Numbered and `Optional - …` prompts** (this folder) — the pipeline steps; run them in Claude, in the order below.
-- **`References/`** — what the steps consult or invoke: the **Pass Preamble** (the shared contract every pass prompt opens with), the Style Guide and its Build Reference (the rules), the master list (per-add-on facts), the permission template, the canonical files (`Data/Flavor.lua` and a `LICENSE` template), and two utility prompts (Guide Feedback Triage, Code Comment Cleanup) run on demand rather than per release.
+- **`References/`** — what the steps consult or invoke: the **Pass Preamble** (the shared contract every pass prompt opens with), the Style Guide and its Build Reference (the rules), the master list (per-add-on facts), the permission template, the canonical files (`Data/Flavor.lua`, the other-client prune for `Features/Core.lua`, and a `LICENSE` template), and two utility prompts (Guide Feedback Triage, Code Comment Cleanup) run on demand rather than per release.
 
 Every pass prompt — numbered, optional, and Code Comment Cleanup alike — starts by reading `References/Pass Preamble.md` and then states only what is specific to it. Feedback Triage, which maintains the guide, runs by its own rules. Rules shared by all passes live there or in the Style Guide, never restated in a prompt.
 

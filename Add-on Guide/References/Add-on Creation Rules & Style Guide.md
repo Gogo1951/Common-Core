@@ -326,78 +326,7 @@ Live reference: **Magic Eraser** — any file in `Data/Vanilla/`, `Data/TBC/` or
 - **Realm clients can't tell each other apart.** Nothing on the client lists another version's realms, so a `"Name - Realm"` key copied from Era to Anniversary stays. Never guess from realm names.
 - **Where the add-on has offline tests** (LUA 5.1 → Offline Tests), it has one test per direction: a Forever load drops a seeded `"Name - Realm"` character, and a realm load drops a seeded `"First Last"` one while keeping a character on another realm.
 
-Use this code as written, in `Features/Core.lua`:
-
-```lua
---[[
-    Characters from another game version, dropped without a word. AceDB keys
-    a character "Name - Realm" on realm clients and "First Last" on the
-    realm-free ones (WoW Forever), so a saved key shaped the other way from
-    the one being played came from a copied WTF folder: its char section,
-    its profile choice and, unless someone still uses it, its own profile go.
-]]
-local REALM_KEY_SEPARATOR = " - "
-
----@param characterKey any
----@param realmClient boolean
----@return boolean
-local function IsOtherClientKey(characterKey, realmClient)
-	if type(characterKey) ~= "string" then
-		return true
-	end
-	return (characterKey:find(REALM_KEY_SEPARATOR, 1, true) ~= nil) ~= realmClient
-end
-
----@param sv table # the saved table, or one of its namespaces
----@param realmClient boolean
----@param profilesInUse table<string, boolean>
----@return nil
-local function PruneSavedTable(sv, realmClient, profilesInUse)
-	local pruned = {}
-	for _, section in ipairs({ "char", "profileKeys" }) do
-		local characters = sv[section]
-		if type(characters) == "table" then
-			for characterKey in pairs(characters) do
-				if IsOtherClientKey(characterKey, realmClient) then
-					characters[characterKey] = nil
-					pruned[characterKey] = true
-				end
-			end
-		end
-	end
-	if type(sv.profiles) == "table" then
-		for characterKey in pairs(pruned) do
-			if not profilesInUse[characterKey] then
-				sv.profiles[characterKey] = nil
-			end
-		end
-	end
-end
-
----@return nil
-local function PruneOtherClientCharacters()
-	local currentKey = ns.db.keys and ns.db.keys.char
-	local sv = ns.db.sv
-	if type(currentKey) ~= "string" or type(sv) ~= "table" then
-		return
-	end
-	local realmClient = currentKey:find(REALM_KEY_SEPARATOR, 1, true) ~= nil
-	local profilesInUse = { [ns.db.keys.profile or ""] = true }
-	for characterKey, profileName in pairs(sv.profileKeys or {}) do
-		if not IsOtherClientKey(characterKey, realmClient) then
-			profilesInUse[profileName] = true
-		end
-	end
-	PruneSavedTable(sv, realmClient, profilesInUse)
-	for _, namespace in pairs(sv.namespaces or {}) do
-		if type(namespace) == "table" then
-			PruneSavedTable(namespace, realmClient, profilesInUse)
-		end
-	end
-end
-```
-
-Call it on the line after `AceDB:New`:
+Copy `References/Canonical Files/Other-Client-Prune.lua` byte for byte into `Features/Core.lua`, and call it on the line after `AceDB:New`:
 
 ```lua
 ns.db = LibStub("AceDB-3.0"):New("AddonNameDB", ns.DATABASE_DEFAULTS, true)
@@ -981,9 +910,12 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### One Look, Three Ways to Draw It
 
-- **The kit's own panels** (`Kit.CreatePanel` and kit entries) for every menu the add-on can lay out itself: the mini-map menu, a flyout off a window's line, a short menu off a button, and a right-click menu with nested sub-menus, switches and choices. Good to Go's Spellbook macro menu is the reference for that last one: `Macro-Menu-Panels.lua` takes the game's menu calls (`CreateButton`, `CreateCheckbox`, `CreateRadio`, `CreateTitle`, `CreateSpacer`) so a menu written for the game's menus moves onto the panels without being rewritten, opens at the cursor, keeps sub-menus up to three deep, and redraws in place on every change. A new right-click menu starts here.
-- **The game's menus in the kit's dress** (`Kit.OpenContextMenu`, `Kit.AddMenuHeader`) for a right-click menu not yet moved onto the kit's panels (Good to Go's Spellbook category menu, and its Settings and What's Next menus). The kit lays its plate after the menu opens, and on each sub-menu as it opens, so it lands after any skin add-on has had its turn: ElvUI strips the game's menus, lays its own square backdrop under them, swaps their checkboxes and turns their arrow. The kit clears that backdrop, restyles every row to the kit's kinds below, and hands the pooled frame back as it found it when the menu closes. Never open `MenuUtil.CreateContextMenu`, `UIDropDownMenu` or `EasyMenu` bare.
-- **An AceGUI dropdown's list** in the add-on's own window takes the plate in place of its border (`Kit.PlatePullout`) and gives the border back on release, since AceGUI pools that frame for every add-on. The options panel's AceConfig dropdowns belong to the Settings window and stay as they are (OPTIONS PANEL).
+| Menu | Drawn with | Rule |
+|---|---|---|
+| Any menu the add-on lays out itself: the mini-map menu, a flyout off a window's line, a short menu off a button, a right-click menu with nested sub-menus, switches and choices | The kit's own panels (`Kit.CreatePanel` and kit entries) | A new right-click menu starts here. Reference: Good to Go's Spellbook macro menu (`Macro-Menu-Panels.lua`), which takes the game's menu calls so a menu written for the game's menus moves over without a rewrite. |
+| A right-click menu not yet moved onto the kit's panels (Good to Go's Spellbook category, Settings and What's Next menus) | The game's menus in the kit's dress (`Kit.OpenContextMenu`, `Kit.AddMenuHeader`) | Never open `MenuUtil.CreateContextMenu`, `UIDropDownMenu` or `EasyMenu` bare. The kit lays its plate after any skin add-on (ElvUI) has had its turn, restyles every row to the kinds below, and hands the frame back when the menu closes. |
+| An AceGUI dropdown's list in the add-on's own window | The plate in place of its border (`Kit.PlatePullout`) | The border goes back on release, since AceGUI pools that frame. The options panel's AceConfig dropdowns belong to the Settings window and stay as they are (OPTIONS PANEL). |
+
 - **One opacity.** Every plate is the same art at the same 80% (`PLATE_ALPHA`), and nothing sits under it: a skin's backdrop goes clear, so no menu reads darker than another and a sub-menu never reads darker than the menu it came from.
 
 ### The Header
@@ -1019,15 +951,15 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **A right-click menu** opens where the game opens its own, at the cursor. **A menu off a button or a line** opens beside it, on the side away from the screen edge (MINIMAP MENU → Placement for the mini-map button), clamped to the screen at strata `DIALOG`.
 - **It closes** 0.4 seconds after the cursor leaves it, its sub-menus and the frame that opened it, on Escape (its frame named and in `UISpecialFrames`), and on a pick that acts.
 
-**Menu-Kit v2 draws all of these** (Common-Core's `addon-kits/Menu-Kit/`, spec `References/Design System/Mini-map Menus/Menu-Kit.md`): `Kit.CreateMenu` opens a menu off a button (`hover`, `click`), off a window's line (`line`) or at the cursor (`cursor`), with sub-menus three deep, and `Kit.MenuHeader` writes the header.
+**Menu-Kit v2 draws all of these**; its calls are in `References/Design System/Mini-map Menus/Menu-Kit.md` → API.
 
 ## MINIMAP MENU
 
-Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer), [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it: the click table, feature blocks, flyouts, More Features and placement), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) (the button handing its clicks to the menu), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`) and [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`). **Magic Eraser** shows what Tracking Eye doesn't: the More Features flyout and its count, click-to-remove list rows, and a Clear that asks first ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua)). The menu machinery is Menu-Kit v2 in Common-Core's [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit) (`Kit.CreateMenu`, `Kit.FeatureBlock`, `Kit.MoreFeatures`, `rightOnHover`), and every add-on copies the kit from there. Where a reference's own code differs from v2, v2 and this section win; that is not a conflict to ask about. Each section below names the live code that shows it.
+Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Menu-Kit.lua) (the renderer), [`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) (what goes in it: the click table, feature blocks, flyouts, More Features and placement), [`Features/Minimap-Button.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Button.lua) (the button handing its clicks to the menu), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua) (`ns.FEATURES`) and [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`). **Magic Eraser** shows what Tracking Eye doesn't: the More Features flyout and its count, click-to-remove list rows, and a Clear that asks first ([`Features/Minimap-Menu.lua`](https://github.com/Gogo1951/Magic-Eraser/blob/main/Features/Minimap-Menu.lua)). The menu machinery is Menu-Kit v2 (MENUS). Where a reference's own code differs from v2, v2 and this section win; that is not a conflict to ask about. Each section below names the live code that shows it.
 
-Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **An add-on with a conversion spec** has it in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, tracked by a GitHub issue in that add-on's repo. **The specs are the maintainer's work orders:** the UX Review draws one as the add-on's Proposed menu (Menus, Not Tooltips) and its feature prompt builds to it; no other pass acts on one. Once a spec's State opens with `live`, the order is done and the add-on's code is the record. Where a spec and this section disagree, this section wins. Menu-Kit v2 (`Mini-map Menus/Menu-Kit.md`) lives in Common-Core's `addon-kits/Menu-Kit/`; every conversion copies it from there (Moving a Tooltip to a Menu, step 1), and a change to it is Common-Core work the maintainer runs, never a pass's.
+Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **An add-on with a conversion spec** has it in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, tracked by a GitHub issue in that add-on's repo. **The specs are the maintainer's work orders:** the UX Review draws one as the add-on's Proposed menu (Menus, Not Tooltips) and its feature prompt builds to it; no other pass acts on one. Once a spec's State opens with `live`, the order is done and the add-on's code is the record. Where a spec and this section disagree, this section wins.
 
-**Never edit a copy of the kit.** The one kit is Common-Core's `addon-kits/Menu-Kit/` (`Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`): a kit change is a Common-Core commit, then `scripts/sync-addon-kits.sh` copies it unchanged into every add-on that holds the kit, and CI's **Shared kits match Common-Core** check fails a copy that differs. v2 keeps v1's names (`Kit.CreatePanel`, `panel:Render`, `Kit.SetToggleText`, `Kit.FLYOUT_GAP`), so an add-on whose own `Minimap-Menu.lua` still drives v1's panels runs on it unchanged, and its sub-menus overlap at once. A pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change.
+**Never edit a copy of the kit.** The one kit is Common-Core's `addon-kits/Menu-Kit/` (`Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`): a kit change is a Common-Core commit the maintainer runs, never a pass's, then `scripts/sync-addon-kits.sh` copies it unchanged into every add-on that holds the kit, and CI's **Shared kits match Common-Core** check fails a copy that differs. Every conversion copies the kit from there (Moving a Tooltip to a Menu, step 1); a v1 copy takes v2 unchanged (`Menu-Kit.md`). A pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change.
 
 **Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
@@ -1060,24 +992,7 @@ Live: Tracking Eye's `CLICKS` table, `ns.RunButtonClick` and `ClickRow` in `Feat
 
 ### Layout
 
-```
-[Full Name] (C_TITLE, left)                     [Version] (C_MUTED, right)
-[SPACER]
-
--- Per feature block: --
-[Feature Name] (C_TITLE, left)          [STATE] (C_ON / C_MUTED, right) [>]
-[Description] (C_BODY, wraps)
-    [Pick list] (choice rows, only if the feature has one)
-[Toggle] (C_INFO)                               [Click] (C_MUTED, right, if it has one)
-[Follow-up action] (C_INFO, only while it applies)            [Click] (C_MUTED, right)
-[SPACER, added by the kit]
-
--- After the last block: --
-More Features (C_TITLE, only with set-and-forget features)     [N On], [N Off] [>]
-[SPACER]
-[SEPARATOR]
-[Short Name] Options (C_INFO, left)            Shift + Middle-Click (C_MUTED, right)
-```
+**Top to bottom:** the header (Full Name in C_TITLE, version in C_MUTED) and a spacer; then each feature block: its title, its description, its pick list (only if it has one), its Toggle row, a follow-up action (only while it applies), and the kit's spacer; after the last block, More Features (only with set-and-forget features), a spacer, a separator, and `[Short Name] Options`. Each row's colors are in Row Kinds; drawn in `References/Design System/Mini-map Menus.html`.
 
 - **One type size.** Every row is the same font size; kinds differ by color only, never by a smaller font.
 - **Short on the right.** A title row's right side is a state word: On, Off, Active or Paused. Any other row's right side is a number, money, a have/wanted ratio, a game slot name or a click. A count, a list or a sentence goes in a `note`, which wraps. Measured across all 11 locales, a title with a phrase beside it ran to 465 points.
@@ -1139,18 +1054,7 @@ Live: Tracking Eye's `PositionMenu` and `PositionFlyout` in `Features/Minimap-Me
 
 ### Flyouts
 
-A flyout holds a feature's secondary settings and opens beside its title, on the side away from the screen edge, its first row level with the title.
-
-```
-[Section] (C_TITLE, left)                         [STATE] (C_ON / C_MUTED)
-[Note] (C_MUTED, wraps — why, while it matters)
-[SPACER, added by the kit]
-[Section] (C_TITLE)
-    [Setting] (toggle)                                       On / Off
-    [Setting] (toggle)                                       On / Off
-[SEPARATOR]
-    [Setting] (toggle)                                       On / Off
-```
+A flyout holds a feature's secondary settings and opens beside its title, on the side away from the screen edge, its first row level with the title: a live status section first, then gold sections over their switches, then a separator before a few unrelated extras (drawn in `Mini-map Menus.html`).
 
 - **No switch row for the feature itself.** The block's Toggle row already does that.
 - **Empty while the feature is off.** The flyout's settings mean nothing then, as on the options panel, so the arrow goes too.
@@ -1177,9 +1081,7 @@ Live: Tracking Eye's `FLYOUTS.farm` (status first, then sections, then a separat
 | `separator` | — | — | A thin line |
 | `spacer` | — | — | A line's room |
 
-On v2, an item row takes `itemID` or `link` and `count`, and the kit draws the icon, the quality color, the count and the item's tooltip; v2 also draws an icon and colored name written into `left` by hand.
-
-**Choice, toggle, item and value rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry `tooltip`, a `function(GameTooltip)`, shown beside it under the cursor; `submenu`, the key of a flyout its hover opens, keeping its own look with the arrow after its right side (MENUS → Rows); and `rightOnHover = true`, which shows its right side only while the row is hovered; the right side is still measured, so the menu's width never changes on hover. `rightOnHover` is Menu-Kit v2's; an add-on still on v1 works around the kit with `ApplyHoverIcons`, as Magic Eraser's `Features/Minimap-Menu.lua` does, until its move.
+**Choice, toggle, item and value rows sit 4 in** (`OPTION_INDENT`, `SPACE.LINE`), so a list under a heading reads as one. Any row can carry a tooltip shown beside it under the cursor, a sub-menu its hover opens (keeping the row's own look, the arrow after its right side: MENUS → Rows), and a right side shown only while hovered, still measured so the menu's width never changes on hover. The entry fields (`itemID`, `tooltip`, `submenu`, `rightOnHover` and the rest) are in `Menu-Kit.md` → API.
 
 ### Blocks Beyond Features
 
@@ -1201,10 +1103,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 ### Behavior
 
 - **Hover opens it; Left-Click opens and holds it.** Hovering the button opens the menu the way the tooltip did. It closes 0.4 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A button whose Left-Click has a job (Button Clicks) does that job instead, and hover alone opens the menu.
-- **Escape closes it.** Name the menu frame and add it to `UISpecialFrames`.
-- **Hovering a title opens its flyout**, and clicking it does too. Hovering any other clickable row closes the flyout.
-- **A pick that acts closes the menu; a switch or a setting's choice keeps it open** (MENUS → Sub-menus). Casting or opening something is done; flipping switches often comes in runs.
-- **A change redraws in place.** Every change, from anywhere, ends in `ns.RefreshSettings()` (One Refresh), so the open options panel, the menu and the button all show the new value.
+- **Escape, flyouts and picks work as in every menu** (MENUS → Sub-menus, Opening and Closing): Escape closes it; hovering or clicking a title opens its flyout and hovering any other clickable row closes it; a pick that acts closes the menu, while a switch or a setting's choice keeps it open and redraws in place (One Refresh).
 - **Read the cursor from `GetCursorPosition`**, not `IsMouseOver`, so a controller's virtual cursor counts (`Kit.IsCursorOver`).
 - **Tooltips reuse the option's strings.** A switch's tooltip is its option's name and description; a spell row's is the spell.
 
@@ -1220,7 +1119,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 0. **Where the add-on has a spec** in `References/Design System/Mini-map Menus/`, read it and its GitHub issue. The spec says every row, click and string; the steps below say how.
 1. **Copy the kit from Common-Core** with `scripts/sync-addon-kits.sh --adopt Menu-Kit ../{Add-on}` (or by hand, unchanged, from [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit) on GitHub `main`): `Features/Menu-Kit.lua`, after `Features/Utilities.lua` in the TOC, and `Includes/Images/Menu-Plate.tga`. Never from another add-on's folder on disk (Pass Preamble → Standing scope). The kit knows nothing about the add-on; it reads only `ns.PALETTE`, `ns.L`, `ns.db`, `ns.FEATURES` and `ns:OpenOptionsPanel`.
-2. **Write `Features/Minimap-Menu.lua`** on the kit (`Menu-Kit.md` → API): `Kit.SetText` once at load with the add-on's strings, then `Kit.CreateMenu{ name, build, flyouts, afterChange = ns.RefreshSettings }`. `build` returns the rows: the header, one `Kit.FeatureBlock` per feature a player turns on and off mid-session (its Toggle row's `click` naming the button click that does the same), any blocks beyond features, `Kit.MoreFeatures(entries)` for the set-and-forget features in `ns.FEATURES`, and `Kit.OptionsRow(entries, L["MENU_OPTIONS"])` last. A `FLYOUTS[key]` builder for each feature with settings. [Tracking Eye's](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) is the same menu written on v1, row for row.
+2. **Write `Features/Minimap-Menu.lua`** on the kit, per `Menu-Kit.md` → API, with `afterChange = ns.RefreshSettings`: the rows in Layout's order (one `Kit.FeatureBlock` per feature a player turns on and off mid-session, its Toggle row naming the button click that does the same; `Kit.MoreFeatures` for the rest of `ns.FEATURES`; `Kit.OptionsRow` last), and a flyout builder for each feature with settings. [Tracking Eye's](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) is the same menu written on v1, row for row.
 3. **Map the old tooltip lines:**
 
    | Old tooltip | Menu |
@@ -1233,7 +1132,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
    | `[Short Name] Options` + Shift + Middle-Click | `[Short Name] Options` `action` row, `Shift + Middle-Click` on its right |
 
 4. **Keep the translations.** The strings the kit reads take one set of names in every add-on: `MENU_ON`, `MENU_OFF`, `MENU_TOGGLE`, `MENU_OPEN`, `MENU_MORE` (`%d more`), `MENU_MORE_FEATURES` (`More Features`), `MENU_FEATURE_COUNT_ON` (`%d On`), `MENU_FEATURE_COUNT_OFF` (`%d Off`), `MENU_PAUSED` (`Paused`), `MENU_OPTIONS` (`[Short Name] Options`) and the click names `MENU_CLICK_LEFT`, `MENU_CLICK_RIGHT`, `MENU_CLICK_MIDDLE`, `MENU_CLICK_SHIFT_LEFT`, `MENU_CLICK_SHIFT_RIGHT`, `MENU_CLICK_SHIFT_MIDDLE` (only those the add-on uses). The conversion renames and adds them in `enUS.lua` only, and its prompt lists each old → new key. The Localization Review then carries every locale across: a renamed key keeps its text, and a key new to the add-on takes Tracking Eye's translations from its [`Locales/`](https://github.com/Gogo1951/Tracking-Eye/tree/main/Locales) on GitHub, and `MENU_MORE` takes GogoLoot's from [its `Locales/`](https://github.com/Gogo1951/GogoLoot/tree/main/Locales), and `MENU_FEATURE_COUNT_ON` / `MENU_FEATURE_COUNT_OFF` take Magic Eraser's from [its `Locales/`](https://github.com/Gogo1951/Magic-Eraser/tree/main/Locales). Every other tooltip string keeps its key rather than being written fresh. Option rows reuse the options' own keys.
-5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) calls `menu:Show(self, "hover")`, `OnLeave` does nothing, since the menu closes itself, and `OnClick` calls `menu:HandleClick(self, button)`: it runs the row whose `click` matches, then `afterChange`; with no match, the menu's `fallback` for that click, else Left-Click opens and holds the menu and Shift + Middle-Click opens options. Remove the tooltip code, and keep every click it named.
+5. **Point the button at the menu.** The LDB object's `OnEnter` (not `OnTooltipShow`) shows the menu, `OnLeave` does nothing, since the menu closes itself, and `OnClick` hands the click to the kit (`Menu-Kit.md` → API), which runs the matching row as Button Clicks says. Remove the tooltip code, and keep every click it named.
 6. **Gate the rows.** For each class, race or profession row, add an `IsPlayerSpell` check in the menu only. Leave the options panel alone.
 7. **Check it in game** on at least three classes, one of which can't use any gated row, and with a controller:
    - Each class sees only its own rows; the options panel still shows all of them.
@@ -1267,31 +1166,7 @@ Existing add-ons move onto the kit through their spec, in the Design System's or
 
 ### Standard Helpers
 
-The kit's `Kit.Header`, `Kit.Desc`, `Kit.Spacer` and `Kit.Label`. An add-on not yet on the kit defines them once in `Options/Options-Utilities.lua` and shares them with every panel file, dot-defined (no `self`), matching the panel builders:
-
-```lua
-function ns.OptionsHeader(text, order, hidden)
-	return { type = "header", name = GetColor("TITLE") .. text .. "|r", order = order, hidden = hidden }
-end
-
-function ns.OptionsDesc(text, order)
-	return { type = "description", name = text, fontSize = "medium", order = order }
-end
-
-function ns.OptionsSpacer(order, hidden)
-	return { type = "description", name = " ", order = order, hidden = hidden }
-end
-
-function ns.OptionsRowLabel(text, order, width)
-	return {
-		type = "description",
-		name = text,
-		fontSize = "medium",
-		width = width or ns.OPTIONS_LABEL_WIDTH,
-		order = order,
-	}
-end
-```
+The kit's `Kit.Header`, `Kit.Desc`, `Kit.Spacer` and `Kit.Label`. An add-on not yet on the kit defines them once in `Options/Options-Utilities.lua` as `ns.OptionsHeader`, `ns.OptionsDesc`, `ns.OptionsSpacer` and `ns.OptionsRowLabel`, dot-defined (no `self`) like the panel builders, shared with every panel file, and with the kit's bodies in [`addon-kits/Options-Kit/Options/Options-Kit.lua`](https://github.com/Gogo1951/Common-Core/blob/main/addon-kits/Options-Kit/Options/Options-Kit.lua): a gold header, a `"medium"` description, a one-space description, and a `"medium"` caption at `ns.OPTIONS_LABEL_WIDTH` unless given a width.
 
 Every section header is a real AceConfig `header` — no panel draws its own from a colored description. `ns.OptionsHeader` and `ns.OptionsSpacer` take an optional last `hidden` argument, so a gated section collapses whole.
 
@@ -1312,26 +1187,7 @@ One entry point opens the add-on's settings **inside the Blizzard Options/Settin
 
 **Route by captured handles, never by name.** `AddToBlizOptions` returns `(frame, categoryID)`. Capture **both** at the root panel's registration and route with captured handles end-to-end: combat gate first, then `Settings.OpenToCategory(<captured categoryID>)`, then `AceConfigDialog:Open` as a genuine last resort that a correctly-routed add-on never reaches. A title lookup — `Settings.GetCategory(<title>)`, or the title passed to `Settings.OpenToCategory` — fails wherever the category ID is a number assigned at registration: execution falls through to `AceConfigDialog:Open` and the panel opens as a standalone floating window instead of docking. It breaks on TBC Anniversary while still working on Classic Era, so it survives testing on one flavor.
 
-```lua
--- inside ns.RegisterOptionsPanels(), at the root panel's registration
-local mainPanel, mainCategoryID = AceConfigDialog:AddToBlizOptions(ns.OPTIONS_REGISTRY.General, L["ADDON_TITLE"])
-ns.optionsFrames = { main = mainPanel, categoryID = mainCategoryID }
-
-function ns:OpenOptionsPanel()
-	if InCombatLockdown() then
-		ns:PrintMessage(L["CHAT_OPTIONS_IN_COMBAT"])
-		return
-	end
-	if not ns.optionsFrames then
-		return
-	end
-	if Settings and Settings.OpenToCategory and ns.optionsFrames.categoryID then
-		Settings.OpenToCategory(ns.optionsFrames.categoryID)
-		return
-	end
-	AceConfigDialog:Open(ns.OPTIONS_REGISTRY.General)
-end
-```
+On the kit this is the kit's `ns:OpenOptionsPanel(key)` (`Options-Kit.md` → Panels). An add-on not yet on the kit captures both at the root panel's registration inside `ns.RegisterOptionsPanels()`, as `ns.optionsFrames = { main = frame, categoryID = categoryID }`, and its `ns:OpenOptionsPanel()` runs the same chain as the kit's on `ns.optionsFrames.categoryID`, with `AceConfigDialog:Open(ns.OPTIONS_REGISTRY.General)` last.
 
 Live reference: **GogoLoot** — `Options/Options.lua`.
 
@@ -1370,17 +1226,7 @@ SlashCmdList["ADDONNAME"] = function()
 end
 ```
 
-The /Commands section is always present on the root panel, with the options command as its first line:
-
-```lua
-spaceCommands0 = ns.OptionsSpacer(90),
-headerCommands = ns.OptionsHeader(L["OPTIONS_COMMANDS_HEADER"], 91),
-spaceCommands1 = ns.OptionsSpacer(92),
-descCommands = ns.OptionsDesc(
-	GetColor("INFO") .. L["OPTIONS_COMMAND"] .. "|r" .. "  " .. L["OPTIONS_COMMAND_DESCRIPTION"],
-	93
-),
-```
+The /Commands section is always present on the root panel: spacer, `L["OPTIONS_COMMANDS_HEADER"]` header, spacer (`Kit.Section`), then the options command as its first line, `L["OPTIONS_COMMAND"]` in C_INFO, two spaces, and `L["OPTIONS_COMMAND_DESCRIPTION"]`, as one description.
 
 **Any other slash command exists only by maintainer request** — never generate one, and never verify, flag, or ask about one already present: it was requested. Feature commands stay deliberately untracked (only the options command is recorded); their wiring is still checked, and a broken wire is an ordinary finding. Each one a player types gets its own `ns.OptionsDesc` on its own `L["KEY"]` pair in the /Commands section, separated by an `ns.OptionsSpacer` — never joined into one description with `"\n"`, which renders with no separation. A command that exists for a macro to run is never listed there: players aren't meant to type it.
 
@@ -1461,18 +1307,15 @@ Live reference: **Control Freak** — `RenderSample` and `AddSample` in `Options
 
 ### Main Page Layout
 
-Page order of the root General panel:
+Page order of the root General panel, drawn for every add-on in `References/Design System/Options Panels.html`:
 
-```
-Full Name (AceConfig group name = L["ADDON_TITLE"])
-Brief Description (L["OPTIONS_DESCRIPTION"] — the pitch-synced string; the key name is house-standard, never abbreviated)
-Enable Welcome Message (toggle, default on)
-Enable Mini-map Button (toggle, default on — only when the add-on has a mini-map button)
-Features (every feature's on/off switch from ns.FEATURES, two to a line at 1.6, if any — the mini-map menu's features in its order: blocks first, then More Features; MINIMAP MENU → Features Mirror)
-[Feature Name] (one per feature split into tool sub-panels: each tool's on/off switch, two to a line, hidden while the feature is off)
-Key Bindings (if any: one row per binding — its caption in C_INFO at 2.1, the bound key at 0.75 (C_TEXT, or Not Bound in C_MUTED), a Set Key button at 0.55 — then one C_HELP line saying what the key does)
-/Commands (always)
-```
+1. **Full Name**, the group name `L["ADDON_TITLE"]`.
+2. **Brief Description**, `L["OPTIONS_DESCRIPTION"]`: the pitch-synced string; the key name is house-standard, never abbreviated.
+3. **Enable Welcome Message** (default on) and **Enable Mini-map Button** (default on, only when the add-on has a mini-map button).
+4. **Features**, if any: every feature's switch from `ns.FEATURES`, two to a line at 1.6, in the mini-map menu's order (blocks first, then More Features; MINIMAP MENU → Features Mirror).
+5. **[Feature Name]**, one per feature split into tool sub-panels: each tool's switch, two to a line, hidden while the feature is off.
+6. **Key Bindings**, if any: one row per binding (its caption in C_INFO at 2.1, the bound key at 0.75 in C_TEXT or Not Bound in C_MUTED, a Set Key button at 0.55), then one C_HELP line saying what the key does.
+7. **/Commands**, always.
 
 **Features holds only the switches** (`Kit.FeatureSwitches`): each caption is Enable and the feature's name, in the order above, two to a line. No description line, status line, icon, colored or gold switch, group heading or blank line sits inside it; a line about one feature goes on that feature's panel.
 
