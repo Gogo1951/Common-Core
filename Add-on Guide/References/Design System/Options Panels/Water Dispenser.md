@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options.lua`](https://github.com/Gogo1951/Water-Dispenser/blob/main/Options/Options.lua), [`Options/Options-General.lua`](https://github.com/Gogo1951/Water-Dispenser/blob/main/Options/Options-General.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Water-Dispenser/blob/main/Options/Options-Utilities.lua), [`Options/Options-Dispensed-Items.lua`](https://github.com/Gogo1951/Water-Dispenser/blob/main/Options/Options-Dispensed-Items.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core). Pairs with `Mini-map Menus/Water Dispenser.md`: build `ns.FEATURES` here, and the menu reads it.
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 

@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options.lua), [`Options/Options-General.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options-General.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options-Utilities.lua), [`Options/Options-Fonts.lua`](https://github.com/Gogo1951/Pretty-Wide-Quest-Log/blob/main/Options/Options-Fonts.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core).
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 

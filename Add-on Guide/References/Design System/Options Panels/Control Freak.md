@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options-Alert-Section.lua`](https://github.com/Gogo1951/Control-Freak/blob/main/Options/Options-Alert-Section.lua), [`Options/Options-Feature-Scope.lua`](https://github.com/Gogo1951/Control-Freak/blob/main/Options/Options-Feature-Scope.lua), [`Options/Options-General.lua`](https://github.com/Gogo1951/Control-Freak/blob/main/Options/Options-General.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Control-Freak/blob/main/Options/Options-Utilities.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core). Pairs with `Mini-map Menus/Control Freak.md`: both read the `ns.FEATURES` built here.
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 

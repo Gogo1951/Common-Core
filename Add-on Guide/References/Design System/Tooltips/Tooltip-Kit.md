@@ -3,7 +3,7 @@
 The shared kit every Gogo add-on draws its tooltip lines with, in Common-Core so every add-on copies one file. It does two jobs: the **blocks an add-on adds to the game's own tooltips** (item, unit, spell), and the **tooltips on the add-on's own widgets** (a button's help, an item or spell row's tooltip, click hints). The kit owns the hooks, so no add-on writes its own `TooltipDataProcessor` or `HookScript` code again, and every block reads the same way whichever add-on drew it.
 
 - **Built:** [`addon-kits/Tooltip-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Tooltip-Kit) holds `Features/Tooltip-Kit.lua`, checked by StyLua, luacheck, `luac5.1 -p` and `scripts/test-tooltip-kit.lua` (`lua5.1 scripts/test-tooltip-kit.lua` from Common-Core), which runs it once on a client with `TooltipDataProcessor` and once without. A change to it is the maintainer's work, in a session launched in `~/Common-Core`; a session in an add-on folder never edits it.
-- **Adopted by:** no add-on yet. Each add-on's move onto it is that add-on's own change (What Each Block Becomes, below).
+- **Each add-on's move onto it is that add-on's own change** (What Each Block Becomes, below).
 - **Not yet checked in game.** Checking It in Game, below, is the list.
 - **The kit knows nothing about the add-on.** It reads only `ns.PALETTE` and four strings from `ns.L`: `ADDON_SHORT_NAME`, `MENU_ON`, `MENU_OFF` and `MENU_MORE`.
 - **Built from:** GogoLoot's `Features/Lockbox-Tooltips.lua` (the block on a lockbox), Water Dispenser's `Features/Item-Tooltips.lua` (the two hook routes and the bag-only check) and `Features/Group-Spares.lua` (the unit block), Good to Go's `Features/Utilities.lua` (`ns.AddItemTooltipPostCall`, `ns.AddSpellTooltipPostCall`, the macro route), `Features/Inventory-Report/Inventory-Report-Tooltip.lua` (the guard cleared with the tooltip) and `Features/Enhanced-Spellbook/Spell-Rank-Lines.lua`, Play It Forward's `Features/Generosity-Tooltip.lua`, and Pretty Wide Quest Log's `routes.AddClickHints` (`Features/Routes/Routes-Core.lua`).
@@ -15,10 +15,11 @@ The shared kit every Gogo add-on draws its tooltip lines with, in Common-Core so
 scripts/sync-addon-kits.sh --adopt Tooltip-Kit ../Addon
 ```
 
-Then add the file to every TOC, after `Features/Utilities.lua` (and after `Data/Data.lua`, which defines `ns.PALETTE` and `ns.L`):
+Then add the file to every TOC, after `Features/Utilities.lua` and Chat-Kit (and after `Data/Data.lua`, which defines `ns.PALETTE` and `ns.L`). The two kits never call each other, so this is just the one order every add-on uses (Style Guide → TOC FILE FORMAT → File Group Order):
 
 ```
 Features/Utilities.lua
+Features/Chat-Kit.lua
 Features/Tooltip-Kit.lua
 ```
 
@@ -290,7 +291,7 @@ Titles, labels and words beside numbers are the add-on's own keys, handed in. Ti
 
 ## What Each Block Becomes
 
-| Add-on, today | With the kit |
+| Add-on, replacing | With the kit |
 |---|---|
 | **GogoLoot**, `Features/Lockbox-Tooltips.lua`: `GogoLoot` alone as a header, then the requirement or the player's rank, green or red | **Status line** `Lockbox … GogoLoot`, its row a `block:Requirement`: red when short, white when met or not known (no more green). Its line scan for the block and its own hooks go: the kit's guard and hooks replace them. Keep the scan for the client's own requirement line, which still picks the row's wording |
 | **GogoLoot**, `Features/Loot-Master.lua`: the Roll List's bag tooltip (`AddBagTooltipLines`), in a file no TOC loads | **Deleted** |

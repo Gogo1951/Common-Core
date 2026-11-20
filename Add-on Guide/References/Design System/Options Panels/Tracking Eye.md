@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-Utilities.lua), [`Options/Options.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options.lua), [`Options/Options-General.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Options/Options-General.lua), [`Features/Utilities.lua`](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Utilities.lua) (`ns.RefreshSettings`).
 **Needs first:** `Options-Kit.md` (in Common-Core).
 **Labels:** `Type: Refactor`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 

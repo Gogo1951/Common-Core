@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/GogoLoot/blob/main/Options/Options-Utilities.lua), [`Options/Options-Utilities-Item-Lists.lua`](https://github.com/Gogo1951/GogoLoot/blob/main/Options/Options-Utilities-Item-Lists.lua), [`Options/Options.lua`](https://github.com/Gogo1951/GogoLoot/blob/main/Options/Options.lua), [`Options/Options-General.lua`](https://github.com/Gogo1951/GogoLoot/blob/main/Options/Options-General.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core). Pairs with `Mini-map Menus/GogoLoot.md`.
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 

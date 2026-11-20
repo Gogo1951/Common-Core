@@ -119,9 +119,9 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 
 Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mini-map Menus/` saying every row, click and string, and a GitHub issue in its repo tracking the work. **They are the maintainer's work orders** (Style Guide → MINIMAP MENU): the UX Review draws one as the add-on's Proposed menu, and no other pass acts on one. The maintainer's order of work: the kit, then Tracking Eye (which proves it), then smallest to largest.
 
-**Tracking Eye's menu is live** ([Gogo1951/Tracking-Eye#32](https://github.com/Gogo1951/Tracking-Eye/pull/32)): its clicks are back on their rows, with More Features, the Features section and one refresh, still on v1 of the kit. It is the menu every conversion follows row for row, read on GitHub; the kit itself comes from Common-Core's `addon-kits/Menu-Kit/` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu). Its move onto Menu-Kit v2 is next.
+**Tracking Eye's menu** is the one every conversion follows row for row, read on GitHub: its clicks on their rows, More Features, the Features section and one refresh. The kit itself comes from Common-Core's `addon-kits/Menu-Kit/` (Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu).
 
-**Magic Eraser's menu is live** ([Gogo1951/Magic-Eraser#52](https://github.com/Gogo1951/Magic-Eraser/pull/52)), on v1 of the kit: the reference for the More Features flyout, click-to-remove list rows and a Clear that asks first.
+**Magic Eraser's menu** is the reference for the More Features flyout, click-to-remove list rows and a Clear that asks first.
 
 | Order | Spec | Issue |
 |---|---|---|
@@ -135,11 +135,11 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 
 | Add-on | Today | In the menu |
 |---|---|---|
-| Tracking Eye | **Live.** Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2, which has landed; its move is next. |
+| Tracking Eye | Clear Tracking (Right-Click), Farm Mode (Shift + Left-Click), Target Tracking (Shift + Right-Click) and Options (Shift + Middle-Click) on their rows; Left-Click opens and holds the menu; More Features | The same menu on Menu-Kit v2. |
 | Water Dispenser | Tooltip: one feature, one report, 2 clicks | One feature block and the Dispense Report. The first to convert. |
 | Control Freak | Tooltip: three features, 4 clicks | All Alerts as a master switch, then the three feature blocks. |
-| GogoLoot | **Live.** Locked Items, then Automated Rolls (Left-Click), Automated Opening (Right-Click) and Loot Announcements (Shift + Left-Click) with the roll read-back as value rows, More Features in a flyout, and Options (Shift + Middle-Click); Shift + Right-Click held for the Master Looting Window | The same menu on Menu-Kit v2, which has landed; its move is next. |
-| Magic Eraser | **Live.** Erase (Left-Click), Protect (Right-Click), Clear Protect List (Middle-Click, asks first), Auto-Vend (Shift + Right-Click) and Options on their rows; click-to-remove Protect List rows; More Features in a flyout with its count | The same menu on Menu-Kit v2, which has landed; its move is next. |
+| GogoLoot | Locked Items, then Automated Rolls (Left-Click), Automated Opening (Right-Click) and Loot Announcements (Shift + Left-Click) with the roll read-back as value rows, More Features in a flyout, and Options (Shift + Middle-Click); Shift + Right-Click held for the Master Looting Window | The same menu on Menu-Kit v2. |
+| Magic Eraser | Erase (Left-Click), Protect (Right-Click), Clear Protect List (Middle-Click, asks first), Auto-Vend (Shift + Right-Click) and Options on their rows; click-to-remove Protect List rows; More Features in a flyout with its count | The same menu on Menu-Kit v2. |
 | Good to Go | Tooltip: an item highlight, three features, class notes, two reports, 7 clicks | Current Food, three feature blocks (Restock List carrying its report), class items, a *[Class] Macros* flyout, Ignore List. |
 
 ## Kit Changes (Menu-Kit v2)
@@ -309,7 +309,7 @@ Each add-on's spec in `Options Panels/` is the maintainer's work order, as Wave 
 | Order | Spec | Options code | Biggest change |
 |---|---|---|---|
 | 0 | [Options-Kit](Options%20Panels/Options-Kit.md) | (the kit) | **Done:** `addon-kits/Options-Kit/`, sync script, CI check, smoke test |
-| 1 | [Magic Eraser](Options%20Panels/Magic%20Eraser.md) | 2,313 lines | **Live on the kit.** The proof; real items in its Examples |
+| 1 | [Magic Eraser](Options%20Panels/Magic%20Eraser.md) | 2,313 lines | The proof; real items in its Examples |
 | 2 | [Tracking Eye](Options%20Panels/Tracking%20Eye.md) | 1,500 | `click` and `gate` on `ns.FEATURES` |
 | 3 | [Play It Forward](Options%20Panels/Play%20It%20Forward.md) | 1,830 | One switch per feature; two resets ask first |
 | 4 | [Water Dispenser](Options%20Panels/Water%20Dispenser.md) | 1,885 | `ns.FEATURES`; Dispensed Items under Dispense |
@@ -325,7 +325,7 @@ All decided by the maintainer; the Style Guide's OPTIONS PANEL (and SAVED VARIAB
 
 1. **One Options-Kit in Common-Core,** copied unchanged into `Options/Options-Kit.lua` and checked byte for byte by CI. *Built.*
 2. **`ns.FEATURES` in every add-on with a Features section,** in the kit's record shape; the root page, each panel's Enable switch and the menu build from it.
-3. **One Refresh in every add-on,** menu or not: the kit's `ns.RefreshSettings`. Today Style Guide → One Refresh binds only add-ons with a menu.
+3. **One Refresh in every add-on,** menu or not: the kit's `ns.RefreshSettings`.
 4. **Every panel registers through `Kit.RegisterPanel`** as its builder function; sub-panels nest by category ID; every ID is captured, so `ns:OpenOptionsPanel(key)` opens any panel.
 5. **The Features section holds only the switches:** `ns.FEATURES`, two to a line, Enable captions. No description, status line, icon, group heading or blank line. Control Freak's holds its three blocks (Monitoring, Naughty List, Tanking Tools); each child keeps its switch on its own tab. Play It Forward's three captions take feature names the maintainer words.
 6. **An Example sits under the control it shows, indented, and leaves while that control is off.**

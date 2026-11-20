@@ -1,9 +1,9 @@
 # Menu-Kit v2 (Common-Core)
 
-The shared renderer every Gogo menu is built on, in Common-Core so every add-on copies one file. **Landed:** [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit) holds `Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`, checked by StyLua, luacheck, `luac5.1 -p` and `scripts/test-menu-kit.lua` (`lua5.1 scripts/test-menu-kit.lua` from Common-Core). A change to it is the maintainer's work, in a session launched in `~/Common-Core`; a session in an add-on folder never edits it.
+The shared renderer every Gogo menu is built on, in Common-Core so every add-on copies one file. **Landed:** [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit) holds `Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga` and `Includes/Images/Menu-Arrow.tga`, checked by StyLua, luacheck, `luac5.1 -p` and `scripts/test-menu-kit.lua` (`lua5.1 scripts/test-menu-kit.lua` from Common-Core). A change to it is the maintainer's work, in a session launched in `~/Common-Core`; a session in an add-on folder never edits it.
 
 - **Issue:** [Gogo1951/Common-Core#3](https://github.com/Gogo1951/Common-Core/issues/3), closed 2026-11-19 with the kit on `main`. Each add-on's move onto v2 is that add-on's own project, starting with Tracking Eye ([Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31)).
-- **The add-ons are still on v1 until each moves:** Tracking Eye, GogoLoot, Magic Eraser and Good to Go each carry v1 (`Features/Menu-Kit.lua`, byte for byte the same on GitHub `main`) and drive it from their own `Minimap-Menu.lua`. **v2 keeps v1's names** (`Kit.CreatePanel`, `panel:Render`, `panel:SubmenuRow`, `panel.onEnterRow`, `Kit.SetToggleText`, `Kit.IsCursorOver`, `Kit.IsInside`, `Kit.SUBMENU_ARROW`, `Kit.FLYOUT_GAP`, `Kit.FLYOUT_RISE`, the `hint` kind), so syncing v2 over a v1 copy changes nothing but the look the rules already ask for: sub-menus overlap their menu (`FLYOUT_GAP` is now negative), long labels wrap at 320, and an `action` row with no colors of its own reads INFO and MUTED. Checked offline with Tracking Eye's own `Minimap-Menu.lua` on v2. **Good to Go's local copy is ahead of GitHub:** the MENUS pieces it carries (`Kit.FLYOUT_OVERLAP`, a switch's own `submenu` with the arrow column, `Kit.AddPlate`, `Kit.OpenContextMenu`, `Kit.AddMenuHeader`, `Kit.PlatePullout`) were never pushed, so v2 builds them from Style Guide → MENUS. Before syncing Good to Go, check its calls against v2's signatures below; `OpenContextMenu`, `AddMenuHeader` and `PlatePullout` are untested in game.
+- **v2 keeps v1's names** (`Kit.CreatePanel`, `panel:Render`, `panel:SubmenuRow`, `panel.onEnterRow`, `Kit.SetToggleText`, `Kit.IsCursorOver`, `Kit.IsInside`, `Kit.SUBMENU_ARROW`, `Kit.FLYOUT_GAP`, `Kit.FLYOUT_RISE`, the `hint` kind), so syncing v2 over a v1 copy changes nothing but the look the rules already ask for: sub-menus overlap their menu (`FLYOUT_GAP` is now negative), long labels wrap at 320, and an `action` row with no colors of its own reads INFO and MUTED. Checked offline with Tracking Eye's own `Minimap-Menu.lua` on v2. `Kit.OpenContextMenu`, `Kit.AddMenuHeader` and `Kit.PlatePullout` are untested in game.
 - **Rules:** Style Guide → MINIMAP MENU.
 - **Pieces:** `../README.md` → Components, Patterns, Kit Changes (Menu-Kit v2).
 - **Drawn:** `../Mini-map Menus.html`.
@@ -16,6 +16,7 @@ The shared renderer every Gogo menu is built on, in Common-Core so every add-on 
 |---|---|
 | `Features/Menu-Kit.lua`: plate, rows, layout | `addon-kits/Menu-Kit/Features/Menu-Kit.lua` here, unchanged in spirit |
 | `Includes/Images/Menu-Plate.tga` | `addon-kits/Menu-Kit/Includes/Images/Menu-Plate.tga` here |
+| The game's submenu triangle | `addon-kits/Menu-Kit/Includes/Images/Menu-Arrow.tga` here, the kit's own chevron |
 | `Minimap-Menu.lua`: `CreatePanel` for menu and flyout, `UISpecialFrames`, `PositionMenu`, `PositionFlyout`, the `OnUpdate` close timer, `OnHide`, `RenderFlyout`, `ns.ShowMenu`, `ns.HideMenu`, `ns.RefreshMenu`, `ns.IsMenuShown`, `ns.IsMenuFrame`, `ns.OpenFlyout`, `menu.onEnterRow` | Into the kit, behind `Kit.CreateMenu` |
 | `Minimap-Menu.lua`: `AddFeature` | Into the kit as `Kit.FeatureBlock` |
 | `Minimap-Menu.lua`: `OptionTooltip`, `Toggle`, `Section`, `Separator`, `OnOff` | Into the kit as small helpers |
@@ -86,13 +87,13 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 ## Distribution
 
 1. The kit and its art live in `addon-kits/Menu-Kit/` here, in folders that mirror an add-on's (`Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga`, `Includes/Images/Menu-Arrow.tga`), as Options-Kit's do.
-2. **Already built, for every kit:** `scripts/sync-addon-kits.sh` copies a kit into each add-on that holds any of its files and leaves the rest alone (`--adopt Menu-Kit` the first time), and the reusable `ci.yml`'s **Shared kits match Common-Core** check fails an add-on whose copy differs, plate included. Dropping the two files into `addon-kits/Menu-Kit/` is all Menu-Kit needs.
-3. **An add-on holding the kit's Lua file has adopted it**, and its next CI run fails until it's synced: Tracking Eye, GogoLoot, Magic Eraser and Good to Go, so each takes `scripts/sync-addon-kits.sh` on its next change (Good to Go after the check above). **Art alone doesn't adopt a kit:** the CI check and the sync script key adoption on a kit's `.lua` files, so Play It Forward, which carries only `Includes/Images/Menu-Plate.tga` for its reopen button, is left alone.
+2. **Already built, for every kit:** `scripts/sync-addon-kits.sh` copies a kit into each add-on that holds any of its files and leaves the rest alone (`--adopt Menu-Kit` the first time), and the reusable `ci.yml`'s **Shared kits match Common-Core** check fails an add-on whose copy differs, plate included. Dropping the kit's files into `addon-kits/Menu-Kit/` is all Menu-Kit needs.
+3. **An add-on holding the kit's Lua file has adopted it**, and its next CI run fails until it's synced: Tracking Eye, GogoLoot, Magic Eraser and Good to Go, so each takes `scripts/sync-addon-kits.sh` on its next change. **Art alone doesn't adopt a kit:** the CI check and the sync script key adoption on a kit's `.lua` files, so Play It Forward, which carries only `Includes/Images/Menu-Plate.tga` for its reopen button, is left alone.
 4. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, copies the kit from `addon-kits/Menu-Kit/` instead of Tracking Eye on GitHub.
 
 ## Done When
 
-- [x] `addon-kits/Menu-Kit/` holds the kit and plate; StyLua, luacheck (under all four add-ons' configs), `luac5.1 -p` and `scripts/test-menu-kit.lua` pass on it.
+- [x] `addon-kits/Menu-Kit/` holds the kit, plate and arrow; StyLua, luacheck (under all four add-ons' configs), `luac5.1 -p` and `scripts/test-menu-kit.lua` pass on it.
 - [x] The sync script and the CI check are in (`scripts/sync-addon-kits.sh`, built with Options-Kit).
 - [x] ~~Tracking Eye runs on v2~~: moved to Tracking Eye's own project ([Gogo1951/Tracking-Eye#31](https://github.com/Gogo1951/Tracking-Eye/issues/31), `Tracking Eye.md`), with nothing visible changed but More Features, which moves into its flyout.
 - [x] Style Guide → MINIMAP MENU's live references point at `addon-kits/Menu-Kit/`.

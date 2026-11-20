@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Thanks-for-the-Buff/blob/main/Options/Options-Utilities.lua), [`Options/Options.lua`](https://github.com/Gogo1951/Thanks-for-the-Buff/blob/main/Options/Options.lua), [`Options/Options-Emote-Grid.lua`](https://github.com/Gogo1951/Thanks-for-the-Buff/blob/main/Options/Options-Emote-Grid.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core).
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 

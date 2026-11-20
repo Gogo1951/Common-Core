@@ -5,12 +5,12 @@ The shared helper every Gogo add-on writes its chat lines through, in Common-Cor
 - **Rules:** Style Guide → MESSAGES, WELCOME MESSAGE, ADD-ON NAMES, COLORS.
 - **Drawn:** `../Chat Lines.html`.
 - **The kit knows nothing about the add-on.** It reads only `ns.PALETTE`, `ns.L` (`ADDON_TITLE`, `ADDON_SHORT_NAME`, `CHAT_LOADED`), `ns.TARGET_MARKER`, `ns.CHAT_MESSAGE_MAX_LENGTH`, `ns.db`, `ns.DATABASE_DEFAULTS`, `ns.FLAVOR` and `ns.Version`, all read when a line is written, so nothing has to exist before the kit loads.
-- **No adopted add-on yet.** Each add-on's move onto the kit is its own change, through `scripts/sync-addon-kits.sh --adopt Chat-Kit`.
+- **Each add-on's move onto the kit is its own change,** through `scripts/sync-addon-kits.sh --adopt Chat-Kit`.
 
 ## Adopting It
 
 1. From Common-Core: `scripts/sync-addon-kits.sh --adopt Chat-Kit ../Addon-Folder`. It copies `Features/Chat-Kit.lua` in; from then on a plain run keeps it current and CI's **Shared kits match Common-Core** check fails a copy that differs.
-2. Add `Features/Chat-Kit.lua` to every TOC **right after `Features/Utilities.lua`** (after Menu-Kit when the add-on has it), before `Features/Announcements.lua` and anything that prints.
+2. Add `Features/Chat-Kit.lua` to every TOC **right after `Features/Utilities.lua`**, before Tooltip-Kit, `Features/Announcements.lua` and anything that prints (Style Guide → TOC FILE FORMAT → File Group Order).
 3. Delete what the kit now does from `Features/Announcements.lua` (What It Replaces, below). The kit defines `ns:PrintMessage`, `ns:BuildAnnounceMessage`, `ns:Announce` and `ns:GetGroupChatChannel`, so callers keep working unchanged; an add-on that still defines one of them later in the TOC overrides the kit's, so remove the old one rather than leave both.
 4. Add `local Chat = ns.ChatKit` where a file uses the kit's other calls.
 5. Call `ns.ChatKit.Welcome()` at the SavedVariables init point's end (`PLAYER_LOGIN`), in place of the add-on's `PrintWelcome`.
@@ -147,11 +147,11 @@ And from `Data/Data.lua`: `ns.PALETTE` (`INFO`, `SEPARATOR`, `TEXT`, `OFF`, `TIT
 
 ## What It Replaces
 
-| Add-on | Today | With the kit |
+| Add-on | Replaces | With the kit |
 |---|---|---|
 | **Good to Go** | `Features/Announcements.lua`: `GetPrintPrefix`, `ns.BuildPrintLine`, `ns:PrintMessage`, `ns.WarnOnce`, `TrimSentBody`/`SignOff`/`BuildSent`, `ns:BuildAnnounceMessage`, `Send`, the whisper queue (`QueueWhisper`, `Deliver`), `ns:Announce`, `FillTokens`, `ns:GetGroupChatChannel`, `ns:QueueAutomatedWhisper`. `Features/Utilities.lua:67`: `ns.ShowUIError`, `ns.ShowUINotice`. | `Chat.Print`, `Chat.PrintLine`, `Chat.PrintWarning`/`PrintOnce`, `Chat.Build({ text = ... })`, `Chat.Whisper`, `Chat.Send`, `Chat.FillTokens`, `Chat.Notice(body)`. `BuildEditable` (the too-long fallback to the default text) and the whisper builders stay: they know the add-on's fields. |
 | **Thanks for the Buff** | Its own `TrimSentBody`/`SignOff`, `ns:BuildAnnounceMessage`, `ns:Announce`, `ns:Whisper` (unbranded), the Good News whisper queue with its lockdown drop. Prints brand with the **Short Name** today. | The kit's calls; `ns:Whisper` becomes `Chat.Whisper` (queued now too). Prints move to the Full Name. |
-| **GogoLoot** | `ns.BuildPrintMessage`, `ns:PrintMessage`, `ns:BuildAnnounceMessage` (no trim today), `ns:Announce`, `ns:AnnounceParts` (packing with `formatArguments`), `ns:GetGroupChatChannel`, `StatusPrint`'s repeat check, `AnnounceItemOnce`, the welcome reading `ns.db.global.showWelcome`. | `Chat.SendParts(channel, target, key, parts, formatArguments)`, `Chat.PrintQuiet` (keyed by the text, or the item ID), `Chat.Welcome()`. The `lootNotifications` master switch stays GogoLoot's: it checks it before calling `Chat.Send`. The loading-screen quiet window (`SetQuiet`) stays GogoLoot's. Sent bodies gain the trim. |
+| **GogoLoot** | `ns.BuildPrintMessage`, `ns:PrintMessage`, `ns:BuildAnnounceMessage` (no trim), `ns:Announce`, `ns:AnnounceParts` (packing with `formatArguments`), `ns:GetGroupChatChannel`, `StatusPrint`'s repeat check, `AnnounceItemOnce`, the welcome reading `ns.db.global.showWelcome`. | `Chat.SendParts(channel, target, key, parts, formatArguments)`, `Chat.PrintQuiet` (keyed by the text, or the item ID), `Chat.Welcome()`. The `lootNotifications` master switch stays GogoLoot's: it checks it before calling `Chat.Send`. The loading-screen quiet window (`SetQuiet`) stays GogoLoot's. Sent bodies gain the trim. |
 | **Pretty Wide Quest Log** | `BuildSent` with the WoW Forever marker rule, `ns:BuildAnnounceMessage` (group), `ns:BuildWhisperMessage`, `ns:Announce`, `ns:GetGroupChatChannel`. Prints brand with the **Short Name** today. | `Chat.Build(key, ...)` and `Chat.Build({ key = key, channel = "WHISPER" }, ...)`; the quest-reference fitting stays. Prints move to the Full Name. Sent bodies gain the trim. |
 | **Magic Eraser** | `ns:FormatCurrency` and `ns:FormatCommaNumber` in `Features/Utilities.lua`, used in prints; Auto-Vend's held sale lines under its total. | `Chat.Money(copper)` inside a print; `Chat.PrintBlock(total, sales)`. `ns:FormatCurrency` stays for windows and menus, where the print's `TEXT` reopening has no place. |
 | **Control Freak** | `ns:PrintMessage`, `TrimClosingPeriod`, `ns.BuildAlertLine`/`ns:PrintAlert` (`Body // Control Freak`), `ns:PrintWelcome`, `ns:BuildAnnounceMessage` (no marker, period trim only), `ns:Announce` with its cut-to-fit. | `Chat.PrintAlert`/`Chat.AlertLine`, `Chat.Welcome()`, `Chat.Send(channel, nil, { key = key, marker = false }, ...)`. Its raid-icon texture-to-token swap, `SafeCutLength` and the PARTY-only channel stay its own: build the body, then send `{ text = body, marker = false }`. |

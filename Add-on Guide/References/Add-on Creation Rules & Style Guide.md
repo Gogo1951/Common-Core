@@ -769,7 +769,7 @@ Read the version from TOC metadata via `C_AddOns.GetAddOnMetadata`, and store it
 
 ## MESSAGES
 
-Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]` (a combat alert trails it instead, below), and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing `!`, `.` or `?` (full-width ones included) and a leading `¡` or `¿`, in every language. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way the helpers apply the marker, name, and separator so the body stays clean.
+Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]` (a combat alert trails it instead, below), and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing `!`, `.` or `?` (full-width ones included) and a leading `¡` or `¿`, in every language. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way Chat-Kit adds the marker, name and separator, so the body stays clean.
 
 | Context | Channel | Format | Example |
 |---|---|---|---|
@@ -795,15 +795,13 @@ Local prints use branded colors: `C_INFO` for the Full Name, `C_SEPARATOR` for t
 
 ### Center Screen
 
-**The middle of the screen is only for refusing a click right where the player is looking** (a macro that can't be deleted, a button that can't act in combat): `Short Name // Message.` in C_OFF through `Chat.Notice`. Everything else goes to chat.
+**The middle of the screen is only for refusing a click right where the player is looking** (a macro that can't be deleted): `Short Name // Message.` in C_OFF through `Chat.Notice`. Everything else goes to chat, a refusal in combat included: that is an ordinary print (OPTIONS PANEL → Combat Guard).
 
 ### Sent Messages (Other Players)
 
-All cross-player chat routes through one entry point so the marker, name, and separator are handled in one place. Roll calls, button whispers and announce macros too: an announce macro's body is built by the kit, and nothing sends around it.
+All cross-player chat goes through Chat-Kit, so the marker, name and separator are handled in one place. Roll calls, button whispers and announce macros too: an announce macro's body is built by the kit, and nothing sends around it. How the kit builds, measures, queues and packs each line is in `Chat-Kit.md`.
 
-- `ns:BuildAnnounceMessage(formatKey, ...)` formats `ns.L[formatKey]` and returns the finished line **without sending**, so callers can measure length first: the sent format above, or the bare body for a line drafted for the player to send (both per Target Marker).
-- `ns:Announce(channel, target, formatKey, ...)` builds and calls `SendChatMessage`. It no-ops on a nil channel **and on a nil message**.
-- `ns:GetGroupChatChannel()` resolves `IsInGroup(LE_PARTY_CATEGORY_INSTANCE)` → `IsInRaid()` → `IsInGroup()`, returning `INSTANCE_CHAT` / `RAID` / `PARTY` in that order, and **returns nil when the player is not grouped** — `ns:Announce` then no-ops, so a caller whose message must still land falls back (for example, whispering the relevant player). Pass the channel explicitly for `SAY` or `YELL`.
+- **A group message goes to the group the player is in:** instance chat, then raid, then party. Solo, nothing is sent, so a message that must still land falls back (for example, whispering the relevant player).
 - **`SAY`, `YELL` and numbered channels need a click or key press behind the send** outside instances. From an event, a timer or login the send is blocked as `ADDON_ACTION_BLOCKED`, which `pcall` doesn't see, so these sends only ever run from the player's own input.
 
 ### Editable Messages
@@ -836,7 +834,7 @@ Live reference: **Thanks for the Buff** — `DefineWhisperComposer` in `Options/
 
 ### Pipe Escapes in Sent Chat
 
-Color codes and textures (`|cff`, `|T`) never survive `SendChatMessage`; item links (`|Hitem...`) do. If bodies never carry item links, strip stray pipes defensively (`message:gsub("|", "")`). If they do, don't strip — stripping breaks the links — and say so in a one-line comment on the helper.
+Color codes and textures (`|cff`, `|T`) never survive sent chat; item links (`|Hitem...`) do, so sent bodies keep their pipes (Chat-Kit keeps them).
 
 ### Message Length
 
@@ -846,13 +844,13 @@ Color codes and textures (`|cff`, `|T`) never survive `SendChatMessage`; item li
 
 Because the ceiling is in bytes, **the overflow canary is whichever supported locale encodes widest — usually ruRU.** Test overflow against that locale, not English.
 
-Any message that can carry multiple item links is built as a parts list and split across as many messages as needed: measure via `BuildAnnounceMessage`, pack parts greedily, split only at part boundaries (a link broken mid-escape is rejected), and repeat the format template so every message reads as a complete announcement.
+Any message that can carry several item links goes out as Chat-Kit's parts: as many messages as it needs, each a complete announcement, split only between links, since a link broken mid-escape is rejected (`Chat-Kit.md` → Sent Messages).
 
 -----
 
 ## WELCOME MESSAGE
 
-Every add-on prints a welcome message through `PrintMessage` on every login, on by default. The player who wants it gone turns it off with the toggle the message itself points to. Its copy is **mandated, identical in every add-on** apart from the Full Name:
+Every add-on prints a welcome message on every login (Chat-Kit's `Chat.Welcome`), on by default. The player who wants it gone turns it off with the toggle the message itself points to. Its copy is **mandated, identical in every add-on** apart from the Full Name:
 
 ```lua
 L["CHAT_LOADED"] =
@@ -861,7 +859,7 @@ L["CHAT_LOADED"] =
 
 The `%s` is `ns.Version`. Replace `[Add-on Name]` with the Full Name when copying into a new add-on — it is baked in literally rather than composed from `L["ADDON_TITLE"]` so it sits inline naturally across translations. Printed, it reads: `Good to Go // Version 2026.10.23.A. Settings (including the option to disable this message) are under Options > AddOns > Good to Go. ...`
 
-`showWelcome` (default `true`) ships in `ns.DATABASE_DEFAULTS` as a presentation key, scoped per SAVED VARIABLES → The Two Models. `PrintWelcome` reads it, returns early when false, and otherwise prints; the General panel's Enable Welcome Message toggle (OPTIONS PANEL → Main Page Layout) binds the same key. **Never gate it on anything else:** no stored version, no first-login or once-per-update check, no saved "already shown" flag. While the toggle is on, it prints at every login.
+`showWelcome` (default `true`) ships in `ns.DATABASE_DEFAULTS` as a presentation key, scoped per SAVED VARIABLES → The Two Models. The welcome prints only while it's on; the General panel's Enable Welcome Message toggle (OPTIONS PANEL → Main Page Layout) binds the same key. **Never gate it on anything else:** no stored version, no first-login or once-per-update check, no saved "already shown" flag. While the toggle is on, it prints at every login.
 
 **A login warning is the one other line allowed at login:** a conflict (an add-on it replaces is also turned on) or a missing add-on it needs, through `Chat.PrintWarning`. The welcome switch doesn't silence it; it stops once the problem is fixed. Pretty Wide Quest Log's Wide Quest Log Plus and Questie warnings are the live reference.
 

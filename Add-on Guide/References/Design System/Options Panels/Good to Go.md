@@ -4,7 +4,6 @@
 **Live code:** [`Options/Options-Feature-Switches.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options-Feature-Switches.lua), [`Options/Options-Utilities.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options-Utilities.lua), [`Options/Options-Item-Lists.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options-Item-Lists.lua), [`Options/Options.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Options/Options.lua).
 **Needs first:** `Options-Kit.md` (in Common-Core). Pairs with `Mini-map Menus/Good to Go.md`.
 **Labels:** `Type: Refactor`, `Type: Design`, `Area: Options`.
-**Issue:** not filed yet.
 
 ## Panel Tree
 
