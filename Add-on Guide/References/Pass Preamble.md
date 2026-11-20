@@ -8,6 +8,21 @@ Governs every pass prompt in this guide — numbered, optional, and Code Comment
 
 Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edit any settings file, and never write anything to `~/Common-Core`. Whatever its write scope, a pass may write the add-on's `README-Notes.md` as Style Guide → README-NOTES directs: to record an exception the maintainer keeps, or to trim or drain entries; whatever writes it then says in one line what it added or changed, and never prints the file. The local copy keeps it across sessions (Session Prep leaves `README-Notes.md` alone), and step 12 commits it with the release like any other change. Never set the Bash tool's `dangerouslyDisableSandbox`: the template runs the sandbox in strict mode, which ignores it. Reads and `git diff`/`status`/`log` work inside the sandbox, and a call made only of `git` or `gh` commands runs outside it on its own — but a `cd`, a pipe, a redirect, or a `$(...)` or heredoc anywhere in the call keeps all of it sandboxed, where `git config` can't write and `gh` fails TLS. Run those as bare calls. A command the sandbox blocks gets reported, never worked around. If an approval prompt appears mid-pass, stop and follow `01 - Local Setup.md` → What a prompt means now. A pass whose write scope is "nothing" denies any write prompt outright.
 
+## Kits and the guide change only in Common-Core
+
+**A pass never edits the guide or a shared kit copy** (`Options/Options-Kit.lua`, `Features/Menu-Kit.lua`, or any other file Common-Core's `addon-kits/` holds), not even to fix a bug in one, because the next sync puts Common-Core's version back and the fix is lost. When the add-on needs one changed:
+
+1. Say in one plain line what's wrong, e.g. *Two-line Examples run together; they need a blank line between them.*
+2. Give a block the maintainer pastes into a session launched in `~/Common-Core`, saying exactly what to change and why:
+
+```
+In Common-Core, change {file under addon-kits/ or Add-on Guide/}: {what to change and why, in plain words}. Update the kit's spec and the Style Guide if a rule changes. Commit and push to main.
+```
+
+3. Leave the add-on's kit copy matching Common-Core, and build what the kit can already do.
+
+**A kit copy that differs from Common-Core is never overwritten silently.** If it holds a change Common-Core lacks, give the paste block for that change first, then copy Common-Core's file over it. Once the change is on Common-Core's `main`, Session Prep step 0 pulls it, and copying Common-Core's file over the add-on's, unchanged, brings it in.
+
 ## Read first
 
 - `References/Add-on Creation Rules & Style Guide.md` — the rules. Authoritative wherever it speaks. Read all of it, unless your prompt names the sections to read.
