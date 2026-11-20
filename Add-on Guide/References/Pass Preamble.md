@@ -133,7 +133,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 Offer each one as a card with a button that starts it. The maintainer asks for these cards, so a card is part of the request, not a side task. Use the app's start-session tool when you have one, as an offer (its card asks *New session* or *Do it here*); otherwise use the suggest-task tool (`spawn_task`). Either can load partway through a session, so look for both by name just before the final reply, and don't decide from which app you think you're in. One card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Also print that line in its own fenced block, so it can be pasted where no card shows:
 
 ```
-Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it as the request. Session Prep already ran in this folder; skip it.
+Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
 ```
 
 **One session edits an add-on folder at a time.** Sessions in one folder share every file, so two at once undo and break each other's work. If a file changes that this session didn't touch, or a check fails in a file it never edited, stop and tell the maintainer in one line that another session is editing this folder.
