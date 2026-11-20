@@ -26,6 +26,7 @@
       "ArtifactComments",
       "ArtifactData",
       "mcp__ccd_session",
+      "mcp__Claude_Browser",
       "WebFetch(domain:github-production-user-asset-6210df.s3.amazonaws.com)"
     ],
     "deny": [
