@@ -2,7 +2,7 @@
 
 **Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the UX Review`. Write scope: **nothing — report only.** No code or add-on file is written in this session, whatever the maintainer approves (Pass Preamble → Report-only passes). The wireframe is an Artifact, never a file in the add-on folder, and feature prompts go in chat.
 
-**Style Guide sections:** read only GLOSSARY, ADD-ON NAMES, SPACING SCALE, TONE AND COPY, MESSAGES, MINIMAP BUTTON, MENUS, MINIMAP MENU, OPTIONS PANEL, ASKING THE MAINTAINER and GUIDE FEEDBACK, not the whole file.
+**Style Guide sections:** read only GLOSSARY, ADD-ON NAMES, SPACING SCALE, TONE AND COPY, MESSAGES, MINIMAP BUTTON, WINDOWS, MENUS, MINIMAP MENU, TOOLTIPS, OPTIONS PANEL, ASKING THE MAINTAINER and GUIDE FEEDBACK, not the whole file.
 
 The first review of the cycle: how the add-on looks and reads to a player, and what it could do next. Map every surface, research what similar add-ons offer when asked, then **show it rather than describe it**: a clickable wireframe of every window a change touches, **Current** beside **Proposed**, with each change asked on the page as a multiple-choice question whose every option is drawn as its own example (Wireframe Build → Change cards). The maintainer picks from the wireframe or in chat, each Build comes out as a feature prompt the maintainer pastes back to run, and `03 - Code Review.md` then reviews the code with them in.
 

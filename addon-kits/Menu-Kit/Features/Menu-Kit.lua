@@ -12,7 +12,8 @@ local ADDON_NAME, ns = ...
 
     Copied unchanged from Common-Core's addon-kits/Menu-Kit/ into
     Features/Menu-Kit.lua, after Features/Utilities.lua in the TOC, with its
-    plate at Includes/Images/Menu-Plate.tga, and checked byte for byte by CI.
+    plate at Includes/Images/Menu-Plate.tga and its sub-menu arrow at
+    Includes/Images/Menu-Arrow.tga, and checked byte for byte by CI.
     Never edit a copy: change Common-Core's and sync it
     (Common-Core/scripts/sync-addon-kits.sh).
 
@@ -43,7 +44,9 @@ local ADDON_NAME, ns = ...
       leftColor, rightColor   a palette key, a six-digit hex or { r, g, b }
       onClick                 what a click does; the menu's afterChange runs after it
       closes                  true for a pick that acts: the menu closes first
-      click                   the button click that does the same ("RightButton", "ShiftLeftButton")
+      click                   the button click that does the same ("RightButton", "ShiftLeftButton"),
+                              or a gesture's localized name ("Drag"), drawn the same and routing nothing
+      disabled                true: gray, no highlight, no click; its tooltip still shows
       tooltip                 a function(GameTooltip), shown beside the row under the cursor
       submenu                 the key of the flyout its hover opens (flyouts[key]), or with
       flyout                  a function returning the flyout's entries in place of flyouts[key]
@@ -88,7 +91,7 @@ local LINE_HEIGHT = 12
 local HIGHLIGHT_ALPHA = 0.16
 local SEPARATOR_ALPHA = 0.35
 
-local HOVER_CLOSE_DELAY = 0.4
+local HOVER_CLOSE_DELAY = 0.5 -- Forgiving for a cursor that slips off the edge, or a controller's
 local CLICK_CLOSE_DELAY = 1.0
 local MENU_GAP = 2 -- From the launcher's corner to the menu's
 local MAX_DEPTH = 4 -- The menu and three sub-menus deep
@@ -101,8 +104,8 @@ local HEADINGS = { section = true, status = true, submenu = true }
 Kit.MAX_WIDTH = MAX_WIDTH
 Kit.LIST_MAX = LIST_MAX
 
--- Blizzard's own arrow on a dropdown row with a submenu, its check mark, and the loot window's Pass for a delete.
-Kit.SUBMENU_ARROW = "|TInterface\\ChatFrame\\ChatFrameExpandArrow:0|t"
+-- The kit's own thin chevron on a row with a submenu (white, at line height), the game's check mark, and the loot window's Pass for a delete.
+Kit.SUBMENU_ARROW = "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Menu-Arrow:0|t"
 Kit.CHECK_MARK = "|TInterface\\Buttons\\UI-CheckBox-Check:0|t"
 Kit.REMOVE_ICON = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:0|t"
 
@@ -389,7 +392,8 @@ local function Look(entry)
 		leftColor = leftColor or (not entry.selected and "MUTED") or "TEXT"
 	elseif kind == "action" then
 		if not right and entry.click then
-			right = TEXT.clicks[entry.click]
+			-- A button click's localized name, or a gesture the caller names itself ("Drag").
+			right = TEXT.clicks[entry.click] or entry.click
 		end
 		leftColor, rightColor = leftColor or "INFO", rightColor or "MUTED"
 	elseif kind == "hint" then
@@ -418,6 +422,10 @@ local function Look(entry)
 		leftColor = leftColor or "BODY"
 	elseif kind == "note" then
 		leftColor = leftColor or "MUTED"
+	end
+	-- A row that can't be used right now reads gray on both sides, as the game grays its own.
+	if entry.disabled then
+		leftColor, rightColor = "MUTED", "MUTED"
 	end
 	return {
 		left = left,
@@ -471,6 +479,7 @@ local function LooksKey(entries, looks, arrows)
 			arrows[index] and ">" or "",
 			entry.onClick and "c" or "",
 			entry.tooltip and "t" or "",
+			entry.disabled and "d" or "",
 		}, "\31")
 	end
 	return table.concat(parts, "\30")
@@ -511,7 +520,7 @@ local function Row(panel, index)
 
 	row:SetScript("OnClick", function(self)
 		local entry = self.entry
-		if not entry then
+		if not entry or entry.disabled then
 			return
 		end
 		local menu = panel.menu
@@ -666,7 +675,7 @@ function Panel:Render(source, context)
 		local row = rows[index]
 		local kind = entry.kind
 		local look = looks[index]
-		local clickable = entry.onClick ~= nil or row.opensFlyout
+		local clickable = (entry.onClick ~= nil or row.opensFlyout) and not entry.disabled
 		row.look = look
 		row:EnableMouse(
 			clickable
@@ -1211,7 +1220,7 @@ function Menu:HandleClick(anchor, button)
 	end
 	local key = (IsShiftKeyDown() and "Shift" or "") .. button
 	for _, entry in ipairs(self.spec.build(self) or {}) do
-		if entry.click == key and entry.onClick then
+		if entry.click == key and entry.onClick and not entry.disabled then
 			if entry.closes then
 				self:Hide()
 			end
@@ -1236,6 +1245,82 @@ function Menu:HandleClick(anchor, button)
 		return true
 	end
 	return false
+end
+
+--------------------------------------------------------------------------------
+-- Windows
+--------------------------------------------------------------------------------
+
+--[[
+    Every window's title, the add-on's own windows and a window drawn on the
+    plate alike (Style Guide → WINDOWS): the title white, the slashes gray, the
+    Short Name blue, "Buff Duty // GtG".
+]]
+function Kit.WindowTitle(title)
+	return Kit.Color("TEXT", title) .. " " .. Kit.Color("SEPARATOR", "//") .. " " .. Kit.Color("INFO", TEXT.shortName)
+end
+
+--[[
+    The header of a window drawn on the plate (Buff Duty): the title on the
+    left and the game's close button on the right, both EDGE in from the
+    plate's edge. onClose replaces the button's own click, which would hide a
+    protected parent. Returns the title's font string and the button; the
+    window lays out its own body under them, HEADER_HEIGHT down.
+]]
+Kit.WINDOW_EDGE = EDGE
+Kit.WINDOW_HEADER_HEIGHT = SPACE.GROUP
+function Kit.AddWindowHeader(frame, title, onClose)
+	local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	text:SetPoint("LEFT", frame, "TOPLEFT", EDGE, -(EDGE + Kit.WINDOW_HEADER_HEIGHT / 2))
+	text:SetText(Kit.WindowTitle(title))
+	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+	close:SetSize(Kit.WINDOW_HEADER_HEIGHT, Kit.WINDOW_HEADER_HEIGHT)
+	close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -EDGE, -EDGE)
+	if onClose then
+		close:SetScript("OnClick", onClose)
+	end
+	return text, close
+end
+
+--[[
+    A window's Options line (Buff Duty's footer): a separator, then a row in
+    the menu's own font, blue, with the sub-menu arrow. Hovering it or a click
+    opens the flyout beside it, overlapping the window as any sub-menu
+    overlaps its menu (Kit.CreateMenu's "line"). flyout() returns the
+    entries; afterChange runs after every row click there. Returns the line's
+    button and its separator, for the window to place under its body, the
+    separator SPACE.NEAR above the line; size the button to the window's inner
+    width and the menu's row height (Kit.ROW_HEIGHT).
+]]
+Kit.ROW_HEIGHT = LINE_HEIGHT + 2 * SPACE.LINE
+function Kit.AddOptionsLine(frame, label, flyout, afterChange)
+	local separator = frame:CreateTexture(nil, "ARTWORK")
+	separator:SetHeight(1)
+	local red, green, blue = RGB("SEPARATOR")
+	separator:SetColorTexture(red, green, blue, SEPARATOR_ALPHA)
+
+	local line = CreateFrame("Button", nil, frame)
+	line:SetHeight(Kit.ROW_HEIGHT)
+	line:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	local text = line:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	text:SetPoint("LEFT", TEXT_INSET, 0)
+	text:SetText(Kit.Color("INFO", label))
+	local arrow = line:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	arrow:SetPoint("RIGHT", -TEXT_INSET, 0)
+	arrow:SetText(Kit.SUBMENU_ARROW)
+	local highlight = line:CreateTexture(nil, "HIGHLIGHT")
+	highlight:SetAllPoints()
+	red, green, blue = RGB("TITLE")
+	highlight:SetColorTexture(red, green, blue, HIGHLIGHT_ALPHA)
+
+	local menu = Kit.CreateMenu({ publish = false, build = flyout, afterChange = afterChange })
+	local function Open(self)
+		menu:Show(self, "line")
+	end
+	line:SetScript("OnEnter", Open)
+	line:SetScript("OnClick", Open)
+	line.menu = menu
+	return line, separator
 end
 
 --------------------------------------------------------------------------------

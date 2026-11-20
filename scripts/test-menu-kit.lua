@@ -555,10 +555,41 @@ point = context.frame.points[1]
 check(point[1] == "BOTTOMLEFT" and point[4] == 300 and point[5] == 200, "a right-click menu opens at the cursor")
 check(ShownRows(context.frame)[1].right.text == "TA", "its header names the add-on's Short Name")
 cursor.x, cursor.y = -1000, -1000
-context:OnUpdate(0.3)
+context:OnUpdate(0.45)
 check(context:IsShown(), "it waits while the cursor is away")
-context:OnUpdate(0.2)
-check(not context:IsShown(), "and closes 0.4 seconds after the cursor leaves")
+context:OnUpdate(0.05)
+check(not context:IsShown(), "and closes 0.5 seconds after the cursor leaves")
 check(Kit.IsMenuFrame(ShownRows(menu.frame)[1] or menu.frame), "IsMenuFrame knows the kit's menus")
 check(not Kit.IsMenuFrame(button), "and nothing else")
+-- Disabled rows, gestures, windows
+local gray = Kit.CreatePanel("TestGray")
+local clicked = false
+gray:Render({
+	{
+		kind = "action",
+		left = "Share Quest",
+		disabled = true,
+		onClick = function()
+			clicked = true
+		end,
+	},
+	{ kind = "action", left = "Move Quest Arrow", click = "Drag" },
+})
+gray:Show()
+rows = ShownRows(gray)
+check(rows[1].left.color[1] > 0.5 and rows[1].left.color[1] < 0.51, "a disabled row is gray on the left")
+check(not rows[1].highlight.shown, "and has no highlight")
+rows[1].scripts.OnClick(rows[1])
+check(not clicked, "and its click does nothing")
+check(rows[2].right.text == "Drag", "a gesture's name is drawn on the right like a click")
+check(
+	Kit.WindowTitle("Buff Duty") == "|cffffffffBuff Duty|r |cffaaaaaa//|r |cff00bbffTA|r",
+	"a window title: white, gray slashes, blue Short Name"
+)
+local window = CreateFrame("Frame", "TestWindow", UIParent)
+local line = Kit.AddOptionsLine(window, "Options", function()
+	return { { kind = "toggle", left = "Your Party", on = true, onClick = function() end } }
+end)
+line.scripts.OnEnter(line)
+check(line.menu:IsShown(), "hovering a window's Options line opens its flyout")
 print("all passed")

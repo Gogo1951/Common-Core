@@ -8,9 +8,9 @@ It grows in waves, one surface at a time:
 |---|---|---|
 | 1 | Mini-map menus | **This folder.** Six add-ons drawn and specced, decisions made, issues filed. |
 | 2 | Options panels | **This folder** (Wave 2: Options Panels, below). Nine add-ons surveyed, drawn and specced; Options-Kit built in `addon-kits/Options-Kit/`; decisions made; issues not filed yet. |
-| 3 | The add-ons' own windows | Later. |
-| 4 | Lines added to the game's tooltips | Later. |
-| 5 | Chat prints and sent messages | Later. |
+| 3 | The add-ons' own windows | The title decided (Style Guide → WINDOWS); the rest later. |
+| 4 | Lines added to the game's tooltips | **`Tooltips/`.** Surveyed across nine add-ons; rules in Style Guide → TOOLTIPS; Tooltip-Kit built in `addon-kits/Tooltip-Kit/`. |
+| 5 | Chat prints and sent messages | **`Chat Lines/`.** Surveyed across nine add-ons; rules in Style Guide → MESSAGES; Chat-Kit built in `addon-kits/Chat-Kit/`. |
 
 ## Files
 
@@ -23,8 +23,10 @@ It grows in waves, one surface at a time:
 | `Mini-map Menus/` | One spec per add-on: its tooltip today, its menu row by row, its clicks, its strings, and how to check it in game. |
 | `Mini-map Menus.html` | The board: every mini-map tooltip drawn from its code beside the menu it becomes, clickable, with scenario switches. Open it in a browser next to `menu-mock.css` and `menu-mock.js`. |
 | `menu-mock.css`, `menu-mock.js` | The mock kit. Draws Menu-Kit entries and old-style GameTooltip lines at the game's sizes. Any wireframe pass that draws a mini-map menu builds from these instead of redrawing one (Using the Mock Kit, below). |
+| `Chat Lines/` | `Chat-Kit.md`, the chat kit's spec: every call, what it replaces in each add-on, and how to check it in game. |
+| `Tooltips/` | `Tooltip-Kit.md`, the tooltip kit's spec: the hooks, the block shapes, what each add-on's block becomes, and how to check it in game. |
 | `Chat Lines.html` | Every chat line the Style Guide defines, in a mock chat box in its exact colors and format: prints, the welcome message, the combat refusal, sent lines, a whisper and Example lines, each naming its rule. Open it next to `menu-mock.css`. |
-| `Windows and Tooltips.html` | An add-on's own window and the lines it adds to a game tooltip, drawn from the Style Guide's rules, with standard WoW behavior marked Proposed default where it has none yet. Open it next to `menu-mock.css` and `menu-mock.js`. |
+| `Windows and Tooltips.html` | An add-on's own window and the lines it adds to a game tooltip, drawn from the Style Guide's rules, with standard WoW behavior marked Proposed default where it has none yet. Drawn before WINDOWS and TOOLTIPS were decided: where its window title or tooltip header differs, the Style Guide wins. Open it next to `menu-mock.css` and `menu-mock.js`. |
 | `Wireframe Starter.html` | The page the UX Review copies and fills in for its wireframe: tabs per window, Current beside Proposed, each change a multiple-choice card whose options show their own example on hover or click, a Try first switch, `FILL` slots marked. Self-contained. |
 
 ## Foundations
@@ -61,7 +63,8 @@ On the Spacing Scale (Style Guide → SPACING SCALE). Menu-Kit's constants:
 | Spacer | 16 | `SPACE.GROUP`. The kit adds one above every heading. |
 | Separator | 8 | `SPACE.NEAR`, a 1-point line across it |
 | `TEXT_INSET` | 8 | A row's edge to its text |
-| `ROW_INSET` | 4 | The plate's edge to a row |
+| `EDGE` | 16 | The plate's edge to the text, on every side |
+| `ROW_INSET` | 8 | The plate's edge to a row |
 | `OPTION_INDENT` | 4 | Choice, toggle, item and value rows sit this much further in |
 | `FLYOUT_OVERLAP` | 16 | `ROW_INSET + TEXT_INSET`: the flyout's edge sits this far inside its menu's, as the game's own sub-menus do (Style Guide → MENUS); it rises 12 (`FLYOUT_RISE`) so its first row meets the row that opened it |
 | `MIN_WIDTH` | 128 | |
@@ -71,7 +74,7 @@ On the Spacing Scale (Style Guide → SPACING SCALE). Menu-Kit's constants:
 
 - Pretty Wide Quest Log's Quest Arrow plate, `Menu-Plate.tga`, nine-sliced at half size, 80% alpha.
 - No boxes, borders or backgrounds inside it.
-- Stock art only: `ChatFrameExpandArrow` for a flyout, `UI-CheckBox-Check` for a pick, item and spell icons at line height (`|T…:0|t`).
+- The kit's own thin white chevron, `Menu-Arrow.tga`, for a flyout; the game's `UI-CheckBox-Check` for a pick; item and spell icons at line height (`|T…:0|t`).
 
 ## Components
 

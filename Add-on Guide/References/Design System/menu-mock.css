@@ -258,13 +258,15 @@
 }
 
 /* Blizzard's submenu arrow and check mark, drawn as stand-ins. */
+/* Menu-Kit's own thin chevron (Includes/Images/Menu-Arrow.tga), white, at line height. */
 .gg-arrow {
-	width: 0;
-	height: 0;
-	border-top: 5px solid transparent;
-	border-bottom: 5px solid transparent;
-	border-left: 6px solid #f0c000;
-	filter: drop-shadow(0 0 1px #000);
+	box-sizing: border-box;
+	width: 7px;
+	height: 7px;
+	margin: 0 2px 0 0;
+	border-top: 2px solid #ffffff;
+	border-right: 2px solid #ffffff;
+	transform: rotate(45deg);
 }
 /* A row with no arrow keeps the arrow's room in a panel that has one, so the values line up in one column. */
 .gg-arrow.room {

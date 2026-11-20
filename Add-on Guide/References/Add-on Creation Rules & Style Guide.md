@@ -58,6 +58,8 @@ Repo-Name/
 │   ├── {Feature-Name}.lua          Optional — one per feature; a single-feature add-on may stay in Core.lua
 │   ├── Minimap-Button.lua          Optional — only with a mini-map button (MINIMAP BUTTON)
 │   ├── Menu-Kit.lua                With a mini-map menu, once the button's tooltip has moved — the menu renderer, copied unchanged (MINIMAP MENU)
+│   ├── Chat-Kit.lua                Every print and sent message, copied unchanged (MESSAGES)
+│   ├── Tooltip-Kit.lua             With tooltip lines of its own — the hooks and blocks, copied unchanged (TOOLTIPS)
 │   └── Minimap-Menu.lua            With a mini-map menu, once the button's tooltip has moved — what goes in the menu (MINIMAP MENU)
 ├── Includes/
 │   ├── Images/                     The icon and other art
@@ -553,8 +555,8 @@ Optional. The entry point is `Tests/Run.lua`, run from the add-on root with `lua
 
 |Name|Where it goes|Example|
 |---|---|---|
-|**Full Name**|Window titles, shaped `Title // Full Name`; the TOC `## Title`; the Options category and root panel; the mini-map menu's header; the front of every chat print; anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Restock List // Good to Go`, `Good to Go // Some Message.`|
-|**Short Name**|Every other tooltip or menu line that names the add-on, including the header of a block it adds to someone else's tooltip (`Short Name // Title`); the end of every message sent to another player|`{rtN} Some Message // GtG`, `GtG // Inventory Report`|
+|**Full Name**|The TOC `## Title`; the Options category and root panel; the mini-map menu's header; the front of every chat print (the end of a combat alert); anywhere the add-on is talked about: sentences, mandated copy, doc titles and prose|`Good to Go // Some Message.`|
+|**Short Name**|Window titles, shaped `Title // Short Name` (WINDOWS); the right side of every other menu's header and of a block it adds to someone else's tooltip (`Inventory Report … GtG`); every other tooltip or menu line that names the add-on; the front of a center-screen line; the end of every message sent to another player|`Restock List // GtG`, `{rtN} Some Message // GtG`|
 |**Both**|The README's H1, `Full Name (Short Name)`; the Full Name alone when the two are the same|`# Good to Go (GtG)`, `# Tracking Eye`|
 
 **They live in two locale keys, and nowhere else in code:**
@@ -566,7 +568,7 @@ L["ADDON_SHORT_NAME"] = "GtG" -- Short Name
 ```
 
 - **Both keys ship in every locale, as written.** The names are proper nouns, never translated, and an add-on whose two names match still defines both.
-- **Code never types either name.** Window titles, prints, sent messages and tooltip headers read the key. A window title's key holds only the title part, and the code joins the two: `title:SetText(L["RESTOCK_LIST_TITLE"] .. " // " .. L["ADDON_TITLE"])`. A locale string that names the add-on inside a sentence or label writes the name its slot calls for, as written in every locale: the welcome message's Options path carries the Full Name, the mini-map menu's `Short Name Options` row the Short Name.
+- **Code never types either name.** Window titles, prints, sent messages and tooltip headers read the key. A window title's key holds only the title part, and the code joins it to the Short Name in WINDOWS' colors: `title:SetText(Kit.WindowTitle(L["RESTOCK_LIST_TITLE"]))`. A locale string that names the add-on inside a sentence or label writes the name its slot calls for, as written in every locale: the welcome message's Options path carries the Full Name, the mini-map menu's `Short Name Options` row the Short Name.
 - **Internal identifiers are not names.** The AceLocale name, `ADDON_NAME`, SavedVariables, registry names, the LibDBIcon key and global function and frame names follow NAMING, never either display name.
 - **In this guide's templates, `Add-on Name` and `[Add-on Name]` stand for the Full Name.** The Short Name is spelled out wherever it goes.
 
@@ -763,38 +765,37 @@ Read the version from TOC metadata via `C_AddOns.GetAddOnMetadata`, and store it
 
 ## MESSAGES
 
-Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]`, and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing period. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way the helpers apply the marker, name, and separator so the body stays clean.
+Two output contexts: prints to the player carry no target marker and use branded colors, and everything sent to other players shares one format. Every print leads with the Full Name, `L["ADDON_TITLE"]` (a combat alert trails it instead, below), and every sent message trails with the Short Name, `L["ADDON_SHORT_NAME"]` (ADD-ON NAMES), never the code identifier. A sent message's body drops its closing `!`, `.` or `?` (full-width ones included) and a leading `¡` or `¿`, in every language. Bodies come from `L["KEY"]`, or from the player's own saved text for an editable message (Editable Messages, below) — either way the helpers apply the marker, name, and separator so the body stays clean.
 
 | Context | Channel | Format | Example |
 |---|---|---|---|
 | Print to the player only | `print()` | `Full Name // Message.`, in branded colors | `Good to Go // Some Message.` |
+| Combat alert to the player | `print()` | `Message // Full Name`, as the group sees it | `Taunt! Aiek used [Growl] on Hogger. // Control Freak` |
+| Refusing a click, center screen | `UIErrorsFrame` | `Short Name // Message.` in C_OFF | `GtG // That macro is on 3 bars. Remove it from your bars first.` |
 | Message to other players | `WHISPER`, `PARTY`, `RAID`, `INSTANCE_CHAT`, `SAY`, `YELL` | `{rtN} Message // Short Name` | `{rtN} Some Message // GtG` |
+
+**Chat-Kit draws every line in this section.** The one kit is Common-Core's `addon-kits/Chat-Kit/` (`Features/Chat-Kit.lua`), copied unchanged into every add-on (`scripts/sync-addon-kits.sh --adopt Chat-Kit`), after `Features/Utilities.lua` in the TOC, and never edited in a copy, as MINIMAP MENU says of Menu-Kit. It keeps this section's names (`ns:PrintMessage`, `ns:BuildAnnounceMessage`, `ns:Announce`, `ns:GetGroupChatChannel`) as its public calls. Nothing else calls `print`, `SendChatMessage` or `UIErrorsFrame`. Its calls are in `References/Design System/Chat Lines/Chat-Kit.md`; drawn: `References/Design System/Chat Lines.html`.
 
 ### Target Marker
 
-The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing so two add-ons never collide. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
+The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing a new one. Good to Go and Thanks for the Buff both sign with Star, by the maintainer's choice; no other two share one. **On WoW Forever, group and channel chat refuse marker tokens,** so there only whispers carry the marker; the kit handles it. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
 
 ### Print Outs (Player Only)
 
-Local prints use branded colors: `C_INFO` for the Full Name, `C_SEPARATOR` for the `//`, `C_TEXT` for the body.
+Local prints use branded colors: `C_INFO` for the Full Name, `C_SEPARATOR` for the `//`, `C_TEXT` for the body (`Chat.Print`). Inside a body, a player's name takes their class color, an item is its link, money shows as coins, numbers are white and slash commands `C_INFO`. No item icons in a print: the link already shows the item. A raid mark may show as its icon in a combat alert.
 
-```lua
-function ns:PrintMessage(message)
-	print(
-		GetColor("INFO") .. L["ADDON_TITLE"] .. "|r "
-			.. GetColor("SEPARATOR") .. "//" .. "|r "
-			.. GetColor("TEXT") .. message .. "|r"
-	)
-end
-```
+- **A combat alert trails the name:** `Message // Full Name`, the same line the group sees (Control Freak's Taunt, Interrupt and Tank Down).
+- **A line that can fire in a burst prints once,** or not again within a quiet window (`Chat.PrintOnce`, `Chat.PrintQuiet`): bags full, a paused feature, a held loot.
 
-Slash commands inside printed messages are wrapped in `C_INFO`.
+**A report with a total prints the total first, then the per-item lines, and every line carries the name.** The same holds for a list or a command help: its title line, then one branded line each. Hold the detail lines until the total is known (Magic Eraser's Auto-Vend holds each sale line until the merchant closes, then prints the summary and the sales under it). Its Example follows the same order.
 
-**A report with a total prints the total first, then the per-item lines.** Hold the detail lines until the total is known (Magic Eraser's Auto-Vend holds each sale line until the merchant closes, then prints the summary and the sales under it). Its Example follows the same order.
+### Center Screen
+
+**The middle of the screen is only for refusing a click right where the player is looking** (a macro that can't be deleted, a button that can't act in combat): `Short Name // Message.` in C_OFF through `Chat.Notice`. Everything else goes to chat.
 
 ### Sent Messages (Other Players)
 
-All cross-player chat routes through one entry point so the marker, name, and separator are handled in one place.
+All cross-player chat routes through one entry point so the marker, name, and separator are handled in one place. Roll calls, button whispers and announce macros too: an announce macro's body is built by the kit, and nothing sends around it.
 
 - `ns:BuildAnnounceMessage(formatKey, ...)` formats `ns.L[formatKey]` and returns the finished line **without sending**, so callers can measure length first: the sent format above, or the bare body for a line drafted for the player to send (both per Target Marker).
 - `ns:Announce(channel, target, formatKey, ...)` builds and calls `SendChatMessage`. It no-ops on a nil channel **and on a nil message**.
@@ -858,6 +859,8 @@ The `%s` is `ns.Version`. Replace `[Add-on Name]` with the Full Name when copyin
 
 `showWelcome` (default `true`) ships in `ns.DATABASE_DEFAULTS` as a presentation key, scoped per SAVED VARIABLES → The Two Models. `PrintWelcome` reads it, returns early when false, and otherwise prints; the General panel's Enable Welcome Message toggle (OPTIONS PANEL → Main Page Layout) binds the same key. **Never gate it on anything else:** no stored version, no first-login or once-per-update check, no saved "already shown" flag. While the toggle is on, it prints at every login.
 
+**A login warning is the one other line allowed at login:** a conflict (an add-on it replaces is also turned on) or a missing add-on it needs, through `Chat.PrintWarning`. The welcome switch doesn't silence it; it stops once the problem is fixed. Pretty Wide Quest Log's Wide Quest Log Plus and Questie warnings are the live reference.
+
 Live reference: **Magic Eraser** — `L["CHAT_LOADED"]` in `Locales/enUS.lua`.
 
 -----
@@ -903,6 +906,14 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 -----
 
+## WINDOWS
+
+**Every window's title reads `Title // Short Name`:** the title in C_TEXT white, the slashes C_SEPARATOR, the Short Name C_INFO blue, at the left of the title bar, with the game's close button at its right end. It holds for the add-on's own windows (the Restock List, the quest log, the Distribution window) and for a window drawn on the menu plate (Buff Duty: MENUS → Window-Menus). The title is Title Case, and its key holds the title part only (ADD-ON NAMES). Menu-Kit's `Kit.WindowTitle(title)` builds the string.
+
+Live reference: **Good to Go's Buff Duty** ([`Features/Buff-Duty/Buff-Duty-Frame.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Features/Buff-Duty/Buff-Duty-Frame.lua)). The rest of a window's look (dragging, a lock, combat) is still the proposed defaults drawn in `References/Design System/Windows and Tooltips.html`.
+
+-----
+
 ## MENUS
 
 **Every menu and sub-menu looks and works the same, in every add-on.** A mini-map menu, a right-click menu, a flyout off a window's line and a dropdown's list are one thing to a player, so they wear one dress: Pretty Wide Quest Log's plate, with one set of row kinds, colors, type, spacing and behavior. MINIMAP MENU → Layout's type and color rules, Row Kinds, Behavior and The Look bind every menu; this section is what holds for all of them, and MINIMAP MENU adds what only a mini-map menu needs.
@@ -923,6 +934,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 - **It names what was clicked.** The first row is the thing's name in C_TITLE on the left and the add-on's Short Name in C_MUTED on the right (`Quest Arrow … PWQL`, `Attack … GtG`, `Settings … GtG`), then a spacer.
 - **A mini-map menu's header** stays the Full Name and version (MINIMAP MENU → Layout).
+- **A window-menu's header is a window title** (WINDOWS): `Buff Duty // GtG`, with the close button.
 - **A flyout or a dropdown's list needs none.** It opens from a row, a window's line or a field that already names it, so it starts with its first row or section (Buff Duty's Options flyout opens on Show in Window).
 
 ### Groups
@@ -938,6 +950,8 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: what it touches (`Delete … Used on 1 Bar`). Never the word Click: the color already says it acts.
 - **Switches and choices, never boxes.** A setting is a `toggle` (its name, On or Off) or a `choice` (the pick white with a check mark, the rest gray). No checkbox, radio button or box is drawn, on the kit's panels or on the game's dressed menus.
 - **Icons at line height.** An item or spell row puts its icon before its name, one space, the icon, then the name (`|T…:0|t`).
+- **A row you can't use right now is gray, not hidden,** where the game's own menu would gray it (Share Quest on a quest that can't be shared): both sides C_MUTED, no highlight, no click, its tooltip still shown (`disabled`). A row this character can never use still hides (MINIMAP MENU → Two Homes for Every Setting).
+- **A gesture is named like a click.** An action done by dragging names it on the right in C_MUTED (`Move Quest Arrow … Drag`).
 
 ### Sub-menus
 
@@ -950,7 +964,12 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 ### Opening and Closing
 
 - **A right-click menu** opens where the game opens its own, at the cursor. **A menu off a button or a line** opens beside it, on the side away from the screen edge (MINIMAP MENU → Placement for the mini-map button), clamped to the screen at strata `DIALOG`.
-- **It closes** 0.4 seconds after the cursor leaves it, its sub-menus and the frame that opened it, on Escape (its frame named and in `UISpecialFrames`), and on a pick that acts.
+- **It closes** 0.5 seconds after the cursor leaves it, its sub-menus and the frame that opened it (1.0 seconds when a Left-Click opened it), on Escape (its frame named and in `UISpecialFrames`), and on a pick that acts. Half a second forgives a cursor that slips off the edge, and a controller's slower one.
+- **Off a button, 2 points off its corner** (`MENU_GAP`), in every menu.
+
+### Window-Menus
+
+A small window drawn on the plate that stays open (Good to Go's Buff Duty) is one of the menus. Its header is the window title with the close button (WINDOWS, `Kit.AddWindowHeader`), then its body, then a separator and a blue Options line in the rows' own font with the sub-menu arrow (`Kit.AddOptionsLine`). Hovering or clicking the line opens its flyout, overlapping the window by 16 points as any sub-menu does. Nothing on it is in a smaller font.
 
 **Menu-Kit v2 draws all of these**; its calls are in `References/Design System/Mini-map Menus/Menu-Kit.md` → API.
 
@@ -960,7 +979,7 @@ Live reference: **Tracking Eye** — [`Features/Menu-Kit.lua`](https://github.co
 
 Drawn: `References/Design System/Mini-map Menus.html`, every row kind and pattern below, with each add-on's tooltip beside its menu. **An add-on with a conversion spec** has it in `References/Design System/Mini-map Menus/{Add-on Name}.md`, row by row with its clicks and strings, tracked by a GitHub issue in that add-on's repo. **The specs are the maintainer's work orders:** the UX Review draws one as the add-on's Proposed menu (Menus, Not Tooltips) and its feature prompt builds to it; no other pass acts on one. Once a spec's State opens with `live`, the order is done and the add-on's code is the record. Where a spec and this section disagree, this section wins.
 
-**Never edit a copy of the kit.** The one kit is Common-Core's `addon-kits/Menu-Kit/` (`Features/Menu-Kit.lua` and `Includes/Images/Menu-Plate.tga`): a kit change is a Common-Core commit the maintainer runs, never a pass's, then `scripts/sync-addon-kits.sh` copies it unchanged into every add-on that holds the kit, and CI's **Shared kits match Common-Core** check fails a copy that differs. Every conversion copies the kit from there (Moving a Tooltip to a Menu, step 1); a v1 copy takes v2 unchanged (`Menu-Kit.md`). A pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change.
+**Never edit a copy of the kit.** The one kit is Common-Core's `addon-kits/Menu-Kit/` (`Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga` and `Includes/Images/Menu-Arrow.tga`): a kit change is a Common-Core commit the maintainer runs, never a pass's, then `scripts/sync-addon-kits.sh` copies it unchanged into every add-on that holds the kit, and CI's **Shared kits match Common-Core** check fails a copy that differs. Every conversion copies the kit from there (Moving a Tooltip to a Menu, step 1); a v1 copy takes v2 unchanged (`Menu-Kit.md`). A pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change.
 
 **Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
 
@@ -1004,7 +1023,7 @@ Live: Tracking Eye's `CLICKS` table, `ns.RunButtonClick` and `ClickRow` in `Feat
 - **The description is the old tooltip line.** One short C_BODY sentence on what the feature does, so a player reads it without hovering.
 - **No how-to notes.** No gray line under a row to teach a trick, such as holding Shift to skip a merchant pass. In the menu it's clutter on every open and repeats what the player already saw; the tip goes where it applies (the chat line when the feature runs) and on the options page.
 - **The Toggle row** is blue, says only Toggle, flips the feature's Enable switch, and names the button click that does the same on its right. Its tooltip is that Enable option's name and description.
-- **The arrow.** Blizzard's submenu arrow (`ChatFrameExpandArrow`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
+- **The arrow.** The kit's thin white chevron (`Menu-Arrow.tga`) sits after the state only when the feature's flyout has something to show. An empty flyout means no arrow, and the title is a plain status heading.
 - **Options last.** A spacer, a separator, then the `[Short Name] Options` action row, naming Shift + Middle-Click. The header is the Full Name; every other line naming the add-on uses the Short Name (ADD-ON NAMES).
 
 ### Features Mirror
@@ -1103,7 +1122,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 ### Behavior
 
-- **Hover opens it; Left-Click opens and holds it.** Hovering the button opens the menu the way the tooltip did. It closes 0.4 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A button whose Left-Click has a job (Button Clicks) does that job instead, and hover alone opens the menu.
+- **Hover opens it; Left-Click opens and holds it.** Hovering the button opens the menu the way the tooltip did. It closes 0.5 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A button whose Left-Click has a job (Button Clicks) does that job instead, and hover alone opens the menu.
 - **Escape, flyouts and picks work as in every menu** (MENUS → Sub-menus, Opening and Closing): Escape closes it; hovering or clicking a title opens its flyout and hovering any other clickable row closes it; a pick that acts closes the menu, while a switch or a setting's choice keeps it open and redraws in place (One Refresh).
 - **Read the cursor from `GetCursorPosition`**, not `IsMouseOver`, so a controller's virtual cursor counts (`Kit.IsCursorOver`).
 - **Tooltips reuse the option's strings.** A switch's tooltip is its option's name and description; a spell row's is the spell.
@@ -1112,14 +1131,14 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 - **The plate is Pretty Wide Quest Log's Quest Arrow menu:** `Menu-Plate.tga`, nine-sliced at half size so the angled corners stay sharp, at 80% alpha.
 - **No boxes.** Blocks are separated by spacing and gold headings, never borders, backgrounds or `common-dropdown-bg`.
-- **Stock art only.** The submenu arrow is `Interface\ChatFrame\ChatFrameExpandArrow`, the check is `Interface\Buttons\UI-CheckBox-Check`, a click-to-remove row's delete icon is `Interface\Buttons\UI-GroupLoot-Pass-Up`.
+- **The kit's art, and the game's.** The plate and the submenu arrow are the kit's own (`Menu-Plate.tga`, and `Menu-Arrow.tga`, a thin white chevron like a Mac menu's, not a solid triangle). The check is `Interface\Buttons\UI-CheckBox-Check`, a click-to-remove row's delete icon is `Interface\Buttons\UI-GroupLoot-Pass-Up`.
 - **Spacing is on the scale** (SPACING SCALE): rows are a line plus 4 above and below, a spacer is 16, a separator is 8, and the text sits 16 points from the plate's edge on every side, as in Good to Go's Buff Duty window.
 - **The row highlight is gold** at 16%, shown only on rows you can click.
 
 ### Moving a Tooltip to a Menu
 
 0. **Where the add-on has a spec** in `References/Design System/Mini-map Menus/`, read it and its GitHub issue. The spec says every row, click and string; the steps below say how.
-1. **Copy the kit from Common-Core** with `scripts/sync-addon-kits.sh --adopt Menu-Kit ../{Add-on}` (or by hand, unchanged, from [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit) on GitHub `main`): `Features/Menu-Kit.lua`, after `Features/Utilities.lua` in the TOC, and `Includes/Images/Menu-Plate.tga`. Never from another add-on's folder on disk (Pass Preamble → Standing scope). The kit knows nothing about the add-on; it reads only `ns.PALETTE`, `ns.L`, `ns.db`, `ns.FEATURES` and `ns:OpenOptionsPanel`.
+1. **Copy the kit from Common-Core** with `scripts/sync-addon-kits.sh --adopt Menu-Kit ../{Add-on}` (or by hand, unchanged, from [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit) on GitHub `main`): `Features/Menu-Kit.lua`, after `Features/Utilities.lua` in the TOC, `Includes/Images/Menu-Plate.tga` and `Includes/Images/Menu-Arrow.tga`. Never from another add-on's folder on disk (Pass Preamble → Standing scope). The kit knows nothing about the add-on; it reads only `ns.PALETTE`, `ns.L`, `ns.db`, `ns.FEATURES` and `ns:OpenOptionsPanel`.
 2. **Write `Features/Minimap-Menu.lua`** on the kit, per `Menu-Kit.md` → API, with `afterChange = ns.RefreshSettings`: the rows in Layout's order (one `Kit.FeatureBlock` per feature a player turns on and off mid-session, its Toggle row naming the button click that does the same; `Kit.MoreFeatures` for the rest of `ns.FEATURES`; `Kit.OptionsRow` last), and a flyout builder for each feature with settings. [Tracking Eye's](https://github.com/Gogo1951/Tracking-Eye/blob/main/Features/Minimap-Menu.lua) is the same menu written on v1, row for row.
 3. **Map the old tooltip lines:**
 
@@ -1143,6 +1162,35 @@ When picking from a set is the feature's main job, the list lives in the block, 
    - Escape closes it; a pick closes it; a switch doesn't.
    - The controller's cursor opens, hovers and clicks every row.
    - Every click the tooltip named still does its job on the button, and its row names it.
+
+-----
+
+## TOOLTIPS
+
+**Tooltip-Kit draws every line an add-on puts in a tooltip.** The one kit is Common-Core's `addon-kits/Tooltip-Kit/` (`Features/Tooltip-Kit.lua`), copied unchanged (`scripts/sync-addon-kits.sh --adopt Tooltip-Kit`), after `Features/Utilities.lua` in the TOC, and never edited in a copy. **The kit owns the hooks:** no add-on hooks a tooltip itself, so a block is added once per tooltip, installed at login, and the tooltip resizes after it. Its calls and the block shapes are in `References/Design System/Tooltips/Tooltip-Kit.md`. The mini-map button opens a menu, never a tooltip (MINIMAP BUTTON), and an options control's tooltip is its AceConfig `desc` (OPTIONS PANEL).
+
+### Blocks in the Game's Tooltips
+
+Lines an add-on adds to an item's, a player's or a spell's tooltip.
+
+- **A spacer, a header, then the rows.** The header reads like a menu header: the title in C_TITLE on the left, the Short Name in C_MUTED on the right (`Inventory Report … GtG`). The kit's header adds the spacer itself. The block goes after every game line, so the game's own lines never move.
+- **The title is Title Case, never a sentence** (`Spares`, not `Open trade!`).
+- **Rows sit one step in.** Labels are C_BODY, or the thing's own color: quality for an item, class for a player. Values are C_TEXT on the right. A word beside a number on the right is C_MUTED, number first (`7 Bag, 18 Bank`).
+- **States read like a menu's:** On in C_ON, Off in C_MUTED. **Red only for a requirement the player doesn't meet** (`Requires Lockpicking … 175`), as the game's own lines are red.
+- **A total or a state goes in a row at the bottom, like a sum** (`Total … 25`), never beside the title.
+- **Nothing to report, no block.** Not even the spacer and header.
+- **Lists stop at 8 rows,** then a C_MUTED `%d more` (`MENU_MORE`).
+- **Two add-ons, two blocks,** each under its own header, never merged.
+- **No modifier keys.** The block is the same with Shift held or not.
+
+### Tooltips on the Add-on's Own Widgets
+
+- **No brand.** It's the add-on's own window, so nothing names the add-on.
+- **Help is a title, then the body under it:** the title C_TITLE, the body C_BODY with no blank line between, and an optional C_HELP helper line. Every one has a title, even a one-sentence hint.
+- **A game thing keeps its own tooltip.** An item or spell shows the game's tooltip unchanged, then a spacer, a C_TITLE section, then the add-on's lines (Good to Go's macro tiles).
+- **Click hints read `Action … Click`,** the action C_INFO, the click C_MUTED, after one spacer and with no blank lines between, the same as a menu's action row.
+- **It opens on the side away from the screen edge,** as a menu does.
+- **Palette colors only,** never the client's `NORMAL_FONT_COLOR` or `GameTooltip_AddNormalLine`.
 
 -----
 
@@ -1484,7 +1532,7 @@ Reading CVars is unrestricted. Writing one changes a game-wide setting the user 
 
 - Feature code may write a user CVar only when the CVar is core to the add-on's function (a loot add-on enforcing `autoLootDefault`), or momentarily to silence its own automated action: written around that action and restored within a second to the exact value read. Never as a convenience side effect.
 - Write only on an actual change: read the current value first and skip the write when it already matches.
-- **No chat notices for settings the add-on changes.** A lasting write prints nothing: the description of the option that drives it says what it changes, and step 9 discloses it in `README.md`. A momentary one gets no README line either. Only the welcome message prints at login.
+- **No chat notices for settings the add-on changes.** A lasting write prints nothing: the description of the option that drives it says what it changes, and step 9 discloses it in `README.md`. A momentary one gets no README line either. Only the welcome message, and a login warning WELCOME MESSAGE allows, print at login.
 - Every write has an options toggle so the user can opt out, unless the feature it serves cannot work with the CVar left alone.
 - Diagnostics' `taintLog` button is user-initiated, not an enforcement, and follows Build Reference → DIAGNOSTIC TOOLS → Taint Log.
 
