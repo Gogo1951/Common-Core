@@ -118,4 +118,4 @@ Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it a
 
 ## Guide Feedback
 
-Follow Style Guide → GUIDE FEEDBACK. **Every pass ends with that section, even when empty.** Each prompt supplies only its own Pass Name for the context stamp.
+Follow Style Guide → GUIDE FEEDBACK. A pass with something to propose ends with that section; one with nothing leaves it out. Each prompt supplies only its own Pass Name for the context stamp.

@@ -63,9 +63,9 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Start step 5 once you've tested step 4 in game and have its reports, and step 8 once both branches are done.
+**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once both branches are done and you've tested in game.
 
-**Every pass ends with a Guide Feedback section** (Style Guide → GUIDE FEEDBACK), and most print `No changes proposed.` One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
+**A pass that spots a problem in the guide adds a Guide Feedback section** (Style Guide → GUIDE FEEDBACK); most have none. One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 
 ## Ground rules
 
@@ -74,4 +74,4 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 - **These documents set the rules; they never track how well any add-on follows them.** No file here records compliance, conversion progress, or pending work; that goes in a pass's report. Examples show only how things *should* be, never "don't do it like add-on X."
 - **One folder per session.** A session works only in the folder **Claude Code was launched in**, reading this guide and the web beside it. Every other folder, this add-on's copies in the other clients and the `WTF` folders included, stays unread and unmentioned unless the maintainer asks (Pass Preamble → Standing scope). Switching flavors means a new session in that flavor's copy.
 - **READMEs wait for steps 9–11.** Until then the code is the only record: no pass edits a README, or flags or asks about one that disagrees with the code (Pass Preamble → Standing scope). Passes still read `README-Technical.md` as their map; the code wins.
-- **Stability beats polish.** The guide changes when something breaks, or when copy or a reference goes stale, and not otherwise. A departure that's right for one add-on is recorded in its `README-Notes.md` and needs no guide change. A Guide Feedback of `No changes proposed.` is a pass that went well.
+- **Stability beats polish.** The guide changes when something breaks, or when copy or a reference goes stale, and not otherwise. A departure that's right for one add-on is recorded in its `README-Notes.md` and needs no guide change. A pass with no Guide Feedback is a pass that went well.
