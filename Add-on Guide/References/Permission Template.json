@@ -14,9 +14,17 @@
       "Read(~/**)",
       "Edit(//Applications/World of Warcraft/*/Interface/AddOns/{{ADDON}}/**)",
       "Write(//Applications/World of Warcraft/*/Interface/AddOns/{{ADDON}}/**)",
+      "Edit(//tmp/claude-*/**)",
+      "Write(//tmp/claude-*/**)",
+      "Edit(//private/tmp/claude-*/**)",
+      "Write(//private/tmp/claude-*/**)",
       "Bash",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "Skill",
+      "Artifact",
+      "ArtifactComments",
+      "ArtifactData"
     ],
     "deny": [
       "Edit(~/Common-Core/**)",

@@ -19,20 +19,19 @@ This file is safe to paste whole into a session: the launcher setup is human-onl
 
   ```
   wowclaude() {
-    local tmpl="$HOME/Common-Core/Add-on Guide/References/Permission Template.json"
     local rendered
-    git -C "$HOME/Common-Core" pull -q --ff-only
     rendered=$(mktemp -t wowclaude)
-    sed "s|{{ADDON}}|$(basename "$PWD")|g" "$tmpl" > "$rendered"
+    curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/References/Permission%20Template.json" \
+      | sed "s|{{ADDON}}|$(basename "$PWD")|g" > "$rendered"
     claude --settings "$rendered" "$@"
   }
   ```
 
-  Then working on an add-on is: `cd` into its folder, run `wowclaude`. The launcher pulls the guide, renders the template for that folder and loads it via `--settings` **for that session only** — nothing is installed or copied into any add-on folder, and the grants evaporate when the session ends.
+  Then working on an add-on is: `cd` into its folder, run `wowclaude`. The launcher fetches the live template from GitHub, renders it for that folder and loads it via `--settings` **for that session only** — nothing is installed or copied into any add-on folder, and the grants evaporate when the session ends.
 
 - **Desktop-app launch — folder-scoped.** The desktop app's Claude Code takes no launch flags, so there the rendered template rides in the add-on folder itself: `.claude/settings.local.json`. Session Prep **step 0** below (re-)renders it in place. In a not-yet-seeded folder that render is the session's **one** approval — answer with a plain **Yes**, not "don't ask again" — and current Claude Code hot-reloads settings changes, so the grants apply immediately, no relaunch. The rendered file persists in that one add-on folder only: later sessions there start prompt-free with zero approvals, and deleting the folder's `.claude/` revokes everything. The repo's `.gitignore` covers `.claude/` (Style Guide → COMMON-CORE), so the file never lands in the repo.
 
-- **Maintainer notes (human-only, never in-session):** if the WoW install lives somewhere other than `/Applications/World of Warcraft/`, a client folder is renamed, or the guide's clone ever moves from `~/Common-Core`, fix the paths in `References/Permission Template.json`, Session Prep step 0 below, Pass Preamble → Next Pass, and the `wowclaude` lines in `~/.zshrc`, which hard-code the clone's path. The `{{ADDON}}` placeholder is rendered by the seed/launch commands and is never edited by hand. Never edit the template itself from inside a session.
+- **Maintainer notes (human-only, never in-session):** if the WoW install lives somewhere other than `/Applications/World of Warcraft/`, a client folder is renamed, or the guide's clone ever moves from `~/Common-Core`, fix the paths in `References/Permission Template.json`, Session Prep step 0 below, Pass Preamble → Next Pass, and the `wowclaude` lines in `~/.zshrc`. The `{{ADDON}}` placeholder is rendered by the seed/launch commands and is never edited by hand. Never edit the template itself from inside a session.
 
 ## What the template grants
 
@@ -42,6 +41,7 @@ The single source for the actual JSON is `References/Permission Template.json` �
 - **`WebFetch` + `WebSearch`** — the open web without prompts: reference repos, CurseForge/Wago listings, the wiki. Web reads are how passes study other add-ons — from their public listings and repos, never from the neighbors' installed folders.
 - **`Edit(./**)` / `Write(./**)`** — the only *silent* write grant, scoped to the folder the session was launched in (`./` is cwd-relative). `defaultMode` is plain `default` (not `acceptEdits`): an edit inside the launch folder applies without a prompt; an edit anywhere outside it — including the other flavors' copies and every other add-on — prompts for approval instead of applying. That prompt is the safety rail (What a prompt means now).
 - **`deny` `Edit`/`Write` on `~/Common-Core`** — the guide and the rest of the Common-Core clone are readable in every session and writable in none. `deny` beats `allow` in every mode, so this holds regardless of how the template was loaded — which is why guide maintenance runs in its own session launched in the guide folder (see Which app runs what). The sandbox applies the same deny to Bash, but an all-`git`, `gh` or `open` call runs outside it and isn't bound by it, so "never route a guide or `WTF` write through Bash" still stands.
+- **Wireframes and design pages without prompts** — `Skill`, `Artifact`, `ArtifactComments` and `ArtifactData`, plus writes to the session's scratchpad (`/tmp/claude-*`), where a wireframe page is written before it's published.
 - **`deny` on `WTF`** — readable when the maintainer asks, never writable, even by accident.
 - **`Bash`** — allowed outright, and **sandboxed**: the OS lets a command write only in this add-on's three flavor copies and the session's temp folder (never `~/Common-Core` or `WTF`), and reach every host the guide's passes pull from without asking (the template's `allowedDomains`). A host a pass needs that isn't on the list is added to the template by the maintainer, never approved one session at a time. A call made only of `git`, `gh` or `open` commands runs outside the sandbox (Pass Preamble → Permissions), since git must write `.git/config`, `gh` can fail TLS inside it on macOS, and `open` needs Apple Events. **Strict mode** (`allowUnsandboxedCommands: false`) makes Claude Code ignore the Bash tool's `dangerouslyDisableSandbox`, so nothing else ever runs outside the sandbox. A command the sandbox blocks now just fails; the session reports it and never works around it. A few edge cases (`find -exec`, some in-place `sed` forms) can still prompt; approve those with a plain **Yes**, not "don't ask again", which only appends a rule that Session Prep step 0's next re-render erases.
 
