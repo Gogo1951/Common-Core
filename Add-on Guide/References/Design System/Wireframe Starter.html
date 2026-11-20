@@ -23,8 +23,18 @@
 
   Every padding, margin, gap and radius on this page is 2, 4, 8, 16, 32, 64 or
   128 px (Style Guide → SPACING SCALE); a 1px border sits outside the scale.
-  Choices are kept in this browser's storage when it allows, and the page works
-  without it.
+  The game windows drawn in it follow Style Guide → WINDOWS (Title // Short
+  Name at the left, no lines, one type size, 16 in on every side, 20-point
+  icons, at least 200 wide).
+
+  Choices: only the artifact's owner sees the option buttons, Try first and
+  notes; everyone else sees the cards read-only and still sees every option's
+  example on hover. Each card writes approvals/{data-id} as
+  { pick, tryFirst, note }: pick is the option's data-v, so "Keep as is" saves
+  as "keep", and a card with no choice has no document. Publish with
+    capabilities: { db: { rules: [{ path: "approvals", read: "view", write: "owner" }] }, user: {} }
+  (02 UX Review → Wireframe Build → Approvals). Only the open tab is kept in
+  this browser.
 -->
 <!-- FILL: the add-on's Full Name, then " UX Wireframes", in the <title> below and the <h1>. -->
 <title>Add-on Name UX Wireframes</title>
@@ -43,7 +53,7 @@
 	--fg: #ece6da;
 	--dim: #a59d8f;
 	--gold: #e8bf3a;
-	--build: #33cc33;
+	--picked: #33cc33;
 	--try: #00bbff;
 	--drop: #808080;
 	--display: "Marcellus", Georgia, serif;
@@ -80,9 +90,13 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 .try-head { font-size: 13px; color: var(--fg); }
 
 /* A plain game window to draw in. Swap it for the mock kits where they fit. 1 CSS px stands for 1 game point. */
-.gw { display: inline-block; min-width: 256px; max-width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, .8); border: 1px solid #5a5040; border-radius: 4px; box-shadow: 0 0 0 1px #000, 0 8px 16px rgba(0, 0, 0, .6); font: 12px/16px var(--game); color: #fff; vertical-align: top; }
-.gw-title { position: relative; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0 32px; border-bottom: 1px solid rgba(255, 209, 0, .35); color: #ffd100; font-size: 14px; }
-.gw-body { display: grid; gap: 8px; padding: 16px; }
+.gw { display: inline-grid; gap: 16px; min-width: 200px; max-width: 100%; box-sizing: border-box; padding: 16px; background: rgba(0, 0, 0, .8); border: 1px solid #5a5040; border-radius: 4px; box-shadow: 0 0 0 1px #000, 0 8px 16px rgba(0, 0, 0, .6); font: 12px/16px var(--game); color: #fff; vertical-align: top; }
+/* Style Guide → WINDOWS: "Title // Short Name" at the left (white, gray, blue), the game's close button at the right end, no line under it, the same type size as the rows. */
+.gw-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 16px; color: #fff; }
+.gw-sep { color: #aaaaaa; }
+.gw-close { flex: none; width: 16px; height: 16px; box-sizing: border-box; border: 1px solid #6a4a2a; border-radius: 4px; background: radial-gradient(circle at 50% 40%, #7a1a10, #3a0806); }
+.gw-body { display: grid; gap: 8px; }
+.gw-icon { display: inline-block; width: 20px; height: 20px; border-radius: 2px; vertical-align: middle; margin-right: 4px; background: linear-gradient(135deg, #6a8fd0, #2a3f70); }
 .gw-row { display: flex; justify-content: space-between; gap: 16px; align-items: center; min-height: 16px; }
 .gw-sec { color: #ffd100; }
 .gw-muted { color: #808080; }
@@ -99,7 +113,7 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 .cards { display: grid; gap: 16px; }
 .change { display: grid; gap: 8px; align-content: start; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-left: 2px solid var(--line); border-radius: 4px; min-width: 0; scroll-margin-top: 64px; }
 .change.on { border-color: var(--gold); }
-.change[data-choice="build"] { border-left-color: var(--build); }
+.change[data-choice="picked"] { border-left-color: var(--picked); }
 .change[data-choice="drop"] { border-left-color: var(--drop); }
 .change[data-try] { border-left-color: var(--try); }
 .change .body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px; align-items: start; }
@@ -126,6 +140,7 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 .idea { border-color: var(--try); color: var(--try); }
 .change p { font-size: 14px; }
 .change .why { color: var(--dim); }
+.change textarea[readonly] { opacity: .8; }
 .change textarea { width: 100%; box-sizing: border-box; min-height: 32px; padding: 4px 8px; font: 13px var(--body); color: var(--fg); background: #14130f; border: 1px solid var(--line); border-radius: 4px; resize: vertical; }
 .stays { margin: 0; padding-left: 16px; display: grid; gap: 4px; color: var(--dim); font-size: 14px; }
 
@@ -141,7 +156,7 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 		<h1>Add-on Name UX Wireframes</h1>
 		<!-- FILL: one or two plain sentences for testers, who are players: what the add-on does and what this page shows. No file paths, symbols or code. -->
 		<p class="lede">How Add-on Name looks today beside the changes being considered. Pick a window above, try it on both sides, and read why each change is suggested.</p>
-		<div class="how"><b>How to review</b><span>Each tab is one window. <b>Current</b> is the game today; <b>Proposed</b> numbers every change. Each change is a question under the windows: hover an option to see it drawn, click to pick it, and add a note if you'd word it differently. Tick <b>Try first</b> to show testers before anything is built.</span></div>
+		<div class="how"><b>How to review</b><span>Each tab is one window. <b>Current</b> is the game today; <b>Proposed</b> numbers every change. Each change is a question under the windows: hover an option to see it drawn, click to pick it, and add a note if you'd word it differently. Tick <b>Try first</b> to show testers before anything is built. Only the page's owner can pick; everyone else can look at every option.</span></div>
 	</header>
 
 	<nav class="tabs" role="tablist" id="tabs"></nav>
@@ -152,9 +167,9 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 			<div class="view">
 				<div class="label">Current</div>
 				<div class="stage">
-					<!-- FILL: the window exactly as the code draws it today, with the locale's strings word for word. -->
+					<!-- FILL: the window exactly as the code draws it today, with the locale's strings word for word. SN stands for the add-on's Short Name. -->
 					<div class="gw">
-						<div class="gw-title">Some List // Add-on Name</div>
+						<div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div>
 						<div class="gw-body">
 							<div class="gw-sec">Some Section</div>
 							<div class="gw-row"><span>Some Row</span><span>20</span></div>
@@ -174,7 +189,7 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 				<div class="stage">
 					<!-- FILL: Current plus every change in its recommended version, each marked with its pin. data-change on the changed control lights it when its card is clicked. -->
 					<div class="gw">
-						<div class="gw-title">Some List // Add-on Name</div>
+						<div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div>
 						<div class="gw-body">
 							<div class="gw-sec">Some Section</div>
 							<div class="gw-row" data-change="sample-layout"><span>Some Row<span class="pin" data-change="sample-layout">1</span></span><span>20</span></div>
@@ -197,19 +212,19 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 				<h3>Rows on the Spacing Scale</h3>
 				<p class="why">Why: the gaps were tuned by eye (6 and 10), so this window spaces differently from its neighbors.</p>
 				<div class="pick" data-v="scale" data-rec><b>Rows 8 apart, edge 16 in</b><span class="line">The Spacing Scale's steps.</span>
-					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"><span>Some Row</span><span>20</span></div><div class="gw-row"><span>Another Row</span><span>12</span></div></div></div></div></template></div>
+					<template><div class="stage"><div class="gw"><div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div><div class="gw-body"><div class="gw-row"><span>Some Row</span><span>20</span></div><div class="gw-row"><span>Another Row</span><span>12</span></div></div></div></div></template></div>
 				<div class="pick" data-v="keep"><b>Keep as is</b><span class="line">Rows 6 apart, edge 10 in.</span>
-					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body" style="gap:6px;padding:10px"><div class="gw-row"><span>Some Row</span><span>20</span></div><div class="gw-row"><span>Another Row</span><span>12</span></div></div></div></div></template></div>
+					<template><div class="stage"><div class="gw" style="padding:10px"><div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div><div class="gw-body" style="gap:6px"><div class="gw-row"><span>Some Row</span><span>20</span></div><div class="gw-row"><span>Another Row</span><span>12</span></div></div></div></div></template></div>
 			</article>
 			<article class="change" data-id="sample-empty" data-n="2" data-tag="copy" data-idea>
 				<h3>Empty List Points Somewhere</h3>
 				<p class="why">Why: a new player opening an empty list has nothing to click.</p>
 				<div class="pick" data-v="point" data-rec><b>Say how to add the first item</b><span class="line">The button's name in blue.</span>
-					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"><span class="gw-muted">Nothing here yet. Add one with <span class="gw-info">Add Item</span>.</span></div></div></div></div></template></div>
+					<template><div class="stage"><div class="gw"><div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div><div class="gw-body"><div class="gw-row"><span class="gw-muted">Nothing here yet. Add one with <span class="gw-info">Add Item</span>.</span></div></div></div></div></template></div>
 				<div class="pick" data-v="blank"><b>Show nothing</b><span class="line">An empty window.</span>
-					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"></div></div></div></div></template></div>
+					<template><div class="stage"><div class="gw"><div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div><div class="gw-body"><div class="gw-row"></div></div></div></div></template></div>
 				<div class="pick" data-v="keep"><b>Keep as is</b><span class="line">"Nothing here yet."</span>
-					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"><span class="gw-muted">Nothing here yet.</span></div></div></div></div></template></div>
+					<template><div class="stage"><div class="gw"><div class="gw-title"><span>Some List <span class="gw-sep">//</span> <span class="gw-info">SN</span></span><span class="gw-close"></span></div><div class="gw-body"><div class="gw-row"><span class="gw-muted">Nothing here yet.</span></div></div></div></div></template></div>
 			</article>
 		</div>
 
@@ -246,7 +261,6 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 		</div>
 	</section>
 
-	<!-- FILL: in the published page, show the options' radio buttons, Try first and notes to the owner only (everyone still sees every example on hover), and write each card to approvals/{data-id} as { pick, tryFirst, note } (02 UX Review → Wireframe Build → Approvals). Replace the two functions in STORE below; nothing else changes. -->
 	<div class="choices" id="choices">
 		<span id="tally"></span>
 		<span class="saved" id="saved"></span>
@@ -258,16 +272,24 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 (function () {
 "use strict";
 
-// STORE: choices and the open tab, kept in this browser when it allows; the page works the same without it.
-var KEY = "ux-wireframe:" + document.title;
-var STORE = {
-	read: function () { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } },
-	write: function (data) { try { localStorage.setItem(KEY, JSON.stringify(data)); return true; } catch (e) { return false; } },
-};
-var state = STORE.read();
-state.choices = state.choices || {};
-var persisted = true;
-function save() { persisted = STORE.write(state); }
+// The open tab is a per-viewer convenience, kept in this browser when it allows.
+var TAB_KEY = "ux-wireframe-tab:" + document.title;
+var state = { choices: {}, tab: null };
+try { state.tab = localStorage.getItem(TAB_KEY); } catch (e) { /* storage blocked */ }
+function saveTab() { try { localStorage.setItem(TAB_KEY, state.tab); } catch (e) { /* storage blocked */ } }
+
+// Choices live in the artifact's db, approvals/{change-id}, written by the owner only.
+var owner = false;
+var approvals = null;
+var status = "Loading choices…";
+function writeChoice(id) {
+	if (!owner || !approvals) return;
+	var rec = state.choices[id] || {};
+	approvals.doc(id).set({ pick: rec.pick || null, tryFirst: !!rec.tryFirst, note: rec.note || "" }).then(
+		function () { status = "Saved."; tally(); },
+		function () { status = "Not saved: copy your choices before leaving."; tally(); }
+	);
+}
 
 // Tabs, built from the window sections
 var sections = Array.prototype.slice.call(document.querySelectorAll("section.window"));
@@ -276,7 +298,7 @@ function openTab(name) {
 	sections.forEach(function (s) { s.hidden = s.dataset.tab !== name; });
 	tabs.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-selected", String(b.textContent === name)); });
 	state.tab = name;
-	save();
+	saveTab();
 }
 sections.forEach(function (s) {
 	var b = document.createElement("button");
@@ -299,11 +321,11 @@ function light(id) {
 	return card;
 }
 var cards = Array.prototype.slice.call(document.querySelectorAll(".change"));
-// A pick of any option but "Keep as is" is a Build; "Keep as is" is a Drop.
-function kind(v) { return v ? (v === "keep" ? "drop" : "build") : null; }
+// A pick of any option but "Keep as is" is Picked; "Keep as is" (saved as "keep") is a Drop.
+function kind(v) { return v ? (v === "keep" ? "drop" : "picked") : null; }
+var redraws = [];
 cards.forEach(function (card) {
 	var id = card.dataset.id;
-	var saved = state.choices[id] || {};
 	var head = document.createElement("div");
 	head.className = "head";
 	head.innerHTML = '<span class="n">' + card.dataset.n + "</span>";
@@ -349,11 +371,11 @@ cards.forEach(function (card) {
 		input.type = "radio";
 		input.name = "pick-" + id;
 		input.value = p.dataset.v;
-		input.checked = saved.pick === p.dataset.v;
+		input.disabled = true;
 		p.prepend(input);
 		if (p.hasAttribute("data-rec")) p.querySelector("b").insertAdjacentHTML("beforeend", '<span class="rec">Recommended</span>');
 		p.addEventListener("mouseenter", function () { show(p); });
-		p.addEventListener("click", function () { input.checked = true; pickIt(p.dataset.v); });
+		p.addEventListener("click", function () { if (owner) { input.checked = true; pickIt(p.dataset.v); } else show(p); });
 		input.addEventListener("focus", function () { show(p); });
 		list.appendChild(p);
 	});
@@ -365,34 +387,52 @@ cards.forEach(function (card) {
 		shown = null;
 		show(resting());
 		light(id);
-		save();
+		writeChoice(id);
 		tally();
 	}
-	if (saved.pick) card.dataset.choice = kind(saved.pick);
 	show(resting());
 
 	var trying = document.createElement("label");
 	trying.className = "trying";
 	trying.innerHTML = '<input type="checkbox"> Try first: show testers before it\'s built';
 	var box = trying.querySelector("input");
-	box.checked = !!saved.tryFirst;
-	if (box.checked) card.setAttribute("data-try", "");
 	box.addEventListener("change", function () {
 		(state.choices[id] = state.choices[id] || {}).tryFirst = box.checked;
 		if (box.checked) card.setAttribute("data-try", ""); else card.removeAttribute("data-try");
-		save();
+		writeChoice(id);
 		tally();
 	});
 	left.appendChild(trying);
 
 	var note = document.createElement("textarea");
 	note.placeholder = "Note (optional): how you'd change it";
-	note.value = saved.note || "";
+	var noteTimer = null;
 	note.addEventListener("input", function () {
 		(state.choices[id] = state.choices[id] || {}).note = note.value;
-		save();
+		clearTimeout(noteTimer);
+		noteTimer = setTimeout(function () { writeChoice(id); }, 800);
 	});
 	left.appendChild(note);
+
+	// Draw this card from the saved choice and who is looking: the owner gets the controls, everyone else reads.
+	redraws.push(function () {
+		var rec = state.choices[id] || {};
+		picks.forEach(function (p) {
+			var input = p.querySelector("input");
+			input.disabled = !owner;
+			input.checked = rec.pick === p.dataset.v;
+		});
+		if (rec.pick) card.dataset.choice = kind(rec.pick); else delete card.dataset.choice;
+		box.checked = !!rec.tryFirst;
+		box.disabled = !owner;
+		trying.hidden = !owner && !rec.tryFirst;
+		if (rec.tryFirst) card.setAttribute("data-try", ""); else card.removeAttribute("data-try");
+		if (document.activeElement !== note) note.value = rec.note || "";
+		note.readOnly = !owner;
+		note.hidden = !owner && !rec.note;
+		shown = null;
+		show(resting());
+	});
 
 	head.addEventListener("click", function () { light(id); });
 });
@@ -413,14 +453,14 @@ function lines() {
 	});
 }
 function tally() {
-	var n = { build: 0, try: 0, drop: 0, none: 0 };
+	var n = { picked: 0, try: 0, drop: 0, none: 0 };
 	cards.forEach(function (c) {
 		var r = state.choices[c.dataset.id] || {};
 		if (r.tryFirst) n.try++;
 		else n[kind(r.pick) || "none"]++;
 	});
-	document.getElementById("tally").innerHTML = "<b>" + n.build + "</b> Build · <b>" + n.try + "</b> Try first · <b>" + n.drop + "</b> Keep as is · <b>" + n.none + "</b> open";
-	document.getElementById("saved").textContent = persisted ? "Saved in this browser." : "Not saved: this browser blocks storage. Copy your choices before leaving.";
+	document.getElementById("tally").innerHTML = "<b>" + n.picked + "</b> Picked · <b>" + n.try + "</b> Try first · <b>" + n.drop + "</b> Keep as is · <b>" + n.none + "</b> open";
+	document.getElementById("saved").textContent = status;
 }
 document.getElementById("copy").addEventListener("click", function () {
 	var text = lines().join("\n");
@@ -431,6 +471,34 @@ document.getElementById("copy").addEventListener("click", function () {
 	} catch (e) { done(false); }
 });
 document.getElementById("choices").hidden = !cards.length;
-tally();
+function redrawAll() { redraws.forEach(function (f) { f(); }); tally(); }
+redrawAll();
+
+// Who is looking, and the saved choices, live. Without the runtime (a local preview) the page stays read-only.
+(async function () {
+	if (!window.claude || !window.claude.use) { status = "Read-only preview."; tally(); return; }
+	var user = await window.claude.use("user");
+	owner = user ? await user.isOwner() : false;
+	var db = await window.claude.use("db");
+	if (!db) { status = owner ? "Choices can't be saved here: pick in chat instead." : ""; owner = false; redrawAll(); return; }
+	approvals = db.collection("approvals");
+	var ids = cards.map(function (c) { return c.dataset.id; });
+	var timer = setTimeout(function () { status = "Choices are slow to load."; tally(); }, 10000);
+	approvals.onSnapshot(function (snap) {
+		clearTimeout(timer);
+		state.choices = {};
+		snap.docs.forEach(function (d) {
+			if (ids.indexOf(d.id) === -1) return;
+			var v = d.data() || {};
+			state.choices[d.id] = { pick: typeof v.pick === "string" ? v.pick : null, tryFirst: !!v.tryFirst, note: typeof v.note === "string" ? v.note : "" };
+		});
+		status = owner ? "Your choices save as you make them." : "Read-only: only the page's owner picks.";
+		redrawAll();
+	}, function () {
+		clearTimeout(timer);
+		status = "Choices couldn't load.";
+		tally();
+	});
+})();
 })();
 </script>

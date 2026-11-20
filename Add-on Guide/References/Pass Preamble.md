@@ -10,7 +10,7 @@ Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edi
 
 ## Kits and the guide change only in Common-Core
 
-**A pass never edits the guide or a shared kit copy** (`Options/Options-Kit.lua`, `Features/Menu-Kit.lua`, or any other file Common-Core's `addon-kits/` holds), not even to fix a bug in one, because the next sync puts Common-Core's version back and the fix is lost. When the add-on needs one changed:
+**A pass never edits the guide or a shared kit copy** (anything Common-Core's `addon-kits/` holds), not even to fix a bug in one, because the next sync puts Common-Core's version back and the fix is lost. When the add-on needs one changed:
 
 1. Say in one plain line what's wrong, e.g. *Two-line Examples run together; they need a blank line between them.*
 2. Give a block the maintainer pastes into a session launched in `~/Common-Core`, saying exactly what to change and why:

@@ -272,6 +272,45 @@
 .gg-arrow.room {
 	visibility: hidden;
 }
+/* A grayed row's arrow (disabled): MUTED, as the rest of the row. */
+.gg-arrow.muted {
+	border-color: var(--gg-muted);
+}
+/* A window-menu's header (Kit.AddWindowHeader): the title on the left, the game's close button, 16 points, on the right. */
+.gg-row.window {
+	min-height: 16px; /* WINDOW_HEADER_HEIGHT */
+	padding-top: 0;
+	padding-bottom: 0;
+	align-items: center;
+}
+.gg-close {
+	box-sizing: border-box;
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	border: 1px solid #6a4a2a;
+	border-radius: 4px;
+	background: radial-gradient(circle at 50% 40%, #7a1a10, #3a0806);
+	cursor: pointer;
+	position: relative;
+}
+.gg-close::before,
+.gg-close::after {
+	content: "";
+	position: absolute;
+	left: 6px;
+	top: 3px;
+	width: 2px;
+	height: 8px;
+	background: #ffd8a0;
+	transform: rotate(45deg);
+}
+.gg-close::after {
+	transform: rotate(-45deg);
+}
+.gg-close:hover {
+	filter: brightness(1.3);
+}
 .gg-check {
 	display: inline-block;
 	width: 10px;

@@ -9,7 +9,14 @@
 
   Menu entries are Menu-Kit's (Style Guide → MINIMAP MENU → Row Kinds):
     { kind, left, right, leftColor, rightColor, on, selected, submenu,
-      rightOnHover, onClick, tooltip, c }
+      rightOnHover, onClick, tooltip, disabled, c }
+  `disabled: true` grays a row as Menu-Kit's does: both sides and the arrow
+  MUTED, no highlight, no click, no sub-menu, its tooltip still shown.
+  A window drawn on the plate (Style Guide → MENUS → Window-Menus) opens with
+    { kind: "window", left: "Buff Duty", shortName: "GtG", onClose }
+  (Kit.AddWindowHeader: "Title // Short Name" and the game's close button),
+  and ends with GG.optionsLine("Options", "flyoutKey"), a separator and the
+  blue Options line with the arrow (Kit.AddOptionsLine).
   plus the two kinds the Design System proposes, `item` and `value`
   (README → Proposed Kit Changes). Colors are ns.PALETTE keys (TITLE, INFO,
   BODY, HELP, TEXT, ON, OFF, SEPARATOR, MUTED), a quality (q:poor … q:epic),
@@ -165,7 +172,11 @@
 		var right = entry.right;
 		var lc = entry.leftColor;
 		var rc = entry.rightColor;
-		if (kind === "header" || kind === "submenu" || kind === "section") {
+		if (kind === "window") {
+			// Kit.WindowTitle: the title white, the slashes gray, the Short Name blue.
+			left = paint(entry.left, "TEXT") + " " + paint("//", "SEPARATOR") + " " + paint(entry.shortName || "", "INFO");
+			right = null;
+		} else if (kind === "header" || kind === "submenu" || kind === "section") {
 			lc = lc || "TITLE";
 			rc = rc || "MUTED";
 		} else if (kind === "status") {
@@ -197,6 +208,10 @@
 			// Proposed: a read-out, nothing to click.
 			lc = lc || "BODY";
 			rc = rc || "TEXT";
+		}
+		if (entry.disabled) {
+			lc = "MUTED";
+			rc = "MUTED";
 		}
 		return { left: left, right: right, lc: lc || "TEXT", rc: rc || "TEXT" };
 	}
@@ -267,13 +282,15 @@
 		entries.forEach(function (entry) {
 			var row = document.createElement("div");
 			var kind = entry.kind;
-			var clickable = !!entry.onClick || kind === "submenu" || !!entry.submenu;
+			var opens = !entry.disabled && (kind === "submenu" || !!entry.submenu);
+			var clickable = !entry.disabled && (!!entry.onClick || opens);
 			row.className =
 				"gg-row " +
 				kind +
 				(OPTION_KINDS[kind] ? " opt" : "") +
 				(WRAP_KINDS[kind] ? " wrap" : "") +
-				(clickable ? " click" : "");
+				(clickable ? " click" : "") +
+				(entry.disabled ? " disabled" : "");
 			if (entry.c) row.dataset.c = entry.c;
 			if (entry.submenu) row.dataset.submenu = entry.submenu;
 			if (kind !== "spacer" && kind !== "separator") {
@@ -283,8 +300,10 @@
 				l.innerHTML = paint(shown.left || "", shown.lc);
 				row.appendChild(l);
 				var rightText = shown.right;
-				if (kind === "submenu" || entry.submenu) {
-					rightText = (rightText ? paint(rightText, shown.rc) + " " : "") + '<span class="gg-arrow"></span>';
+				if (kind === "window") {
+					rightText = '<button type="button" class="gg-close" aria-label="Close"></button>';
+				} else if (kind === "submenu" || entry.submenu) {
+					rightText = (rightText ? paint(rightText, shown.rc) + " " : "") + '<span class="gg-arrow' + (entry.disabled ? " muted" : "") + '"></span>';
 				} else if (rightText !== undefined && rightText !== null) {
 					rightText = paint(rightText, shown.rc) + (hasArrow ? ' <span class="gg-arrow room"></span>' : "");
 				}
@@ -293,6 +312,8 @@
 					r.className = "r" + (entry.rightOnHover ? " hover-only" : "");
 					r.innerHTML = rightText;
 					row.appendChild(r);
+					var close = r.querySelector(".gg-close");
+					if (close && entry.onClose) close.addEventListener("click", entry.onClose);
 				}
 			}
 			if (clickable) {
@@ -311,7 +332,7 @@
 			}
 			row.addEventListener("mouseenter", function () {
 				if (entry.tooltip) showTip(row, entry.tooltip, host);
-				if (onEnterRow && (clickable || entry.submenu)) onEnterRow(row, entry);
+				if (onEnterRow && clickable) onEnterRow(row, entry);
 			});
 			row.addEventListener("mouseleave", hideTip);
 			panel.appendChild(row);
@@ -348,6 +369,11 @@
 		tip = null;
 	}
 
+	// A window's Options line (Kit.AddOptionsLine): a separator, then the blue line with the arrow, opening flyouts[key].
+	function optionsLine(label, key) {
+		return [{ kind: "separator" }, { kind: "action", left: label, submenu: key }];
+	}
+
 	window.GG = {
 		PALETTE: PALETTE,
 		QUALITY: QUALITY,
@@ -357,6 +383,7 @@
 		icon: icon,
 		money: money,
 		menu: menu,
+		optionsLine: optionsLine,
 		tooltip: tooltip,
 	};
 })();

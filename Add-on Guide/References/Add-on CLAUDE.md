@@ -10,5 +10,5 @@ This folder is one of Gogo1951's WoW add-ons. Its guide is `~/Common-Core/Add-on
 - **Check every change** with `stylua --syntax lua51`, `luac -p`, luacheck, and `lua5.1 Tests/Run.lua` when it exists. Say once, at the end, that it hasn't been tried in game.
 - **English you add or change** is translated into every other locale in the same edit.
 - **One session edits this folder at a time.** If a file changes that you didn't touch, stop and say so in one line.
-- **Never edit a kit copy or the guide** (`Options/Options-Kit.lua`, `Features/Menu-Kit.lua`, anything under `~/Common-Core`). If one needs changing, say what in one line and give a block to paste into a session launched in `~/Common-Core` (Pass Preamble → Kits and the guide change only in Common-Core).
+- **Never edit a kit copy or the guide** (anything Common-Core's `addon-kits/` holds, anything under `~/Common-Core`). If one needs changing, say what in one line and give a block to paste into a session launched in `~/Common-Core` (Pass Preamble → Kits and the guide change only in Common-Core).
 - **No branches and no worktrees.** Commit only when the maintainer asks, or in step 12.

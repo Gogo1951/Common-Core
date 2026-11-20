@@ -101,10 +101,12 @@ Live reference: **Tracking Eye** — the folder layout, end to end, mini-map men
 |`Data/{Game}/{Table-Name}-{Game}.lua`|Static game data, one complete set per flavor — see DATA → Flavor Folders.|
 |`Features/Core.lua`|Add-on identity, saved-variable lifecycle, central event dispatcher — every registered event routes through it (feature files never call `RegisterEvent` or create an event frame), with the event list exported as `ns.EVENT_NAMES` so the dispatcher and Diagnostics can't drift. No shared utilities.|
 |`Features/Utilities.lua`|Stateless functions used by multiple files: API shims, color accessors, tooltip helpers, parsing, small game-state predicates.|
-|`Features/Announcements.lua`|The single home for all messaging: `PrintMessage`, `BuildAnnounceMessage` / `Announce`, `GetGroupChatChannel`.|
+|`Features/Chat-Kit.lua`|Every print and sent message, copied unchanged from Common-Core's `addon-kits/Chat-Kit/`; CI checks it byte for byte (MESSAGES).|
+|`Features/Tooltip-Kit.lua`|With tooltip lines of its own. The tooltip hooks and blocks, copied unchanged from Common-Core's `addon-kits/Tooltip-Kit/`; CI checks it byte for byte (TOOLTIPS).|
+|`Features/Announcements.lua`|The add-on's own messages, built on Chat-Kit: an editable message's fill and build functions (MESSAGES → Editable Messages).|
 |`Features/{Feature-Name}.lua`|Self-contained feature module. Owns its logic, timers, caches. Exposes only what other modules need via the namespace.|
 |`Features/Minimap-Button.lua`|Optional. LDB object and button; hover and left-click open the menu.|
-|`Features/Menu-Kit.lua`|With the button. The menu renderer, copied unchanged from the live reference; reads only `ns.PALETTE`.|
+|`Features/Menu-Kit.lua`|With the button. The menu renderer, copied unchanged from Common-Core's `addon-kits/Menu-Kit/`; CI checks it byte for byte (MINIMAP MENU).|
 |`Features/Minimap-Menu.lua`|With the button. What goes in the menu: its feature blocks, flyouts and Options row.|
 |`Diagnostics/`|The Diagnostic Tools framework and panel, with the add-on's own manifests and context probe in `Manifests.lua` — see DIAGNOSTIC TOOLS. Self-contained English strings. No gameplay logic.|
 |`Options/Options-Kit.lua`|Once the add-on is on Options-Kit. The shared options pieces, copied unchanged from Common-Core's `addon-kits/Options-Kit/`, first in the TOC's Options group; CI checks it byte for byte.|
@@ -397,6 +399,8 @@ Data/Default-Settings.lua
 # Add-on Name
 Features/Core.lua
 Features/Utilities.lua
+Features/Chat-Kit.lua
+Features/Tooltip-Kit.lua
 Features/Announcements.lua
 Features/{Feature-Name}.lua
 Features/Menu-Kit.lua
@@ -423,7 +427,7 @@ Diagnostics/Options-Diagnostics.lua
 Options/Options.lua
 ```
 
-Group headers are single-hash `#` comments; `##` is reserved for metadata fields the client parses, never a section divider. Localization loads first after Includes — AceLocale must register locales before `Data/Data.lua` calls `GetLocale`. `Data/Flavor.lua` opens the Data block because everything after it may read the flavor. The TOC's own flavor folder follows `Data/Data.lua`, and `Data/Default-Settings.lua` closes the block, since its default lists come from that folder. The add-on section is dependency-first throughout; the Diagnostics panel file loads with the Options block, just before `Options.lua` registers it.
+Group headers are single-hash `#` comments; `##` is reserved for metadata fields the client parses, never a section divider. Localization loads first after Includes — AceLocale must register locales before `Data/Data.lua` calls `GetLocale`. `Data/Flavor.lua` opens the Data block because everything after it may read the flavor. The TOC's own flavor folder follows `Data/Data.lua`, and `Data/Default-Settings.lua` closes the block, since its default lists come from that folder. The add-on section is dependency-first throughout: the kits follow `Features/Utilities.lua`, Chat-Kit then Tooltip-Kit (neither needs the other; this is just one order everywhere), with Menu-Kit just before the menu it draws; the Diagnostics panel file loads with the Options block, just before `Options.lua` registers it.
 
 **Merged fragments load dependency-first.** When feature options are composed into the General panel as builder fragments rather than registered as their own panels, those files load *before* `Options-General.lua`.
 
@@ -646,7 +650,7 @@ Four things sit outside it:
 - **Geometry fitted to Blizzard's art**, such as Icon Fit's 20-point icon and its offset inside LibDBIcon's ring.
 - **A 1-point line or border.**
 
-Existing add-ons move onto the scale through the UX Review's Build choices, never in a sweep.
+Existing add-ons move onto the scale through the UX Review's picks, never in a sweep.
 
 -----
 
@@ -910,7 +914,15 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 **Every window's title reads `Title // Short Name`:** the title in C_TEXT white, the slashes C_SEPARATOR, the Short Name C_INFO blue, at the left of the title bar, with the game's close button at its right end. It holds for the add-on's own windows (the Restock List, the quest log, the Distribution window) and for a window drawn on the menu plate (Buff Duty: MENUS → Window-Menus). The title is Title Case, and its key holds the title part only (ADD-ON NAMES). Menu-Kit's `Kit.WindowTitle(title)` builds the string.
 
-Live reference: **Good to Go's Buff Duty** ([`Features/Buff-Duty/Buff-Duty-Frame.lua`](https://github.com/Gogo1951/Good-to-Go/blob/main/Features/Buff-Duty/Buff-Duty-Frame.lua)). The rest of a window's look (dragging, a lock, combat) is still the proposed defaults drawn in `References/Design System/Windows and Tooltips.html`.
+- **Spacers, not lines.** Groups sit apart by a spacer; no divider under the title or between groups.
+- **One type size.** Title, headings, rows and notes are the same size; they differ by color only.
+- **16 points in from the edge on all four sides.**
+- **Icons are 20 points, and a window is at least 200 wide.** These two are the maintainer's numbers (SPACING SCALE → A number the maintainer gives): never moved onto the scale.
+- **A list of consumables shows only what the player carries.**
+- **It moves by its title bar only,** clamped to the screen, and reopens where the player left it: its position saved in the save model's presentation scope (SAVED VARIABLES → The Two Models), as the mini-map button's is, with a Reset Position that puts it back in the center.
+- **The close button and Escape close it** (its frame named and in `UISpecialFrames`). A window with buttons the game blocks in combat closes when combat starts and stays closed; any other window stays open.
+
+Drawn: `References/Design System/Windows and Tooltips.html`. Built: Menu-Kit's `Kit.WindowTitle` and `Kit.AddWindowHeader` in Common-Core's [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit).
 
 -----
 
@@ -924,8 +936,8 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 | Menu | Drawn with | Rule |
 |---|---|---|
-| Any menu the add-on lays out itself: the mini-map menu, a flyout off a window's line, a short menu off a button, a right-click menu with nested sub-menus, switches and choices | The kit's own panels (`Kit.CreatePanel` and kit entries) | A new right-click menu starts here. Reference: Good to Go's Spellbook macro menu (`Macro-Menu-Panels.lua`), which takes the game's menu calls so a menu written for the game's menus moves over without a rewrite. |
-| A right-click menu not yet moved onto the kit's panels (Good to Go's Spellbook category, Settings and What's Next menus) | The game's menus in the kit's dress (`Kit.OpenContextMenu`, `Kit.AddMenuHeader`) | Never open `MenuUtil.CreateContextMenu`, `UIDropDownMenu` or `EasyMenu` bare. The kit lays its plate after any skin add-on (ElvUI) has had its turn, restyles every row to the kinds below, and hands the frame back when the menu closes. |
+| Any menu the add-on lays out itself: the mini-map menu, a flyout off a window's line, a short menu off a button, a right-click menu with nested sub-menus, switches and choices | The kit's own panels (`Kit.CreatePanel` and kit entries) | Every menu is drawn here. |
+| A right-click menu written on the game's menus | Moves onto the kit's own panels | Never open `MenuUtil.CreateContextMenu`, `UIDropDownMenu` or `EasyMenu` bare. Until it moves, `Kit.OpenContextMenu` and `Kit.AddMenuHeader` dress it: the kit lays its plate after any skin add-on (ElvUI) has had its turn, restyles every row to the kinds below, and hands the frame back when the menu closes. |
 | An AceGUI dropdown's list in the add-on's own window | The plate in place of its border (`Kit.PlatePullout`) | The border goes back on release, since AceGUI pools that frame. The options panel's AceConfig dropdowns belong to the Settings window and stay as they are (OPTIONS PANEL). |
 
 - **One opacity.** Every plate is the same art at the same 80% (`PLATE_ALPHA`), and nothing sits under it: a skin's backdrop goes clear, so no menu reads darker than another and a sub-menu never reads darker than the menu it came from.
@@ -947,7 +959,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **A row that opens a sub-menu** has its label in C_TITLE and, on its right in C_MUTED, what is set inside it (`Stop Attack`, `68 / 255`, `Character`), then the arrow. With nothing set inside, the right side is the arrow alone.
 - **A switch with options of its own keeps its switch look:** name white, On in C_ON, then the arrow (gray name and Off in C_MUTED while it's off). A click flips it; hovering opens its sub-menu (Buff Duty's Your Target opens Include NPCs, Buff Food the buff food in your bags).
 - **The arrow has its own column.** In a menu where any row has an arrow, every row's right side ends where the arrow's room begins, so an On without an arrow lines up with an On beside one.
-- **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: what it touches (`Delete … Used on 1 Bar`). Never the word Click: the color already says it acts.
+- **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: what it touches (`Delete … Used on 1 Bar`).
 - **Switches and choices, never boxes.** A setting is a `toggle` (its name, On or Off) or a `choice` (the pick white with a check mark, the rest gray). No checkbox, radio button or box is drawn, on the kit's panels or on the game's dressed menus.
 - **Icons at line height.** An item or spell row puts its icon before its name, one space, the icon, then the name (`|T…:0|t`).
 - **A row you can't use right now is gray, not hidden,** where the game's own menu would gray it (Share Quest on a quest that can't be shared): both sides C_MUTED, no highlight, no click, its tooltip still shown (`disabled`). A row this character can never use still hides (MINIMAP MENU → Two Homes for Every Setting).
@@ -958,7 +970,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 16 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET + TEXT_INSET`, where a row's text ends), drawn over it, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 12). Never a gap and never flush: a sub-menu set apart reads as a second menu.
 - **Hovering the row opens it**, and a click does too, unless the row is a switch, whose click flips it. Hovering any other clickable row closes it. The row keeps its highlight while its sub-menu is open.
 - **The side away from the screen edge**, decided once when the menu opens; a sub-menu of a sub-menu goes the same way.
-- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 16 points, measured from the line's right end, level with it.
+- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 16 points, measured from the window's edge, level with the line.
 - **A change keeps it open.** A switch or a setting's choice redraws in place, so the player sees the new value (Macro Storage). A pick that acts, casting, opening a window or going somewhere, closes it.
 
 ### Opening and Closing
@@ -981,7 +993,7 @@ Drawn: `References/Design System/Mini-map Menus.html`, every row kind and patter
 
 **Never edit a copy of the kit.** The one kit is Common-Core's `addon-kits/Menu-Kit/` (`Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga` and `Includes/Images/Menu-Arrow.tga`): a kit change is a Common-Core commit the maintainer runs, never a pass's, then `scripts/sync-addon-kits.sh` copies it unchanged into every add-on that holds the kit, and CI's **Shared kits match Common-Core** check fails a copy that differs. Every conversion copies the kit from there (Moving a Tooltip to a Menu, step 1); a v1 copy takes v2 unchanged (`Menu-Kit.md`). A pass whose menu needs a kit change asks for it (ASKING THE MAINTAINER), builds what the kit can already draw, and leaves the rest of that row to land after the kit change.
 
-**Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's Build choices (Menus, Not Tooltips), never in a sweep.
+**Every action is a row the player clicks, and the button keeps its clicks.** A controller's virtual cursor reaches every row, so nothing in the menu needs a modifier key or a right or middle button. A mouse player keeps the shortcuts they know: every click the button had still does its job, and the row that does the same job names that click on its right (Button Clicks, below). Existing add-ons move from a tooltip to the menu through the UX Review's picks (Menus, Not Tooltips), never in a sweep.
 
 ### Two Homes for Every Setting
 
@@ -1586,7 +1598,7 @@ AceGUI-3.0 loads through its `.xml`. The last two lines ship only with a mini-ma
 **Every add-on is built on [Common-Core](https://github.com/Gogo1951/Common-Core), which holds the shared CI and release logic for all Gogo add-ons; its README is the source of truth wherever this section and it differ.** Nothing in it ships to players. Its `.github/workflows/package.yml` and `ci.yml` are reusable workflows: add-ons call them and never copy their logic.
 
 - **Shared files.** `addon-files/` holds the files every add-on carries an exact copy of: `.github/workflows/package.yml` and `.github/workflows/ci.yml` (thin callers), `.gitignore` and `.gitattributes`. `scripts/sync-addon-files.sh <add-on folder>` copies them in, and CI fails an add-on whose copy differs. They change only in Common-Core, then get synced to every add-on: never edit one inside an add-on.
-- **Shared kits.** `addon-kits/<Kit>/` holds code an add-on adopts whole: today `Options-Kit` (OPTIONS PANEL → Options-Kit). A kit's folders mirror the add-on's own paths. `scripts/sync-addon-kits.sh --adopt <Kit> <add-on folder>` copies one in the first time; a plain run refreshes every kit each add-on has adopted. An add-on holding any of a kit's files has adopted it, and CI fails it if any of them differs. They change only in Common-Core.
+- **Shared kits.** `addon-kits/<Kit>/` holds code an add-on adopts whole: `Options-Kit` (OPTIONS PANEL), `Menu-Kit` (MINIMAP MENU), `Chat-Kit` (MESSAGES) and `Tooltip-Kit` (TOOLTIPS). A kit's folders mirror the add-on's own paths. `scripts/sync-addon-kits.sh --adopt <Kit> <add-on folder>` copies one in the first time; a plain run refreshes every kit each add-on has adopted. An add-on holding any of a kit's files has adopted it, and CI fails it if any of them differs. They change only in Common-Core.
 - **Per add-on, written by hand:** `.pkgmeta`, `.luacheckrc`, the TOCs, `LICENSE` and the README files.
 
 ### What CI Enforces
@@ -1634,7 +1646,7 @@ The single definition of how a pass talks to the maintainer. **The maintainer is
 - **Never ask permission to do the job.** What the prompt or the maintainer already asked for gets done and reported, never confirmed first, within the pass's write scope; in a pass whose write scope is nothing, done means the fix or feature prompt, never the edit (Pass Preamble → Report-only passes): no "shall I apply these?", "want me to run it?" or "ready to continue?". A question is only for a genuine choice the record can't settle.
 - **Small calls aren't questions.** When a choice is minor or easy to change later, make the sensible call and mention it in one line of the report. Example: a new feature generally starts on, so just ship it on and say so; don't ask.
 - **Look it up first.** Check the record before asking: this guide, the add-on's `README-Notes.md`, its master-list entry, and the code. A README is never the record (Pass Preamble → Standing scope). A question one of those answers is a lookup you skipped.
-- **Always multiple choice.** Use the surface's question tool (a short numbered list only if it has none). 2–4 options, one decision per question, **at most 4 questions per round and one round per pass**. Never a free-text question: when you need a name, a tagline or a link, offer your best 2–3 drafts as options; the maintainer can still type their own.
+- **Always multiple choice.** Use the surface's question tool (a short numbered list only if it has none). 2–4 options, one decision per question, **at most 4 questions per round and one round per pass**. The UX Review's change cards, picked on its wireframe page, don't count toward either. Never a free-text question: when you need a name, a tagline or a link, offer your best 2–3 drafts as options; the maintainer can still type their own.
 - **Best option first.** End its label with `(Recommended)`. When leaving things alone is a real choice, the last option is `Keep as is`. Flag a weak option honestly rather than rubber-stamping it.
 - **Every option has an example of what a player would see.** One plain line, then the example. Like this:
     - `Print after each vendor visit (Recommended)` — *Example: "Good to Go // Sold 3 items for 12g."*
