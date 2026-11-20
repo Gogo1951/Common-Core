@@ -940,10 +940,10 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Sub-menus
 
-- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 12 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET + TEXT_INSET`, where a row's text ends), drawn over it, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 8). Never a gap and never flush: a sub-menu set apart reads as a second menu.
+- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 16 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET + TEXT_INSET`, where a row's text ends), drawn over it, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 12). Never a gap and never flush: a sub-menu set apart reads as a second menu.
 - **Hovering the row opens it**, and a click does too, unless the row is a switch, whose click flips it. Hovering any other clickable row closes it. The row keeps its highlight while its sub-menu is open.
 - **The side away from the screen edge**, decided once when the menu opens; a sub-menu of a sub-menu goes the same way.
-- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 12 points, measured from the line's right end, level with it.
+- **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 16 points, measured from the line's right end, level with it.
 - **A change keeps it open.** A switch or a setting's choice redraws in place, so the player sees the new value (Macro Storage). A pick that acts, casting, opening a window or going somewhere, closes it.
 
 ### Opening and Closing
@@ -1046,7 +1046,7 @@ Live: Tracking Eye's `ns.RefreshSettings` in `Features/Utilities.lua`, reached f
 | Bottom left | Above, to the right | `BOTTOMLEFT` → `TOPRIGHT` |
 
 - **Halves decide it**, measured from the button's center against `UIParent` at its effective scale, once when the menu opens; it doesn't jump while open.
-- **The flyout opens on the same side** the menu opened toward, overlapping it by 12 points (`Kit.FLYOUT_OVERLAP`; MENUS → Sub-menus), rising 8 so its first row meets its title.
+- **The flyout opens on the same side** the menu opened toward, overlapping it by 16 points (`Kit.FLYOUT_OVERLAP`; MENUS → Sub-menus), rising 12 so its first row meets its title.
 - **A row's tooltip** opens on that side too (`ANCHOR_LEFT` or `ANCHOR_RIGHT`).
 - **Clamped to the screen**, strata `DIALOG`, top-level. Any LDB display's frame is a button for this: a Titan Panel plugin along the top opens below it.
 
@@ -1112,7 +1112,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 - **The plate is Pretty Wide Quest Log's Quest Arrow menu:** `Menu-Plate.tga`, nine-sliced at half size so the angled corners stay sharp, at 80% alpha.
 - **No boxes.** Blocks are separated by spacing and gold headings, never borders, backgrounds or `common-dropdown-bg`.
 - **Stock art only.** The submenu arrow is `Interface\ChatFrame\ChatFrameExpandArrow`, the check is `Interface\Buttons\UI-CheckBox-Check`, a click-to-remove row's delete icon is `Interface\Buttons\UI-GroupLoot-Pass-Up`.
-- **Spacing is on the scale** (SPACING SCALE): rows are a line plus 4 above and below, a spacer is 16, a separator is 8, text sits 8 in from its row, rows 4 in from the plate.
+- **Spacing is on the scale** (SPACING SCALE): rows are a line plus 4 above and below, a spacer is 16, a separator is 8, and the text sits 16 points from the plate's edge on every side, as in Good to Go's Buff Duty window.
 - **The row highlight is gold** at 16%, shown only on rows you can click.
 
 ### Moving a Tooltip to a Menu

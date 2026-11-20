@@ -77,8 +77,10 @@ local MIN_WIDTH = 128
 local MAX_WIDTH = 320 -- No menu or flyout is wider: a long label wraps instead
 local NOTE_MAX_WIDTH = 256 -- A note wraps here when nothing else makes the panel wider
 local DESCRIPTION_MAX_WIDTH = 320 -- A description gets more room before it wraps
-local ROW_INSET = SPACE.LINE -- From the plate's edge to a row's highlight
-local TEXT_INSET = SPACE.NEAR -- From a row's edge to its text
+local EDGE = SPACE.GROUP -- From the plate's edge to the text, on every side
+local ROW_INSET = SPACE.NEAR -- From the plate's edge to a row's highlight
+local TEXT_INSET = EDGE - ROW_INSET -- From a row's edge to its text
+local PANEL_INSET = EDGE - SPACE.LINE -- Above the first row and below the last: a row's own SPACE.LINE makes up EDGE
 local OPTION_INDENT = SPACE.LINE -- Options sit a little in from the text above them, so a list reads as one
 local RIGHT_GAP = SPACE.GROUP -- From a row's left text to its right side
 local ARROW_GAP = SPACE.LINE -- From a row's right side to the arrow's column
@@ -112,7 +114,7 @@ Kit.REMOVE_ICON = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:0|t"
     an add-on still placing its own flyout with it gets the overlap too.
 ]]
 Kit.FLYOUT_OVERLAP = ROW_INSET + TEXT_INSET
-Kit.FLYOUT_RISE = SPACE.NEAR
+Kit.FLYOUT_RISE = PANEL_INSET
 Kit.FLYOUT_GAP = ROW_INSET - Kit.FLYOUT_OVERLAP
 
 --------------------------------------------------------------------------------
@@ -685,6 +687,7 @@ function Panel:Render(source, context)
 			row.right:SetFontObject("GameFontHighlight")
 			row.left:SetWordWrap(false)
 			row.left:SetWidth(0)
+			row.left:SetHeight(0)
 			-- As wide as its widest look: the hover's right side measured too, so nothing shifts on hover.
 			local rightWidth = 0
 			if look.hover then
@@ -713,7 +716,7 @@ function Panel:Render(source, context)
 	width = math.min(math.ceil(width), MAX_WIDTH)
 
 	-- Second pass: a left side that doesn't fit wraps within what the right side leaves, and the row grows.
-	local y = SPACE.NEAR
+	local y = PANEL_INSET
 	for index, entry in ipairs(entries) do
 		local row = rows[index]
 		local size = measured[index]
@@ -724,8 +727,13 @@ function Panel:Render(source, context)
 			if WRAPS[entry.kind] or size.leftWidth > available then
 				row.left:SetWordWrap(true)
 				row.left:SetWidth(math.max(available, 1))
-				row.height = math.max(lineHeight, row.left:GetStringHeight() or lineHeight) + 2 * SPACE.LINE
+				-- Set again now the width is set, so it wraps there instead of keeping the first pass's one-line layout.
+				row.left:SetText(row.left:GetText() or "")
+				local textHeight = math.max(lineHeight, math.ceil(row.left:GetStringHeight() or lineHeight))
+				row.left:SetHeight(textHeight)
+				row.height = textHeight + 2 * SPACE.LINE
 			else
+				row.left:SetHeight(lineHeight)
 				row.height = lineHeight + 2 * SPACE.LINE
 			end
 			row.left:ClearAllPoints()
@@ -741,7 +749,7 @@ function Panel:Render(source, context)
 		row:SetPoint("TOPRIGHT", self, "TOPRIGHT", -ROW_INSET, -y)
 		y = y + row.height
 	end
-	self:SetSize(width, y + SPACE.NEAR)
+	self:SetSize(width, y + PANEL_INSET)
 	-- A row already under the cursor shows its hover look; every other hover-only right side hides.
 	for index = 1, #entries do
 		local row = rows[index]

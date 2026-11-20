@@ -53,9 +53,9 @@
 		NOTE_MAX_WIDTH: 256,
 		DESCRIPTION_MAX_WIDTH: 320,
 		MAX_WIDTH: 320, // no row widens the menu past this; a long left side wraps
-		INSETS: 2 * (8 + 4), // TEXT_INSET + ROW_INSET, both sides
-		FLYOUT_OVERLAP: 12, // ROW_INSET + TEXT_INSET: the flyout's edge sits this far inside its menu's (Style Guide → MENUS)
-		FLYOUT_RISE: 8, // SPACE.NEAR
+		INSETS: 2 * (8 + 8), // TEXT_INSET + ROW_INSET, both sides
+		FLYOUT_OVERLAP: 16, // ROW_INSET + TEXT_INSET: the flyout's edge sits this far inside its menu's (Style Guide → MENUS)
+		FLYOUT_RISE: 12, // PANEL_INSET
 	};
 
 	function hex(key) {
