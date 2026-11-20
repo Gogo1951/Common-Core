@@ -92,7 +92,8 @@ Widths are AceConfig units (170 points each), so they sit outside the Spacing Sc
 | `Kit.Helper(order, hidden, text)` | inline group | A silver helper line under a field, in the control column |
 | `Kit.FieldSets(order, hidden, sets)` | inline group | A section's field sets, a spacer between each |
 | `Kit.SubLabelRow(order, hidden, caption, control, desc)` | inline group | The same under the control it belongs to |
-| `Kit.SubToggleRow(order, hidden, toggle)` | inline group | An on/off choice under the control it belongs to |
+| `Kit.ButtonRow(order, hidden, button, caption)` | inline group | A lone button in the control column, its name kept on it; `caption` goes in the label column |
+| `Kit.SubToggleRow(order, hidden, toggle, preview)` | inline group | An on/off choice under the control it belongs to; `preview` (a `Kit.SoundPreview`) sits past the row's end and stays while the switch is off |
 | `Kit.Pairs(order, hidden, toggles)` | inline group | Toggles two to a line |
 | `Kit.ToggleRow(order, toggle, { control, preview, helper, hidden })` | inline group | A switch with its one setting beside it, a sound's speaker past the end and a helper line under the setting; all leave while it's off; a caption too long for the label column (measured) sends them to the line below |
 | `Kit.SoundPreview(play)` | execute | The speaker for `ToggleRow` |

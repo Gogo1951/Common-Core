@@ -863,6 +863,75 @@ function Kit.CreateMenu(spec)
 	return menu
 end
 
+--[[
+    A dropdown on the kit's own menu (Kit.CreateMenu): its own frames, never
+    the game's shared dropdown frames, so nothing taints them.
+    menu:Open(anchor, entries, onClose, upward) shows entries under anchor, or
+    over it when upward (a click on the open anchor again closes it);
+    menu:Close(); and menu:IsOpenFor(anchor). A row's click closes the menu
+    first, unless the entry sets keepOpen. onClose runs whenever it hides.
+]]
+function Kit.CreateDropdownMenu(name)
+	local shown = { entries = nil, onClose = nil }
+	local kitMenu = Kit.CreateMenu({
+		name = name,
+		publish = false,
+		build = function()
+			return shown.entries or {}
+		end,
+	})
+	local frame = kitMenu.frame
+	frame:SetFrameStrata("FULLSCREEN_DIALOG") -- In front of the window it drops from
+	frame:HookScript("OnHide", function()
+		local onClose = shown.onClose
+		shown.entries, shown.onClose = nil, nil
+		if onClose then
+			onClose()
+		end
+	end)
+
+	local menu = {}
+
+	function menu:Close()
+		kitMenu:Hide()
+	end
+
+	function menu:IsOpenFor(anchor)
+		return kitMenu:IsShown() and kitMenu.state.anchor == anchor
+	end
+
+	function menu:Open(anchor, entries, onClose, upward)
+		if menu:IsOpenFor(anchor) then
+			kitMenu:Hide()
+			return
+		end
+		kitMenu:Hide()
+		local list = {}
+		for index, entry in ipairs(entries) do
+			if entry.onClick and not entry.keepOpen and not entry.closes then
+				local copy = {}
+				for key, value in pairs(entry) do
+					copy[key] = value
+				end
+				copy.closes = true
+				entry = copy
+			end
+			list[index] = entry
+		end
+		shown.entries, shown.onClose = list, onClose
+		kitMenu:Show(anchor, "hover")
+		-- A dropdown's list hangs straight under its field, or over it, not off a corner.
+		frame:ClearAllPoints()
+		if upward then
+			frame:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 0, 0)
+		else
+			frame:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, 0)
+		end
+	end
+
+	return menu
+end
+
 -- Every open menu redraws in place; the rest wait until they open.
 function Kit.RefreshAll()
 	for _, menu in ipairs(menus) do
