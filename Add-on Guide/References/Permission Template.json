@@ -24,7 +24,8 @@
       "Skill",
       "Artifact",
       "ArtifactComments",
-      "ArtifactData"
+      "ArtifactData",
+      "mcp__ccd_session"
     ],
     "deny": [
       "Edit(~/Common-Core/**)",
