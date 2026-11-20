@@ -31,7 +31,7 @@ To run a pass, launch Claude Code in the add-on's installed folder and paste the
 
 ## The pipeline
 
-Each step is one laser-focused job. Run them in order, and skip an optional one when it has nothing to do. Each entry says what the step is for, then what it changes.
+Each step is one laser-focused job. Run them as the diagram shows, and skip an optional one when it has nothing to do. Each entry says what the step is for, then what it changes.
 
 **Reviews that only report: steps 2, 3 and 8** (and `Optional - Create UX Wireframes.md`). They never edit code; you get findings or feature prompts, then one question: *Apply all / Pick which ones / None for now*. Code changes only when you answer it. **Reviews that fix their own area: steps 4–7**, each inside the files its entry names, and nowhere else.
 
@@ -65,7 +65,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7, and step 5 if it ran, are done and you've tested in game.
 
-**After step 3 the work runs in two branches, side by side** in the same folder: 4 then 5, and 6 then 7, meeting at 8. **Steps 9–11 also run side by side**; each writes its own file. Other passes run one at a time, in order.
+**After step 3 the work runs in two branches, side by side** in the same folder: 4 then 5, and 6 then 7, meeting at 8. **Steps 9–11 also run side by side**; each writes its own file.
 
 **A pass that spots a problem in the guide adds a Guide Feedback section** (Style Guide → GUIDE FEEDBACK); most have none. One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 
