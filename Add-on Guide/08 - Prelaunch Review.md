@@ -17,7 +17,7 @@ Run this when manual testing is **complete** and the add-on is believed to be wo
     The guide is the standard wherever it speaks (Style Guide, opening rule). For what it tells you to copy verbatim — `.pkgmeta` and the wiki's category strings — the fetched live source is the comparison target; where that source fails an explicit guide requirement, the reference file is what needs fixing. If a needed live file can't be fetched, say so and mark affected findings reduced-confidence.
 
     **Reference check — required before any finding that changes what players see** (Style Guide, opening rules). A Live reference that does the opposite of its rule is a Phase 3 question, never a finding.
-3. **Clarify — required, before any findings.** Ask per the preamble. For example: *this release adds a setting that changes what other players in the group see; should it ship on or off by default?* No findings until any answers are in.
+3. **Clarify — required, before any findings.** Ask per the preamble. For example: *this release whispers other players automatically; is that OK to ship?* Small calls are made, not asked (Style Guide → ASKING THE MAINTAINER). No findings until any answers are in.
 4. **Report.** Produce the report below.
 
 ## Presumption of working code
@@ -83,7 +83,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 
 **Never offer to create a PR, branch, or commit.** That is `12 - Create Release Notes & PR.md`'s job, prompted only as Pass Preamble → Next Pass says. Fix prompts edit the working copy, which step 12 commits; a Packaging file, checked on `main`, gets its complete corrected contents in its own fenced code block instead, for the maintainer to paste into GitHub.
 
-Open with the verdict — **Ready to tag** or **Not ready: N blocker(s)** — and a 2–3 sentence summary. Then list issues grouped by checklist area, Blockers first. Include a short **Master list** line stating whether the master-list row was already current or what updates are proposed (when there are updates, the exact edits ride in Guide Feedback as routine data items). Keep prose lean.
+Open with the verdict — **Ready to tag** or **Not ready: N blocker(s)** — and a 2–3 sentence summary. A Not ready verdict is never a dead end: once the chosen fixes run, the reply offers step 8 again (Pass Preamble → Next Pass). Then list issues grouped by checklist area, Blockers first. Include a short **Master list** line stating whether the master-list row was already current or what updates are proposed (when there are updates, the exact edits ride in Guide Feedback as routine data items). Keep prose lean.
 
 Severity scale:
 - **Blocker** — do not tag a release until fixed.

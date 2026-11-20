@@ -33,7 +33,7 @@ To run a pass, launch Claude Code in the add-on's installed folder and paste the
 
 Each step is one laser-focused job. Run them in order, and skip an optional one when it has nothing to do. Each entry says what the step is for, then what it changes.
 
-**Reviews that only report: steps 2, 3 and 8** (and `Optional - Create UX Wireframes.md`). They never edit code; you get findings or feature prompts, and code changes only when you paste one back. **Reviews that fix their own area: steps 4–7**, each inside the files its entry names, and nowhere else.
+**Reviews that only report: steps 2, 3 and 8** (and `Optional - Create UX Wireframes.md`). They never edit code; you get findings or feature prompts, then one question: *Apply all / Pick which ones / None for now*. Code changes only when you answer it. **Reviews that fix their own area: steps 4–7**, each inside the files its entry names, and nowhere else.
 
 ![The pass workflow: 01 to 03 in a line, then 04 → 05 beside 06 → 07, meeting at 08, then 09–11 and 12](References/Pass%20Workflow.svg)
 
@@ -53,6 +53,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Optional, whenever wanted:**
 
+- **`Optional - Fix a Bug.md`** — Testing found something broken? Describe it in plain words (or paste the error) and it fixes it, then tells you which passes to re-run, usually none. *Changes:* whatever the fix needs, never the READMEs.
 - **`Optional - Create UX Wireframes.md`** — Draws every window exactly as it is now, as a clickable private page to share with testers, at step 2's link. Nothing is proposed. *Changes:* nothing.
 
 **In `References/`, run on demand:**

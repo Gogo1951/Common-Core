@@ -32,7 +32,7 @@ Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal
 
 ## Report-only passes
 
-**A pass whose write scope is "nothing" never edits code or any add-on file, whatever the maintainer approves** (the preamble's `README-Notes.md` record aside). A Build button, a "yes", "looks good" or "build it" is an approval of the change, not permission to make it. The pass ends with its report and its fix or feature prompts; code changes only when the maintainer pastes a prompt back. If the maintainer asks the pass itself to write code, say so in one line and give the prompt instead.
+**A pass whose write scope is "nothing" never edits code or any add-on file, whatever the maintainer approves** (the preamble's `README-Notes.md` record aside). A Build button, a "yes", "looks good" or "build it" is an approval of the change, not permission to make it. The pass ends with its report, its fix or feature prompts, and the one Apply question (Batch apply, below); code changes only when the maintainer answers that question or pastes prompts back, and then the prompts run in this session. If the maintainer asks the pass to write code any other way, say so in one line and ask the Apply question instead.
 
 ## Standing scope — true in every pass
 
@@ -66,17 +66,21 @@ Each issue's fix prompt is copy-and-run ready: a fenced code block (no language 
 
 ## Batch apply
 
-When a report contains at least one fix or feature prompt (`Issue N` or `Feature N`), follow the last one with a one-sentence **Batch apply** note telling the maintainer they can paste any subset of the prompts back in a single message — edited or reordered — together with the line below, and each will run one at a time with the same rigor. Give that line by itself in a fenced code block:
+**The maintainer never has to copy and paste prompts back.** When a report contains at least one fix or feature prompt (`Issue N` or `Feature N`), it ends with one multiple-choice question (Style Guide → ASKING THE MAINTAINER), after Guide Feedback:
 
-```
-Apply these in dependency order, one at a time; after each, run stylua --syntax lua51 + luac + luacheck (+ a sanity check where relevant) and stop and report if anything fails; give me a one-line status per issue, then tell me they're done and give me the Copy to Other Flavors command.
-```
+- `Apply all (Recommended)` — *every Issue and Feature above runs now, one at a time*
+- `Pick which ones` — *type the numbers, e.g. "1, 3, 4"*
+- `None for now` — *nothing changes; the prompts stay above to paste later*
+
+Drop `(Recommended)` from Apply all, and recommend Pick which ones, when any item is flagged as weak or as a UX change you'd rather the maintainer choose. Pasting prompts back, edited or not, works the same as picking them.
+
+**How chosen prompts run.** Apply them in dependency order, one at a time; after each, run `stylua --syntax lua51` + `luac` + luacheck (+ a sanity check where relevant) and stop and report if anything fails; give a one-line status per item, then say they're done and give the Copy to Other Flavors command.
 
 ## Copy to Other Flavors
 
 In steps 2–8 this command means "the work is done, go test." It comes once the edits are finished, never beside prompts still to run:
 
-- **A report with fix or feature prompts carries no copy command.** Once the prompts the maintainer pastes back have run, the reply gives the one-line statuses, says the prompts are done, and ends with the command.
+- **A report with fix or feature prompts carries no copy command.** Once the prompts the maintainer chose have run, the reply gives the one-line statuses, says the prompts are done, and ends with the command.
 - **A report with none** ends with the command, just before Guide Feedback, when the pass itself edited files (Diagnostics, Data, Copy and Localization Reviews), and leaves it out when nothing changed.
 
 Give it in a fenced block tagged `bash`, so the app shows a Run button. Fill in the launch folder's client folder for `{Client}` and the add-on's folder for `{Folder}`:
@@ -98,6 +102,8 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 | `04 - Diagnostics Review.md` | `05 - Data Review.md` |
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
+| `08 - Prelaunch Review.md`, verdict **Not ready**, once its chosen fixes have run | `08 - Prelaunch Review.md` again. When a blocker belongs to another pass (stale data → `05 - Data Review.md`, new English → `07 - Localization Review.md`), offer that pass first, with one line: then run 08 again |
+| `Optional - Fix a Bug.md` | the pass its report names to re-run, or `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
 
 **After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no prompt. Step 7's prompt for step 8 comes with one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
