@@ -279,15 +279,32 @@ try { state.tab = localStorage.getItem(TAB_KEY); } catch (e) { /* storage blocke
 function saveTab() { try { localStorage.setItem(TAB_KEY, state.tab); } catch (e) { /* storage blocked */ } }
 
 // Choices live in the artifact's db, approvals/{change-id}, written by the owner only.
-var owner = false;
+// A click always picks on the page; the save is tried whenever the db is there,
+// and the status line says whether it saved or why not.
+var owner = null; // null until the owner check answers (or if it fails)
 var approvals = null;
+var loaded = false;
+var tried = false; // a save has been tried, so its result owns the status line
 var status = "Loading choices…";
+var noDb = "Not saved yet: still connecting to the db.";
+var COPY = " Use Copy choices to send them in chat.";
+var unsaved = {}; // ids picked on this page that the db hasn't confirmed
+function why(e) { return e && (e.message || e.code) ? String(e.message || e.code) : "no reason given"; }
+function setStatus(s) { status = s; tally(); }
+function idle() { return owner === false ? "Only the page's owner saves choices: your picks stay on this page." : "Your choices save as you make them."; }
 function writeChoice(id) {
-	if (!owner || !approvals) return;
+	unsaved[id] = true;
+	if (!approvals) { setStatus(noDb + COPY); return; }
+	tried = true;
 	var rec = state.choices[id] || {};
-	approvals.doc(id).set({ pick: rec.pick || null, tryFirst: !!rec.tryFirst, note: rec.note || "" }).then(
-		function () { status = "Saved."; tally(); },
-		function () { status = "Not saved: copy your choices before leaving."; tally(); }
+	var settled = false;
+	setStatus("Saving…");
+	var slow = setTimeout(function () { if (!settled) setStatus("Still saving after 10 seconds." + COPY); }, 10000);
+	Promise.resolve().then(function () {
+		return approvals.doc(id).set({ pick: rec.pick || null, tryFirst: !!rec.tryFirst, note: rec.note || "" });
+	}).then(
+		function () { settled = true; clearTimeout(slow); delete unsaved[id]; setStatus("Saved."); },
+		function (e) { settled = true; clearTimeout(slow); setStatus("Not saved: " + why(e) + "." + COPY); }
 	);
 }
 
@@ -371,11 +388,10 @@ cards.forEach(function (card) {
 		input.type = "radio";
 		input.name = "pick-" + id;
 		input.value = p.dataset.v;
-		input.disabled = true;
 		p.prepend(input);
 		if (p.hasAttribute("data-rec")) p.querySelector("b").insertAdjacentHTML("beforeend", '<span class="rec">Recommended</span>');
 		p.addEventListener("mouseenter", function () { show(p); });
-		p.addEventListener("click", function () { if (owner) { input.checked = true; pickIt(p.dataset.v); } else show(p); });
+		p.addEventListener("click", function () { input.checked = true; pickIt(p.dataset.v); });
 		input.addEventListener("focus", function () { show(p); });
 		list.appendChild(p);
 	});
@@ -419,7 +435,6 @@ cards.forEach(function (card) {
 		var rec = state.choices[id] || {};
 		picks.forEach(function (p) {
 			var input = p.querySelector("input");
-			input.disabled = !owner;
 			input.checked = rec.pick === p.dataset.v;
 		});
 		if (rec.pick) card.dataset.choice = kind(rec.pick); else delete card.dataset.choice;
@@ -474,31 +489,51 @@ document.getElementById("choices").hidden = !cards.length;
 function redrawAll() { redraws.forEach(function (f) { f(); }); tally(); }
 redrawAll();
 
-// Who is looking, and the saved choices, live. Without the runtime (a local preview) the page stays read-only.
-(async function () {
-	if (!window.claude || !window.claude.use) { status = "Read-only preview."; tally(); return; }
-	var user = await window.claude.use("user");
-	owner = user ? await user.isOwner() : false;
-	var db = await window.claude.use("db");
-	if (!db) { status = owner ? "Choices can't be saved here: pick in chat instead." : ""; owner = false; redrawAll(); return; }
-	approvals = db.collection("approvals");
-	var ids = cards.map(function (c) { return c.dataset.id; });
-	var timer = setTimeout(function () { status = "Choices are slow to load."; tally(); }, 10000);
-	approvals.onSnapshot(function (snap) {
-		clearTimeout(timer);
-		state.choices = {};
-		snap.docs.forEach(function (d) {
-			if (ids.indexOf(d.id) === -1) return;
-			var v = d.data() || {};
-			state.choices[d.id] = { pick: typeof v.pick === "string" ? v.pick : null, tryFirst: !!v.tryFirst, note: typeof v.note === "string" ? v.note : "" };
-		});
-		status = owner ? "Your choices save as you make them." : "Read-only: only the page's owner picks.";
+// Who is looking, and the saved choices, live. The owner check and the db connect separately,
+// so neither one failing or being slow holds up the other, or the picks on the page.
+if (!window.claude || !window.claude.use) {
+	noDb = "Not saved: this preview has no db.";
+	setStatus("Preview: picks stay on this page." + COPY);
+} else {
+	(async function () {
+		try {
+			var user = await window.claude.use("user");
+			owner = user ? !!(await user.isOwner()) : false;
+		} catch (e) { owner = null; }
+		if (loaded && status === "Your choices save as you make them.") status = idle();
 		redrawAll();
-	}, function () {
-		clearTimeout(timer);
-		status = "Choices couldn't load.";
-		tally();
-	});
-})();
+	})();
+	(async function () {
+		var timer = setTimeout(function () { if (!loaded) setStatus("The db is slow to answer: picks work, and save once it does." + COPY); }, 10000);
+		var db;
+		try { db = await window.claude.use("db"); } catch (e) { db = null; noDb = "Not saved: the db couldn't connect (" + why(e) + ")."; }
+		if (!db) {
+			clearTimeout(timer);
+			if (noDb.indexOf("still connecting") !== -1) noDb = "Not saved: this page has no db.";
+			setStatus(noDb + COPY);
+			return;
+		}
+		approvals = db.collection("approvals");
+		Object.keys(unsaved).forEach(writeChoice); // picks made while it connected
+		var ids = cards.map(function (c) { return c.dataset.id; });
+		approvals.onSnapshot(function (snap) {
+			clearTimeout(timer);
+			var next = {};
+			snap.docs.forEach(function (d) {
+				if (ids.indexOf(d.id) === -1) return;
+				var v = d.data() || {};
+				next[d.id] = { pick: typeof v.pick === "string" ? v.pick : null, tryFirst: !!v.tryFirst, note: typeof v.note === "string" ? v.note : "" };
+			});
+			// Keep picks made here that the db hasn't confirmed yet.
+			Object.keys(unsaved).forEach(function (id) { if (state.choices[id]) next[id] = state.choices[id]; });
+			state.choices = next;
+			if (!loaded) { loaded = true; if (!tried) status = idle(); }
+			redrawAll();
+		}, function (e) {
+			clearTimeout(timer);
+			setStatus("Saved choices couldn't load (" + why(e) + "). Picks still try to save." + COPY);
+		});
+	})();
+}
 })();
 </script>
