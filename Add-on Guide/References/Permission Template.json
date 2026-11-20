@@ -25,7 +25,8 @@
       "Artifact",
       "ArtifactComments",
       "ArtifactData",
-      "mcp__ccd_session"
+      "mcp__ccd_session",
+      "WebFetch(domain:github-production-user-asset-6210df.s3.amazonaws.com)"
     ],
     "deny": [
       "Edit(~/Common-Core/**)",
@@ -94,7 +95,8 @@
         "pypi.org",
         "files.pythonhosted.org",
         "luarocks.org",
-        "*.luarocks.org"
+        "*.luarocks.org",
+        "github-production-user-asset-6210df.s3.amazonaws.com"
       ]
     }
   }
