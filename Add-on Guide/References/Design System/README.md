@@ -66,7 +66,7 @@ On the Spacing Scale (Style Guide → SPACING SCALE). Menu-Kit's constants:
 | `EDGE` | 16 | The plate's edge to the text, on every side |
 | `ROW_INSET` | 8 | The plate's edge to a row |
 | `OPTION_INDENT` | 4 | Choice, toggle, item and value rows sit this much further in |
-| `FLYOUT_OVERLAP` | 16 | `ROW_INSET + TEXT_INSET`: the flyout's edge sits this far inside its menu's, as the game's own sub-menus do (Style Guide → MENUS); it rises 12 (`FLYOUT_RISE`) so its first row meets the row that opened it |
+| `FLYOUT_OVERLAP` | 8 | `ROW_INSET`: the flyout's edge sits this far inside its menu's, where a row's highlight ends, clear of the arrow, as the game's own sub-menus do (Style Guide → MENUS); it rises 12 (`FLYOUT_RISE`) so its first row meets the row that opened it |
 | `MIN_WIDTH` | 128 | |
 | Wrap caps | 320 / 256 | A description / a note, before it would widen the menu |
 
