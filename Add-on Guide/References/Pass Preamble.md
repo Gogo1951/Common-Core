@@ -131,7 +131,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 
 **Only a pass in the table's left column offers a prompt.** 05, 09, 10, 11 and 12 offer none: the pass that started them already offered what comes next.
 
-**Offer each next pass as a card with a play button, never as a copy box.** Just before the final reply, run `ToolSearch` with `select:mcp__ccd_session__spawn_task` to load the card tool, then call it once per next pass: title `Run {prompt file name}`, a one-line tldr of what that pass does, and the prompt exactly the line below. A fresh session, no worktree, since the game loads the add-on from this folder. Only if that search returns no tool, print the line as text, with one line saying so: *No card: this session has no card tool (sessions started from Terminal don't; the desktop app's Code tab does).*
+**Offer each next pass as a card with a play button, never as a copy box.** Just before the final reply, call `mcp__ccd_session__spawn_task` once per next pass (it may already be loaded, or arrive mid-session; if not, load it with `ToolSearch`): title `Run {prompt file name}`, a one-line tldr of what that pass does, and the prompt exactly the line below. A fresh session, no worktree, since the game loads the add-on from this folder. Print the line as text only if calling the tool fails, with one line saying so: *No card: this session has no card tool (sessions started from Terminal don't; the desktop app's Code tab does).*
 
 ```
 Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
