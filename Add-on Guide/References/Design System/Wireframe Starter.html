@@ -13,6 +13,11 @@
     beside, the control it changes.
   - Under them: one <article class="change" data-id="slug"> per change. The id
     is a short stable slug, never the number, so a rerun finds an earlier choice.
+  - Each change is a multiple-choice question: 2 to 4 <div class="pick"> options,
+    the recommended one first with data-rec, "Keep as is" last where leaving it
+    alone is a real choice. Each option holds its own example in a <template>,
+    drawn as the player would see it. The page shows the example beside the
+    options: hovering an option shows its example, clicking picks it.
   - Create UX Wireframes: Current only. Delete every Proposed pane, the change
     cards and the choices bar.
 
@@ -90,25 +95,37 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 .lit { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 2px; }
 .pin.lit { outline-offset: 0; }
 
-/* Change cards */
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 384px), 1fr)); gap: 16px; }
-.change { display: grid; gap: 8px; align-content: start; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-left: 2px solid var(--line); border-radius: 4px; cursor: pointer; min-width: 0; }
+/* Change cards: a multiple-choice question each, its options on the left, the hovered or picked option's example on the right */
+.cards { display: grid; gap: 16px; }
+.change { display: grid; gap: 8px; align-content: start; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-left: 2px solid var(--line); border-radius: 4px; min-width: 0; scroll-margin-top: 64px; }
 .change.on { border-color: var(--gold); }
 .change[data-choice="build"] { border-left-color: var(--build); }
-.change[data-choice="try"] { border-left-color: var(--try); }
-.change[data-choice="drop"] { border-left-color: var(--drop); opacity: .75; }
+.change[data-choice="drop"] { border-left-color: var(--drop); }
+.change[data-try] { border-left-color: var(--try); }
+.change .body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px; align-items: start; }
+@media (max-width: 800px) { .change .body { grid-template-columns: minmax(0, 1fr); } }
+.change .left { display: grid; gap: 8px; min-width: 0; }
+.change .picks { display: grid; gap: 8px; }
+.pick { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; align-items: start; padding: 8px 16px; border: 1px solid var(--line); border-radius: 4px; background: #26231d; cursor: pointer; }
+.pick:hover, .pick.showing { border-color: #4a443a; background: #2c281e; }
+.pick:has(input:checked) { border-color: var(--gold); }
+.pick:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
+.pick input { margin: 4px 0 0; accent-color: var(--gold); }
+.pick b { font-weight: 500; }
+.pick .rec { font: 600 11px var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-left: 8px; }
+.pick .line { grid-column: 2; font-size: 13px; color: var(--dim); }
+.pick template { display: none; }
+.change .example { display: grid; gap: 8px; min-width: 0; }
+.change .example .cap { font-size: 13px; color: var(--dim); }
+.change .example .cap b { color: var(--gold); font-weight: 500; }
+.change .trying { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--dim); cursor: pointer; }
+.change .trying input { accent-color: var(--try); }
 .change .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
 .change .n { flex: none; min-width: 24px; height: 24px; border-radius: 16px; background: var(--gold); color: #14130f; font: 600 12px/24px var(--body); text-align: center; }
 .tag, .idea { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; color: var(--dim); }
 .idea { border-color: var(--try); color: var(--try); }
 .change p { font-size: 14px; }
 .change .why { color: var(--dim); }
-.choose { display: flex; flex-wrap: wrap; gap: 8px; }
-.choose button { font: 13px var(--body); color: var(--fg); background: #26231d; border: 1px solid var(--line); border-radius: 4px; padding: 4px 16px; cursor: pointer; }
-.choose button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.choose button[aria-pressed="true"][data-v="build"] { border-color: var(--build); color: var(--build); }
-.choose button[aria-pressed="true"][data-v="try"] { border-color: var(--try); color: var(--try); }
-.choose button[aria-pressed="true"][data-v="drop"] { border-color: var(--drop); color: #c0c0c0; }
 .change textarea { width: 100%; box-sizing: border-box; min-height: 32px; padding: 4px 8px; font: 13px var(--body); color: var(--fg); background: #14130f; border: 1px solid var(--line); border-radius: 4px; resize: vertical; }
 .stays { margin: 0; padding-left: 16px; display: grid; gap: 4px; color: var(--dim); font-size: 14px; }
 
@@ -124,7 +141,7 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 		<h1>Add-on Name UX Wireframes</h1>
 		<!-- FILL: one or two plain sentences for testers, who are players: what the add-on does and what this page shows. No file paths, symbols or code. -->
 		<p class="lede">How Add-on Name looks today beside the changes being considered. Pick a window above, try it on both sides, and read why each change is suggested.</p>
-		<div class="how"><b>How to review</b><span>Each tab is one window. <b>Current</b> is the game today; <b>Proposed</b> numbers every change. Click a card to find its change on the mock, then choose <b>Build</b>, <b>Try first</b> or <b>Drop</b>, and add a note if you'd word it differently.</span></div>
+		<div class="how"><b>How to review</b><span>Each tab is one window. <b>Current</b> is the game today; <b>Proposed</b> numbers every change. Each change is a question under the windows: hover an option to see it drawn, click to pick it, and add a note if you'd word it differently. Tick <b>Try first</b> to show testers before anything is built.</span></div>
 	</header>
 
 	<nav class="tabs" role="tablist" id="tabs"></nav>
@@ -155,7 +172,7 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 			<div class="view">
 				<div class="label">Proposed</div>
 				<div class="stage">
-					<!-- FILL: Current plus every change, each marked with its pin. data-change on the changed control lights it when its card is clicked. -->
+					<!-- FILL: Current plus every change in its recommended version, each marked with its pin. data-change on the changed control lights it when its card is clicked. -->
 					<div class="gw">
 						<div class="gw-title">Some List // Add-on Name</div>
 						<div class="gw-body">
@@ -174,16 +191,25 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 		</div>
 
 		<div class="cards">
-			<!-- FILL: one card per change on this window, ranked by impact. data-id is a short stable slug; data-tag is layout, copy, behavior or feature. Add data-idea to a change carried over as Try first. -->
+			<!-- FILL: one card per change on this window, ranked by impact. data-id is a short stable slug; data-tag is layout, copy, behavior or feature. Add data-idea to a change carried over as Try first.
+			     Each card is one multiple-choice question: 2 to 4 .pick options, the best first with data-rec, "Keep as is" last (its example is Current) where leaving it alone is a real choice. data-v is a short stable slug per option. Every option's <template> draws its example as the player would see it, with the same mock pieces as the panes above. -->
 			<article class="change" data-id="sample-layout" data-n="1" data-tag="layout">
 				<h3>Rows on the Spacing Scale</h3>
-				<p>What the player sees: rows sit 8 apart and the window's edge is 16 in.</p>
 				<p class="why">Why: the gaps were tuned by eye (6 and 10), so this window spaces differently from its neighbors.</p>
+				<div class="pick" data-v="scale" data-rec><b>Rows 8 apart, edge 16 in</b><span class="line">The Spacing Scale's steps.</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"><span>Some Row</span><span>20</span></div><div class="gw-row"><span>Another Row</span><span>12</span></div></div></div></div></template></div>
+				<div class="pick" data-v="keep"><b>Keep as is</b><span class="line">Rows 6 apart, edge 10 in.</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body" style="gap:6px;padding:10px"><div class="gw-row"><span>Some Row</span><span>20</span></div><div class="gw-row"><span>Another Row</span><span>12</span></div></div></div></div></template></div>
 			</article>
 			<article class="change" data-id="sample-empty" data-n="2" data-tag="copy" data-idea>
 				<h3>Empty List Points Somewhere</h3>
-				<p>What the player sees: an empty list says how to add the first item.</p>
 				<p class="why">Why: a new player opening an empty list has nothing to click.</p>
+				<div class="pick" data-v="point" data-rec><b>Say how to add the first item</b><span class="line">The button's name in blue.</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"><span class="gw-muted">Nothing here yet. Add one with <span class="gw-info">Add Item</span>.</span></div></div></div></div></template></div>
+				<div class="pick" data-v="blank"><b>Show nothing</b><span class="line">An empty window.</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"></div></div></div></div></template></div>
+				<div class="pick" data-v="keep"><b>Keep as is</b><span class="line">"Nothing here yet."</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Some List // Add-on Name</div><div class="gw-body"><div class="gw-row"><span class="gw-muted">Nothing here yet.</span></div></div></div></div></template></div>
 			</article>
 		</div>
 
@@ -211,13 +237,16 @@ section.window { display: grid; gap: 32px; padding-block: 32px; }
 		<div class="cards">
 			<article class="change" data-id="sample-caption" data-n="3" data-tag="copy">
 				<h3>Caption Says What You Get</h3>
-				<p>What the player sees: the switch's caption names the result.</p>
 				<p class="why">Why: the old caption named how it works, not what it does.</p>
+				<div class="pick" data-v="result" data-rec><b>Name the result</b><span class="line">"Enable Skip Typing DELETE".</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Add-on Name</div><div class="gw-body"><div class="gw-row"><span>Enable Skip Typing DELETE</span><span class="gw-on">On</span></div></div></div></div></template></div>
+				<div class="pick" data-v="keep"><b>Keep as is</b><span class="line">"Enable Some Feature".</span>
+					<template><div class="stage"><div class="gw"><div class="gw-title">Add-on Name</div><div class="gw-body"><div class="gw-row"><span>Enable Some Feature</span><span class="gw-on">On</span></div></div></div></div></template></div>
 			</article>
 		</div>
 	</section>
 
-	<!-- FILL: in the published page, show the Build / Try first / Drop buttons and notes to the owner only, and write each choice to approvals/{data-id} (02 UX Review → Wireframe Build → Approvals). Replace the two functions in STORE below; nothing else changes. -->
+	<!-- FILL: in the published page, show the options' radio buttons, Try first and notes to the owner only (everyone still sees every example on hover), and write each card to approvals/{data-id} as { pick, tryFirst, note } (02 UX Review → Wireframe Build → Approvals). Replace the two functions in STORE below; nothing else changes. -->
 	<div class="choices" id="choices">
 		<span id="tally"></span>
 		<span class="saved" id="saved"></span>
@@ -239,8 +268,6 @@ var state = STORE.read();
 state.choices = state.choices || {};
 var persisted = true;
 function save() { persisted = STORE.write(state); }
-
-var LABELS = { build: "Build", try: "Try first", drop: "Drop" };
 
 // Tabs, built from the window sections
 var sections = Array.prototype.slice.call(document.querySelectorAll("section.window"));
@@ -272,6 +299,8 @@ function light(id) {
 	return card;
 }
 var cards = Array.prototype.slice.call(document.querySelectorAll(".change"));
+// A pick of any option but "Keep as is" is a Build; "Keep as is" is a Drop.
+function kind(v) { return v ? (v === "keep" ? "drop" : "build") : null; }
 cards.forEach(function (card) {
 	var id = card.dataset.id;
 	var saved = state.choices[id] || {};
@@ -283,39 +312,89 @@ cards.forEach(function (card) {
 	if (card.hasAttribute("data-idea")) head.insertAdjacentHTML("beforeend", '<span class="idea">idea</span>');
 	card.prepend(head);
 
-	var choose = document.createElement("div");
-	choose.className = "choose";
-	Object.keys(LABELS).forEach(function (v) {
-		var b = document.createElement("button");
-		b.type = "button";
-		b.dataset.v = v;
-		b.textContent = LABELS[v];
-		b.setAttribute("aria-pressed", String(saved.choice === v));
-		b.addEventListener("click", function (e) {
-			e.stopPropagation();
-			var rec = state.choices[id] = state.choices[id] || {};
-			rec.choice = rec.choice === v ? null : v;
-			choose.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.v === rec.choice)); });
-			if (rec.choice) card.dataset.choice = rec.choice; else delete card.dataset.choice;
-			save();
-			tally();
-		});
-		choose.appendChild(b);
+	// The options on the left, the example on the right
+	var picks = Array.prototype.slice.call(card.querySelectorAll(".pick"));
+	var body = document.createElement("div");
+	body.className = "body";
+	var left = document.createElement("div");
+	left.className = "left";
+	var list = document.createElement("div");
+	list.className = "picks";
+	list.setAttribute("role", "radiogroup");
+	left.appendChild(list);
+	var example = document.createElement("div");
+	example.className = "example";
+	example.innerHTML = '<div class="cap"></div><div class="ex"></div>';
+	body.appendChild(left);
+	body.appendChild(example);
+	card.appendChild(body);
+
+	var shown = null;
+	function show(pick) {
+		if (!pick || pick === shown) return;
+		shown = pick;
+		picks.forEach(function (p) { p.classList.toggle("showing", p === pick); });
+		example.querySelector(".cap").innerHTML = "Example · <b>" + pick.querySelector("b").firstChild.textContent + "</b>";
+		var ex = example.querySelector(".ex");
+		ex.innerHTML = "";
+		var t = pick.querySelector("template");
+		if (t) ex.appendChild(t.content.cloneNode(true));
+	}
+	function resting() {
+		var rec = state.choices[id] || {};
+		return picks.filter(function (p) { return p.dataset.v === rec.pick; })[0] || picks.filter(function (p) { return p.hasAttribute("data-rec"); })[0] || picks[0];
+	}
+	picks.forEach(function (p, i) {
+		var input = document.createElement("input");
+		input.type = "radio";
+		input.name = "pick-" + id;
+		input.value = p.dataset.v;
+		input.checked = saved.pick === p.dataset.v;
+		p.prepend(input);
+		if (p.hasAttribute("data-rec")) p.querySelector("b").insertAdjacentHTML("beforeend", '<span class="rec">Recommended</span>');
+		p.addEventListener("mouseenter", function () { show(p); });
+		p.addEventListener("click", function () { input.checked = true; pickIt(p.dataset.v); });
+		input.addEventListener("focus", function () { show(p); });
+		list.appendChild(p);
 	});
-	card.appendChild(choose);
-	if (saved.choice) card.dataset.choice = saved.choice;
+	list.addEventListener("mouseleave", function () { show(resting()); });
+	function pickIt(v) {
+		var rec = state.choices[id] = state.choices[id] || {};
+		rec.pick = v;
+		card.dataset.choice = kind(v);
+		shown = null;
+		show(resting());
+		light(id);
+		save();
+		tally();
+	}
+	if (saved.pick) card.dataset.choice = kind(saved.pick);
+	show(resting());
+
+	var trying = document.createElement("label");
+	trying.className = "trying";
+	trying.innerHTML = '<input type="checkbox"> Try first: show testers before it\'s built';
+	var box = trying.querySelector("input");
+	box.checked = !!saved.tryFirst;
+	if (box.checked) card.setAttribute("data-try", "");
+	box.addEventListener("change", function () {
+		(state.choices[id] = state.choices[id] || {}).tryFirst = box.checked;
+		if (box.checked) card.setAttribute("data-try", ""); else card.removeAttribute("data-try");
+		save();
+		tally();
+	});
+	left.appendChild(trying);
 
 	var note = document.createElement("textarea");
 	note.placeholder = "Note (optional): how you'd change it";
 	note.value = saved.note || "";
-	note.addEventListener("click", function (e) { e.stopPropagation(); });
 	note.addEventListener("input", function () {
 		(state.choices[id] = state.choices[id] || {}).note = note.value;
 		save();
 	});
-	card.appendChild(note);
+	left.appendChild(note);
 
-	card.addEventListener("click", function () { light(id); });
+	head.addEventListener("click", function () { light(id); });
 });
 document.querySelectorAll(".pin").forEach(function (pin) {
 	pin.addEventListener("click", function () {
@@ -328,14 +407,19 @@ document.querySelectorAll(".pin").forEach(function (pin) {
 function lines() {
 	return cards.map(function (c) {
 		var rec = state.choices[c.dataset.id] || {};
-		var t = c.dataset.n + ". " + c.querySelector("h3").textContent + " (" + c.dataset.id + "): " + (rec.choice ? LABELS[rec.choice] : "no choice");
+		var pick = rec.pick ? c.querySelector('.pick[data-v="' + rec.pick + '"] b').firstChild.textContent : "no pick";
+		var t = c.dataset.n + ". " + c.querySelector("h3").textContent + " (" + c.dataset.id + "): " + pick + (rec.tryFirst ? ", try first" : "");
 		return rec.note ? t + ". Note: " + rec.note : t;
 	});
 }
 function tally() {
 	var n = { build: 0, try: 0, drop: 0, none: 0 };
-	cards.forEach(function (c) { var r = state.choices[c.dataset.id]; n[r && r.choice ? r.choice : "none"]++; });
-	document.getElementById("tally").innerHTML = "<b>" + n.build + "</b> Build · <b>" + n.try + "</b> Try first · <b>" + n.drop + "</b> Drop · <b>" + n.none + "</b> open";
+	cards.forEach(function (c) {
+		var r = state.choices[c.dataset.id] || {};
+		if (r.tryFirst) n.try++;
+		else n[kind(r.pick) || "none"]++;
+	});
+	document.getElementById("tally").innerHTML = "<b>" + n.build + "</b> Build · <b>" + n.try + "</b> Try first · <b>" + n.drop + "</b> Keep as is · <b>" + n.none + "</b> open";
 	document.getElementById("saved").textContent = persisted ? "Saved in this browser." : "Not saved: this browser blocks storage. Copy your choices before leaving.";
 }
 document.getElementById("copy").addEventListener("click", function () {

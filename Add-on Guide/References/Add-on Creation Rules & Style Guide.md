@@ -1592,7 +1592,7 @@ The single definition of how a pass talks to the maintainer. **The maintainer is
     - `Print after each vendor visit (Recommended)` — *Example: "Good to Go // Sold 3 items for 12g."*
     - `Stay quiet` — *Example: nothing in chat; the sale still happens.*
 - **Short and plain.** The question itself is at most two sentences: what a player notices if it's left alone. No code, function, file, path or line names, and no quoted code, even when a Live reference disagrees with a rule: describe both behaviors in player words instead. Don't explain how you checked.
-- **Show visual choices, don't describe them.** A choice about layout, colors, menus or chat lines links a mock page or shows the rendered line.
+- **Show visual choices, don't describe them.** A choice about layout, colors, menus, tooltips, windows or chat lines is asked on a page where every option is drawn as the player would see it: the options on the left, and beside them the example of whichever option is hovered or clicked, the recommended one shown first (`02 - UX Review.md` → Wireframe Build → Change cards). A single rendered line in chat is enough only when the choice is about that one line.
 - **Don't re-ask an answered question.** If a tool call fails or a round repeats for mechanical reasons, carry existing answers forward.
 - **A modification is an approval.** When the maintainer answers with a modification instead of picking an option, use their version; in a report-only pass, it goes into the prompt.
 - **Stop and wait.** Nothing proceeds until the answers are in.
