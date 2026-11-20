@@ -1,0 +1,352 @@
+<!--
+  Gogo Design System: UX Wireframe starter.
+
+  The page 02 UX Review (and Optional - Create UX Wireframes) copies into the
+  session's scratchpad and fills in, instead of building a wireframe from
+  scratch (02 UX Review → Wireframe Build). Fill every <!- - FILL: ... - -> slot,
+  delete the sample content, and keep the rest as it is.
+
+  - One <section class="window" data-tab="..."> per window a change touches.
+    The tabs build themselves from these sections.
+  - Inside each: a Current pane and a Proposed pane. Number each change on the
+    Proposed mock with <span class="pin" data-change="slug">N</span> on, or
+    beside, the control it changes.
+  - Under them: one <article class="change" data-id="slug"> per change. The id
+    is a short stable slug, never the number, so a rerun finds an earlier choice.
+  - Create UX Wireframes: Current only. Delete every Proposed pane, the change
+    cards and the choices bar.
+
+  Every padding, margin, gap and radius on this page is 2, 4, 8, 16, 32, 64 or
+  128 px (Style Guide → SPACING SCALE); a 1px border sits outside the scale.
+  Choices are kept in this browser's storage when it allows, and the page works
+  without it.
+-->
+<!-- FILL: the add-on's Full Name, then " UX Wireframes", in the <title> below and the <h1>. -->
+<title>Add-on Name UX Wireframes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600&family=PT+Sans:wght@400;700&display=swap">
+<!-- FILL: when a pane draws a mini-map menu or an options panel, uncomment these and publish the files beside the page (02 UX Review → Wireframe Build). -->
+<!-- <link rel="stylesheet" href="menu-mock.css"> -->
+<!-- <link rel="stylesheet" href="options-mock.css"> -->
+<style>
+/* One dark look in either theme: the mocks sit beside the game's own windows. Layout: tabs per window, Current beside Proposed, change cards under them. */
+:root {
+	--bg: #14130f;
+	--panel: #1d1b16;
+	--line: #34302a;
+	--fg: #ece6da;
+	--dim: #a59d8f;
+	--gold: #e8bf3a;
+	--build: #33cc33;
+	--try: #00bbff;
+	--drop: #808080;
+	--display: "Marcellus", Georgia, serif;
+	--body: "Inter", system-ui, sans-serif;
+	--game: "PT Sans", "Trebuchet MS", Arial, sans-serif;
+	color-scheme: dark;
+}
+:root:not([data-theme="light"]), :root[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+[hidden] { display: none !important; }
+.page { max-width: 1280px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: 40px; line-height: 1.1; color: var(--gold); }
+h2 { font-size: 24px; line-height: 1.2; }
+h3 { font-size: 17px; color: var(--gold); }
+p { margin: 0; max-width: 72ch; }
+.lede { color: var(--dim); font-size: 17px; }
+header.top { display: grid; gap: 16px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.how { display: grid; gap: 4px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; max-width: 80ch; }
+.how b { color: var(--gold); font-weight: 500; }
+
+/* Tabs: one per window */
+.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--line); }
+.tabs button { font: 14px var(--body); color: var(--dim); background: none; border: 1px solid transparent; border-radius: 4px; padding: 4px 16px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--gold); border-color: var(--gold); }
+.tabs button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+section.window { display: grid; gap: 32px; padding-block: 32px; }
+.views { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 16px; align-items: start; }
+.view { display: grid; gap: 8px; min-width: 0; }
+.view .label { font: 500 12px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.stage { position: relative; padding: 16px; border-radius: 4px; overflow-x: auto; background: radial-gradient(120% 90% at 20% 10%, rgba(92, 120, 70, .55), transparent 60%), radial-gradient(90% 80% at 90% 90%, rgba(70, 60, 40, .7), transparent 65%), linear-gradient(160deg, #26301f, #1b1d16 55%, #2a2418); }
+.try { margin: 0; padding-left: 16px; font-size: 14px; color: var(--dim); display: grid; gap: 4px; }
+.try-head { font-size: 13px; color: var(--fg); }
+
+/* A plain game window to draw in. Swap it for the mock kits where they fit. 1 CSS px stands for 1 game point. */
+.gw { display: inline-block; min-width: 256px; max-width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, .8); border: 1px solid #5a5040; border-radius: 4px; box-shadow: 0 0 0 1px #000, 0 8px 16px rgba(0, 0, 0, .6); font: 12px/16px var(--game); color: #fff; vertical-align: top; }
+.gw-title { position: relative; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0 32px; border-bottom: 1px solid rgba(255, 209, 0, .35); color: #ffd100; font-size: 14px; }
+.gw-body { display: grid; gap: 8px; padding: 16px; }
+.gw-row { display: flex; justify-content: space-between; gap: 16px; align-items: center; min-height: 16px; }
+.gw-sec { color: #ffd100; }
+.gw-muted { color: #808080; }
+.gw-info { color: #00bbff; }
+.gw-on { color: #33cc33; }
+.gw-btn { display: inline-block; height: 32px; line-height: 32px; padding: 0 16px; border: 1px solid #6a4a2a; border-radius: 4px; background: linear-gradient(#8a1a10, #4a0a06); color: #ffd100; cursor: pointer; }
+
+/* Change pins on the Proposed mock */
+.pin { display: inline-block; min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 8px; background: var(--gold); color: #14130f; font: 600 11px/16px var(--body); text-align: center; vertical-align: 1px; margin-left: 4px; cursor: pointer; }
+.lit { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 2px; }
+.pin.lit { outline-offset: 0; }
+
+/* Change cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 384px), 1fr)); gap: 16px; }
+.change { display: grid; gap: 8px; align-content: start; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-left: 2px solid var(--line); border-radius: 4px; cursor: pointer; min-width: 0; }
+.change.on { border-color: var(--gold); }
+.change[data-choice="build"] { border-left-color: var(--build); }
+.change[data-choice="try"] { border-left-color: var(--try); }
+.change[data-choice="drop"] { border-left-color: var(--drop); opacity: .75; }
+.change .head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.change .n { flex: none; min-width: 24px; height: 24px; border-radius: 16px; background: var(--gold); color: #14130f; font: 600 12px/24px var(--body); text-align: center; }
+.tag, .idea { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; color: var(--dim); }
+.idea { border-color: var(--try); color: var(--try); }
+.change p { font-size: 14px; }
+.change .why { color: var(--dim); }
+.choose { display: flex; flex-wrap: wrap; gap: 8px; }
+.choose button { font: 13px var(--body); color: var(--fg); background: #26231d; border: 1px solid var(--line); border-radius: 4px; padding: 4px 16px; cursor: pointer; }
+.choose button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.choose button[aria-pressed="true"][data-v="build"] { border-color: var(--build); color: var(--build); }
+.choose button[aria-pressed="true"][data-v="try"] { border-color: var(--try); color: var(--try); }
+.choose button[aria-pressed="true"][data-v="drop"] { border-color: var(--drop); color: #c0c0c0; }
+.change textarea { width: 100%; box-sizing: border-box; min-height: 32px; padding: 4px 8px; font: 13px var(--body); color: var(--fg); background: #14130f; border: 1px solid var(--line); border-radius: 4px; resize: vertical; }
+.stays { margin: 0; padding-left: 16px; display: grid; gap: 4px; color: var(--dim); font-size: 14px; }
+
+/* Choices bar */
+.choices { position: sticky; bottom: 0; z-index: 10; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 16px; margin-top: 32px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; font-size: 13px; color: var(--dim); }
+.choices b { color: var(--fg); font-weight: 500; }
+.choices button { margin-left: auto; font: 13px var(--body); color: var(--fg); background: #26231d; border: 1px solid var(--line); border-radius: 4px; padding: 4px 16px; cursor: pointer; }
+.choices .saved { font-size: 12px; }
+</style>
+
+<div class="page">
+	<header class="top">
+		<h1>Add-on Name UX Wireframes</h1>
+		<!-- FILL: one or two plain sentences for testers, who are players: what the add-on does and what this page shows. No file paths, symbols or code. -->
+		<p class="lede">How Add-on Name looks today beside the changes being considered. Pick a window above, try it on both sides, and read why each change is suggested.</p>
+		<div class="how"><b>How to review</b><span>Each tab is one window. <b>Current</b> is the game today; <b>Proposed</b> numbers every change. Click a card to find its change on the mock, then choose <b>Build</b>, <b>Try first</b> or <b>Drop</b>, and add a note if you'd word it differently.</span></div>
+	</header>
+
+	<nav class="tabs" role="tablist" id="tabs"></nav>
+
+	<!-- FILL: one section per window a change touches. Copy this whole section for the next window. -->
+	<section class="window" data-tab="Main Window">
+		<div class="views">
+			<div class="view">
+				<div class="label">Current</div>
+				<div class="stage">
+					<!-- FILL: the window exactly as the code draws it today, with the locale's strings word for word. -->
+					<div class="gw">
+						<div class="gw-title">Some List // Add-on Name</div>
+						<div class="gw-body">
+							<div class="gw-sec">Some Section</div>
+							<div class="gw-row"><span>Some Row</span><span>20</span></div>
+							<div class="gw-row"><span>Another Row</span><span>12</span></div>
+							<div class="gw-row"><span class="gw-muted">Nothing here yet.</span></div>
+						</div>
+					</div>
+				</div>
+				<!-- FILL: two or three tasks for testers on this view. -->
+				<div class="try-head">Try this</div>
+				<ul class="try">
+					<li>Find where Some Row is set.</li>
+				</ul>
+			</div>
+			<div class="view">
+				<div class="label">Proposed</div>
+				<div class="stage">
+					<!-- FILL: Current plus every change, each marked with its pin. data-change on the changed control lights it when its card is clicked. -->
+					<div class="gw">
+						<div class="gw-title">Some List // Add-on Name</div>
+						<div class="gw-body">
+							<div class="gw-sec">Some Section</div>
+							<div class="gw-row" data-change="sample-layout"><span>Some Row<span class="pin" data-change="sample-layout">1</span></span><span>20</span></div>
+							<div class="gw-row"><span>Another Row</span><span>12</span></div>
+							<div class="gw-row" data-change="sample-empty"><span class="gw-muted">Nothing here yet. Add one with <span class="gw-info">Add Item</span>.</span><span class="pin" data-change="sample-empty">2</span></div>
+						</div>
+					</div>
+				</div>
+				<div class="try-head">Try this</div>
+				<ul class="try">
+					<li>Add an item from an empty list.</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="cards">
+			<!-- FILL: one card per change on this window, ranked by impact. data-id is a short stable slug; data-tag is layout, copy, behavior or feature. Add data-idea to a change carried over as Try first. -->
+			<article class="change" data-id="sample-layout" data-n="1" data-tag="layout">
+				<h3>Rows on the Spacing Scale</h3>
+				<p>What the player sees: rows sit 8 apart and the window's edge is 16 in.</p>
+				<p class="why">Why: the gaps were tuned by eye (6 and 10), so this window spaces differently from its neighbors.</p>
+			</article>
+			<article class="change" data-id="sample-empty" data-n="2" data-tag="copy" data-idea>
+				<h3>Empty List Points Somewhere</h3>
+				<p>What the player sees: an empty list says how to add the first item.</p>
+				<p class="why">Why: a new player opening an empty list has nothing to click.</p>
+			</article>
+		</div>
+
+		<div>
+			<h2>Works and Stays</h2>
+			<!-- FILL: a short list of what already works on this window and isn't changing. -->
+			<ul class="stays">
+				<li>Some Section's heading and order.</li>
+			</ul>
+		</div>
+	</section>
+
+	<!-- FILL: delete this second sample section, or copy the first for another window. -->
+	<section class="window" data-tab="Options">
+		<div class="views">
+			<div class="view">
+				<div class="label">Current</div>
+				<div class="stage"><div class="gw"><div class="gw-title">Add-on Name</div><div class="gw-body"><div class="gw-row"><span>Enable Some Feature</span><span class="gw-on">On</span></div></div></div></div>
+			</div>
+			<div class="view">
+				<div class="label">Proposed</div>
+				<div class="stage"><div class="gw"><div class="gw-title">Add-on Name</div><div class="gw-body"><div class="gw-row" data-change="sample-caption"><span>Enable Some Feature<span class="pin" data-change="sample-caption">3</span></span><span class="gw-on">On</span></div></div></div></div>
+			</div>
+		</div>
+		<div class="cards">
+			<article class="change" data-id="sample-caption" data-n="3" data-tag="copy">
+				<h3>Caption Says What You Get</h3>
+				<p>What the player sees: the switch's caption names the result.</p>
+				<p class="why">Why: the old caption named how it works, not what it does.</p>
+			</article>
+		</div>
+	</section>
+
+	<!-- FILL: in the published page, show the Build / Try first / Drop buttons and notes to the owner only, and write each choice to approvals/{data-id} (02 UX Review → Wireframe Build → Approvals). Replace the two functions in STORE below; nothing else changes. -->
+	<div class="choices" id="choices">
+		<span id="tally"></span>
+		<span class="saved" id="saved"></span>
+		<button type="button" id="copy">Copy choices</button>
+	</div>
+</div>
+
+<script>
+(function () {
+"use strict";
+
+// STORE: choices and the open tab, kept in this browser when it allows; the page works the same without it.
+var KEY = "ux-wireframe:" + document.title;
+var STORE = {
+	read: function () { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } },
+	write: function (data) { try { localStorage.setItem(KEY, JSON.stringify(data)); return true; } catch (e) { return false; } },
+};
+var state = STORE.read();
+state.choices = state.choices || {};
+var persisted = true;
+function save() { persisted = STORE.write(state); }
+
+var LABELS = { build: "Build", try: "Try first", drop: "Drop" };
+
+// Tabs, built from the window sections
+var sections = Array.prototype.slice.call(document.querySelectorAll("section.window"));
+var tabs = document.getElementById("tabs");
+function openTab(name) {
+	sections.forEach(function (s) { s.hidden = s.dataset.tab !== name; });
+	tabs.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-selected", String(b.textContent === name)); });
+	state.tab = name;
+	save();
+}
+sections.forEach(function (s) {
+	var b = document.createElement("button");
+	b.type = "button";
+	b.setAttribute("role", "tab");
+	b.textContent = s.dataset.tab;
+	b.addEventListener("click", function () { openTab(s.dataset.tab); });
+	tabs.appendChild(b);
+});
+var first = sections[0] ? sections[0].dataset.tab : null;
+var known = sections.some(function (s) { return s.dataset.tab === state.tab; });
+if (first) openTab(known ? state.tab : first);
+
+// Cards: number, tag, idea badge, buttons and note
+function light(id) {
+	document.querySelectorAll(".lit, .change.on").forEach(function (e) { e.classList.remove("lit", "on"); });
+	document.querySelectorAll('[data-change="' + id + '"]').forEach(function (e) { e.classList.add("lit"); });
+	var card = document.querySelector('.change[data-id="' + id + '"]');
+	if (card) card.classList.add("on");
+	return card;
+}
+var cards = Array.prototype.slice.call(document.querySelectorAll(".change"));
+cards.forEach(function (card) {
+	var id = card.dataset.id;
+	var saved = state.choices[id] || {};
+	var head = document.createElement("div");
+	head.className = "head";
+	head.innerHTML = '<span class="n">' + card.dataset.n + "</span>";
+	head.appendChild(card.querySelector("h3"));
+	if (card.dataset.tag) head.insertAdjacentHTML("beforeend", '<span class="tag">' + card.dataset.tag + "</span>");
+	if (card.hasAttribute("data-idea")) head.insertAdjacentHTML("beforeend", '<span class="idea">idea</span>');
+	card.prepend(head);
+
+	var choose = document.createElement("div");
+	choose.className = "choose";
+	Object.keys(LABELS).forEach(function (v) {
+		var b = document.createElement("button");
+		b.type = "button";
+		b.dataset.v = v;
+		b.textContent = LABELS[v];
+		b.setAttribute("aria-pressed", String(saved.choice === v));
+		b.addEventListener("click", function (e) {
+			e.stopPropagation();
+			var rec = state.choices[id] = state.choices[id] || {};
+			rec.choice = rec.choice === v ? null : v;
+			choose.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x.dataset.v === rec.choice)); });
+			if (rec.choice) card.dataset.choice = rec.choice; else delete card.dataset.choice;
+			save();
+			tally();
+		});
+		choose.appendChild(b);
+	});
+	card.appendChild(choose);
+	if (saved.choice) card.dataset.choice = saved.choice;
+
+	var note = document.createElement("textarea");
+	note.placeholder = "Note (optional): how you'd change it";
+	note.value = saved.note || "";
+	note.addEventListener("click", function (e) { e.stopPropagation(); });
+	note.addEventListener("input", function () {
+		(state.choices[id] = state.choices[id] || {}).note = note.value;
+		save();
+	});
+	card.appendChild(note);
+
+	card.addEventListener("click", function () { light(id); });
+});
+document.querySelectorAll(".pin").forEach(function (pin) {
+	pin.addEventListener("click", function () {
+		var card = light(pin.dataset.change);
+		if (card) card.scrollIntoView({ block: "nearest" });
+	});
+});
+
+// Tally and copy, so choices can go in chat too
+function lines() {
+	return cards.map(function (c) {
+		var rec = state.choices[c.dataset.id] || {};
+		var t = c.dataset.n + ". " + c.querySelector("h3").textContent + " (" + c.dataset.id + "): " + (rec.choice ? LABELS[rec.choice] : "no choice");
+		return rec.note ? t + ". Note: " + rec.note : t;
+	});
+}
+function tally() {
+	var n = { build: 0, try: 0, drop: 0, none: 0 };
+	cards.forEach(function (c) { var r = state.choices[c.dataset.id]; n[r && r.choice ? r.choice : "none"]++; });
+	document.getElementById("tally").innerHTML = "<b>" + n.build + "</b> Build · <b>" + n.try + "</b> Try first · <b>" + n.drop + "</b> Drop · <b>" + n.none + "</b> open";
+	document.getElementById("saved").textContent = persisted ? "Saved in this browser." : "Not saved: this browser blocks storage. Copy your choices before leaving.";
+}
+document.getElementById("copy").addEventListener("click", function () {
+	var text = lines().join("\n");
+	var btn = this;
+	function done(ok) { btn.textContent = ok ? "Copied" : "Copy failed"; setTimeout(function () { btn.textContent = "Copy choices"; }, 1600); }
+	try {
+		navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+	} catch (e) { done(false); }
+});
+document.getElementById("choices").hidden = !cards.length;
+tally();
+})();
+</script>

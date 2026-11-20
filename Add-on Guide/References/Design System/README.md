@@ -23,6 +23,9 @@ It grows in waves, one surface at a time:
 | `Mini-map Menus/` | One spec per add-on: its tooltip today, its menu row by row, its clicks, its strings, and how to check it in game. |
 | `Mini-map Menus.html` | The board: every mini-map tooltip drawn from its code beside the menu it becomes, clickable, with scenario switches. Open it in a browser next to `menu-mock.css` and `menu-mock.js`. |
 | `menu-mock.css`, `menu-mock.js` | The mock kit. Draws Menu-Kit entries and old-style GameTooltip lines at the game's sizes. Any wireframe pass that draws a mini-map menu builds from these instead of redrawing one (Using the Mock Kit, below). |
+| `Chat Lines.html` | Every chat line the Style Guide defines, in a mock chat box in its exact colors and format: prints, the welcome message, the combat refusal, sent lines, a whisper and Example lines, each naming its rule. Open it next to `menu-mock.css`. |
+| `Windows and Tooltips.html` | An add-on's own window and the lines it adds to a game tooltip, drawn from the Style Guide's rules, with standard WoW behavior marked Proposed default where it has none yet. Open it next to `menu-mock.css` and `menu-mock.js`. |
+| `Wireframe Starter.html` | The page the UX Review copies and fills in for its wireframe: tabs per window, Current beside Proposed, change cards with Build, Try first and Drop, `FILL` slots marked. Self-contained. |
 
 ## Foundations
 
