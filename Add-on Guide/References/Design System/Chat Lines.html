@@ -1,0 +1,290 @@
+<title>Chat Lines</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600&family=PT+Sans:wght@400;700&family=PT+Sans+Narrow&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="menu-mock.css">
+<style>
+/* One dark look in either theme, as the other boards: the chat box sits in the game's world. Layout: one chat box with every line, then a card per line naming its rule, then the Example lines on a panel. */
+:root {
+	--bg: #14130f;
+	--panel: #1d1b16;
+	--line: #34302a;
+	--fg: #ece6da;
+	--dim: #a59d8f;
+	--gold: #e8bf3a;
+	--display: "Marcellus", Georgia, serif;
+	--body: "Inter", system-ui, sans-serif;
+	--mono: "JetBrains Mono", ui-monospace, monospace;
+	--chat: "Arial Narrow", "PT Sans Narrow", Arial, sans-serif;
+	color-scheme: dark;
+}
+:root:not([data-theme="light"]), :root[data-theme="dark"] { color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+.page { max-width: 1280px; margin: 0 auto; padding-block: 32px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: 44px; line-height: 1.1; color: var(--gold); }
+h2 { font-size: 28px; line-height: 1.2; }
+h3 { font-size: 18px; color: var(--gold); }
+p { margin: 0; max-width: 72ch; }
+code { font: 13px var(--mono); color: #f0d98a; }
+.eyebrow { font: 500 12px var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.lede { color: var(--dim); font-size: 17px; }
+header.top { display: grid; gap: 16px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.try { display: grid; gap: 4px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; max-width: 80ch; }
+.try b { color: var(--gold); font-weight: 500; }
+section.band { display: grid; gap: 16px; padding-block: 32px; border-bottom: 1px solid var(--line); }
+
+/* The chat frame: ChatFrame1 at its default size and alpha, the game's chat font with its shadow. */
+.chat-wrap { display: grid; gap: 0; max-width: 640px; }
+.chat-tabs { display: flex; gap: 2px; padding-left: 8px; }
+.chat-tabs span { font: 12px var(--gg-font); color: #ffd100; padding: 4px 16px 2px; background: rgba(0, 0, 0, .55); border-radius: 4px 4px 0 0; text-shadow: 1px -1px 0 #000; }
+.chat-tabs span + span { color: #c0b080; background: rgba(0, 0, 0, .3); }
+.chat { position: relative; padding: 8px; background: rgba(0, 0, 0, .45); border-radius: 0 4px 4px 4px; font: 14px/17px var(--chat); color: #fff; text-shadow: 1px -1px 0 #000; }
+.chat .ln { position: relative; padding: 2px 4px 2px 32px; border-radius: 2px; cursor: pointer; overflow-wrap: anywhere; }
+.chat .ln:hover, .chat .ln.lit { background: rgba(255, 209, 0, .12); }
+.chat .ln::before { content: attr(data-n); position: absolute; left: 4px; top: 3px; width: 16px; height: 16px; border-radius: 8px; background: #3a342a; color: var(--gold); font: 600 10px/16px var(--body); text-align: center; text-shadow: none; }
+.editbox { margin-top: 8px; padding: 4px 8px; border: 1px solid #6a6050; border-radius: 4px; background: rgba(0, 0, 0, .7); font: 14px/17px var(--chat); text-shadow: 1px -1px 0 #000; display: flex; gap: 4px; align-items: baseline; position: relative; padding-left: 32px; cursor: pointer; }
+.editbox::before { content: attr(data-n); position: absolute; left: 4px; top: 4px; width: 16px; height: 16px; border-radius: 8px; background: #3a342a; color: var(--gold); font: 600 10px/16px var(--body); text-align: center; text-shadow: none; }
+.editbox.lit { border-color: var(--gold); }
+.caret { display: inline-block; width: 1px; height: 14px; background: #fff; vertical-align: -2px; }
+@media (prefers-reduced-motion: no-preference) { .caret { animation: blink 1s steps(1) infinite; } @keyframes blink { 50% { opacity: 0; } } }
+
+/* A target marker, drawn as a stand-in for the star texture the receiving client puts in place of {rt1}. Never game art. */
+.rt { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; }
+
+/* Cards: one per line, naming its rule and its colors. */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 16px; }
+.card { display: grid; gap: 8px; align-content: start; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; min-width: 0; scroll-margin-top: 16px; }
+.card.lit { border-color: var(--gold); }
+.card .head { display: flex; gap: 8px; align-items: baseline; }
+.card .n { flex: none; width: 24px; height: 24px; border-radius: 16px; background: #3a342a; color: var(--gold); font: 600 12px/24px var(--body); text-align: center; }
+.card .rule { font-size: 12px; color: var(--dim); }
+.card .sample { padding: 8px; background: rgba(0, 0, 0, .45); border-radius: 4px; font: 14px/17px var(--chat); color: #fff; text-shadow: 1px -1px 0 #000; overflow-wrap: anywhere; }
+.card p { font-size: 14px; color: var(--dim); }
+.swatches { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--dim); }
+.swatches span { display: inline-flex; align-items: center; gap: 4px; }
+.swatches i { width: 12px; height: 12px; border-radius: 2px; background: var(--c); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .15); }
+.swatches code { font-size: 12px; }
+
+/* The Example on an options panel: Kit.Example, as OPTIONS PANEL → Example Lines draws it. */
+.seg { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.seg > span { font-size: 12px; color: var(--dim); margin-right: 4px; }
+.seg button { font: 13px var(--body); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+.seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.ex-panel { display: grid; gap: 0; max-width: 578px; padding: 16px; background: rgba(6, 6, 8, .96); border: 1px solid #5a5040; border-radius: 4px; font: 12px/14px var(--gg-font); color: #fff; }
+.ex-panel .hdr { color: var(--gg-title); font-size: 14px; line-height: 16px; padding-bottom: 4px; border-bottom: 1px solid rgba(255, 209, 0, .35); }
+.ex-panel .sp { height: 16px; }
+.ex-panel .row { display: flex; justify-content: space-between; gap: 16px; }
+.ex-panel .sel { min-width: 128px; padding: 2px 8px; border: 1px solid #5a5040; border-radius: 2px; background: #000; color: #fff; }
+.ex-panel .label { color: var(--gg-help); }
+.ex-panel .msg { padding-left: 16px; }
+.ex-panel .msg + .msg { margin-top: 14px; }
+.notes { margin: 0; padding-left: 24px; display: grid; gap: 8px; max-width: 80ch; color: var(--dim); font-size: 14px; }
+</style>
+
+<div class="page gg">
+	<header class="top">
+		<div class="eyebrow">Gogo Design System · Chat</div>
+		<h1>Chat Lines</h1>
+		<p class="lede">Every chat line the Style Guide defines, drawn in the game's chat box in its exact colors and format. Each line carries a number; its card below names the rule it shows and the colors it uses.</p>
+		<div class="try"><b>How to read it</b><span>Click a line in the chat box to jump to its card. "Add-on Name" stands for the Full Name and "Short Name" for the Short Name (Style Guide → ADD-ON NAMES). The player's character here is Aiek, a Paladin; everyone else comes from the house roster (OPTIONS PANEL → Example Lines). The star stands in for the add-on's target marker, which the receiving client draws as the mark.</span></div>
+	</header>
+
+	<section class="band" id="box">
+		<h2>In the Chat Box</h2>
+		<div class="chat-wrap">
+			<div class="chat-tabs"><span>General</span><span>Combat Log</span></div>
+			<div class="chat" id="chat"></div>
+			<div class="editbox" id="editbox" data-n="9"></div>
+		</div>
+	</section>
+
+	<section class="band" id="lines">
+		<h2>Line by Line</h2>
+		<div class="cards" id="cards"></div>
+	</section>
+
+	<section class="band" id="example">
+		<h2>Example Lines</h2>
+		<p>On an options panel, every feature that prints or sends a line shows it under its control, drawn as it will arrive with the settings chosen (Style Guide → OPTIONS PANEL → Example Lines). The silver label reads <code>Example</code> with no colon; the lines sit indented under it, a blank line apart, and follow the dropdown.</p>
+		<div class="seg" id="exSeg"><span>Announce in</span></div>
+		<div class="ex-panel" id="exPanel"></div>
+		<ul class="notes">
+			<li>Print draws the exact string the print helper builds. Party, Raid and Instance all draw as party chat, from <code>CHAT_PARTY_GET</code>, in <code>ChatTypeInfo.PARTY</code> (fallback <code>AAAAFF</code>). A whisper draws as the person receiving it sees it, from <code>CHAT_WHISPER_GET</code>, in <code>ChatTypeInfo.WHISPER</code> (fallback <code>FF80FF</code>).</li>
+			<li>A report with a total shows the total over a detail line. Nothing prints or sends: no Example shows.</li>
+		</ul>
+	</section>
+</div>
+
+<script>
+(function () {
+"use strict";
+
+// ns.PALETTE (Style Guide → COLORS), plus the colors the chat lines borrow.
+var C = {
+	TITLE: "FFD100", INFO: "00BBFF", BODY: "FFFFFF", HELP: "CCCCCC", TEXT: "FFFFFF",
+	ON: "33CC33", OFF: "CC3333", SEPARATOR: "AAAAAA", MUTED: "808080",
+	PARTY: "AAAAFF", WHISPER: "FF80FF",
+	PALADIN: "F48CBA", HUNTER: "AAD372",
+	COMMON: "FFFFFF",
+};
+var ME = "Aiek", ME_CLASS = "PALADIN";
+
+function p(text, key) { return '<span style="color:#' + C[key] + '">' + text + "</span>"; }
+var STAR = '<svg class="rt" viewBox="0 0 14 14" aria-label="target marker"><path d="M7 .8l1.8 4.1 4.4.4-3.3 2.9 1 4.3L7 10.2 3.1 12.5l1-4.3L.8 5.3l4.4-.4z" fill="#ffd84a" stroke="#7a5a00" stroke-width=".8"/></svg>';
+
+// The print helper: Full Name in C_INFO, // in C_SEPARATOR, body in C_TEXT (MESSAGES → Print Outs).
+function printed(body) { return p("Add-on Name", "INFO") + " " + p("//", "SEPARATOR") + " " + p(body, "TEXT"); }
+// The sent format: {rtN} Message // Short Name, closing period dropped (MESSAGES).
+function sent(body) { return STAR + " " + body + " // Short Name"; }
+function who(name, cls) { return "[" + p(name, cls) + "]"; }
+function partyLine(body) { return p("[Party] " + who(ME, ME_CLASS) + ": " + sent(body), "PARTY"); }
+function whisperLine(body) { return p(who(ME, ME_CLASS) + " whispers: " + sent(body), "WHISPER"); }
+function link(name, q) { return p("[" + name + "]", q); }
+
+function sw(key, role) { return { key: key, role: role }; }
+
+var LINES = [
+	{
+		title: "Welcome Message",
+		rule: "Style Guide → WELCOME MESSAGE",
+		html: printed("Version 2026.10.23.A. Settings (including the option to disable this message) are under Options > AddOns > Add-on Name. Enjoying this add-on? Tell a friend, Favorite it on CurseForge, or Star it on GitHub. (="),
+		note: "Mandated copy, identical in every add-on but the Full Name, printed through the print helper at every login while Enable Welcome Message is on. A dev copy reads <code>Version Dev</code> (VERSION DISPLAY).",
+		colors: [sw("INFO", "Full Name"), sw("SEPARATOR", "//"), sw("TEXT", "Body")],
+	},
+	{
+		title: "Print Out",
+		rule: "MESSAGES → Print Outs (Player Only)",
+		html: printed("Some Message."),
+		note: "<code>Full Name // Message.</code> to the player only. No target marker. The body keeps its closing period.",
+		colors: [sw("INFO", "Full Name"), sw("SEPARATOR", "//"), sw("TEXT", "Body")],
+	},
+	{
+		title: "Print That Names a Slash Command",
+		rule: "MESSAGES → Print Outs (Player Only)",
+		html: p("Add-on Name", "INFO") + " " + p("//", "SEPARATOR") + " " + p("Some Message that names ", "TEXT") + p("/cmd", "INFO") + p(".", "TEXT"),
+		note: "A slash command inside a printed message is wrapped in C_INFO.",
+		colors: [sw("INFO", "Full Name, /cmd"), sw("SEPARATOR", "//"), sw("TEXT", "Body")],
+	},
+	{
+		title: "Print That Names a Player",
+		rule: "OPTIONS PANEL → Example Lines",
+		html: p("Add-on Name", "INFO") + " " + p("//", "SEPARATOR") + " " + p("Some Message for ", "TEXT") + p("Spek", "HUNTER") + p(".", "TEXT"),
+		note: "Player names in a print take their class color. Spek is the house roster's Hunter.",
+		colors: [sw("INFO", "Full Name"), sw("SEPARATOR", "//"), sw("TEXT", "Body"), sw("HUNTER", "Hunter")],
+	},
+	{
+		title: "Report: Total First",
+		rule: "MESSAGES → Print Outs (Player Only)",
+		html: printed("Some Total: 6 Items.") + "<br>" + printed(link("Linen Cloth", "COMMON") + " x4.") + "<br>" + printed(link("Rough Stone", "COMMON") + " x2."),
+		note: "A report with a total holds its detail lines until the total is known, then prints the total first and the per-item lines under it. Item links take their quality color (COLORS).",
+		colors: [sw("INFO", "Full Name"), sw("SEPARATOR", "//"), sw("TEXT", "Body"), sw("COMMON", "Common item")],
+	},
+	{
+		title: "Combat Refusal",
+		rule: "OPTIONS PANEL → Combat Guard",
+		html: printed("As a safety precaution, the Options Interface cannot be opened during combat."),
+		note: "Mandated copy, <code>CHAT_OPTIONS_IN_COMBAT</code>, printed every time the player asks for Options in combat, never queued. It is the guide's only refusal line, and an ordinary print, not red.",
+		colors: [sw("INFO", "Full Name"), sw("SEPARATOR", "//"), sw("TEXT", "Body")],
+	},
+	{
+		title: "Sent Message (Party)",
+		rule: "MESSAGES → Sent Messages (Other Players)",
+		html: partyLine("Some Message"),
+		note: "<code>{rtN} Message // Short Name</code>, the closing period dropped. The client draws it as party chat with the sender's name; color codes never survive the send, so the whole line is the channel's color.",
+		colors: [sw("PARTY", "ChatTypeInfo.PARTY fallback"), sw("PALADIN", "Sender, class color")],
+	},
+	{
+		title: "Whisper, as Received",
+		rule: "MESSAGES → Editable Messages",
+		html: whisperLine("Some Message"),
+		note: "The same wire format, around whatever text the player saved. The marker and sign-off are added on the way out and can't be deleted. Drawn as the person receiving it sees it.",
+		colors: [sw("WHISPER", "ChatTypeInfo.WHISPER fallback"), sw("PALADIN", "Sender, class color")],
+	},
+];
+
+var DRAFT = {
+	title: "Line Drafted for the Player",
+	rule: "MESSAGES → Target Marker",
+	html: p("Party:", "PARTY") + " <span>Some Message</span><span class=\"caret\"></span>",
+	note: "A line the add-on puts in the player's own chat box for them to send is the player's words: no target marker, no add-on name, no <code>//</code>.",
+	colors: [sw("PARTY", "Edit box header")],
+};
+
+var chat = document.getElementById("chat");
+var cards = document.getElementById("cards");
+var editbox = document.getElementById("editbox");
+
+function card(line, n) {
+	var el = document.createElement("article");
+	el.className = "card";
+	el.id = "line-" + n;
+	el.innerHTML =
+		'<div class="head"><span class="n">' + n + "</span><div><h3>" + line.title + '</h3><div class="rule">' + line.rule + "</div></div></div>" +
+		'<div class="sample">' + line.html + "</div>" +
+		"<p>" + line.note + "</p>" +
+		'<div class="swatches">' + line.colors.map(function (c) {
+			return '<span><i style="--c:#' + C[c.key] + '"></i><code>' + (C[c.key] === undefined ? "" : C[c.key]) + "</code> " + c.role + "</span>";
+		}).join("") + "</div>";
+	cards.appendChild(el);
+	return el;
+}
+
+function light(n, from) {
+	document.querySelectorAll(".lit").forEach(function (e) { e.classList.remove("lit"); });
+	var c = document.getElementById("line-" + n);
+	var l = document.querySelector('[data-n="' + n + '"]');
+	if (c) c.classList.add("lit");
+	if (l) l.classList.add("lit");
+	if (from === "chat" && c) c.scrollIntoView({ block: "nearest" });
+}
+
+LINES.forEach(function (line, i) {
+	var n = i + 1;
+	var row = document.createElement("div");
+	row.className = "ln";
+	row.dataset.n = n;
+	row.tabIndex = 0;
+	row.innerHTML = line.html;
+	row.addEventListener("click", function () { light(n, "chat"); });
+	row.addEventListener("keydown", function (e) { if (e.key === "Enter") light(n, "chat"); });
+	chat.appendChild(row);
+	card(line, n).addEventListener("click", function () { light(n, "card"); });
+});
+editbox.innerHTML = DRAFT.html;
+editbox.addEventListener("click", function () { light(9, "chat"); });
+card(DRAFT, 9).addEventListener("click", function () { light(9, "card"); });
+
+// Example lines: Kit.Example under the control it shows, following its dropdown.
+var MODES = {
+	Print: [printed("Some Total: 6 Items."), printed(link("Linen Cloth", "COMMON") + " x4.")],
+	Party: [partyLine("Some Message")],
+	Whisper: [whisperLine("Some Message")],
+	Never: [],
+};
+var seg = document.getElementById("exSeg");
+var panel = document.getElementById("exPanel");
+var mode = "Print";
+function drawExample() {
+	var lines = MODES[mode];
+	var html =
+		'<div class="hdr">Some Feature</div><div class="sp"></div>' +
+		'<div class="row"><span>Announce In</span><span class="sel">' + mode + "</span></div>";
+	if (lines.length) {
+		html += '<div class="sp"></div><div class="label">Example</div>' +
+			lines.map(function (l) { return '<div class="msg">' + l + "</div>"; }).join("");
+	}
+	panel.innerHTML = html;
+	seg.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.textContent === mode)); });
+}
+Object.keys(MODES).forEach(function (m) {
+	var b = document.createElement("button");
+	b.type = "button";
+	b.textContent = m;
+	b.addEventListener("click", function () { mode = m; drawExample(); });
+	seg.appendChild(b);
+});
+drawExample();
+})();
+</script>
