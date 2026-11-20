@@ -2,7 +2,7 @@
 
 Governs every pass prompt in this guide — numbered, optional, and Code Comment Cleanup alike. Feedback Triage, which maintains the guide, runs by its own rules. Each prompt opens by pointing here and then states only what is specific to it: its Pass Name, its write scope, and its own work.
 
-**Guide paths.** The guide lives in the Common-Core repo's `Add-on Guide/` folder, read from the local clone at `~/Common-Core`, which Session Prep step 0 keeps level with `main`. Every guide file a prompt names (`References/…`, `01 - Local Setup.md`) is relative to `~/Common-Core/Add-on Guide/`; every other path is relative to the add-on folder.
+**Guide paths.** The guide is the Common-Core repo's `Add-on Guide/` folder on GitHub `main`. Every guide file a prompt names (`References/…`, `01 - Local Setup.md`) is relative to it, fetched with `curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/{path}"` (spaces as `%20`), never read from a local copy; every other path is relative to the add-on folder.
 
 ## Permissions
 
@@ -21,7 +21,7 @@ In Common-Core, change {file under addon-kits/ or Add-on Guide/}: {what to chang
 
 3. Leave the add-on's kit copy matching Common-Core, and build what the kit can already do.
 
-**A kit copy that differs from Common-Core is never overwritten silently.** If it holds a change Common-Core lacks, give the paste block for that change first, then copy Common-Core's file over it. Once the change is on Common-Core's `main`, Session Prep step 0 pulls it, and copying Common-Core's file over the add-on's, unchanged, brings it in.
+**A kit copy that differs from Common-Core is never overwritten silently.** If it holds a change Common-Core lacks, give the paste block for that change first, then copy Common-Core's file over it. Once the change is on Common-Core's `main`, copying Common-Core's file over the add-on's, unchanged, brings it in.
 
 ## Read first
 
@@ -133,7 +133,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 Offer each one as a card with a button that starts it. The maintainer asks for these cards, so a card is part of the request, not a side task. Use the app's start-session tool when you have one, as an offer (its card asks *New session* or *Do it here*); otherwise use the suggest-task tool (`spawn_task`). Either can load partway through a session, so look for both by name just before the final reply, and don't decide from which app you think you're in. One card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Also print that line in its own fenced block, so it can be pasted where no card shows:
 
 ```
-Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
+Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
 ```
 
 **One session edits an add-on folder at a time.** Sessions in one folder share every file, so two at once undo and break each other's work. If a file changes that this session didn't touch, or a check fails in a file it never edited, stop and tell the maintainer in one line that another session is editing this folder.

@@ -10,7 +10,7 @@ Some files can be shared by reference and some can't, and that decides the layou
 
 | File | Where it lives | Why |
 |---|---|---|
-| Add-on Guide | `Add-on Guide/` here | One copy of the pipeline prompts, the Style Guide and the master list. Sessions read it from a local clone at `~/Common-Core`, which each session's prep pulls; start at `Add-on Guide/Start Here.md`. |
+| Add-on Guide | `Add-on Guide/` here | One copy of the pipeline prompts, the Style Guide and the master list. Sessions read it straight from `main` on GitHub; start at `Add-on Guide/Start Here.md`. |
 | Release logic | `.github/workflows/package.yml` here | Reusable workflow; each add-on calls it, so a fix here reaches every add-on. |
 | CI checks | `.github/workflows/ci.yml` here | Reusable workflow, same reason. |
 | Action version updates | `.github/dependabot.yml` here | The pinned actions are only referenced here, so only this repo needs Dependabot. |

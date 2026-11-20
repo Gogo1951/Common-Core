@@ -9,15 +9,15 @@ Every pass prompt — numbered, optional, and Code Comment Cleanup alike — sta
 
 ## Setup
 
-Sessions read the guide from a local clone of Common-Core at `~/Common-Core`. Clone it once:
+Sessions read the guide straight from Common-Core `main` on GitHub (Pass Preamble → Guide paths), so it is always current and never needs pulling. The local clone at `~/Common-Core` is only for the `wowclaude` launcher, guide maintenance and the sync scripts. Clone it once:
 
 ```bash
 git clone https://github.com/Gogo1951/Common-Core.git ~/Common-Core
 ```
 
-From then on, Session Prep step 0 pulls it at the start of every code session, so the guide is always the latest `main`. Every guide path in these files (`References/…`, `01 - Local Setup.md`) is relative to `~/Common-Core/Add-on Guide/`.
+Every guide path in these files (`References/…`, `01 - Local Setup.md`) is relative to `Add-on Guide/`.
 
-To run a pass, launch Claude Code in the add-on's installed folder and paste the prompt's contents, or point the session at the file: `Run the pass in ~/Common-Core/Add-on Guide/03 - Code Review.md: read it and treat it as the request.`
+To run a pass, launch Claude Code in the add-on's installed folder and paste the prompt's contents, or point the session at the file: `Run the pass in Common-Core's Add-on Guide/03 - Code Review.md on GitHub main: fetch it and treat it as the request.`
 
 ## Supported clients
 
@@ -38,7 +38,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 ![The pass workflow: 01 to 03 in a line, then 04, the optional 05, 06 and 07, one at a time, then 08, then 09–11 and 12](References/Pass%20Workflow.svg)
 
 - **`00 - Optional GitHub Cleanup.md`** — Starts a new add-on, or checks an existing one. For a new add-on it builds a complete, loadable skeleton on Common-Core. For an existing one it checks GitHub for every scaffolding file and repo setting. *Changes:* the new add-on's folder; for an existing add-on nothing local, with missing settings given as Run-button commands and corrected files as blocks to paste into GitHub.
-- **`01 - Local Setup.md`** — **Run at the start of every code session you start yourself, before anything else** (step 0 needs only Session Prep step 0). Sessions launched from a pass's Next Pass prompt, and step 12, run only its step 0, which updates the guide. Refreshes the guide, sets the session's permissions, pulls the latest `main` and libraries down, and opens the folder in Sublime Text. *Changes:* the add-on's `.claude/settings.local.json`, its TOCs' version and interface lines, its READMEs and scaffolding files, its libraries, and its git wiring (no commits).
+- **`01 - Local Setup.md`** — **Run at the start of every code session you start yourself, before anything else** (step 0 needs only Session Prep step 0). Sessions launched from a pass's Next Pass prompt, and step 12, run only its step 0. Sets the session's permissions, pulls the latest `main` and libraries down, and opens the folder in Sublime Text. *Changes:* the add-on's `.claude/settings.local.json`, its TOCs' version and interface lines, its READMEs and scaffolding files, its libraries, and its git wiring (no commits).
 - **`02 - UX Review.md`** — Reviews how the add-on looks and reads to a player in about ten minutes. Asks at most four broad questions, then draws a clickable wireframe of Current beside Proposed for the windows its changes touch, layout fixes and feature ideas alike, and you approve each change on the page or in chat. Competitor research and full drawings run when you ask or say *full*. *Changes:* nothing itself; approved changes come out as feature prompts, which you run before step 3.
 - **`03 - Code Review.md`** — A full review of the code, step 2's features included, against the Style Guide and good judgment. You get a report of findings, each with a copy-and-run fix prompt, then you run the fixes you want. *Changes:* nothing itself; the fix prompts edit the code.
 - **`04 - Diagnostics Review.md`** — Brings the Diagnostic Tools panel in line with the code, so it captures everything that could explain a bug report, without asking. *Changes:* `Diagnostics/`, plus its TOC lines, `ns.EVENT_NAMES` and the dispatcher's logging call.

@@ -1,6 +1,6 @@
 # Local Setup (Permissions + Session Prep)
 
-**Step 1 of every code session you start yourself.** It refreshes the guide, scopes the session's permissions to this add-on, pre-approves every data source the guide uses, pulls the latest `main` and libraries down, and opens the folder in Sublime Text.
+**Step 1 of every code session you start yourself.** It scopes the session's permissions to this add-on, pre-approves every data source the guide uses, pulls the latest `main` and libraries down, and opens the folder in Sublime Text.
 
 **Access is scoped to the add-on being worked on.** A session writes silently only in the folder it was launched in, reads without a prompt, and reaches the open web; the guide and `WTF` are deny-listed for writes, and no write grant is ever machine-wide (What the template grants). **Access is not a reason to look:** a session never reads outside its launch folder unasked (Pass Preamble → Standing scope).
 
@@ -54,23 +54,19 @@ The single source for the actual JSON is `References/Permission Template.json` �
 
 ## Session Prep — Claude runs this at the start of every code session
 
-**In a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in step 12, run only step 0.** The rest already ran in this folder this cycle, and step 2 would overwrite the READMEs steps 9–11 wrote. Step 0 always runs, so no session reads an old guide.
+**In a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in step 12, run only step 0.** The rest already ran in this folder this cycle, and step 2 would overwrite the READMEs steps 9–11 wrote. Step 0 always runs.
 
-0. **Refresh the guide, then render / heal the permission file and the session rules.** From the add-on folder, run these exactly, as three separate calls:
-
-   ```
-   git -C ~/Common-Core pull -q --ff-only
-   ```
+0. **Render / heal the permission file and the session rules from GitHub `main`.** From the add-on folder, run these exactly, as two separate calls:
 
    ```
-   sed "s|{{ADDON}}|$(basename "$PWD")|g" "$HOME/Common-Core/Add-on Guide/References/Permission Template.json" | cmp -s - .claude/settings.local.json && echo "Permissions current" || echo "Permissions need rendering"
+   curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/References/Permission%20Template.json" | sed "s|{{ADDON}}|$(basename "$PWD")|g" | cmp -s - .claude/settings.local.json && echo "Permissions current" || echo "Permissions need rendering"
    ```
 
    ```
-   cmp -s "$HOME/Common-Core/Add-on Guide/References/Add-on CLAUDE.md" .claude/CLAUDE.md && echo "Rules current" || echo "Rules need copying"
+   curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/References/Add-on%20CLAUDE.md" | cmp -s - .claude/CLAUDE.md && echo "Rules current" || echo "Rules need copying"
    ```
 
-   The first brings the guide's local clone level with Common-Core `main`; it is all `git`, so it runs outside the sandbox. If it fails, say so in one plain line and carry on with the guide as it is on this computer; never stop the session or wait on it. On `Rules need copying`, write `.claude/CLAUDE.md` with the Write tool as an exact copy of `References/Add-on CLAUDE.md`: the rules every session in this folder loads, plain requests included. Like the permission file, it lives in `.claude/`, which git ignores. On `Permissions current`, move on. On `Permissions need rendering`, write `.claude/settings.local.json` with the Write tool: the template's exact text with every `{{ADDON}}` replaced by this folder's name, nothing else changed. The command runs inside the sandbox; the sandbox can't write `.claude/` and strict mode ignores `dangerouslyDisableSandbox`, so the Write tool is the only way to write the file. That write is the one approval a session can ask for, and only in a new folder or after the template changes (plain **Yes**). The check also catches drift and stray one-off approvals. Under `wowclaude` it also seeds the folder for future desktop-app sessions. If the file shows `{{ADDON}}` literally, the session wasn't launched from the add-on folder. **These are the guide's only sanctioned writes to `.claude/`** — never any other settings edit, never in `~/Common-Core`, never machine-wide.
+   On `Permissions current` or `Rules current`, move on. On `Rules need copying`, write `.claude/CLAUDE.md` with the Write tool as an exact copy of `References/Add-on CLAUDE.md` (fetched from the same URL): the rules every session in this folder loads, plain requests included. Like the permission file, it lives in `.claude/`, which git ignores. On `Permissions need rendering`, write `.claude/settings.local.json` with the Write tool: the template's exact text (fetched from the same URL) with every `{{ADDON}}` replaced by this folder's name, nothing else changed. **Before either write, Read the file: if it already holds exactly that text, skip the write.** Never ask to write a file that wouldn't change. If a fetch fails, say so in one line and move on; never write a file from a failed fetch. The commands run inside the sandbox; the sandbox can't write `.claude/` and strict mode ignores `dangerouslyDisableSandbox`, so the Write tool is the only way to write the file. That write is the one approval a session can ask for, and only in a new folder or after the template changes (plain **Yes**). The check also catches drift and stray one-off approvals. Under `wowclaude` it also seeds the folder for future desktop-app sessions. If the file shows `{{ADDON}}` literally, the session wasn't launched from the add-on folder. **These are the guide's only sanctioned writes to `.claude/`** — never any other settings edit, never in `~/Common-Core`, never machine-wide.
 
 1. **Normalize the add-on's TOCs** in this working copy — every `.toc` in the folder — directly and without asking for confirmation:
 

@@ -1,8 +1,8 @@
 # Every session in this add-on folder
 
-This folder is one of Gogo1951's WoW add-ons. Its guide is `~/Common-Core/Add-on Guide/`, read-only here. These rules hold in every session in this folder: a guide pass or a plain request. A pass adds `References/Pass Preamble.md` on top.
+This folder is one of Gogo1951's WoW add-ons. Its guide is Common-Core's `Add-on Guide/` on GitHub `main`, read-only here. These rules hold in every session in this folder: a guide pass or a plain request. A pass adds `References/Pass Preamble.md` on top.
 
-- **Read the latest guide.** Before reading anything in it, run `git -C ~/Common-Core pull -q --ff-only`. If that fails, say so in one line and carry on with the guide as it is; never stop or wait on it.
+- **Read the guide from GitHub.** Fetch each guide file from `main` with `curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/{path}"` (spaces as `%20`). Never read, pull or update a local copy of it.
 - **Talk plainly.** A few short lines in player words: what a player sees, what now works. No file, function or variable names unless asked. No walls of text.
 - **Questions are multiple choice**, with the tool's buttons: best option first, each with an example of what a player would see. Ask only what you can't look up, and never ask permission to do what was asked: no closing "want me to commit?" or "shall I go on?".
 - **The maintainer's preferences go in the guide, never in Claude's memory notes.** One that holds for every add-on goes to Common-Core as a paste block (Style Guide → GUIDE FEEDBACK); one this add-on alone keeps goes in `README-Notes.md` (Style Guide → README-NOTES).
