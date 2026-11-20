@@ -55,7 +55,7 @@ The single source for the actual JSON is `References/Permission Template.json` �
 
 ## Session Prep — Claude runs this at the start of every code session
 
-**In a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in step 12, run only step 0.** The rest already ran in this folder this cycle, and step 2 would overwrite the READMEs steps 9–11 wrote. Step 0 always runs.
+**In a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in step 12, run only step 0.** The rest already ran in this folder this cycle, and step 1 would overwrite everything the cycle changed. Step 0 always runs.
 
 0. **Render / heal the permission file and the session rules from GitHub `main`.** From the add-on folder, run these exactly, as two separate calls:
 
@@ -69,7 +69,17 @@ The single source for the actual JSON is `References/Permission Template.json` �
 
    On `Permissions current` or `Rules current`, move on. On `Permissions need rendering` when the file already exists, Read it first: every `allow` rule, `additionalDirectories` entry or `allowedDomains` host it holds that the template lacks was approved by hand in an earlier session. Each one any add-on would need becomes a Guide Feedback item adding it to `References/Permission Template.json` (a routine data item: Style Guide → GUIDE FEEDBACK), so no other add-on asks for it again; one tied to this add-on alone is dropped. On `Rules need copying`, write `.claude/CLAUDE.md` with the Write tool as an exact copy of `References/Add-on CLAUDE.md` (fetched from the same URL): the rules every session in this folder loads, plain requests included. Like the permission file, it lives in `.claude/`, which git ignores. On `Permissions need rendering`, write `.claude/settings.local.json` with the Write tool: the template's exact text (fetched from the same URL) with every `{{ADDON}}` replaced by this folder's name, nothing else changed. **Before either write, Read the file: if it already holds the same settings, skip the write.** Key order and spacing don't count, since the app reorders the file whenever it saves an approval. Never ask to write a file that wouldn't change. If a fetch fails, say so in one line and move on; never write a file from a failed fetch. The commands run inside the sandbox; the sandbox can't write `.claude/` and strict mode ignores `dangerouslyDisableSandbox`, so the Write tool is the only way to write the file. That write is the one approval a session can ask for, and only in a new folder or after the template changes (plain **Yes**). The check also catches drift and stray one-off approvals. Under `wowclaude` it also seeds the folder for future desktop-app sessions. If the file shows `{{ADDON}}` literally, the session wasn't launched from the add-on folder. **These are the guide's only sanctioned writes to `.claude/`** — never any other settings edit, never in `~/Common-Core`, never machine-wide.
 
-1. **Normalize the add-on's TOCs** in this working copy — every `.toc` in the folder — directly and without asking for confirmation:
+1. **Make the folder an exact copy of the latest `main`, merged PRs included.** The first line wires the folder as a clone of the repo and moves it onto the newest `main`. The second overwrites every file with `main`'s version and deletes files `main` doesn't have, local edits included: no diffing, no comparing, no asking, no report, no Guide Feedback. The one file it leaves alone is `README-Notes.md`, which carries this folder's rulings until step 12 commits it with the release (Pass Preamble → Permissions); if it's missing from disk, it comes back from `main`. Files git ignores, like `.claude/`, are untouched. From the add-on folder, run exactly (the repo URL is in the TOC footer, and only a folder without `.git` needs it):
+
+   ```
+   git fetch -q origin --tags && git symbolic-ref HEAD refs/heads/main && git reset -q origin/main; git config core.fileMode false
+   git checkout -q origin/main -- . ':!README-Notes.md'; git clean -fdq -e README-Notes.md; git checkout-index -a -q
+   rm -f CHANGELOG.md
+   ```
+
+   A folder without `.git` first runs `git init -q -b main && git remote add origin https://github.com/Gogo1951/Repo-Name.git` as its own call. The first two lines stay all `git`, with no loop, `if`, `cd` or redirect, because only an all-`git` call runs outside the sandbox, and git must write `.git/`. `git checkout-index -a -q` writes back only the files missing from disk, never overwriting one. **No commits here, ever**: authorship is configured and verified only inside step 12's identity gate (`12 - Create Release Notes & PR.md`).
+
+2. **Normalize the add-on's TOCs** in this working copy — every `.toc` in the folder — directly and without asking for confirmation:
 
    - Set the `## Version:` line to the release token:
 
@@ -90,17 +100,6 @@ The single source for the actual JSON is `References/Permission Template.json` �
      **This table is the single home for the current target numbers**, all three on every add-on (Style Guide → TOC FILE FORMAT → Interface Versions). Session Prep sets numbers only and never creates, renames, or deletes a TOC — a missing target TOC is a Blocker for the pass to report — so an unsuffixed TOC gets the version token and nothing else, and a TOC for any other flavor keeps the number it declares. When targets change, the maintainer updates them here **and every flavor line of the Testing & Localization template in `09 - Optional Create README.md`**, their one other live copy.
 
    Just make the edits; don't do them one prompt at a time across the session.
-
-2. **Point the folder at the latest `main`, then blind-pull the READMEs and scaffolding files from GitHub.** The first line wires the folder as a clone of the repo and moves it onto the newest `main` without touching any file on disk, so `git status` shows exactly how this copy differs from GitHub. The second overwrites the READMEs and scaffolding, local edits included: no diffing, no comparing, no asking, no report, no Guide Feedback. The one file it leaves alone is `README-Notes.md`, which carries this folder's rulings until step 12 commits it with the release (Pass Preamble → Permissions). Every other file on disk stays as it is: real local edits run ahead of `main`, but a file that matches an older version of itself on `main` is a stale download, and the third line replaces it with `main`'s. A file `main` has that is missing from disk comes back from `main`, README-Notes.md included. From the add-on folder, run exactly (the repo URL is in the TOC footer, and only a folder without `.git` needs it):
-
-   ```
-   git fetch -q origin --tags && git symbolic-ref HEAD refs/heads/main && git reset -q origin/main; git config core.fileMode false
-   git checkout -q origin/main -- 'README*.md' ':!README-Notes.md'; git checkout -q origin/main -- .gitattributes; git checkout -q origin/main -- .gitignore; git checkout -q origin/main -- .luacheckrc; git checkout -q origin/main -- .pkgmeta; git checkout -q origin/main -- .github; git checkout -q origin/main -- LICENSE; git checkout-index -a -q
-   git diff --name-only origin/main -- . ':!Includes/Libraries' | while read -r f; do b=$(git hash-object "$f"); git log --format= --raw --no-abbrev origin/main -- "$f" | grep -q " $b " && git show "origin/main:$f" > "$f" && echo "Took GitHub's newer $f"; done
-   rm -f CHANGELOG.md
-   ```
-
-   A folder without `.git` first runs `git init -q -b main && git remote add origin https://github.com/Gogo1951/Repo-Name.git` as its own call. The first two lines stay all `git`, with no loop, `if`, `cd` or redirect, because only an all-`git` call runs outside the sandbox, and git must write `.git/`. The third line isn't all `git`, so it runs in the sandbox and writes each file with `git show`, touching nothing in `.git/`. Each path gets its own `checkout`, since one call naming a path `main` lacks fails whole, and `git checkout-index -a -q` writes back only the files missing from disk, never overwriting one. If git says a path isn't on `main`, mention it in one line and move on. **No commits here, ever**: authorship is configured and verified only inside step 12's identity gate (`12 - Create Release Notes & PR.md`).
 
 3. **Refresh `Includes/Libraries/` from `.pkgmeta`,** so the session tests against the latest library versions, the same ones Common-Core's release workflow vendors at tag time (Style Guide → COMMON-CORE → Releases). Each external is fetched into a temporary folder and swapped in only when the fetch succeeds, so a failed download leaves the old copy in place. The first line hands `svn` the sandbox's network proxy, credentials included, since `svn` ignores the `HTTPS_PROXY` that git and curl read; without it every CurseForge and WowAce download fails. A GitHub external is cloned into the temp folder with no template and moved into place, because the sandbox refuses the `.git/hooks` and `.git/config` that a clone writes inside the add-on folder. From the add-on folder, run exactly:
 
