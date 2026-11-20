@@ -8,7 +8,7 @@ It runs after `02 - UX Review.md` and its feature prompts, so it reviews the who
 
 0. **Permissions** — per the preamble.
 1. **Review.** Read the preamble's read-first docs and `References/Style Guide - Build Reference.md`, then everything in scope (see Standards and Ignore): the add-on's code, which is the whole record (READMEs other than the `README-Technical.md` map are skipped; see Ignore). Build a full picture of what the add-on does and how. The reference implementations are named at each rule's own site in the Style Guide; fetch one only for the Reference check below or a detail the guide can't settle. No output yet.
-2. **Clarify — required, before any findings.** Identify what you'd need to know to be confident in your findings, and ask per the preamble. Ask about things that bear on the review, not trivia: whether a frame is ever shown in combat, which client a behavior targets, whether a departure that looks deliberate is intentional (check `git status` and the recent `git log` first, per Style Guide → README-NOTES). No findings until you're confident and any answers are in.
+2. **Clarify — only when needed, before any findings.** Usually nothing needs asking; skip the phase then. Ask per the preamble only what you can't settle from the code and the record. Ask about things that bear on the review, not trivia: whether a frame is ever shown in combat, which client a behavior targets, whether a departure that looks deliberate is intentional (check `git status` and the recent `git log` first, per Style Guide → README-NOTES). No findings until you're confident and any answers are in.
 3. **Report.** Produce the report below.
 
 ## Standards
@@ -82,7 +82,7 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 ## Report format
 
 Open with a 2–3 sentence summary, then the skim list (Pass Preamble → Report format — skim list). Then list the issues, most worth fixing first — no severity labels except **Blocker** where the Pass Preamble names one (a missing target TOC), listed first. Keep the report tight: the description and the fix prompt are the whole issue; no padding, no restating the obvious.
-Skip trivial style observations the guide doesn't address; within scope, report everything it does address regardless of triviality.
+**At most 10 issues.** Rank by what a player would feel, bugs first; when there are more, report the top 10 and say in one line how many smaller ones were left for the next run. Skip trivial style observations.
 
 **Trim `README-Notes.md` first.** Before Phase 2, delete every entry in it that doesn't matter (Style Guide → README-NOTES → Only what matters), in `## Exceptions` and `## Decisions` alike, without asking. What they covered becomes ordinary findings, and the report says in one line which labels went.
 

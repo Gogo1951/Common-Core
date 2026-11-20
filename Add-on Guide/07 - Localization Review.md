@@ -1,17 +1,17 @@
 # WoW Add-on Localization Review (Editing, 5-Phase)
 
-**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Localization Review`. Write scope: **every `Locales/*.lua` except `enUS.lua`, and every non-English row of `Data.MESSAGE_LANGUAGES` in `Data/Message-Languages.lua`.**
+**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Localization Review`. Write scope: **every `Locales/*.lua`, and every non-English row of `Data.MESSAGE_LANGUAGES` in `Data/Message-Languages.lua`.**
 
 Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` has just made right. When this pass finishes, every locale carries a correct, idiomatic translation of every `enUS.lua` key. This pass does the translating: it never defers the work to a later human pass or leaves `TODO` markers behind. **It asks nothing.** Every wording, register, loanword and stay-English call is its own to make, so it makes it and moves on.
 
-**`enUS.lua` is read-only here.** A translation that disagrees with `enUS.lua` is evidence about *either* file; when it shows the English is what's wrong, report it as an issue in the preamble's fix-prompt format and translate the English as it stands.
+**Fix a plain English mistake here, don't send it back.** A translation that disagrees with `enUS.lua` is evidence about *either* file. When it shows the English has a typo or says something the code doesn't do, fix the English in place, translate the fixed version, and list each English change in the report as before → after. Rewording English for style stays the Copy Review's.
 
 ## Workflow — five phases (0–4), all required
 
 0. **Permissions** — per the preamble.
 
 1. **Audit — don't assume.** Before changing anything, list what needs translating:
-    - **Changed English.** Every `enUS.lua` key whose value differs from `main` (`git diff origin/main -- Locales/enUS.lua`), the same set as the Copy Review's before-and-after table. Each of these is retranslated in every locale, whatever it holds now.
+    - **Changed English.** Every `enUS.lua` key whose value differs from `main` (`git diff origin/main -- Locales/enUS.lua`), whatever changed it. Each of these is retranslated in every locale, whatever it holds now.
     - **Drift.** Per locale: keys missing, keys `enUS.lua` no longer has, values left in English that When a value may stay English (below) doesn't allow, and translations that no longer match the current English.
     - **Game-name keys.** Any key the Code Review flagged as a game name keeps its current values in every locale; its fix retires the key, and a typed-in game name is the guess GAME NAMES forbids.
 

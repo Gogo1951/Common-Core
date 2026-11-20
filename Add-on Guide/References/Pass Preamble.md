@@ -33,9 +33,15 @@ In Common-Core, change {file under addon-kits/ or Add-on Guide/}: {what to chang
 
 **Do not reconstruct any of these from memory.** If one can't be read, say so and stop rather than working from what you remember of it.
 
+## The maintainer's word wins
+
+**What the maintainer says in this session beats every rule in this guide.** A size, a number, a word, a name, where a setting lives: use it exactly as given, even off the Spacing Scale or against a copy rule, and don't argue or round it. Do exactly what was asked, nothing dropped and nothing added. **Never undo something the maintainer changed**, in this session or a recent one (the working tree and recent commits show it), and never bundle an undo into a larger change. If it breaks something, say what in one line and leave it.
+
+**Don't guess.** When you aren't sure why something happens, say so and give one thing to check in game before changing code. Never change working code to chase a guess, and never state a guess or a code comment as fact.
+
 ## Workflow contract
 
-Run the prompt's phases in order. Don't skip one, and don't begin the report until the clarify phase has closed.
+Run the prompt's phases in order. Don't skip one, and don't begin the report until the clarify phase has closed. A clarify phase with nothing to ask is skipped.
 
 ## Every reply — plain words
 
@@ -47,7 +53,7 @@ Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal
 
 ## Report-only passes
 
-**A pass whose write scope is "nothing" never edits code or any add-on file, whatever the maintainer approves** (the preamble's `README-Notes.md` record aside). A Build button, a "yes", "looks good" or "build it" is an approval of the change, not permission to make it. The pass ends with its report, its fix or feature prompts, and the one Apply question (Batch apply, below); code changes only when the maintainer answers that question or pastes prompts back, and then the prompts run in this session. If the maintainer asks the pass to write code any other way, say so in one line and ask the Apply question instead.
+**A pass whose write scope is "nothing" edits no code until the maintainer says go** (the preamble's `README-Notes.md` record aside). It writes its report and its fix or feature prompts, then asks the one Apply question (Batch apply, below). **"Build it", "do it", "yes", "apply" or "go" is the answer to that question:** run the prompts it covers in this session right away, without asking again.
 
 ## Standing scope — true in every pass
 
@@ -89,7 +95,7 @@ Each issue's fix prompt is copy-and-run ready: a fenced code block (no language 
 
 Drop `(Recommended)` from Apply all, and recommend Pick which ones, when any item is flagged as weak or as a UX change you'd rather the maintainer choose. Pasting prompts back, edited or not, works the same as picking them.
 
-**How chosen prompts run.** Apply them in dependency order, one at a time; after each, run `stylua --syntax lua51` + `luac` + luacheck (+ a sanity check where relevant) and stop and report if anything fails; give a one-line status per item, then say they're done and give the Copy to Other Flavors command.
+**How chosen prompts run.** Apply them in dependency order, one at a time; after each, run `stylua --syntax lua51` + `luac` + luacheck, plus `lua5.1 Tests/Run.lua` when the add-on has it, and stop and report if anything fails. A prompt that adds or changes English also translates it into every other locale in the same edit, so no later pass has to come back for it. Give a one-line status per item, then say they're done, say plainly that none of it has been tried in game, and give the Copy to Other Flavors command.
 
 ## Copy to Other Flavors
 
@@ -113,15 +119,16 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 | Pass done | Prompt for |
 |---|---|
 | `02 - UX Review.md` | `03 - Code Review.md` |
-| `03 - Code Review.md` | `04 - Diagnostics Review.md` and `06 - Copy Review.md`, side by side |
-| `04 - Diagnostics Review.md` | `05 - Data Review.md` |
+| `03 - Code Review.md` | `04 - Diagnostics Review.md` |
+| `04 - Diagnostics Review.md` | `05 - Data Review.md` when phase 4 says yes, else `06 - Copy Review.md` |
+| `05 - Data Review.md` | `06 - Copy Review.md` |
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md` |
-| `08 - Prelaunch Review.md`, verdict **Not ready**, once its chosen fixes have run | `08 - Prelaunch Review.md` again. When a blocker belongs to another pass (stale data → `05 - Data Review.md`, new English → `07 - Localization Review.md`), offer that pass first, with one line: then run 08 again |
+| `08 - Prelaunch Review.md`, verdict **Not ready** | Nothing: once its chosen fixes have run, it checks again **in this same session** and gives its new verdict. Only a blocker another pass owns (stale data → `05 - Data Review.md`) gets that pass's prompt, with one line: then run 08 again |
 | `Optional - Fix a Bug.md` | the pass its report names to re-run, or `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
 
-**After step 3 the work runs in two branches:** 4 then 5, and 6 then 7. Their write scopes never meet, so either branch can run ahead of the other. `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4). It is optional and ends its branch with no prompt. Step 7's prompt for step 8 comes with one line: start it once any Data Review session has finished too, so step 8 reviews both branches.
+**One pass at a time, in order.** `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4).
 
 Offer each one as a card with a button that starts it. The maintainer asks for these cards, so a card is part of the request, not a side task. Use the app's start-session tool when you have one, as an offer (its card asks *New session* or *Do it here*); otherwise use the suggest-task tool (`spawn_task`). Either can load partway through a session, so look for both by name just before the final reply, and don't decide from which app you think you're in. One card per pass, a fresh session, no worktree, since the game loads the add-on from this folder. The card's prompt is exactly the line below, with the prompt's file name filled in. Also print that line in its own fenced block, so it can be pasted where no card shows:
 
@@ -129,7 +136,7 @@ Offer each one as a card with a button that starts it. The maintainer asks for t
 Run the pass in ~/Common-Core/Add-on Guide/{Prompt file}: read it and treat it as the request. Session Prep already ran in this folder; skip it.
 ```
 
-**Sessions the maintainer runs side by side share this folder,** so the passes paired above never write the same files. A lint or parse failure in a file outside your write scope is another session's edit in progress: run the check again once, and report it only if it fails again.
+**One session edits an add-on folder at a time.** Sessions in one folder share every file, so two at once undo and break each other's work. If a file changes that this session didn't touch, or a check fails in a file it never edited, stop and tell the maintainer in one line that another session is editing this folder.
 
 ## Guide Feedback
 

@@ -637,8 +637,9 @@ Add later classes only if a supported flavor includes them. Item-quality colors 
 
 **Every size and gap the add-on sets in game points is a step on one scale: 2, 4, 8, 16, 32, 64, 128.** Padding, margins, the space between controls, `SetPoint` offsets, row heights, icon and texture sizes, and border insets all take a value from it. A dimension past 128, such as a window's width or height, is a multiple of 16. Each choice is then a step up or down the scale, never a number tuned by eye, and every window spaces the same way.
 
-Three things sit outside it:
+Four things sit outside it:
 
+- **A number the maintainer gives.** It is used exactly as given, never rounded onto the scale (Pass Preamble → The maintainer's word wins).
 - **AceConfig `width` values.** They are fractions of the panel's column, not points; Build Reference → Label-Beside-Control Rows governs them.
 - **Geometry fitted to Blizzard's art**, such as Icon Fit's 20-point icon and its offset inside LibDBIcon's ring.
 - **A 1-point line or border.**
@@ -738,7 +739,7 @@ When code compares a looked-up name with something the client shows, check that 
 
 ### English
 
-- **EN-US, always.** Every English word we write is American English: in-game strings, READMEs, comments, reports and chat. Never British, Australian or Canadian spelling or usage: color, gray, center, favorite, organize, canceled, traveled, defense, armor, catalog, license. A non-American spelling is a typo. The glossary's house spellings still win.
+- **EN-US, always.** Every English word we write is American English: in-game strings, READMEs, comments, reports and chat. Never British, Australian or Canadian spelling or usage: color, gray, center, favorite, organize, canceled, traveled, defense, armor, catalog, license. A non-American spelling is a typo. The glossary's house spellings still win, and so do words the maintainer writes themselves ("Hey mate" stays).
 - **Titles and headers are Title Case.** Window titles, panel and tab names, section headers, column headers, tooltip titles and README headings. Capitalize every word except a, an, the, and, but, or, nor, for, so, yet, as, at, by, from, in, of, off, on, per, to, up, via and with, which stay lowercase unless they open or close the title. Glossary spellings keep their own case (Add-on, Mini-map). Title Case is English-only: other locales follow their own language's convention for headers.
 
 ### In-Game Rendering Rules
@@ -934,7 +935,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **A row that opens a sub-menu** has its label in C_TITLE and, on its right in C_MUTED, what is set inside it (`Stop Attack`, `68 / 255`, `Character`), then the arrow. With nothing set inside, the right side is the arrow alone.
 - **A switch with options of its own keeps its switch look:** name white, On in C_ON, then the arrow (gray name and Off in C_MUTED while it's off). A click flips it; hovering opens its sub-menu (Buff Duty's Your Target opens Include NPCs, Buff Food the buff food in your bags).
 - **The arrow has its own column.** In a menu where any row has an arrow, every row's right side ends where the arrow's room begins, so an On without an arrow lines up with an On beside one.
-- **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: its click, or what it touches (`Delete … Used on 1 Bar`, `All Buff Duty Settings … Click`).
+- **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_MUTED, never in brackets in the label: what it touches (`Delete … Used on 1 Bar`). Never the word Click: the color already says it acts.
 - **Switches and choices, never boxes.** A setting is a `toggle` (its name, On or Off) or a `choice` (the pick white with a check mark, the rest gray). No checkbox, radio button or box is drawn, on the kit's panels or on the game's dressed menus.
 - **Icons at line height.** An item or spell row puts its icon before its name, one space, the icon, then the name (`|T…:0|t`).
 
@@ -1616,8 +1617,10 @@ How a pass proposes a change to these documents.
 
 **Routine data items ride here too, exempt from the bar and the cap**, because they record a durable per-add-on *fact* rather than criticise the docs: the Prelaunch's row reconciliation, a scaffold's new row, and the like. Give each as its exact proposed edit, ready to apply. A maintainer's rule-change ruling from the pass is doc feedback, asked about on its own at triage, but exempt from the cap.
 
-**Format.** Title the section **Guide Feedback**, with one context-stamp line directly under it: `Generated on [Date] after performing [Pass Name] on [Add-on Name].` Per item: what the doc currently says, what reality is, and the suggested edit. When there is an item, close with this venue pointer on its own line — *Paste the line below into a new session launched in `~/Common-Core`; triage never runs in this code session.* — followed by this block:
+**Format.** Title the section **Guide Feedback**, with one context-stamp line directly under it: `Generated on [Date] after performing [Pass Name] on [Add-on Name].` Per item: what the doc currently says, what reality is, and the suggested edit. When there is an item, close with one line — *Paste the block below into a new session launched in `~/Common-Core`.* — followed by **one fenced block holding everything that session needs**, since it sees nothing from this one: the triage line, then the stamp and every item, word for word.
 
 ```
-Triage the Guide Feedback above using Add-on Guide/References/Guide Feedback Triage Prompt.md; edit nothing before I approve.
+Triage this Guide Feedback using Add-on Guide/References/Guide Feedback Triage Prompt.md; edit nothing before I approve.
+
+{the stamp line and every item}
 ```

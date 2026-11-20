@@ -3,7 +3,7 @@
 This folder is the guide for building and maintaining Gogo1951's WoW add-ons: the prompts Claude runs, and the rules they enforce. It lives in [Common-Core](https://github.com/Gogo1951/Common-Core) under `Add-on Guide/`, beside the shared CI and release logic every add-on is built on. Two kinds of files:
 
 - **Numbered and `Optional - …` prompts** (this folder) — the pipeline steps; run them in Claude, in the order below.
-- **`References/`** — what the steps consult or invoke: the **Pass Preamble** (the shared contract every pass prompt opens with), the Style Guide and its Build Reference (the rules), the master list (per-add-on facts), the permission template, the canonical files (`Data/Flavor.lua`, the other-client prune for `Features/Core.lua`, and a `LICENSE` template), and two utility prompts (Guide Feedback Triage, Code Comment Cleanup) run on demand rather than per release.
+- **`References/`** — what the steps consult or invoke: the **Pass Preamble** (the shared contract every pass prompt opens with), the Style Guide and its Build Reference (the rules), the master list (per-add-on facts), the permission template, the canonical files (`Data/Flavor.lua`, the other-client prune for `Features/Core.lua`, and a `LICENSE` template), `Add-on CLAUDE.md` (the rules every session in an add-on folder loads, which Session Prep copies in), and two utility prompts (Guide Feedback Triage, Code Comment Cleanup) run on demand rather than per release.
 
 Every pass prompt — numbered, optional, and Code Comment Cleanup alike — starts by reading `References/Pass Preamble.md` and then states only what is specific to it. Feedback Triage, which maintains the guide, runs by its own rules. Rules shared by all passes live there or in the Style Guide, never restated in a prompt.
 
@@ -35,7 +35,7 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Reviews that only report: steps 2, 3 and 8** (and `Optional - Create UX Wireframes.md`). They never edit code; you get findings or feature prompts, then one question: *Apply all / Pick which ones / None for now*. Code changes only when you answer it. **Reviews that fix their own area: steps 4–7**, each inside the files its entry names, and nowhere else.
 
-![The pass workflow: 01 to 03 in a line, then 04 → 05 beside 06 → 07, meeting at 08, then 09–11 and 12](References/Pass%20Workflow.svg)
+![The pass workflow: 01 to 03 in a line, then 04, the optional 05, 06 and 07, one at a time, then 08, then 09–11 and 12](References/Pass%20Workflow.svg)
 
 - **`00 - Optional GitHub Cleanup.md`** — Starts a new add-on, or checks an existing one. For a new add-on it builds a complete, loadable skeleton on Common-Core. For an existing one it checks GitHub for every scaffolding file and repo setting. *Changes:* the new add-on's folder; for an existing add-on nothing local, with missing settings given as Run-button commands and corrected files as blocks to paste into GitHub.
 - **`01 - Local Setup.md`** — **Run at the start of every code session you start yourself, before anything else** (step 0 needs only Session Prep step 0). Sessions launched from a pass's Next Pass prompt, and step 12, skip it. Refreshes the guide, sets the session's permissions, pulls the latest `main` and libraries down, and opens the folder in Sublime Text. *Changes:* the add-on's `.claude/settings.local.json`, its TOCs' version and interface lines, its READMEs and scaffolding files, its libraries, and its git wiring (no commits).
@@ -43,8 +43,8 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 - **`03 - Code Review.md`** — A full review of the code, step 2's features included, against the Style Guide and good judgment. You get a report of findings, each with a copy-and-run fix prompt, then you run the fixes you want. *Changes:* nothing itself; the fix prompts edit the code.
 - **`04 - Diagnostics Review.md`** — Brings the Diagnostic Tools panel in line with the code, so it captures everything that could explain a bug report, without asking. *Changes:* `Diagnostics/`, plus its TOC lines, `ns.EVENT_NAMES` and the dispatcher's logging call.
 - **`05 - Data Review.md`** — Optional, once step 4 is finished. Checks the data against each client's own tables on wago.tools: strips IDs a client doesn't have, corrects values, and adds anything it missed, using QuestieDB to leave out items players can't get, all without asking. It asks you for an in-game Validate Data run only when the tables can't settle something. *Changes:* the `Data/{Game}/` folders the TOCs list.
-- **`06 - Copy Review.md`** — Polishes the English in `enUS.lua`: typos, consistency, and strings to merge or split. Ends with a before-and-after table of every English string that changed. *Changes:* `Locales/enUS.lua`, plus code that uses a renamed key.
-- **`07 - Localization Review.md`** — Translates every other language to match the current English, without asking. *Changes:* every locale file except `enUS.lua`.
+- **`06 - Copy Review.md`** — Polishes the English in `enUS.lua`: typos, consistency, and strings to merge or split. Ends with a before-and-after table of every English string it changed. *Changes:* `Locales/enUS.lua`, plus code that uses a renamed key.
+- **`07 - Localization Review.md`** — Translates every other language to match the current English, without asking. *Changes:* every locale file, `enUS.lua` only to fix a plain English mistake it finds.
 - **`08 - Prelaunch Review.md`** — The last gate before tagging a release, run once manual testing is done. Checks release metadata, packaging, translations and leftovers, and gives a Ready to tag or Not ready verdict. *Changes:* nothing; master-list updates are proposed in Guide Feedback.
 - **`09 - Optional Create README.md`** — Writes the marketing README players read before installing. A pitch change also rewrites the pitch in every TOC and every language. *Changes:* `README.md`, plus every copy of the pitch when it changes.
 - **`10 - Optional Create README-Technical.md`** — Writes the code map every later pass reads first: where things live, how they connect, the traps. *Changes:* `README-Technical.md`.
@@ -63,7 +63,9 @@ Each step is one laser-focused job. Run them in order, and skip an optional one 
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.
 
-**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once both branches are done and you've tested in game.
+**Each finished pass offers the next pass's prompt**, in the order the diagram shows (Pass Preamble → Next Pass): a card you click to start it in a new session when you're ready, plus the same line as text to paste. No pass ever starts the next one for you. Step 5 needs no in-game test first. Start step 8 once step 7 is done and you've tested in game.
+
+**One session per add-on folder at a time.** Two sessions in the same folder edit the same files and undo each other's work. Finish one (or stop it) before starting the next.
 
 **A pass that spots a problem in the guide adds a Guide Feedback section** (Style Guide → GUIDE FEEDBACK); most have none. One that proposes a change ends with a copy-and-run line for a **new session launched in `~/Common-Core`**, where `References/Guide Feedback Triage Prompt.md` applies what you approve — **never the code session**, whose template denies guide writes.
 

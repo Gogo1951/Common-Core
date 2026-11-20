@@ -53,6 +53,7 @@ For everything else, drop what fails:
 
 ## Rules
 
-- **Approval gates everything.** No edit lands without a yes.
+- **Approval gates everything.** No edit lands without a yes, and nothing lands that wasn't asked for: no drafts, trims, rewrites or new pages on the side.
+- **A complaint is not a new rule.** When something went wrong, first look for the rule that caused it and delete or loosen that. Add a rule only when nothing can be taken away, and never reverse a rule landed the same day without saying so.
 - **A change to what players see is its own question** (Style Guide, opening rules): state it as before → after in player terms, name the section's Live reference and whether it already does this, and never fold it into another change.
 - Keep edits minimal — record the ruling, don't rewrite the section around it. The exception is when the ruling reveals that the *section* is what keeps generating items; then rewriting it simpler is the correct fix.

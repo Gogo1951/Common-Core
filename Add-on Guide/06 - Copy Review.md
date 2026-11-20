@@ -2,7 +2,7 @@
 
 **Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the Copy Review`. Write scope: **`Locales/enUS.lua` and code references to renamed keys.** No other locale file is touched; `07 - Localization Review.md` translates them next.
 
-Polish the English. `enUS.lua` is the source every other locale is translated from, so it gets right first, and the report carries a before-and-after table of every English string that changed, so step 7 knows exactly what to retranslate.
+Polish the English. `enUS.lua` is the source every other locale is translated from, so it gets right first, and the report carries a before-and-after table of every English string this pass changed.
 
 **The pitch is step 9's.** `OPTIONS_DESCRIPTION` carries `README.md`'s pitch, which `09 - Optional Create README.md` owns and keeps in sync. Fix its rendering-rule drift, never its wording, and never compare it with `README.md` or ask about a difference.
 
@@ -41,4 +41,4 @@ Do not touch code before Phase 3, and do not begin Phase 3 until the Phase 2 ans
 
 Open with a 2–3 sentence summary: what was cleaned, what was consolidated or split, and the Phase 4 result. Keep prose lean.
 
-Then the **before-and-after table**, the part that matters most: columns **Key | English Before | English After**, one row for **every `enUS.lua` key whose value differs from `main`** (`git diff origin/main -- Locales/enUS.lua`), whatever made the change: this pass, an earlier fix prompt, or a feature prompt. A new key shows `none` as Before; a removed key shows `none` as After; a renamed key shows `old → new` in the Key column. Quote both values exactly as they appear in the file, placeholders included. Leave no change out; if nothing changed, say so in one line. Step 7 retranslates from this table.
+Then the **before-and-after table**, the part that matters most: columns **Key | English Before | English After**, one row for **every `enUS.lua` key this pass changed**. Step 7 finds every other changed key itself. A new key shows `none` as Before; a removed key shows `none` as After; a renamed key shows `old → new` in the Key column. Quote both values exactly as they appear in the file, placeholders included. If this pass changed nothing, say so in one line.

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="680" height="1044" viewBox="0 0 680 1044" role="img">
 <title>Add-on pass workflow</title>
-<desc>Optional 00 GitHub Cleanup, then 01 Local Setup, 02 UX Review and 03 Code Review. Code Review offers two branches side by side: 04 Diagnostics Review then the optional 05 Data Review, and 06 Copy Review then 07 Localization Review. Both branches meet at an in-game test; a bug found there goes to the Fix a Bug prompt and the test runs again. Then the optional Code Comment Cleanup, then 08 Prelaunch Review. Not ready means fix and run 08 again; Ready to tag offers 09, 10 and 11, then 12 Release Notes and PR.</desc>
+<desc>Optional 00 GitHub Cleanup, then 01 Local Setup, 02 UX Review and 03 Code Review. Then, one at a time: 04 Diagnostics Review, the optional 05 Data Review, 06 Copy Review and 07 Localization Review. They meet at an in-game test; a bug found there goes to the Fix a Bug prompt and the test runs again. Then the optional Code Comment Cleanup, then 08 Prelaunch Review. Not ready means fix and run 08 again; Ready to tag offers 09, 10 and 11, then 12 Release Notes and PR.</desc>
 <style>
 text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;text-anchor:middle;dominant-baseline:central}
 .th{font-size:14px;font-weight:600}.ts{font-size:12px}
@@ -25,12 +25,12 @@ rect{stroke-width:1}
 <line x1="340" y1="158" x2="340" y2="182" class="arr" marker-end="url(#a)"/>
 <g class="p"><rect x="240" y="184" width="200" height="52" rx="8"/><text class="th" x="340" y="201">02 UX Review</text><text class="ts" x="340" y="220">Wireframes</text></g>
 <line x1="340" y1="238" x2="340" y2="262" class="arr" marker-end="url(#a)"/>
-<g class="p"><rect x="240" y="264" width="200" height="52" rx="8"/><text class="th" x="340" y="281">03 Code Review</text><text class="ts" x="340" y="300">Offers 04 and 06</text></g>
+<g class="p"><rect x="240" y="264" width="200" height="52" rx="8"/><text class="th" x="340" y="281">03 Code Review</text><text class="ts" x="340" y="300">Then 04, then 06</text></g>
 
 <path d="M340 318 L340 334 L190 334 L190 354" class="arr" marker-end="url(#a)"/>
 <path d="M340 334 L490 334 L490 354" class="arr" marker-end="url(#a)"/>
 <g class="p"><rect x="90" y="356" width="200" height="52" rx="8"/><text class="th" x="190" y="373">04 Diagnostics Review</text><text class="ts" x="190" y="392">Panel matches the code</text></g>
-<text class="ts note" x="340" y="382">side by side</text>
+<text class="ts note" x="340" y="382">one at a time</text>
 <g class="p"><rect x="390" y="356" width="200" height="52" rx="8"/><text class="th" x="490" y="373">06 Copy Review</text><text class="ts" x="490" y="392">Polish enUS.lua</text></g>
 <line x1="190" y1="410" x2="190" y2="446" class="arr d" marker-end="url(#a)"/>
 <line x1="490" y1="410" x2="490" y2="446" class="arr" marker-end="url(#a)"/>
@@ -39,7 +39,7 @@ rect{stroke-width:1}
 <path d="M190 502 L190 524 L340 524" class="arr d"/>
 <path d="M490 502 L490 524 L340 524 L340 546" class="arr" marker-end="url(#a)"/>
 
-<g class="a"><rect x="240" y="548" width="200" height="52" rx="8"/><text class="th" x="340" y="565">In-game Test</text><text class="ts" x="340" y="584">After both branches</text></g>
+<g class="a"><rect x="240" y="548" width="200" height="52" rx="8"/><text class="th" x="340" y="565">In-game Test</text><text class="ts" x="340" y="584">After 07</text></g>
 <line x1="442" y1="562" x2="518" y2="562" class="arr" marker-end="url(#a)"/>
 <text class="ts note" x="480" y="549">Found a bug</text>
 <line x1="520" y1="586" x2="444" y2="586" class="arr" marker-end="url(#a)"/>
