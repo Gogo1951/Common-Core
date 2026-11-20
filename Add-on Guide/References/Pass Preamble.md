@@ -24,7 +24,7 @@ Run the prompt's phases in order. Don't skip one, and don't begin the report unt
 
 ## Every reply — plain words
 
-**Every reply to the maintainer is written for a non-developer,** not only a report's issue descriptions. Keep it to a few short lines in player words: say what happens in game — what a player sees, or what now works — not how the code does it. No function, file or variable names unless the maintainer asks for them. When something needs deciding, end with a yes/no question (Asking questions, below). A report keeps its own format, its prose in the same plain words; the text inside fix and feature prompts and command blocks is written for Claude or for running, and keeps its own rules.
+**Every reply to the maintainer is written for a non-developer,** not only a report's issue descriptions. Keep it to a few short lines in player words: say what happens in game — what a player sees, or what now works — not how the code does it. No function, file or variable names unless the maintainer asks for them. When something needs deciding, end with a short multiple-choice question, best option first, each option with an example of what a player would see (Asking questions, below). A report keeps its own format, its prose in the same plain words; the text inside fix and feature prompts and command blocks is written for Claude or for running, and keeps its own rules.
 
 ## Asking questions
 
