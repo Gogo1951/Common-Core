@@ -590,6 +590,47 @@ local window = CreateFrame("Frame", "TestWindow", UIParent)
 local line = Kit.AddOptionsLine(window, "Options", function()
 	return { { kind = "toggle", left = "Your Party", on = true, onClick = function() end } }
 end)
+window.box = { 100, 420, 600, 400 } -- left, right, top, bottom
+window.cx, window.cy = 260, 500 -- Left half: the flyout opens right
+line.box = { 108, 412, 432, 412 } -- ROW_INSET in from the window's sides
 line.scripts.OnEnter(line)
 check(line.menu:IsShown(), "hovering a window's Options line opens its flyout")
+line.cx, line.cy = 260, 422
+line.menu:Hide()
+line.scripts.OnEnter(line)
+local linePoint = line.menu.frame.points[1]
+check(
+	linePoint[1] == "TOPLEFT" and linePoint[3] == "TOPRIGHT" and linePoint[4] == -(16 - 8),
+	"the line's flyout overlaps the window's edge by 16, not the line's end"
+)
+line.box = { 100, 420, 432, 412 }
+line.menu:Hide()
+line.scripts.OnEnter(line)
+check(line.menu.frame.points[1][4] == -16, "measured from where the line really ends")
+
+-- A gray row with a sub-menu: its arrow gray, and it opens nothing
+local grayMenu = Kit.CreateMenu({
+	publish = false,
+	build = function()
+		return {
+			{ kind = "submenu", left = "Gray", submenu = "full", disabled = true },
+			{ kind = "submenu", left = "Live", submenu = "full" },
+		}
+	end,
+	flyouts = FLYOUTS,
+})
+local grayButton = CreateFrame("Button", "TestGrayButton")
+grayButton.cx, grayButton.cy = 200, 200
+grayMenu:Show(grayButton, "click")
+rows = ShownRows(grayMenu.frame)
+rows[2] = rows[#rows] -- past the spacer the kit puts above a heading
+check(rows[1].arrow:IsShown() and rows[1].arrow.text:find(":128:128:128|t", 1, true), "a gray row's arrow is gray")
+check(rows[2].arrow.text == Kit.SUBMENU_ARROW, "a live row's stays white")
+check(not rows[1].opensFlyout, "a gray row opens no sub-menu")
+rows[1].scripts.OnEnter(rows[1])
+check(not (grayMenu.panels[2] and grayMenu.panels[2]:IsShown()), "not on hover")
+rows[1].scripts.OnClick(rows[1])
+check(not (grayMenu.panels[2] and grayMenu.panels[2]:IsShown()), "nor on a click")
+rows[2].scripts.OnEnter(rows[2])
+check(grayMenu.panels[2] and grayMenu.panels[2]:IsShown(), "while a live one does")
 print("all passed")

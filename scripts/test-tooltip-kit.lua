@@ -87,6 +87,12 @@ function Tooltip:SetOwner(owner, anchor)
 	self.owner, self.anchor = owner, anchor
 	self:ClearLines()
 end
+function Tooltip:ClearAllPoints()
+	self.point = nil
+end
+function Tooltip:SetPoint(point, relativeTo, relative)
+	self.point = { point, relativeTo, relative }
+end
 function Tooltip:GetOwner()
 	return self.owner
 end
@@ -116,10 +122,10 @@ end
 local loginFrame, postCalls, requested, combat
 local TYPES = { Item = 0, Spell = 1, Unit = 2, Macro = 25 }
 
-local function Owner(x, bag, scale)
+local function Owner(x, bag, scale, y)
 	return {
 		GetCenter = function()
-			return x, 500
+			return x, y or 500
 		end,
 		GetEffectiveScale = function()
 			return scale or 1
@@ -379,7 +385,10 @@ check(
 	"an uncached item: its ID, gray"
 )
 check(requested[1] == 99999, "and the kit asks for it")
-check(Painted(Line(7).left) == "40C7EB", "a player's name in its class color (C_ClassColor)")
+check(
+	Painted(Line(7).left) == "3FC7EB",
+	"a player's name in the Style Guide's class color, never the game's (C_ClassColor)"
+)
 check(Painted(Line(8).left) == "FFFFFF", "an unknown class reads white")
 check(Painted(Line(9).right) == "33CC33" and select(2, Painted(Line(9).right)) == "On", "On green, MENU_ON")
 check(Painted(Line(10).right) == "808080" and select(2, Painted(Line(10).right)) == "Off", "Off gray, MENU_OFF")
@@ -441,6 +450,24 @@ Process("Unit", GameTooltip, {})
 check(unitCalls == 1, "a secret unit is skipped")
 issecretvalue = nil
 
+-- notInCombat is the default; false draws in combat too
+local defaultCalls, inCombatCalls = 0, 0
+Tip.OnUnit(function(block)
+	defaultCalls = defaultCalls + 1
+	block:Header("Default"):Row("Row", 1)
+end)
+Tip.OnUnit(function(block)
+	inCombatCalls = inCombatCalls + 1
+	block:Header("In Combat"):Row("Row", 1)
+end, { notInCombat = false })
+GameTooltip.unit = "mouseover"
+GameTooltip:Fill("Someone")
+combat = true
+Process("Unit", GameTooltip, {})
+check(defaultCalls == 0, "a unit hook with no options draws nothing in combat")
+check(inCombatCalls == 1, "notInCombat = false draws in combat")
+combat = false
+
 -- Spells, and a macro showing a spell
 local spells = {}
 Tip.OnSpell(function(block, spellID)
@@ -459,33 +486,39 @@ Process("Macro", GameTooltip, { lines = { { tooltipType = TYPES.Item, tooltipID 
 check(#spells == 2, "a macro showing an item doesn't")
 
 -- The add-on's own widgets
-check(Tip.Anchor(Owner(300)) == "ANCHOR_RIGHT", "Anchor: left of the middle opens right")
-check(Tip.Anchor(Owner(1500)) == "ANCHOR_LEFT", "right of it opens left")
-check(Tip.Anchor(Owner(600, nil, 2)) == "ANCHOR_LEFT", "measured at the owner's scale")
+local function Corners(owner)
+	return table.concat({ Tip.Anchor(owner) }, " ")
+end
+check(Corners(Owner(300)) == "BOTTOMLEFT TOPRIGHT", "Anchor: bottom left of the screen opens right and up")
+check(Corners(Owner(1500)) == "BOTTOMRIGHT TOPLEFT", "right of the middle opens left")
+check(Corners(Owner(300, nil, nil, 900)) == "TOPLEFT BOTTOMRIGHT", "the top half opens down")
+check(Corners(Owner(1500, nil, nil, 900)) == "TOPRIGHT BOTTOMLEFT", "top right opens left and down")
+check(Corners(Owner(600, nil, 2)) == "TOPRIGHT BOTTOMLEFT", "measured at the owner's scale")
 
 local button = Owner(1500)
 local tip = Tip.Help(button, "Restock List", "Buys what you keep.", {
 	helper = "Shift skips it.",
-	hints = { { "Open", "Click" }, { "Options", "Right-Click" } },
+	hints = { { "Open", "Left-Click" }, { "Options", "Right-Click" } },
 })
 lines = tip.lines
-check(tip == GameTooltip and tip.owner == button and tip.anchor == "ANCHOR_LEFT", "Help anchors away from the edge")
+check(tip == GameTooltip and tip.owner == button and tip.anchor == "ANCHOR_NONE", "Help places it itself")
+check(tip.point[1] == "BOTTOMRIGHT" and tip.point[2] == button and tip.point[3] == "TOPLEFT", "away from the edges")
 check(#lines == 6, "Help: title, body, helper, spacer, two hints")
 check(Painted(lines[1].left) == "FFD100" and lines[1].right == nil, "the title gold, no brand")
 check(Painted(lines[2].left) == "FFFFFF" and lines[2].wrap, "the body white and wrapping, right under it")
 check(Painted(lines[3].left) == "CCCCCC" and lines[3].wrap, "the helper silver")
 check(lines[4].left == " ", "one spacer before the hints")
 check(Painted(lines[5].left) == "00BBFF" and select(2, Painted(lines[5].left)) == "Open", "a hint's action blue")
-check(Painted(lines[5].right) == "808080" and select(2, Painted(lines[5].right)) == "Click", "its click gray")
+check(Painted(lines[5].right) == "808080" and select(2, Painted(lines[5].right)) == "Left-Click", "its click gray")
 check(select(2, Painted(lines[6].left)) == "Options", "no blank line between hints")
 check(tip.shows > 0, "and it's shown")
 tip = Tip.Help(Owner(300), "Title Only")
-check(#tip.lines == 1 and tip.anchor == "ANCHOR_RIGHT", "Help is at least a title")
+check(#tip.lines == 1 and tip.point[1] == "BOTTOMLEFT", "Help is at least a title")
 tip = Tip.Help(Owner(300), "Pinned", nil, { anchor = "ANCHOR_TOP" })
 check(tip.anchor == "ANCHOR_TOP", "opts.anchor wins")
 
 local empty = NewTooltip("Empty", {})
-Tip.Hints(empty, { { "Track", "Click" } })
+Tip.Hints(empty, { { "Track", "Left-Click" } })
 check(#empty.lines == 1 and empty.shows == 1, "Hints on an empty tooltip: no spacer, and it resizes")
 
 tip = Tip.Thing(Owner(300), 133, function(block)
@@ -585,5 +618,20 @@ Tip.OnItem(function(block)
 	block:Header("Late"):Row("A", 1)
 end)
 check(loginFrame == nil and #postCalls[TYPES.Item] == 1, "a kit loaded after login hooks right away")
+
+print("-- a locale missing its keys")
+L.ADDON_SHORT_NAME, L.MENU_ON = nil, nil
+setmetatable(L, { -- AceLocale answers a missing key with its own name, and stores it
+	__index = function(self, key)
+		rawset(self, key, key)
+		return key
+	end,
+})
+local _ = L.MENU_ON
+Tip = Load({ tdp = true, loggedIn = true })
+local fallback = Tip.Block(NewTooltip("F", {})):Header("F"):State("Thing", true)
+fallback:Done()
+check(select(2, Painted(fallback.tooltip.lines[1].right)) == "", "no Short Name: blank, never ADDON_SHORT_NAME")
+check(select(2, Painted(fallback.tooltip.lines[2].right)) == "On", "no MENU_ON: On, never the key's name")
 
 print("all passed")

@@ -1,8 +1,8 @@
 local _, ns = ...
 
--- luacheck: read globals C_ClassColor C_Container C_Item C_Secrets CreateFrame Enum GameTooltip GetItemQualityColor
+-- luacheck: read globals C_Container C_Item C_Secrets CreateFrame Enum GameTooltip GetItemQualityColor
 -- luacheck: read globals hooksecurefunc InCombatLockdown IsLoggedIn issecretvalue NUM_BAG_SLOTS NUM_REAGENTBAG_SLOTS
--- luacheck: read globals RAID_CLASS_COLORS TooltipDataProcessor UIParent
+-- luacheck: read globals TooltipDataProcessor UIParent
 
 --[[
     Tooltip-Kit: every Gogo add-on's tooltip lines. The blocks an add-on adds
@@ -30,7 +30,8 @@ local _, ns = ...
                           opts.bagsOnly: only the player's carried bag slots
                           opts.tooltips: default { GameTooltip }
       Tip.OnUnit(fn(block, unit, tooltip), opts)
-                          opts.notInCombat: nothing while in combat
+                          opts.notInCombat: nothing while in combat, the
+                          default; false draws in combat too
                           opts.tooltips: default { GameTooltip }
       Tip.OnSpell(fn(block, spellID, tooltip), opts)
                           opts.tooltips: default { GameTooltip }
@@ -60,7 +61,9 @@ local _, ns = ...
                                            The game's item or spell tooltip, then the footer:
                                            function(block) or { title, lines }
       Tip.Hints(tooltip, hints)            A spacer, then each { action, click }: blue, gray
-      Tip.Anchor(owner) -> anchor          ANCHOR_RIGHT left of the screen's middle, else ANCHOR_LEFT
+      Tip.Anchor(owner) -> point, relative The tooltip's corner and the owner's opposite one,
+                                           away from the nearer edges, side to side and up and down
+      Tip.Own(tooltip, owner, anchor)      SetOwner, placed by Tip.Anchor unless anchor is given
 
     Small helpers: Tip.Color(color, text), Tip.Count(number, word) ("7 Bag":
     the number white, the word gray) and Tip.Counts(pairs) ("7 Bag, 18 Bank").
@@ -96,7 +99,10 @@ local DEFAULT_PALETTE = {
 	MUTED = "808080",
 }
 
--- Style Guide → COLORS, for a client with neither C_ClassColor nor RAID_CLASS_COLORS.
+--[[
+    Style Guide → COLORS: the same on every flavor, as Chat-Kit's. Never the
+    game's RAID_CLASS_COLORS or C_ClassColor, which other add-ons can rewrite.
+]]
 local CLASS_COLORS = {
 	DEATHKNIGHT = "C41E3A",
 	DRUID = "FF7C0A",
@@ -134,28 +140,22 @@ local function Color(color, text)
 end
 Tip.Color = Color
 
+--[[
+    A locale string, or the fallback. Read raw: AceLocale answers a missing key
+    with the key's own name (and may store it so), which would draw
+    ADDON_SHORT_NAME in game instead of the fallback.
+]]
 local function Text(key, fallback)
-	local L = ns.L
-	return (L and L[key]) or fallback
+	local value = type(ns.L) == "table" and rawget(ns.L, key)
+	if type(value) == "string" and value ~= "" and value ~= key then
+		return value
+	end
+	return fallback
 end
 
 -- A class file's color as a hex, or nil for an unknown class.
 local function ClassHex(classFile)
-	if not classFile then
-		return nil
-	end
-	if C_ClassColor and C_ClassColor.GetClassColor then
-		local color = C_ClassColor.GetClassColor(classFile)
-		if color then
-			return HexOf(color.r, color.g, color.b)
-		end
-	elseif RAID_CLASS_COLORS then
-		local color = RAID_CLASS_COLORS[classFile]
-		if color then
-			return HexOf(color.r, color.g, color.b)
-		end
-	end
-	return CLASS_COLORS[classFile]
+	return classFile and CLASS_COLORS[classFile] or nil
 end
 
 local function QualityHex(quality)
@@ -554,7 +554,8 @@ end
 
 local function InstallUnit(registration)
 	local wanted = Wanted(registration)
-	local notInCombat = registration.opts.notInCombat
+	-- On unless the add-on asks otherwise: Forever's units turn secret in combat.
+	local notInCombat = registration.opts.notInCombat ~= false
 	local function Fire(tooltip)
 		if not wanted[tooltip] then
 			return
@@ -677,19 +678,46 @@ end
 -- The Add-on's Own Widgets
 --------------------------------------------------------------------------------
 
--- The side away from the screen's nearer edge: right of an owner left of the middle, else left.
+--[[
+    Away from the screen's nearer edges, as a menu opens (Style Guide →
+    MINIMAP MENU → Placement): right of an owner left of the middle, else
+    left; above an owner in the bottom half, else below. Returns the tooltip's
+    corner and the owner's opposite one, BOTTOMLEFT and TOPRIGHT by default.
+]]
 function Tip.Anchor(owner)
-	local x = owner and owner.GetCenter and owner:GetCenter()
-	local middle = UIParent and UIParent.GetCenter and UIParent:GetCenter()
-	if not (x and middle) then
-		return "ANCHOR_RIGHT"
+	local x, y
+	if owner and owner.GetCenter then
+		x, y = owner:GetCenter()
 	end
-	local scale = owner.GetEffectiveScale and owner:GetEffectiveScale() or 1
-	local screenScale = UIParent.GetEffectiveScale and UIParent:GetEffectiveScale() or 1
-	if x * scale < middle * screenScale then
-		return "ANCHOR_RIGHT"
+	local middleX, middleY
+	if UIParent and UIParent.GetCenter then
+		middleX, middleY = UIParent:GetCenter()
 	end
-	return "ANCHOR_LEFT"
+	local scale = owner and owner.GetEffectiveScale and owner:GetEffectiveScale() or 1
+	local screenScale = UIParent and UIParent.GetEffectiveScale and UIParent:GetEffectiveScale() or 1
+	local openLeft = x ~= nil and middleX ~= nil and x * scale >= middleX * screenScale
+	local openDown = y ~= nil and middleY ~= nil and y * scale >= middleY * screenScale
+	local vertical, opposite = "BOTTOM", "TOP"
+	if openDown then
+		vertical, opposite = "TOP", "BOTTOM"
+	end
+	if openLeft then
+		return vertical .. "RIGHT", opposite .. "LEFT"
+	end
+	return vertical .. "LEFT", opposite .. "RIGHT"
+end
+
+-- The tooltip owned by owner and placed by Tip.Anchor; an anchor given (an ANCHOR_ name) is used as is.
+function Tip.Own(tooltip, owner, anchor)
+	if anchor then
+		tooltip:SetOwner(owner, anchor)
+		return tooltip
+	end
+	tooltip:SetOwner(owner, "ANCHOR_NONE")
+	tooltip:ClearAllPoints()
+	local point, relative = Tip.Anchor(owner)
+	tooltip:SetPoint(point, owner, relative)
+	return tooltip
 end
 
 -- Each { action, click } on its own line after one spacer: the action blue, the click gray, no gaps between.
@@ -709,13 +737,13 @@ end
 
 --[[
     Help on a widget: the title gold, the body white right under it, then
-    opts.helper silver and opts.hints (Tip.Hints). opts.anchor overrides
-    Tip.Anchor. Returns GameTooltip, shown.
+    opts.helper silver and opts.hints (Tip.Hints). opts.anchor (an ANCHOR_
+    name) overrides Tip.Anchor. Returns GameTooltip, shown.
 ]]
 function Tip.Help(owner, title, body, opts)
 	opts = opts or {}
 	local tooltip = GameTooltip
-	tooltip:SetOwner(owner, opts.anchor or Tip.Anchor(owner))
+	Tip.Own(tooltip, owner, opts.anchor)
 	AddLine(tooltip, Color("TITLE", title), "TITLE")
 	if body then
 		AddLine(tooltip, Color("BODY", body), "BODY", true)
@@ -737,7 +765,7 @@ end
 ]]
 function Tip.Thing(owner, thing, footer)
 	local tooltip = GameTooltip
-	tooltip:SetOwner(owner, Tip.Anchor(owner))
+	Tip.Own(tooltip, owner)
 	if type(thing) == "number" then
 		tooltip:SetSpellByID(thing)
 	elseif thing then

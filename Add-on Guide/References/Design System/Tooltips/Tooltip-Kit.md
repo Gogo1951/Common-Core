@@ -61,7 +61,7 @@ local Tip = ns.TooltipKit
 
 ```lua
 Tip.OnItem(function(block, itemID, link, tooltip) end, { bagsOnly = true, tooltips = { GameTooltip, ItemRefTooltip } })
-Tip.OnUnit(function(block, unit, tooltip) end, { notInCombat = true })
+Tip.OnUnit(function(block, unit, tooltip) end) -- skipped in combat unless { notInCombat = false }
 Tip.OnSpell(function(block, spellID, tooltip) end)
 ```
 
@@ -72,7 +72,7 @@ The callback fills `block`; the kit draws it after the callback returns, and onl
 - **`tooltip:Show()`** runs after the lines go in, so the tooltip grows to fit.
 - **`tooltips`**: the tooltips a hook draws on, `{ GameTooltip }` by default. Add `ItemRefTooltip` for a link clicked in chat. The comparison tooltips beside them only repeat the block, so leave them out.
 - **`bagsOnly`** (items): only an item in one of the player's carried bags (bag 0 through `NUM_BAG_SLOTS`, plus the reagent bag where the client has one). On the old route the kit hooks `GameTooltip:SetBagItem` instead of the script, scoped by the bag the call names, which holds under replacement bag add-ons; on the tooltip-data route it asks the owner's `GetBagID`.
-- **`notInCombat`** (units): nothing while in combat, checked before the unit is read. A unit that reads secret on Forever is skipped either way.
+- **`notInCombat`** (units): **on by default**: nothing while in combat, checked before the unit is read, since a unit read in combat on Forever can be secret. Pass `notInCombat = false` only for a block that must show in combat and reads nothing a secret unit breaks. A unit that reads secret is skipped either way.
 - **Spells shown by a macro** count as that spell on the tooltip-data route (an action bar slot holding a macro fills a Macro tooltip, not a Spell one). A macro showing an item, or nothing, is skipped.
 - **The callback decides everything else**: whether the feature is on, whether the item or unit is one it cares about. Return without adding a row and nothing shows.
 
@@ -85,7 +85,7 @@ Every method returns the block, so calls chain.
 | `block:Header(title)` | Spacer, then the title gold … the Short Name gray |
 | `block:Row(label, value)` | Label white … value white. `value` may be nil for a label alone |
 | `block:Item(itemIDOrLink, value)` | The item's icon at line height and its name in its quality color … value. An item not cached yet shows its name from the link, or its ID, in gray, and is asked for, so the next show has it |
-| `block:Player(name, classFile, value)` | The name in its class color … value |
+| `block:Player(name, classFile, value)` | The name in its class color (Style Guide → COLORS' fixed table, never the game's `RAID_CLASS_COLORS`, which other add-ons rewrite) … value |
 | `block:State(label, on)` | Label white … On green or Off gray |
 | `block:Requirement(label, value, met)` | White, or red on both sides when `met` is `false`. `nil` (not known: a non-Rogue, a client that can't read the skill) reads white |
 | `block:Line(text)` | A silver (`HELP`) sentence that wraps, not indented |
@@ -111,13 +111,14 @@ For a block on a tooltip the add-on fills itself: an options panel's Example of 
 Tip.Help(owner, title, body, { helper = L["..."], hints = { { L["OPEN"], L["MENU_CLICK_LEFT"] } }, anchor = nil })
 Tip.Thing(owner, linkOrSpellID, footer) -- footer: function(block) or { title = , lines = { "a sentence", { label, value } } }
 Tip.Hints(tooltip, { { action, click }, ... })
-Tip.Anchor(owner) -- "ANCHOR_RIGHT" or "ANCHOR_LEFT"
+Tip.Anchor(owner) -- the tooltip's corner and the owner's opposite one: "BOTTOMLEFT", "TOPRIGHT"
+Tip.Own(tooltip, owner, anchor) -- SetOwner, placed by Tip.Anchor unless an ANCHOR_ name is given
 ```
 
 - **`Tip.Help`** sets `GameTooltip` on the owner: the title gold, the body white right under it with no blank line, the `helper` silver, then the `hints`. Always a title; the body is optional. Returns the tooltip, shown.
 - **`Tip.Thing`** sets the game's own tooltip, unchanged (a number is a spell ID, a string an item or spell link, or `"item:6948"`), then the footer: a spacer, a gold section title (no brand), the add-on's lines. A footer with nothing to say adds nothing.
 - **`Tip.Hints`**: one spacer (unless the tooltip is empty), then each hint on its own line, the action `INFO` blue on the left, the click `MUTED` gray on the right, no blank lines between them.
-- **`Tip.Anchor`**: the side away from the screen's nearer edge. An owner whose center is left of the screen's middle opens its tooltip to the right (`ANCHOR_RIGHT`), else to the left (`ANCHOR_LEFT`). `opts.anchor` on `Tip.Help` overrides it.
+- **`Tip.Anchor`**: away from the screen's nearer edges, side to side and up and down, as a menu opens (Style Guide → MINIMAP MENU → Placement). An owner left of the screen's middle opens its tooltip to the right, else to the left; one in the bottom half opens it upward, else downward. It returns the tooltip's corner and the owner's opposite one (`BOTTOMLEFT`, `TOPRIGHT` for an owner low on the left). `Tip.Own` sets the owner with `ANCHOR_NONE` and places it there; `Tip.Help` and `Tip.Thing` use it. `opts.anchor` on `Tip.Help` (an `ANCHOR_` name) overrides it.
 
 ### Helpers
 
@@ -211,7 +212,7 @@ Tip.OnUnit(function(block, unit)
 		list[index] = { item = row.itemID, value = ns.db.profile.ShowQuantity and row.Amount or nil }
 	end
 	block:Header(L["SPARES_TITLE"]):List(list) -- "Spares"
-end, { notInCombat = true })
+end)
 ```
 
 ```
@@ -257,7 +258,7 @@ button:SetScript("OnLeave", GameTooltip_Hide)
 Restock List                                ← TITLE gold
 Buys what you keep, at every merchant.      ← BODY white, right under it
 
-Open                                Click   ← INFO blue … MUTED gray
+Open                           Left-Click   ← INFO blue … MUTED gray
 Options                       Right-Click
 ```
 
@@ -280,7 +281,7 @@ Every add-on already carries these, or takes them with its first kit (Style Guid
 
 | Key | enUS | Used for |
 |---|---|---|
-| `ADDON_SHORT_NAME` | the Short Name | Every header's right side |
+| `ADDON_SHORT_NAME` | the Short Name | Every header's right side. A key the locale lacks reads as missing and falls back (blank, or `On`, `Off`, `%d more`): the kit reads the table raw, since AceLocale answers a missing key with its own name. |
 | `MENU_ON` | `On` | `block:State`, `block:Total(label, true)` |
 | `MENU_OFF` | `Off` | `block:State`, `block:Total(label, false)` |
 | `MENU_MORE` | `%d more` | `block:List` past 8 rows |
@@ -294,7 +295,7 @@ Titles, labels and words beside numbers are the add-on's own keys, handed in. Ti
 | **GogoLoot**, `Features/Lockbox-Tooltips.lua`: `GogoLoot` alone as a header, then the requirement or the player's rank, green or red | **Status line** `Lockbox … GogoLoot`, its row a `block:Requirement`: red when short, white when met or not known (no more green). Its line scan for the block and its own hooks go: the kit's guard and hooks replace them. Keep the scan for the client's own requirement line, which still picks the row's wording |
 | **GogoLoot**, `Features/Loot-Master.lua`: the Roll List's bag tooltip (`AddBagTooltipLines`), in a file no TOC loads | **Deleted** |
 | **Water Dispenser**, `Features/Item-Tooltips.lua`: one branded `Will Dispense` line on a carried bag item | **Status line** with a state row (`block:State(L["TOOLTIP_WILL_DISPENSE"], true)`), `bagsOnly = true`. `ns.SetupItemTooltips`, `GetCarriedBagSlot` and both routes go |
-| **Water Dispenser**, `Features/Group-Spares.lua`: the branded spares header and item rows on a unit | **Item list** `Spares … Water Dispenser`, `notInCombat = true`, stopping at 8. Its own hook pair (`HookTooltip`) goes |
+| **Water Dispenser**, `Features/Group-Spares.lua`: the branded spares header and item rows on a unit | **Item list** `Spares … Water Dispenser`, skipped in combat (the default), stopping at 8. Its own hook pair (`HookTooltip`) goes |
 | **Good to Go**, `Inventory-Report-Tooltip.lua`: `GtG // Inventory Report` with the total beside it, this character, a blank line, the others | **Roster** with the `Total` row at the bottom, no blank line inside the block. `ns.AddItemTooltipPostCall`, the `reported` guard and the five-second hook delay go (the kit hooks at login) |
 | **Good to Go**, `Spell-Rank-Lines.lua` and `Spell-Ranks-Tooltip.lua`: `GtG // Firebolt Ranks` and a line per rank | **Ranked list** `Firebolt Ranks … GtG`. `ns.AddSpellTooltipPostCall` goes; the What's Next? rows draw the same block with `Tip.Block(GameTooltip)` |
 | **Play It Forward**, `Generosity-Tooltip.lua`: the branded Badge of Generosity header and four silver rows, on your own tooltip even at all zeros | **Read-out** `Badge of Generosity … PIF` (its Short Name moves to the master list's PIF, Chat-Kit.md), white labels, **hidden until something's given** (zero gifts is nothing to report). Its route check and hook go; the town-only gate and hover ping stay in the callback |

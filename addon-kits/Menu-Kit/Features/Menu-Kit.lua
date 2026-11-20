@@ -46,7 +46,7 @@ local ADDON_NAME, ns = ...
       closes                  true for a pick that acts: the menu closes first
       click                   the button click that does the same ("RightButton", "ShiftLeftButton"),
                               or a gesture's localized name ("Drag"), drawn the same and routing nothing
-      disabled                true: gray, no highlight, no click; its tooltip still shows
+      disabled                true: gray, no highlight, no click, no sub-menu (its arrow gray); its tooltip still shows
       tooltip                 a function(GameTooltip), shown beside the row under the cursor
       submenu                 the key of the flyout its hover opens (flyouts[key]), or with
       flyout                  a function returning the flyout's entries in place of flyouts[key]
@@ -190,6 +190,16 @@ function Kit.Color(color, text)
 		return math.floor(value * 255 + 0.5)
 	end
 	return format("|cff%02x%02x%02x%s|r", Byte(red), Byte(green), Byte(blue), text)
+end
+
+-- The arrow tinted, for a gray row: a texture escape takes its color as 0–255 after its texel box.
+local ARROW_PATH = "Interface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Menu-Arrow"
+local function ArrowIn(color)
+	local red, green, blue = RGB(color)
+	local function Byte(value)
+		return math.floor(value * 255 + 0.5)
+	end
+	return format("|T%s:0:0:0:0:32:32:0:32:0:32:%d:%d:%d|t", ARROW_PATH, Byte(red), Byte(green), Byte(blue))
 end
 
 local function PlayClick()
@@ -645,7 +655,8 @@ function Panel:Render(source, context)
 	for index, entry in ipairs(entries) do
 		local row = Row(self, index)
 		row.entry = entry
-		row.opensFlyout = arrows[index] or false
+		-- A gray row keeps its arrow, gray, but opens nothing: hover and click both pass it by.
+		row.opensFlyout = (arrows[index] and not entry.disabled) or false
 		row:UnlockHighlight()
 	end
 	for index = #entries + 1, #rows do
@@ -686,6 +697,7 @@ function Panel:Render(source, context)
 		row.highlight:SetShown(clickable)
 		row.line:SetShown(kind == "separator")
 		row.arrow:SetShown(arrows[index] or false)
+		row.arrow:SetText(entry.disabled and ArrowIn("MUTED") or Kit.SUBMENU_ARROW)
 
 		if not look then
 			Paint(row.left, nil)
@@ -988,10 +1000,28 @@ function Menu:HasFlyout(entry)
 end
 
 --[[
+    How far a window's line sits inside the window's edge on the side its
+    flyout opens toward, so the flyout overlaps the window, not the line, by
+    FLYOUT_OVERLAP. Measured when the window is on screen; else the line's
+    usual place, ROW_INSET in, where Kit.AddOptionsLine's text meets the body's.
+]]
+local function LineInset(line, openLeft)
+	local window = line.window
+	if window then
+		if openLeft and line:GetLeft() and window:GetLeft() then
+			return line:GetLeft() - window:GetLeft()
+		elseif not openLeft and line:GetRight() and window:GetRight() then
+			return window:GetRight() - line:GetRight()
+		end
+	end
+	return ROW_INSET
+end
+
+--[[
     Where a menu opens (MINIMAP MENU → Placement, MENUS → Opening and Closing),
     decided once by which half of the screen it opens in:
       "hover", "click"  off a button's corner, the menu's corner MENU_GAP from the opposite one
-      "line"            off a window's line, overlapping the window by FLYOUT_OVERLAP
+      "line"            off a window's line, overlapping the window's edge by FLYOUT_OVERLAP
       "cursor"          a right-click menu, at the cursor, as the game opens its own
 ]]
 function Menu:Place(anchor, how)
@@ -1011,10 +1041,11 @@ function Menu:Place(anchor, how)
 		state.openLeft = (x or 0) * scale > width / 2
 		state.openDown = (y or 0) * scale > height / 2
 		if how == "line" then
+			local inside = Kit.FLYOUT_OVERLAP - LineInset(anchor, state.openLeft)
 			if state.openLeft then
-				main:SetPoint("TOPRIGHT", anchor, "TOPLEFT", Kit.FLYOUT_OVERLAP, Kit.FLYOUT_RISE)
+				main:SetPoint("TOPRIGHT", anchor, "TOPLEFT", inside, Kit.FLYOUT_RISE)
 			else
-				main:SetPoint("TOPLEFT", anchor, "TOPRIGHT", -Kit.FLYOUT_OVERLAP, Kit.FLYOUT_RISE)
+				main:SetPoint("TOPLEFT", anchor, "TOPRIGHT", -inside, Kit.FLYOUT_RISE)
 			end
 		else
 			local point = (state.openDown and "TOP" or "BOTTOM") .. (state.openLeft and "RIGHT" or "LEFT")
@@ -1320,6 +1351,7 @@ function Kit.AddOptionsLine(frame, label, flyout, afterChange)
 	line:SetScript("OnEnter", Open)
 	line:SetScript("OnClick", Open)
 	line.menu = menu
+	line.window = frame
 	return line, separator
 end
 

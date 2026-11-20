@@ -196,6 +196,19 @@ ns.db = { profile = { showWelcome = false }, global = { showWelcome = true } }
 check(Chat.Welcome() == true, "global on prints whatever the profile says")
 ns.db = nil
 check(Chat.Welcome() == true, "before the database exists it is on, its default")
+ns.DATABASE_DEFAULTS = { profile = { showWelcome = true } } -- Simple, with a stale global from an older version
+ns.db = { profile = { showWelcome = true }, global = { showWelcome = false } }
+check(Chat.Welcome() == true, "the scope the defaults name wins: an old global value can't silence it")
+ns.db = { profile = { showWelcome = false }, global = { showWelcome = true } }
+check(Chat.Welcome() == false, "and an old global value can't turn it back on")
+ns.DATABASE_DEFAULTS = { global = { showWelcome = true } } -- Per-Character
+ns.db = { profile = { showWelcome = false }, global = { showWelcome = true } }
+check(Chat.Welcome() == true, "Per-Character defaults read global only")
+ns.DATABASE_DEFAULTS = nil
+ns.L.CHAT_LOADED_SAVED, ns.L.CHAT_LOADED = ns.L.CHAT_LOADED, "Version %d."
+ns.db = { profile = { showWelcome = true }, global = {} }
+check(Chat.Welcome() == false, "a CHAT_LOADED with the wrong placeholder prints nothing, never an error")
+ns.L.CHAT_LOADED, ns.L.CHAT_LOADED_SAVED = ns.L.CHAT_LOADED_SAVED, nil
 ns.db = { profile = { showWelcome = false }, global = {} }
 Clear(printed)
 check(Chat.PrintWarning("Turn off Other Add-on: it fights this one.") == true, "PrintWarning ignores the switch")
@@ -203,13 +216,13 @@ check(Visible(printed[1]) == "Good to Go // Turn off Other Add-on: it fights thi
 check(Chat.PrintWarning("Turn off Other Add-on: it fights this one.") == false, "and says it once a session")
 
 -- Center screen
-check(Chat.Notice("You can't do that in combat.") == true, "Notice adds to UIErrorsFrame")
+check(Chat.Notice("That macro is on 3 bars.") == true, "Notice adds to UIErrorsFrame")
 local notice = Last(notices)
-check(notice.text == "GtG // You can't do that in combat.", "Short Name // Message")
+check(notice.text == "GtG // That macro is on 3 bars.", "Short Name // Message")
 check(math.abs(notice.r - 0xCC / 255) < 1e-9 and math.abs(notice.g - 0x33 / 255) < 1e-9, "red (OFF) for a refusal")
 Chat.Notice("Queued.", "notice")
 notice = Last(notices)
-check(math.abs(notice.r - 1) < 1e-9 and math.abs(notice.g - 0xD1 / 255) < 1e-9, "gold (TITLE) for a notice")
+check(math.abs(notice.r - 0xCC / 255) < 1e-9, "always red: there is no gold notice")
 
 -- Values inside a print
 check(Chat.Player("Katz", "DRUID") == "|cffFF7C0AKatz|r|cffFFFFFF", "Player: class color, then TEXT again")
@@ -423,6 +436,37 @@ end
 Chat.Draft("Old client", "SAY")
 check(Last(opened).text == "/s Old client", "ChatFrame_OpenChat where ChatFrameUtil is missing")
 ChatFrameUtil = util
+
+-- AceLocale answers a missing key with its own name: the kit reads raw, so the fallback runs
+local locale = ns.L
+ns.L = setmetatable({ ADDON_TITLE = "Good to Go", BUFF_ASK = "%s is missing [Arcane Intellect]!" }, {
+	__index = function(self, key)
+		rawset(self, key, key)
+		return key
+	end,
+})
+check(
+	Chat.Build("BUFF_ASK", "Katz") == "{rt1} Katz is missing [Arcane Intellect] // Good to Go",
+	"no Short Name: the Full Name, not ADDON_SHORT_NAME"
+)
+local _ = ns.L.ADDON_SHORT_NAME -- AceLocale stores a key it was asked for and lacked
+check(Chat.Build("BUFF_ASK", "Katz"):find("ADDON_SHORT_NAME", 1, true) == nil, "even once the key's name is stored")
+check(Chat.Build("NO_SUCH_KEY") == nil, "and a missing format key builds nothing")
+ns.L = locale
+
+-- Bad translations and the length limit
+ns.L.BAD_PLACEHOLDER = "%d is missing %s"
+Clear(sent)
+check(Chat.Build("BAD_PLACEHOLDER", "Katz") == nil, "a translation whose placeholders don't fit builds nothing")
+check(Chat.Send("PARTY", nil, "BAD_PLACEHOLDER", "Katz") == false and #sent == 0, "and sends nothing, never an error")
+check(
+	Chat.Send("PARTY", nil, { text = string.rep("a", 300) }) == false and #sent == 0,
+	"Send refuses a line over 255 bytes"
+)
+check(Chat.Whisper("Aero", string.rep("a", 256)) == false and #sent == 0, "and so does Whisper")
+check(Chat.Send("PARTY", nil, { text = string.rep("a", 200) }) == true and #sent == 1, "a line under it goes")
+local oversized = Chat.SendParts("RAID", nil, "LOOT_LIST", { string.rep("x", 300), "b" })
+check(#oversized == 1 and #sent == 2, "SendParts skips a part too long alone and sends the rest")
 
 -- The Style Guide's names
 Clear(printed)

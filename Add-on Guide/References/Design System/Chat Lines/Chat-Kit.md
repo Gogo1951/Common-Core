@@ -4,7 +4,7 @@ The shared helper every Gogo add-on writes its chat lines through, in Common-Cor
 
 - **Rules:** Style Guide → MESSAGES, WELCOME MESSAGE, ADD-ON NAMES, COLORS.
 - **Drawn:** `../Chat Lines.html`.
-- **The kit knows nothing about the add-on.** It reads only `ns.PALETTE`, `ns.L` (`ADDON_TITLE`, `ADDON_SHORT_NAME`, `CHAT_LOADED`), `ns.TARGET_MARKER`, `ns.CHAT_MESSAGE_MAX_LENGTH`, `ns.db`, `ns.FLAVOR` and `ns.Version`, all read when a line is written, so nothing has to exist before the kit loads.
+- **The kit knows nothing about the add-on.** It reads only `ns.PALETTE`, `ns.L` (`ADDON_TITLE`, `ADDON_SHORT_NAME`, `CHAT_LOADED`), `ns.TARGET_MARKER`, `ns.CHAT_MESSAGE_MAX_LENGTH`, `ns.db`, `ns.DATABASE_DEFAULTS`, `ns.FLAVOR` and `ns.Version`, all read when a line is written, so nothing has to exist before the kit loads.
 - **No adopted add-on yet.** Each add-on's move onto the kit is its own change, through `scripts/sync-addon-kits.sh --adopt Chat-Kit`.
 
 ## Adopting It
@@ -34,7 +34,7 @@ local Chat = ns.ChatKit
 | `Chat.PrintOnce(key, body)` | once a session per key | Returns true when it printed. |
 | `Chat.PrintQuiet(key, seconds, body)` | not again within `seconds` per key | GogoLoot's repeat window and `AnnounceItemOnce`. Returns true when it printed. |
 | `Chat.Welcome()` | `L.CHAT_LOADED` with `ns.Version` | Gated **only** by `showWelcome` (below). No once-per-session flag: it prints at every login while the switch is on. |
-| `Chat.Notice(body, kind)` | center screen: `Short Name // Body` | `UIErrorsFrame`, only to refuse a click right where the player is looking. `kind` `"error"` (the default) is `OFF` red; `"notice"` is `TITLE` gold. |
+| `Chat.Notice(body)` | center screen: `Short Name // Body`, `OFF` red | `UIErrorsFrame`, only to refuse a click right where the player is looking (a macro that can't be deleted). A refusal in combat is an ordinary `Chat.Print`, never center screen. |
 
 ```lua
 Chat.Print(L["CHAT_LIST_ADDED"]:format(link))
@@ -42,10 +42,10 @@ Chat.PrintBlock(L["CHAT_VENDOR_TOTAL"]:format(Chat.Money(total)), saleLines)
 Chat.PrintAlert(L["ALERT_TAUNT"]:format(icon, Chat.Player(name, class), spellLink))
 Chat.PrintQuiet("paused", ns.STATUS_REPEAT_COOLDOWN, L["CHAT_OPENING_PAUSED"])
 Chat.PrintWarning(L["CHAT_CONFLICT_QUESTIE"])
-Chat.Notice(L["ERROR_IN_COMBAT"]) -- refusing a click in combat
+Chat.Notice(L["ERROR_MACRO_ON_BARS"]) -- refusing a click: the macro can't be deleted while it's on your bars
 ```
 
-**Where `showWelcome` lives.** The key is presentation, scoped per Style Guide → SAVED VARIABLES → The Two Models: `ns.db.profile.showWelcome` under Simple, `ns.db.global.showWelcome` under Per-Character. The kit reads `ns.db.global.showWelcome` first and `ns.db.profile.showWelcome` only when global has none. AceDB returns a scope's default for every key its defaults define, so the scope that answers is the one the add-on's `ns.DATABASE_DEFAULTS` put it in, and the kit needs no setting to know the model. Before `ns.db` exists, or with neither scope holding the key, it reads as on, its default.
+**Where `showWelcome` lives.** The key is presentation, scoped per Style Guide → SAVED VARIABLES → The Two Models: `ns.db.profile.showWelcome` under Simple, `ns.db.global.showWelcome` under Per-Character. The kit reads only the scope the add-on's `ns.DATABASE_DEFAULTS` puts it in, so a value an older version saved in the other scope never overrides the current switch, and the kit needs no setting to know the model. Without `ns.DATABASE_DEFAULTS` it reads global first, then the profile. Before `ns.db` exists, or with neither scope holding the key, it reads as on, its default.
 
 ### Values Inside a Print
 
@@ -88,10 +88,17 @@ ns:Announce(ns:GetGroupChatChannel(), nil, "BUFF_DUTY_OTHERS_ASK_ONE", name, lin
 -- A combat alert to the group: no marker.
 Chat.Send(Chat.GroupChannel(), nil, { key = "ALERT_TAUNT", marker = false }, name, spellLink)
 
--- An editable whisper: the player's text, filled, signed off, queued.
-local body = Chat.FillTokens(ns.db.profile.thanksWhisper, { name = Ambiguate(sender, "short"), spell = link })
-local line = Chat.Build({ text = body, channel = "WHISPER" })
-if line and #line <= ns.CHAT_MESSAGE_MAX_LENGTH then
+-- An editable whisper: the player's text, filled, signed off, queued. Empty text sends nothing;
+-- too long, the default text in the player's chosen language goes instead (Style Guide → Editable Messages).
+local tokens = { name = Ambiguate(sender, "short"), spell = link }
+local function WhisperLine(text)
+	return Chat.Build({ text = Chat.FillTokens(text, tokens), channel = "WHISPER" })
+end
+local line = WhisperLine(ns.db.profile.thanksWhisper)
+if line and #line > ns.CHAT_MESSAGE_MAX_LENGTH then
+	line = WhisperLine(ns.GetDefaultThanksWhisper()) -- the default for ns.GetMessageLanguage()
+end
+if line then
 	Chat.Whisper(sender, line)
 end
 
@@ -109,7 +116,9 @@ Chat.Draft(announcement, "PARTY")
 - **The marker** is `ns.TARGET_MARKER`, followed by a space. An add-on without one (none defined, or an empty string) sends none.
 - **WoW Forever** (`ns.FLAVOR == "Camelot"`) blocks raid-marker tokens in group and channel chat, so there the marker goes on whispers only: `Send` and `SendParts` decide from their channel, and `Build` builds the group's line unless given `channel = "WHISPER"`.
 - **Pipes are kept**: bodies carry item, spell and quest links, which survive sent chat; stripping would break them.
-- **Parts** (item links with counts, an enchant, money) pack greedily across as many lines as needed, each at most `ns.CHAT_MESSAGE_MAX_LENGTH` bytes (255 by default), split only between parts, each line the whole format so it reads complete. `formatArguments(joined)` returns the format's arguments in order, for a format whose list isn't its only one; by default the joined list is. A part too long alone still gets its own line: it can't be shortened without breaking its link.
+- **Parts** (item links with counts, an enchant, money) pack greedily across as many lines as needed, each at most `ns.CHAT_MESSAGE_MAX_LENGTH` bytes (255 by default), split only between parts, each line the whole format so it reads complete. `formatArguments(joined)` returns the format's arguments in order, for a format whose list isn't its only one; by default the joined list is. A part too long alone still gets its own line from `BuildParts` (it can't be shortened without breaking its link), and `SendParts` skips that line.
+- **Over the limit, nothing goes.** `Send`, `SendParts` and `Whisper` never hand chat a line over `ns.CHAT_MESSAGE_MAX_LENGTH` bytes, which it would refuse. Swapping in an editable message's default text is the add-on's build function's job, before the kit sees the line.
+- **A translation whose placeholders don't fit** its arguments builds nothing (`Build` returns nil, `Send` sends nothing), never a Lua error.
 - **Whispers** go through one queue, 0.35 seconds apart, so a burst never trips the server's chat squelch; an empty queue sends at once. While `C_ChatInfo.InChatMessagingLockdown()` (where the client has it) says chat is locked, the queue waits, looking again each second; a whisper still locked out 30 seconds after it was queued is dropped rather than sent stale. A lockdown value the game hides (`issecretvalue`) counts as locked. Group and channel sends during lockdown are skipped, never queued.
 - **Sends** use `C_ChatInfo.SendChatMessage`, or `SendChatMessage` on a client without it.
 
@@ -131,7 +140,7 @@ Every add-on already has them; the kit adds no locale key.
 | Key | What |
 |---|---|
 | `L["ADDON_TITLE"]` | The Full Name: every print, alert and warning. |
-| `L["ADDON_SHORT_NAME"]` | The Short Name: every sent line's sign-off and the center-screen notice. Falls back to the Full Name. |
+| `L["ADDON_SHORT_NAME"]` | The Short Name: every sent line's sign-off and the center-screen refusal. Falls back to the Full Name. A key the locale lacks counts as missing (the kit reads the table raw, since AceLocale answers a missing key with its own name). |
 | `L["CHAT_LOADED"]` | The welcome message, `%s` the version (Style Guide → WELCOME MESSAGE). |
 
 And from `Data/Data.lua`: `ns.PALETTE` (`INFO`, `SEPARATOR`, `TEXT`, `OFF`, `TITLE`; a missing key falls back to the Style Guide's value), `ns.TARGET_MARKER`, `ns.CHAT_MESSAGE_MAX_LENGTH`, `ns.FLAVOR` (`Data/Flavor.lua`) and `ns.Version`.
@@ -140,7 +149,7 @@ And from `Data/Data.lua`: `ns.PALETTE` (`INFO`, `SEPARATOR`, `TEXT`, `OFF`, `TIT
 
 | Add-on | Today | With the kit |
 |---|---|---|
-| **Good to Go** | `Features/Announcements.lua`: `GetPrintPrefix`, `ns.BuildPrintLine`, `ns:PrintMessage`, `ns.WarnOnce`, `TrimSentBody`/`SignOff`/`BuildSent`, `ns:BuildAnnounceMessage`, `Send`, the whisper queue (`QueueWhisper`, `Deliver`), `ns:Announce`, `FillTokens`, `ns:GetGroupChatChannel`, `ns:QueueAutomatedWhisper`. `Features/Utilities.lua:67`: `ns.ShowUIError`, `ns.ShowUINotice`. | `Chat.Print`, `Chat.PrintLine`, `Chat.PrintWarning`/`PrintOnce`, `Chat.Build({ text = ... })`, `Chat.Whisper`, `Chat.Send`, `Chat.FillTokens`, `Chat.Notice(body)` / `Chat.Notice(body, "notice")`. `BuildEditable` (the too-long fallback to the default text) and the whisper builders stay: they know the add-on's fields. |
+| **Good to Go** | `Features/Announcements.lua`: `GetPrintPrefix`, `ns.BuildPrintLine`, `ns:PrintMessage`, `ns.WarnOnce`, `TrimSentBody`/`SignOff`/`BuildSent`, `ns:BuildAnnounceMessage`, `Send`, the whisper queue (`QueueWhisper`, `Deliver`), `ns:Announce`, `FillTokens`, `ns:GetGroupChatChannel`, `ns:QueueAutomatedWhisper`. `Features/Utilities.lua:67`: `ns.ShowUIError`, `ns.ShowUINotice`. | `Chat.Print`, `Chat.PrintLine`, `Chat.PrintWarning`/`PrintOnce`, `Chat.Build({ text = ... })`, `Chat.Whisper`, `Chat.Send`, `Chat.FillTokens`, `Chat.Notice(body)`. `BuildEditable` (the too-long fallback to the default text) and the whisper builders stay: they know the add-on's fields. |
 | **Thanks for the Buff** | Its own `TrimSentBody`/`SignOff`, `ns:BuildAnnounceMessage`, `ns:Announce`, `ns:Whisper` (unbranded), the Good News whisper queue with its lockdown drop. Prints brand with the **Short Name** today. | The kit's calls; `ns:Whisper` becomes `Chat.Whisper` (queued now too). Prints move to the Full Name. |
 | **GogoLoot** | `ns.BuildPrintMessage`, `ns:PrintMessage`, `ns:BuildAnnounceMessage` (no trim today), `ns:Announce`, `ns:AnnounceParts` (packing with `formatArguments`), `ns:GetGroupChatChannel`, `StatusPrint`'s repeat check, `AnnounceItemOnce`, the welcome reading `ns.db.global.showWelcome`. | `Chat.SendParts(channel, target, key, parts, formatArguments)`, `Chat.PrintQuiet` (keyed by the text, or the item ID), `Chat.Welcome()`. The `lootNotifications` master switch stays GogoLoot's: it checks it before calling `Chat.Send`. The loading-screen quiet window (`SetQuiet`) stays GogoLoot's. Sent bodies gain the trim. |
 | **Pretty Wide Quest Log** | `BuildSent` with the WoW Forever marker rule, `ns:BuildAnnounceMessage` (group), `ns:BuildWhisperMessage`, `ns:Announce`, `ns:GetGroupChatChannel`. Prints brand with the **Short Name** today. | `Chat.Build(key, ...)` and `Chat.Build({ key = key, channel = "WHISPER" }, ...)`; the quest-reference fitting stays. Prints move to the Full Name. Sent bodies gain the trim. |

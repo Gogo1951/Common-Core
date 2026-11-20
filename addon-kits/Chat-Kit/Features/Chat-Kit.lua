@@ -16,7 +16,7 @@ local _, ns = ...
     The kit knows nothing about the add-on. It reads only what every add-on
     already defines under one name: ns.PALETTE, ns.L (ADDON_TITLE,
     ADDON_SHORT_NAME, CHAT_LOADED), ns.TARGET_MARKER, ns.CHAT_MESSAGE_MAX_LENGTH,
-    ns.db, ns.FLAVOR and ns.Version.
+    ns.db, ns.DATABASE_DEFAULTS, ns.FLAVOR and ns.Version.
 
     Spec: Common-Core/Add-on Guide/References/Design System/Chat Lines/
     Chat-Kit.md. Rules: Style Guide → MESSAGES and WELCOME MESSAGE.
@@ -31,7 +31,7 @@ local _, ns = ...
       Chat.Welcome()                      L.CHAT_LOADED with ns.Version, while showWelcome is on
       Chat.PrintLine(body)                Print's line, unprinted, for an Example line
       Chat.AlertLine(body)                PrintAlert's line, unprinted
-      Chat.Notice(body, kind)             Short Name // Body, center screen: "error" red, "notice" gold
+      Chat.Notice(body)                   Short Name // Body, red, center screen: refusing a click
       Chat.Player(name, classFile)        A name in its class color, inside a print
       Chat.Money(copper)                  12g 05s 00c, colored, inside a print
       Chat.Slash(text)                    A slash command in INFO, inside a print
@@ -107,10 +107,14 @@ local function Color(key)
 	return "|cff" .. Hex(key)
 end
 
--- A locale string, or nil when the add-on has none under that key.
+--[[
+    A locale string, or nil when the add-on has none under that key. Read raw:
+    AceLocale answers a missing key with the key's own name (and may store it
+    so), which would print ADDON_SHORT_NAME in game instead of falling back.
+]]
 local function Text(key)
-	local value = ns.L and ns.L[key]
-	if type(value) == "string" and value ~= "" then
+	local value = type(ns.L) == "table" and rawget(ns.L, key)
+	if type(value) == "string" and value ~= "" and value ~= key then
 		return value
 	end
 	return nil
@@ -280,17 +284,28 @@ end
 --[[
     showWelcome is a presentation key, scoped per the add-on's save model
     (Style Guide → SAVED VARIABLES → The Two Models): ns.db.global under
-    Per-Character, ns.db.profile under Simple. AceDB hands back a scope's
-    default for a key its defaults define, so the scope that answers is the one
-    the add-on put it in. On by default, and gated on nothing else.
+    Per-Character, ns.db.profile under Simple. The scope ns.DATABASE_DEFAULTS
+    puts it in is the only one read, so a value an older version saved in the
+    other scope never overrides the current switch. With no defaults to go by,
+    global answers first, then the profile. On by default, and gated on
+    nothing else.
 ]]
+local function DefinesWelcome(scope)
+	return type(scope) == "table" and scope.showWelcome ~= nil
+end
+
 local function WelcomeOn()
 	local db = ns.db
 	if not db then
 		return true
 	end
+	local defaults = ns.DATABASE_DEFAULTS
 	local value
-	if db.global then
+	if type(defaults) == "table" and DefinesWelcome(defaults.profile) then
+		value = db.profile and db.profile.showWelcome
+	elseif type(defaults) == "table" and DefinesWelcome(defaults.global) then
+		value = db.global and db.global.showWelcome
+	elseif db.global then
 		value = db.global.showWelcome
 	end
 	if value == nil and db.profile then
@@ -304,20 +319,24 @@ function Chat.Welcome()
 	if not loaded or not WelcomeOn() then
 		return false
 	end
-	Chat.Print(format(loaded, tostring(ns.Version or "Dev")))
+	local ok, line = pcall(format, loaded, tostring(ns.Version or "Dev"))
+	if not ok then
+		return false
+	end
+	Chat.Print(line)
 	return true
 end
 
 --[[
     Center screen, where the game says "can't do that": only to refuse a click
-    right where the player is looking. Short Name // Body, red for a refusal
-    (kind "error", the default), gold for a notice (kind "notice").
+    right where the player is looking, in red. Short Name // Body. Refusing in
+    combat is an ordinary print (Chat.Print), never this.
 ]]
-function Chat.Notice(body, kind)
+function Chat.Notice(body)
 	if body == nil or not UIErrorsFrame then
 		return false
 	end
-	local hex = Hex(kind == "notice" and "TITLE" or "OFF")
+	local hex = Hex("OFF")
 	local red = tonumber(hex:sub(1, 2), 16) / 255
 	local green = tonumber(hex:sub(3, 4), 16) / 255
 	local blue = tonumber(hex:sub(5, 6), 16) / 255
@@ -397,9 +416,11 @@ local function Marker(options, channel)
 end
 
 --[[
-    The finished line for a channel, or nil: for a key with no text, and for a
-    body the trim leaves empty. L[key] goes through string.format; a { text }
-    body is the player's own and never does, so a stray % can't break it.
+    The finished line for a channel, or nil: for a key with no text, for a
+    translation whose placeholders don't fit its arguments (it would throw),
+    and for a body the trim leaves empty. L[key] goes through string.format; a
+    { text } body is the player's own and never does, so a stray % can't
+    break it.
     Bodies carry item and spell links, which survive sent chat, so pipes stay.
 ]]
 local function BuildFor(channel, formatKey, ...)
@@ -410,7 +431,11 @@ local function BuildFor(channel, formatKey, ...)
 		if not template then
 			return nil
 		end
-		body = format(template, ...)
+		local ok, filled = pcall(format, template, ...)
+		if not ok then
+			return nil
+		end
+		body = filled
 	end
 	body = Chat.Trim(body)
 	if body == "" then
@@ -479,9 +504,14 @@ local function Pump()
 	end
 end
 
+-- Over the chat limit in bytes, SendChatMessage refuses the line: the kit never hands it one.
+local function TooLong(message)
+	return #message > MaxLength()
+end
+
 -- A finished line to one player, as written: build it first (Chat.Build) for the marker and name.
 function Chat.Whisper(name, text)
-	if not name or name == "" or not text or text == "" then
+	if not name or name == "" or not text or text == "" or TooLong(text) then
 		return false
 	end
 	queue[#queue + 1] = { target = name, text = text, queuedAt = Now() }
@@ -495,14 +525,15 @@ local function Deliver(channel, target, message)
 	if channel == "WHISPER" then
 		return Chat.Whisper(target, message)
 	end
-	if InLockdown() then
+	if TooLong(message) or InLockdown() then
 		return false
 	end
 	RawSend(message, channel, target)
 	return true
 end
 
--- Built for its channel and sent: whispers through the queue. Nothing without a channel or a message.
+-- Built for its channel and sent: whispers through the queue. Nothing without a channel or a message, or over
+-- the limit.
 function Chat.Send(channel, target, formatKey, ...)
 	if not channel then
 		return false
@@ -519,7 +550,8 @@ end
     fit: packed greedily, each at most ns.CHAT_MESSAGE_MAX_LENGTH bytes, split
     only between parts (a link cut mid-escape is rejected), and each line the
     whole format, so it reads complete. A part too long alone still gets its
-    own line: it can't be shortened without breaking its link.
+    own line here (it can't be shortened without breaking its link), and
+    SendParts then skips that line, since chat would refuse it.
     formatArguments(joined) returns the format's arguments in order, for a
     format whose list isn't its only one; by default the list is.
 ]]
@@ -556,16 +588,18 @@ function Chat.BuildParts(formatKey, parts, formatArguments, channel)
 	return messages
 end
 
--- Returns the lines it sent.
+-- Returns the lines it sent (a whisper's: queued).
 function Chat.SendParts(channel, target, formatKey, parts, formatArguments)
+	local sent = {}
 	if not channel then
-		return {}
+		return sent
 	end
-	local messages = Chat.BuildParts(formatKey, parts, formatArguments, channel)
-	for _, message in ipairs(messages) do
-		Deliver(channel, target, message)
+	for _, message in ipairs(Chat.BuildParts(formatKey, parts, formatArguments, channel)) do
+		if Deliver(channel, target, message) then
+			sent[#sent + 1] = message
+		end
 	end
-	return messages
+	return sent
 end
 
 -- The chat the whole group reads: an instance group's own first, then raid, then party. Nil when solo.
