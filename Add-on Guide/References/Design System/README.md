@@ -278,7 +278,7 @@ Options-Kit's pieces (`Options Panels/Options-Kit.md` → API), each drawn in th
 - **Features section.** `ns.FEATURES` switches, two to a line, menu order, Enable captions. No description, status line, icon, group heading or blank line inside it.
 - **Feature panel.** Description; its Enable switch (`Kit.FeatureSwitch`); then its sections, all hidden while it's off (`Kit.HideAllExcept`), so a switched-off feature shows only what it is and how to turn it on.
 - **Sub-panel.** A list or separate tool under its feature, titled "Feature > Sub-panel". It stays in the tree while the feature is off and opens with a silver status line naming the switch (Decision 7).
-- **Field sets.** A section is its header and summary, then its field sets, a spacer between each. A field set is one control and what belongs to it: one setting riding on the switch's line (`ToggleRow`), a helper line under the field where a player needs it before they'd hover (`Kit.Helper`), sub-rows for anything more, and last its Example: a spacer, `Example:` on its own line, the message line or lines indented under it. Everything after the control leaves while it's off.
+- **Field sets.** A section is its header and summary, then its field sets, a spacer between each. A field set is one control and what belongs to it: one setting riding on the switch's line (`ToggleRow`), a helper line under the field where a player needs it before they'd hover (`Kit.Helper`), sub-rows for anything more, and last its Example, drawn as Style Guide → OPTIONS PANEL says (the `Example` label on its own line, no colon, the lines under it). Everything after the control leaves while it's off.
 
   ```
   Section Header
