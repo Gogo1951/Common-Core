@@ -28,7 +28,7 @@ grep -rn "RegisterEvent\|RegisterUnitEvent\|GetCVar\|C_CVar\|IsPlayerSpell\|IsSp
 - **API checks** — every API COMPATIBILITY routes, and every load-bearing API the core loop depends on, has a row in `ns.DIAGNOSTIC_API_CHECKS`.
 - **Data sources** — every file in every flavor folder has a row in `ns.DIAGNOSTIC_DATA_SOURCES`.
 - **Name lookups** — every game record the add-on names by ID has a row in `ns.DIAGNOSTIC_NAME_LOOKUPS`.
-- **Spells and CVars** — every spell the add-on gates on is in `ns.DIAGNOSTIC_SPELLS`, and every CVar it reads or writes shows in a probe.
+- **Spells and CVars** — every spell the add-on gates on and every CVar it reads or writes shows in a probe.
 - **Saved Variables** — the dump reaches every table the add-on saves, and prints every row a player can edit.
 
 Add what's missing, and drop any row for something the add-on no longer uses.

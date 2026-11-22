@@ -1481,7 +1481,7 @@ A standard `Options > [Add-on Name] > Diagnostic Tools` panel **ships in every a
 - **Saved variables** — the dump targets the add-on's own tables by name and nothing else.
 - **Data sources** — every file in the flavor folders gets a row in `ns.DIAGNOSTIC_DATA_SOURCES`, and the Data tab builds one report row per file. The folders share their table names, and each manifest row is labeled by table name, so one manifest serves every flavor, and adding a file to the folders adds its row — the validator can never drift from what the add-on ships.
 - **Name lookups** — every game record the add-on names by ID (GAME NAMES) gets a row in `ns.DIAGNOSTIC_NAME_LOOKUPS`, so the Localization tab checks every name a player sees.
-- **Plus** whatever spells (`ns.DIAGNOSTIC_SPELLS`), CVars, and bespoke context the add-on actually depends on.
+- **Plus** whatever spells, CVars, and bespoke context the add-on actually depends on.
 
 These are environment probes and state capture for bug reports, not tests; logic tests live in `Tests/` (LUA 5.1 → Offline Tests).
 

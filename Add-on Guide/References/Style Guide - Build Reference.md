@@ -95,7 +95,7 @@ Some registered events are firehoses — `UI_ERROR_MESSAGE` fires on every red c
 
 Every add-on adds at least one small probe, a report on the Settings tab, for the state most likely to explain *its* "feature doesn't appear" reports — existence and value reads only. Magic Eraser's **Eraser Context** report is the worked example: it prints the character and profile, every switch that can stop an erase, the key bindings, what the bags hold, the list sizes and the item the eraser would take next. Common shapes:
 
-- **Player & spell context** — class, level, and `IsPlayerSpell` / spell-info over the spells this add-on gates on, driven by `ns.DIAGNOSTIC_SPELLS`. Most "nothing shows up" reports are "the player doesn't know the spell" or "the API returned nil."
+- **Player & spell context** — class, level, and `IsPlayerSpell` / spell-info over the spells this add-on gates on. Most "nothing shows up" reports are "the player doesn't know the spell" or "the API returned nil."
 - **Display context** (only for add-ons that draw frames or a mini-map button) — `GetPhysicalScreenSize()`, `UIParent:GetScale()`, and the `uiScale` CVar. Solves off-screen and wrong-position reports.
 - **Relevant CVars** — a short, curated readout of the CVars the add-on actually reads.
 
