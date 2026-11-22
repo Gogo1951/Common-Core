@@ -748,8 +748,10 @@ function Panel:Render(source, context)
 			if WRAPS[entry.kind] or size.leftWidth > available then
 				row.left:SetWordWrap(true)
 				row.left:SetWidth(math.max(available, 1))
-				-- Set again now the width is set, so it wraps there instead of keeping the first pass's one-line layout.
-				row.left:SetText(row.left:GetText() or "")
+				-- Cleared, then set: the game doesn't re-wrap unchanged text, so a refresh would keep the one-line layout.
+				local text = row.left:GetText() or ""
+				row.left:SetText("")
+				row.left:SetText(text)
 				local textHeight = math.max(lineHeight, math.ceil(row.left:GetStringHeight() or lineHeight))
 				row.left:SetHeight(textHeight)
 				row.height = textHeight + 2 * SPACE.LINE
