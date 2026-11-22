@@ -1395,7 +1395,7 @@ Help [Add-on Name] Level Up (the group name, drawn as the page title)
 Seven paragraphs: intro, ways, four bullets (Share Feedback, Tell a Friend, Favorite on CurseForge, Star on GitHub), thanks
 Spacer
 Feedback & Support Links (header)
-Spacer, then Discord; spacer, then CurseForge; spacer, then Wago; spacer, then GitHub (TITLE-colored label beside a read-only URL box, in that order)
+Spacer, then Discord; spacer, then CurseForge; spacer, then Wago; spacer, then GitHub (TITLE-colored caption 0.6 wide beside a read-only URL box filling the rest of ROW_WIDTH, in that order)
 Spacer
 Copy caption (C_HELP)
 Version (C_INFO, order 999, after a full-width blank spacer)

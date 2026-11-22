@@ -250,6 +250,14 @@ check(
 	lr.args.row and lr.args.helper.args.cell2.width == Kit.CONTROL_WIDTH,
 	"LabelRow puts its helper line under the control"
 )
+local link = Kit.LinkRow(7, "Discord", "https://example.com")
+check(
+	link.args.cell1.width == 0.6
+		and link.args.cell1.name == Kit.Color("TITLE", "Discord")
+		and link.args.cell2.width == Kit.ROW_WIDTH - 0.6
+		and link.args.cell2.get() == "https://example.com",
+	"LinkRow is a 0.6 TITLE caption beside a read-only URL box filling the row"
+)
 local sets = Kit.FieldSets(6, nil, { Kit.Desc("a"), Kit.Desc("b"), Kit.Desc("c") })
 check(sets.args.space2 and sets.args.space3 and not sets.args.space1, "FieldSets puts a spacer between each set")
 -- items

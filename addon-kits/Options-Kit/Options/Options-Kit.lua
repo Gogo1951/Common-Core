@@ -343,6 +343,28 @@ function Kit.LabelRow(order, hidden, caption, control, desc, helper)
 end
 
 --[[
+    A copyable link: a TITLE-colored caption 0.6 wide beside a read-only box
+    holding the URL, filling the rest of ROW_WIDTH. The caption is one short
+    word and the box a full URL, so it never takes LabelRow's columns. The game
+    can't open links, so the box is there to copy from; typing in it does
+    nothing.
+]]
+function Kit.LinkRow(order, caption, url)
+	return Kit.Row(order, nil, {
+		Kit.Label(Kit.Color("TITLE", caption), nil, 0.6),
+		{
+			type = "input",
+			name = "",
+			width = Kit.ROW_WIDTH - 0.6,
+			get = function()
+				return url
+			end,
+			set = function() end,
+		},
+	})
+end
+
+--[[
     A section's field sets, one under the other with a spacer between each: a
     field set is a control with what belongs to it (its sub-rows, its helper
     line, its Example). Returns one arg.

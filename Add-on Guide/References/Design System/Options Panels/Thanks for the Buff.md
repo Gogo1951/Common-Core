@@ -23,7 +23,7 @@ Every panel registers as its builder function through `Kit.RegisterPanel` (Emote
 
 ## Root Page
 
-Description, Enable Welcome Message, Features, /Commands, then the Good to Go links (README-Notes). No mini-map toggle (no button).
+Description, Enable Welcome Message, Features, /Commands, then the Good to Go links (README-Notes), each a `Kit.LinkRow`: TITLE-colored caption 0.6 wide beside a read-only URL box filling the rest of ROW_WIDTH. No mini-map toggle (no button).
 
 - **Features** draws `Kit.FeatureSwitches(13)`, and **its description line goes** (Decision 5): the section holds only the switches, as in every other add-on.
 
@@ -51,7 +51,7 @@ Description, Enable Welcome Message, Features, /Commands, then the Good to Go li
 ## Onto the Kit
 
 - Copy `Options/Options-Kit.lua`; delete the grid from `Data/Data.lua` (`OPTIONS_PROMOTE_WIDTH` stays).
-- `Options-Utilities.lua`: delete the standard helpers, `OptionsLinkRow` (becomes `Kit.LabelRow`), `TintText` (`Kit.Tint`), `OptionsExample`, `OptionsFeatureToggle`, `GetFeatureSwitch` / `SetFeatureSwitch`, `OptionsTogglePairs`, `HideAllExcept`, and the `_RowLabel` widget (`Kit.Label`'s `desc` uses the stock InteractiveLabel). Keep the composer, `SampleWhisper`, `MarkerAsTexture` (or `Kit.Markers`), the emote helpers.
+- `Options-Utilities.lua`: delete the standard helpers, `OptionsLinkRow` (becomes `Kit.LinkRow`), `TintText` (`Kit.Tint`), `OptionsExample`, `OptionsFeatureToggle`, `GetFeatureSwitch` / `SetFeatureSwitch`, `OptionsTogglePairs`, `HideAllExcept`, and the `_RowLabel` widget (`Kit.Label`'s `desc` uses the stock InteractiveLabel). Keep the composer, `SampleWhisper`, `MarkerAsTexture` (or `Kit.Markers`), the emote helpers.
 - **One Refresh:** delete `NotifyAllPanels` and the single-panel `NotifyChange` calls (`Wave-To-Friends.lua:33`, `Ignored-Buffs.lua:25`, `Emote-Grid.lua:275`).
 
 ## Strings

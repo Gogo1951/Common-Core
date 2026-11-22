@@ -38,6 +38,8 @@ One copy ends the drift the way `addon-files/` did for workflows: a fix lands on
 | `Options/Options.lua`: `Register`, `RegisterChild`, `AddSubPanel`, `AddFeaturePanel`, `AddPanel`, `PrepareListTree`, `ns:OpenOptionsPanel`, `ns.IsOptionsPanelOpen`, `ns.optionsFrames` | `Kit.RegisterPanel`, `Kit.PrepareTree`, and the kit's `ns:OpenOptionsPanel(key)` and `ns.IsOptionsPanelOpen()`. `ns.RegisterOptionsPanels` stays, as a list of `Kit.RegisterPanel` calls. |
 | What only this add-on has: its alert section builder, emote grid, whisper composer, mail editor, filter grid, font section | Stays in the add-on, built from kit pieces |
 
+**A migration sheet never maps a settled layout onto a kit helper that draws it differently.** When the kit has no helper that matches, the add-on keeps its own until the kit gets one.
+
 ## Load Order
 
 `Options/Options-Kit.lua` is the first file in the TOC's Options group, before `Options/Options-Utilities.lua`. It runs at file scope (it only defines functions, the grid and one AceGUI widget type) and reads `ns.db` only when a panel draws.
@@ -89,6 +91,7 @@ Widths are AceConfig units (170 points each), so they sit outside the Spacing Sc
 | `Kit.Row(order, hidden, cells)` | inline group | Cells left to right on one pinned line |
 | `Kit.SubRow(order, hidden, cells)` | inline group | The same, indented: a sub-option |
 | `Kit.LabelRow(order, hidden, caption, control, desc, helper)` | inline group | A caption beside its dropdown, slider or box; `helper` adds a silver line under the field |
+| `Kit.LinkRow(order, caption, url)` | inline group | A copyable link, never `Kit.LabelRow`: a TITLE-colored caption 0.6 wide beside a read-only URL box filling the rest of `ROW_WIDTH` |
 | `Kit.Helper(order, hidden, text)` | inline group | A silver helper line under a field, in the control column |
 | `Kit.FieldSets(order, hidden, sets)` | inline group | A section's field sets, a spacer between each |
 | `Kit.SubLabelRow(order, hidden, caption, control, desc)` | inline group | The same under the control it belongs to |
