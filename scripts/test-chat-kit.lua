@@ -288,15 +288,18 @@ Chat.Send("SAY", nil, "RUSSIAN")
 check(Last(legacySent).message == "{rt1} Привет! // GtG", "SendChatMessage where C_ChatInfo lacks it")
 C_ChatInfo.SendChatMessage = sendChat
 
--- WoW Forever: the marker on whispers only
+-- WoW Forever: no marker in numbered channels only
 ns.FLAVOR = "Camelot"
 check(
-	Chat.Build("BUFF_ASK", "Katz") == "Katz is missing [Arcane Intellect]! // GtG",
-	"Forever: no marker in group lines"
+	Chat.Build({ key = "BUFF_ASK", channel = "CHANNEL" }, "Katz") == "Katz is missing [Arcane Intellect]! // GtG",
+	"Forever: no marker in a numbered channel's line"
 )
-check(Chat.Build({ key = "BUFF_ASK", channel = "WHISPER" }, "Katz"):sub(1, 6) == "{rt1} ", "but whispers keep it")
+check(Chat.Build("BUFF_ASK", "Katz"):sub(1, 6) == "{rt1} ", "but group lines keep it")
+check(Chat.Build({ key = "BUFF_ASK", channel = "WHISPER" }, "Katz"):sub(1, 6) == "{rt1} ", "and whispers")
 Chat.Send("RAID", nil, "BUFF_ASK", "Katz")
-check(Last(sent).message:sub(1, 4) == "Katz", "Forever: sent to the raid without it")
+check(Last(sent).message:sub(1, 6) == "{rt1} ", "Forever: sent to the raid with it")
+Chat.Send("CHANNEL", "2", "BUFF_ASK", "Katz")
+check(Last(sent).message:sub(1, 4) == "Katz", "Forever: sent to a numbered channel without it")
 Advance(1)
 Chat.Send("WHISPER", "Aero", "BUFF_ASK", "Katz")
 check(Last(sent).message:sub(1, 6) == "{rt1} " and Last(sent).channel == "WHISPER", "and whispered with it")
@@ -395,7 +398,11 @@ Advance(1)
 Clear(sent)
 Chat.SendParts("WHISPER", "Aero", "LOOT_LIST", { "a", "b" })
 check(#sent == 1 and sent[1].message == "{rt1} Handed out: a, b. // GtG", "Forever: whispered parts keep the marker")
-check(Chat.BuildParts("LOOT_LIST", { "a" })[1] == "Handed out: a. // GtG", "group parts don't")
+check(Chat.BuildParts("LOOT_LIST", { "a" })[1] == "{rt1} Handed out: a. // GtG", "group parts keep it too")
+check(
+	Chat.BuildParts("LOOT_LIST", { "a" }, nil, "CHANNEL")[1] == "Handed out: a. // GtG",
+	"numbered-channel parts don't"
+)
 ns.FLAVOR = "Vanilla"
 
 -- Tokens

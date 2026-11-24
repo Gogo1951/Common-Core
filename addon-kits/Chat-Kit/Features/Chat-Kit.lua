@@ -47,8 +47,9 @@ local _, ns = ...
       Chat.Draft(text, chatType, target)  Into the player's own chat box: no marker, no name
 
     formatKey is an L key, or a table for more: { key = "L_KEY" } or
-    { text = "a body already filled" }, plus channel = "WHISPER" (Build only:
-    which line to build) and marker = false (a combat alert's: no marker).
+    { text = "a body already filled" }, plus channel (Build and BuildParts:
+    which channel's line to build, "CHANNEL" for a numbered one) and
+    marker = false (a combat alert's: no marker).
 
     The Style Guide's names keep working: ns:PrintMessage(message),
     ns:BuildAnnounceMessage(formatKey, ...), ns:Announce(channel, target,
@@ -360,15 +361,15 @@ local NO_OPTIONS = {}
 --[[
     {rtN} on every sent line that carries one, with two exceptions: a combat
     alert (marker = false), whose body already carries the mark that matters,
-    and WoW Forever's group and channel chat, which block raid-marker tokens;
-    its whispers keep it.
+    and WoW Forever's numbered channels, which block raid-marker tokens;
+    its party, raid, whispers and other channels keep it.
 ]]
 local function Marker(options, channel)
 	local marker = ns.TARGET_MARKER
 	if options.marker == false or type(marker) ~= "string" or marker == "" then
 		return ""
 	end
-	if ns.FLAVOR == "Camelot" and channel ~= "WHISPER" then
+	if ns.FLAVOR == "Camelot" and channel == "CHANNEL" then
 		return ""
 	end
 	return marker .. " "
