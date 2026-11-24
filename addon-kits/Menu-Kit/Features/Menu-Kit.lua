@@ -32,11 +32,11 @@ local ADDON_NAME, ns = ...
       status       left, right            A gold label and where it stands
       submenu      left, right, submenu   A gold label that opens a flyout
       separator                           A thin line
-      action       left, click            A row to click: blue, its button click gray on the right
+      action       left, click            A row to click: blue; on the right only what it touches, or a gesture
       toggle       left, on               A switch: On in green, or Off with its name gray
-      choice       left, selected         One of a set: the pick white with a check, the rest gray
+      choice       left, selected         One of a set: the pick light yellow with a check, the rest white
       item         itemID or link, count  An item: its icon, its name in its quality color, the count
-      value        left, right            A read-out: white label, white value, nothing to click
+      value        left, right            A setting's value: white label, light yellow value (Off gray)
       description  left                   What a feature does, white, wrapped at 320
       note         left                   Gray helper text, wrapped at 256
 
@@ -44,8 +44,9 @@ local ADDON_NAME, ns = ...
       leftColor, rightColor   a palette key, a six-digit hex or { r, g, b }
       onClick                 what a click does; the menu's afterChange runs after it
       closes                  true for a pick that acts: the menu closes first
-      click                   the button click that does the same ("RightButton", "ShiftLeftButton"),
-                              or a gesture's localized name ("Drag"), drawn the same and routing nothing
+      click                   the button's kept click that does the same ("RightButton"), never drawn on
+                              the row: a Right-Click is named in its tooltip (MENU_SHORTCUT); or a
+                              gesture's localized name ("Drag"), drawn gray on the right, routing nothing
       disabled                true: gray, no highlight, no click, no sub-menu (its arrow gray); its tooltip still shows
       tooltip                 a function(GameTooltip), shown beside the row under the cursor
       submenu                 the key of the flyout its hover opens (flyouts[key]), or with
@@ -136,7 +137,9 @@ Kit.FLYOUT_GAP = ROW_INSET - Kit.FLYOUT_OVERLAP
       count              L["ITEM_QUANTITY"]             "x%d"
       loading            L["LOADING_ITEM"]              "Loading ID: %d"
       shortName          L["ADDON_SHORT_NAME"]          a right-click menu's header
-      clicks             { LeftButton = L["MENU_CLICK_LEFT"], ShiftMiddleButton = ..., }
+      shortcut           L["MENU_SHORTCUT"]             "Shortcut: Right-Click the mini-map button."
+
+    A v1 add-on's clicks = { ... } is still accepted and no longer drawn.
 ]]
 local TEXT = {
 	on = "On",
@@ -149,8 +152,14 @@ local TEXT = {
 	count = "x%d",
 	loading = "Loading ID: %d",
 	shortName = "",
+	shortcut = "",
 	clicks = {},
 }
+
+-- A button click ("RightButton", "ShiftLeftButton"), as opposed to a gesture the caller names ("Drag").
+local function IsButtonClick(click)
+	return type(click) == "string" and click:match("Button%d*$") ~= nil
+end
 
 function Kit.SetText(strings)
 	for key, value in pairs(strings) do
@@ -171,12 +180,15 @@ local function HexRGB(hex)
 	return tonumber(hex:sub(1, 2), 16) / 255, tonumber(hex:sub(3, 4), 16) / 255, tonumber(hex:sub(5, 6), 16) / 255
 end
 
+-- Roles an add-on's ns.PALETTE may not have yet (Style Guide → COLORS).
+local PALETTE_FALLBACK = { VALUE = "FFFF99", HELP = "CCCCCC" }
+
 -- A palette key, a six-digit hex (a class or quality color), or { r, g, b }.
 local function RGB(color)
 	if type(color) == "table" then
 		return color[1] or color.r or 1, color[2] or color.g or 1, color[3] or color.b or 1
 	end
-	local hex = ns.PALETTE and ns.PALETTE[color]
+	local hex = ns.PALETTE and ns.PALETTE[color] or PALETTE_FALLBACK[color]
 	if not hex and type(color) == "string" and color:match("^%x%x%x%x%x%x$") then
 		hex = color
 	end
@@ -398,14 +410,16 @@ local function Look(entry)
 		leftColor = leftColor or (not entry.on and "MUTED") or "TEXT"
 		rightColor = rightColor or (entry.on and "ON") or "MUTED"
 	elseif kind == "choice" then
+		-- The pick matches the value on the row that opened it; the rest are options, not gray. Off stays gray.
 		right = entry.selected and Kit.CHECK_MARK or nil
-		leftColor = leftColor or (not entry.selected and "MUTED") or "TEXT"
+		leftColor = leftColor or (left == TEXT.off and "MUTED") or (entry.selected and "VALUE") or "BODY"
 	elseif kind == "action" then
-		if not right and entry.click then
-			-- A button click's localized name, or a gesture the caller names itself ("Drag").
-			right = TEXT.clicks[entry.click] or entry.click
+		-- A button click is never named on the row (its tooltip says it); a gesture is, gray.
+		if not right and entry.click and not IsButtonClick(entry.click) then
+			right = entry.click
+			rightColor = rightColor or "MUTED"
 		end
-		leftColor, rightColor = leftColor or "INFO", rightColor or "MUTED"
+		leftColor, rightColor = leftColor or "INFO", rightColor or "VALUE"
 	elseif kind == "hint" then
 		-- v1's click hint, kept so an add-on not yet moved still draws; new menus use action rows.
 		leftColor, rightColor = leftColor or "INFO", rightColor or "INFO"
@@ -425,9 +439,10 @@ local function Look(entry)
 		if entry.count then
 			left = (left or "") .. " " .. Kit.Color("TEXT", format(TEXT.count, entry.count))
 		end
-		rightColor = rightColor or "MUTED"
+		rightColor = rightColor or "VALUE"
 	elseif kind == "value" then
 		leftColor = leftColor or "BODY"
+		rightColor = rightColor or (right == TEXT.off and "MUTED") or "VALUE"
 	elseif kind == "description" then
 		leftColor = leftColor or "BODY"
 	elseif kind == "note" then
@@ -508,7 +523,7 @@ local function Row(panel, index)
 		return row
 	end
 	row = CreateFrame("Button", nil, panel)
-	row:RegisterForClicks("LeftButtonUp")
+	row:RegisterForClicks("AnyUp") -- Any mouse button does a row's job, so an old Right-Click habit can't miss.
 	row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
 	row.highlight:SetAllPoints()
 	local red, green, blue = RGB("TITLE")
@@ -557,9 +572,18 @@ local function Row(panel, index)
 		if self.look and (self.look.hover or self.look.rightOnHover) then
 			Dress(self, true)
 		end
-		if entry and entry.tooltip then
+		local shortcut = entry and entry.click == "RightButton" and TEXT.shortcut ~= "" and TEXT.shortcut
+		if entry and (entry.tooltip or shortcut) then
 			GameTooltip:SetOwner(self, panel.tooltipAnchor or "ANCHOR_RIGHT")
-			entry.tooltip(GameTooltip)
+			local helpRed, helpGreen, helpBlue = RGB("HELP")
+			if entry.tooltip then
+				entry.tooltip(GameTooltip)
+				if shortcut then
+					GameTooltip:AddLine(shortcut, helpRed, helpGreen, helpBlue, true)
+				end
+			else
+				GameTooltip:SetText(shortcut, helpRed, helpGreen, helpBlue, 1, true)
+			end
 			GameTooltip:Show()
 		elseif entry and entry.kind == "item" and (entry.itemID or entry.link) then
 			GameTooltip:SetOwner(self, panel.tooltipAnchor or "ANCHOR_RIGHT")
@@ -831,7 +855,7 @@ local menus = {}
           build = BuildMainEntries,     -- returns the menu's entries
           flyouts = FLYOUTS,            -- flyouts[key]() returns a sub-menu's entries
           afterChange = ns.RefreshSettings, -- after every row click and button click
-          fallback = nil,               -- optional { LeftButton = fn }: when no row's click matches
+          fallback = nil,               -- optional { RightButton = fn }: when no row's click matches
           publish = nil,                -- false: don't set ns.ShowMenu and the rest
       })
 
@@ -1240,16 +1264,24 @@ end
 --------------------------------------------------------------------------------
 
 --[[
-    Both ways, from one place: an action entry names its click ("RightButton",
-    "ShiftLeftButton"), the row draws that click's name on its right, and the
-    button's OnClick lands here, which runs the main entry whose click matches.
-    With no match: the add-on's fallback for that click, if it gave one; else a
-    Left-Click opens and holds the menu, and Shift + Middle-Click opens options.
-    True when the click did something.
+    Left-Click toggles the menu in every add-on: it holds a menu that hover
+    opened, and closes one it already holds. Any other click runs the main
+    entry that names it (the add-on's one kept click, a Right-Click: Style Guide
+    → MINIMAP MENU → Button Clicks), else the add-on's fallback for it; a click
+    with no job does nothing. True when the click did something.
 ]]
 function Menu:HandleClick(anchor, button)
 	if not ns.db then
 		return false
+	end
+	if button == "LeftButton" then
+		local state = self.state
+		if self:IsShown() and state.anchor == anchor and state.closeDelay == CLICK_CLOSE_DELAY then
+			self:Hide()
+		else
+			self:Show(anchor, "click")
+		end
+		return true
 	end
 	local key = (IsShiftKeyDown() and "Shift" or "") .. button
 	for _, entry in ipairs(self.spec.build(self) or {}) do
@@ -1266,15 +1298,6 @@ function Menu:HandleClick(anchor, button)
 	if fallback then
 		fallback(anchor)
 		self:AfterChange()
-		return true
-	end
-	if key == "LeftButton" then
-		self:Show(anchor, "click")
-		return true
-	end
-	if key == "ShiftMiddleButton" and ns.OpenOptionsPanel then
-		self:Hide()
-		ns:OpenOptionsPanel()
 		return true
 	end
 	return false
@@ -1451,7 +1474,8 @@ end
       })
 
     toggle.name and desc are the feature's Enable option, its tooltip. label
-    replaces Toggle (Open). click names the button click that does the same.
+    replaces Toggle (Open). click is the button's kept click that does the same
+    (RightButton), named in the row's tooltip, never on the row.
     With on and confirm, turning it off asks confirm first.
 ]]
 function Kit.FeatureBlock(entries, block)
@@ -1515,14 +1539,13 @@ function Kit.List(entries, rows, max)
 	end
 end
 
--- The Options footer: a spacer, a separator, and the action row naming Shift + Middle-Click.
+-- The Options footer: a spacer, a separator, and the Options action row. It has no button click.
 function Kit.OptionsRow(entries, label)
 	entries[#entries + 1] = { kind = "spacer" }
 	entries[#entries + 1] = { kind = "separator" }
 	entries[#entries + 1] = {
 		kind = "action",
 		left = label,
-		click = "ShiftMiddleButton",
 		closes = true,
 		onClick = function()
 			if ns.OpenOptionsPanel then

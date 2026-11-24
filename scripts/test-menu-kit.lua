@@ -56,6 +56,9 @@ end
 function Frame:GetScript(name)
 	return self.scripts[name]
 end
+function Frame:RegisterForClicks(...)
+	self.registeredClicks = table.concat({ ... }, ",")
+end
 function Frame:GetParent()
 	return self.parent
 end
@@ -191,6 +194,14 @@ end
 function GameTooltip:SetItemByID(id)
 	self.item = id
 end
+-- The lines a tooltip was given, so a check can read the last one.
+function GameTooltip:SetText(text)
+	self.lines = { text }
+end
+function GameTooltip:AddLine(text)
+	self.lines = self.lines or {}
+	self.lines[#self.lines + 1] = text
+end
 function GetCursorPosition()
 	return cursor.x, cursor.y
 end
@@ -281,6 +292,7 @@ Kit.SetText({
 	on = "On",
 	off = "Off",
 	clicks = { RightButton = "Right-Click", ShiftMiddleButton = "Shift + Middle-Click" },
+	shortcut = "Shortcut: Right-Click the mini-map button.",
 })
 
 -- Colors
@@ -301,15 +313,37 @@ panel:Render({
 	{ kind = "action", left = "Clear", click = "RightButton", onClick = function() end },
 	{ kind = "submenu", left = "Settings", submenu = "x" },
 	{ kind = "hint", left = "Old hint", right = "Click" },
+	{ kind = "action", left = "Move", click = "Drag", onClick = function() end },
+	{ kind = "choice", left = "Picked", selected = true },
+	{ kind = "choice", left = "Other" },
+	{ kind = "choice", left = "Off" },
+	{ kind = "value", left = "Cooldown", right = "0 Seconds" },
+	{ kind = "value", left = "Delay", right = "Off" },
 })
 local rows = ShownRows(panel)
-check(#rows == 9, "a spacer goes in above each heading that doesn't follow one")
+check(#rows == 15, "a spacer goes in above each heading that doesn't follow one")
 check(rows[4].entry.kind == "spacer" and rows[5].entry.kind == "section", "the spacer sits before the section")
 check(rows[7].entry.kind == "spacer" and rows[8].entry.kind == "submenu", "and before the submenu")
 check(rows[5].right:IsShown() == false, "a section with no right side draws none")
-check(rows[6].right.text == "Right-Click", "an action row names its click on the right")
+check(not rows[6].right:IsShown(), "an action row never names a button click")
 check(rows[6].left.color[3] == 1 and rows[6].left.color[1] == 0, "an action row is INFO on the left")
-check(rows[6].right.color[1] > 0.5 and rows[6].right.color[1] < 0.51, "and MUTED on the right")
+check(rows[10].right.text == "Drag", "a gesture is named on the right")
+check(rows[10].right.color[1] > 0.5 and rows[10].right.color[1] < 0.51, "in MUTED")
+local VALUE = { 1, 1, 0x99 / 255 }
+local function Is(color, want)
+	for index = 1, 3 do
+		if math.abs(color[index] - want[index]) > 0.01 then
+			return false
+		end
+	end
+	return true
+end
+check(Is(rows[11].left.color, VALUE), "the picked choice is VALUE, even with no VALUE in ns.PALETTE")
+check(Is(rows[12].left.color, { 1, 1, 1 }), "a choice not picked is white")
+check(Is(rows[13].left.color, { 0x80 / 255, 0x80 / 255, 0x80 / 255 }), "an Off choice is gray")
+check(Is(rows[14].right.color, VALUE), "a value is VALUE, 0 included")
+check(Is(rows[15].right.color, { 0x80 / 255, 0x80 / 255, 0x80 / 255 }), "a value of Off is gray")
+check(rows[6].registeredClicks == "AnyUp", "a row answers any mouse button")
 check(rows[8].opensFlyout and rows[8].arrow:IsShown(), "v1: a submenu row carries the arrow")
 check(rows[9].left.color[1] == 0 and rows[9].right.color[1] == 0, "v1's hint still draws, blue both sides")
 check(panel.width >= 128 and panel.width <= 320, "the panel sits between MIN_WIDTH and MAX_WIDTH")
@@ -464,8 +498,14 @@ end
 check(byText.Feature.opensFlyout and byText.Feature.arrow:IsShown(), "a title whose flyout has rows gets the arrow")
 check(not byText.Quiet.opensFlyout and not byText.Quiet.arrow:IsShown(), "an empty flyout means no arrow")
 check(not byText.Quiet.highlight.shown, "and no highlight")
-check(byText.Toggle.right.text == "Right-Click", "the Toggle row names its click")
-check(byText["Test Options"].right.text == "Shift + Middle-Click", "the Options row names Shift + Middle-Click")
+check(not byText.Toggle.right:IsShown(), "the Toggle row names no click")
+check(not byText["Test Options"].right:IsShown(), "nor does the Options row")
+GameTooltip.lines = {}
+byText.Toggle.scripts.OnEnter(byText.Toggle)
+check(
+	GameTooltip.lines[#GameTooltip.lines] == "Shortcut: Right-Click the mini-map button.",
+	"its tooltip names the kept Right-Click"
+)
 local more = byText["More Features"]
 check(more and more.opensFlyout, "More Features opens its flyout")
 check(more.right.text:find("2 On", 1, true) and more.right.text:find("1 Off", 1, true), "it counts: 2 On, 1 Off")
@@ -497,11 +537,15 @@ check(menu:HandleClick(button, "RightButton") and ran[2] == "flip", "the button'
 check(refreshed == 2, "and ends in afterChange too")
 check(menu:HandleClick(button, "MiddleButton") == false, "a click with no job does nothing")
 shift = true
-check(menu:HandleClick(button, "MiddleButton") and optionsOpened == "root", "Shift + Middle-Click opens options")
-check(not menu:IsShown(), "and closes the menu")
+optionsOpened = nil
+check(not menu:HandleClick(button, "MiddleButton") and not optionsOpened, "Shift + Middle-Click opens nothing")
 shift = false
-check(menu:HandleClick(button, "LeftButton") and menu:IsShown(), "Left-Click with no job opens the menu")
-check(menu.state.closeDelay == 1.0, "and holds it a second")
+menu:Hide()
+ns.ShowMenu(button, nil, "hover")
+check(menu:HandleClick(button, "LeftButton") and menu:IsShown(), "Left-Click holds a menu hover opened")
+check(menu.state.closeDelay == 1.0, "for a second")
+check(menu:HandleClick(button, "LeftButton") and not menu:IsShown(), "a second Left-Click closes it")
+check(menu:HandleClick(button, "LeftButton") and menu:IsShown(), "and a third opens it again")
 local erased
 local quiet = Kit.CreateMenu({
 	build = function()
@@ -515,7 +559,7 @@ local quiet = Kit.CreateMenu({
 	publish = false,
 })
 quiet:HandleClick(button, "LeftButton")
-check(erased and not quiet:IsShown(), "a fallback Left-Click does its job instead")
+check(not erased and quiet:IsShown(), "Left-Click toggles the menu even with a Left-Click fallback")
 
 -- More Features' flyout
 ns.OpenFlyout(Kit.MORE_FEATURES)

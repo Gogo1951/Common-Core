@@ -36,11 +36,7 @@ Kit.SetText({
 	moreFeatures = L["MENU_MORE_FEATURES"], -- "More Features"
 	featuresOn = L["MENU_FEATURE_COUNT_ON"], featuresOff = L["MENU_FEATURE_COUNT_OFF"], -- "%d On", "%d Off"
 	count = L["ITEM_QUANTITY"], -- "x%d"; optional, default "x%d"
-	clicks = {
-		LeftButton = L["MENU_CLICK_LEFT"], RightButton = L["MENU_CLICK_RIGHT"], MiddleButton = L["MENU_CLICK_MIDDLE"],
-		ShiftLeftButton = L["MENU_CLICK_SHIFT_LEFT"], ShiftRightButton = L["MENU_CLICK_SHIFT_RIGHT"],
-		ShiftMiddleButton = L["MENU_CLICK_SHIFT_MIDDLE"],
-	},
+	shortcut = L["MENU_SHORTCUT"], -- "Shortcut: Right-Click the mini-map button."; only where the button keeps a click
 })
 
 -- One menu per add-on. build returns the main entries; flyouts[key] returns a flyout's.
@@ -49,7 +45,7 @@ local menu = Kit.CreateMenu({
 	build = BuildMainEntries,
 	flyouts = FLYOUTS,
 	afterChange = ns.RefreshSettings, -- every row click and button click ends here (One Refresh)
-	fallback = nil, -- optional { LeftButton = fn }: run when no entry's click matches
+	fallback = nil, -- optional { RightButton = fn }: run when no entry's click matches
 })
 
 -- The LDB object hands the kit its events; the kit routes clicks through the click table.
@@ -58,17 +54,18 @@ OnLeave = function() end,
 OnClick = function(self, button) menu:HandleClick(self, button) end,
 ```
 
-- **`Kit.FeatureBlock(entries, { key, title, state, stateColor, description, note, rows, toggle, after })`**, where `toggle = { name, desc, flip, click, label, on, confirm }`: `click` is a click key (`"ShiftLeftButton"`) or nil, `label` replaces Toggle (`MENU_OPEN`), and with `on` and `confirm` turning it off asks first.
-- **Action entries** carry `click = "RightButton"` (or nil). The kit draws that click's name on the row's right in MUTED. `menu:HandleClick` finds the entry whose `click` matches, across the main entries only, and runs its `onClick`. With no match, the kit runs the add-on's `fallback[button]` when it gave one (Magic Eraser's Left-Click erases even while its Erase row is hidden); otherwise a Left-Click opens and holds the menu, and anything else does nothing. Shift + Middle-Click with no match opens `ns:OpenOptionsPanel()`, so every add-on gets it for free.
-- **The Options row** is `Kit.OptionsRow(entries, L["MENU_OPTIONS"])`: spacer, separator, and an action row naming Shift + Middle-Click, which closes the menu and opens options.
+- **`Kit.FeatureBlock(entries, { key, title, state, stateColor, description, note, rows, toggle, after })`**, where `toggle = { name, desc, flip, click, label, on, confirm }`: `click` is the button's one kept click (`"RightButton"`) or nil, `label` replaces Toggle (`MENU_OPEN`), and with `on` and `confirm` turning it off asks first.
+- **Clicks** (Style Guide → MINIMAP MENU → Button Clicks). `menu:HandleClick` gives Left-Click to the menu in every add-on: it holds a menu hover opened and closes one it already holds, whatever the entries or `fallback` say. Any other click runs the main entry whose `click` matches, then the add-on's `fallback[button]` (Magic Eraser's Right-Click erases even while its Erase row is hidden); a click with no job does nothing. Shift + Middle-Click no longer opens options.
+- **Action entries** carry `click = "RightButton"` (or nil), the button's one kept click. The kit never draws it on the row: it adds `MENU_SHORTCUT` to the row's tooltip as a HELP line, after the option's own text. A row answers any mouse button (`RegisterForClicks("AnyUp")`).
+- **The Options row** is `Kit.OptionsRow(entries, L["MENU_OPTIONS"])`: spacer, separator, and an action row with no click, which closes the menu and opens options.
 - **Two new kinds:**
   - `item`: `{ kind = "item", itemID or link, count, right, rightColor, onClick }`. The kit draws the icon at line height and the name in its quality color without brackets, adds the count, and shows the item's tooltip on hover. An uncached item draws `Loading ID: %d` in MUTED and redraws when it arrives.
-  - `value`: `{ kind = "value", left, right }`. BODY left, TEXT right, nothing to click.
+  - `value`: `{ kind = "value", left, right }`. BODY left, VALUE right (Off in MUTED). With `submenu`, it's a picker: the value, then the arrow.
 - **`Kit.List(entries, rows, max)`** appends every row, or up to `max` when given, then a `note` saying how many more.
 - **Colors** take a palette key or a six-digit hex (class colors, quality colors).
 - **`MAX_WIDTH = 320`** for the menu and every flyout. The left text of every row wraps within what's left after its right side and the 16-point gap, and the row grows to the wrapped height; the right side never wraps and stays level with the first line. A wrapped label's text is cleared and then set again once its width is set, because the game doesn't re-wrap a string whose text hasn't changed, so it re-wraps at that width on every layout, refreshes included, instead of drawing the cut-off one-line layout; the string is pinned to the height it then measures (a one-line label to the line height), and the row is sized from that. Measured across all six add-ons and 11 locales, 55 of 682 rows ran past 320 on one line, worst 465, and none does with wrapping (`../README.md` → Will It Fit).
 - **Margins:** 16 points from the plate's edge to the text on every side, as in Good to Go's Buff Duty window (`EDGE = SPACE.GROUP`). Rows sit 8 in from the plate (`ROW_INSET = SPACE.NEAR`, where a row's highlight starts), text 8 in from its row (`TEXT_INSET = EDGE - ROW_INSET`), and the panel keeps 12 above its first row and below its last (`PANEL_INSET = EDGE - SPACE.LINE`), which a row's own 4 above and below makes 16. Sub-menus overlap by `Kit.FLYOUT_OVERLAP = ROW_INSET` (8), where a row's highlight ends, so they never cover its arrow, and rise `Kit.FLYOUT_RISE = PANEL_INSET` (12); `Kit.FLYOUT_GAP` is 0.
-- **Defaults:** `action` is INFO left and MUTED right. The `hint` kind is retired for new menus: it still draws, blue both sides, so GogoLoot's v1 menu runs on v2 until its move.
+- **Defaults:** `action` is INFO left and VALUE right (what it touches; a gesture MUTED). `choice` is VALUE when picked, BODY otherwise, and MUTED for an Off choice. `item` is VALUE right. VALUE and HELP fall back to `FFFF99` and `CCCCCC` when the add-on's `ns.PALETTE` lacks them. The `hint` kind is retired for new menus: it still draws, blue both sides, so GogoLoot's v1 menu runs on v2 until its move.
 - **`Kit.MoreFeatures(entries, features)`** appends the More Features `submenu` row and builds its flyout: one compact toggle per set-and-forget feature from the add-on's `ns.FEATURES`, gated and confirmed as its switch is (Features Mirror). The row's right side counts the flyout's switches, `4 On, 3 Off` (On count ON, comma TEXT, Off count MUTED), then the arrow; block features aren't counted.
 - **`rightOnHover = true`** on any entry shows its right side only while the row is hovered. The kit still measures it, so the menu never changes width on hover. A click-to-remove list row uses it for its delete icon (Style Guide → MINIMAP MENU → Blocks Beyond Features, Editable list).
 - **`afterChange`** is the add-on's `ns.RefreshSettings` in every add-on (One Refresh).
