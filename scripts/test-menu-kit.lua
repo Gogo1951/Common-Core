@@ -84,6 +84,13 @@ end
 function Frame:SetHeight(height)
 	self.height = height
 end
+function Frame:SetWidth(width)
+	self.width = width
+	self.sized = (self.sized or 0) + 1 -- A panel's width is set only when it's laid out again
+end
+function Frame:EnableMouseWheel(on)
+	self.wheel = on and true or false
+end
 function Frame:GetWidth()
 	return self.width or 0
 end
@@ -680,4 +687,53 @@ rows[1].scripts.OnClick(rows[1])
 check(not (grayMenu.panels[2] and grayMenu.panels[2]:IsShown()), "nor on a click")
 rows[2].scripts.OnEnter(rows[2])
 check(grayMenu.panels[2] and grayMenu.panels[2]:IsShown(), "while a live one does")
+-- A long list scrolls past 20 rows, its view a whole number of rows, the wheel moving it
+local longEntries = {}
+for index = 1, 50 do
+	longEntries[index] = { kind = "choice", left = "Bag " .. index, onClick = function() end }
+end
+local longPanel = Kit.CreatePanel("TestLong")
+longPanel:Show()
+longPanel:Render(longEntries)
+rows = ShownRows(longPanel)
+check(#rows == 20 and rows[1].entry.left == "Bag 1", "a 50-row list shows its first 20")
+check(longPanel.height == 20 * 20 + 24, "and stays 20 rows tall")
+check(longPanel.wheel and longPanel.thumb:IsShown(), "the wheel scrolls it, and a thumb shows where it sits")
+longPanel.scripts.OnMouseWheel(longPanel, -1)
+rows = ShownRows(longPanel)
+check(rows[1].entry.left == "Bag 4" and rows[1].points[1][5] == -12, "a notch down moves it 3 rows")
+longPanel:Render(longEntries)
+check(ShownRows(longPanel)[1].entry.left == "Bag 4", "a redraw keeps the place")
+for _ = 1, 20 do
+	longPanel.scripts.OnMouseWheel(longPanel, -1)
+end
+rows = ShownRows(longPanel)
+check(#rows == 20 and rows[20].entry.left == "Bag 50", "it stops with the last row at the bottom")
+for _ = 1, 20 do
+	longPanel.scripts.OnMouseWheel(longPanel, 1)
+end
+check(ShownRows(longPanel)[1].entry.left == "Bag 1", "and with the first at the top")
+longPanel:Render({ longEntries[1], longEntries[2] })
+check(
+	#ShownRows(longPanel) == 2 and not longPanel.wheel and not longPanel.thumb:IsShown(),
+	"a short list doesn't scroll"
+)
+
+-- A dropdown hangs MENU_GAP under its field, or over it
+local dropdown = Kit.CreateDropdownMenu("TestDropdown")
+local field = CreateFrame("Button", "TestField")
+field.cx, field.cy = 200, 600
+local dropFrame = named.TestDropdown
+dropdown:Open(field, { { kind = "choice", left = "One", onClick = function() end } })
+local dropPoint = dropFrame.points[1]
+check(
+	dropPoint[1] == "TOPLEFT" and dropPoint[3] == "BOTTOMLEFT" and dropPoint[5] == -2,
+	"a dropdown opens 2 under its field"
+)
+dropdown:Close()
+dropdown:Open(field, { { kind = "choice", left = "One", onClick = function() end } }, nil, true)
+dropPoint = dropFrame.points[1]
+check(dropPoint[1] == "BOTTOMLEFT" and dropPoint[3] == "TOPLEFT" and dropPoint[5] == 2, "or 2 over it")
+dropdown:Close()
+
 print("all passed")

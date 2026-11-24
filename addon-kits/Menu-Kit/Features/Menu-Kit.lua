@@ -96,6 +96,11 @@ local HOVER_CLOSE_DELAY = 0.5 -- Forgiving for a cursor that slips off the edge,
 local CLICK_CLOSE_DELAY = 1.0
 local MENU_GAP = 2 -- From the launcher's corner to the menu's
 local MAX_DEPTH = 4 -- The menu and three sub-menus deep
+local SCROLL_ROWS = 20 -- A panel taller than this many plain rows scrolls with the mouse wheel
+local MAX_HEIGHT = 2 * PANEL_INSET + SCROLL_ROWS * (LINE_HEIGHT + 2 * SPACE.LINE)
+local SCROLL_STEP = 3 -- Rows per notch of the wheel
+local THUMB_WIDTH = 2
+local THUMB_ALPHA = 0.6
 local LIST_MAX = 8
 
 local OPTIONS = { choice = true, toggle = true, item = true, value = true }
@@ -676,6 +681,7 @@ function Panel:Render(source, context)
 	end
 
 	local rows = self.rows
+	self.rowCount = #entries
 	for index, entry in ipairs(entries) do
 		local row = Row(self, index)
 		row.entry = entry
@@ -692,6 +698,7 @@ function Panel:Render(source, context)
 
 	local key = LooksKey(entries, looks, arrows)
 	if key == self.shownKey then
+		self:Layout() -- Row() showed every row again: a scrolled panel hides the ones out of view
 		return
 	end
 	self.shownKey = key
@@ -761,7 +768,6 @@ function Panel:Render(source, context)
 	width = math.min(math.ceil(width), MAX_WIDTH)
 
 	-- Second pass: a left side that doesn't fit wraps within what the right side leaves, and the row grows.
-	local y = PANEL_INSET
 	for index, entry in ipairs(entries) do
 		local row = rows[index]
 		local size = measured[index]
@@ -791,18 +797,94 @@ function Panel:Render(source, context)
 			row.right:SetPoint("TOPRIGHT", -(TEXT_INSET + (anyArrow and arrowWidth or 0)), -SPACE.LINE)
 		end
 		row:SetHeight(row.height)
-		row:ClearAllPoints()
-		row:SetPoint("TOPLEFT", self, "TOPLEFT", ROW_INSET, -y)
-		row:SetPoint("TOPRIGHT", self, "TOPRIGHT", -ROW_INSET, -y)
-		y = y + row.height
 	end
-	self:SetSize(width, y + PANEL_INSET)
+	self:SetWidth(width)
+	self:Layout()
 	-- A row already under the cursor shows its hover look; every other hover-only right side hides.
 	for index = 1, #entries do
 		local row = rows[index]
 		if row.look then
 			Dress(row, row:IsMouseEnabled() and Kit.IsCursorOver(row))
 		end
+	end
+end
+
+--[[
+    Stacks the rows and sets the panel's height. A panel whose rows run past
+    MAX_HEIGHT (SCROLL_ROWS plain rows, as a long bag list would) stays that
+    tall and shows whole rows from self.scroll on: the mouse wheel moves them
+    SCROLL_STEP at a time, and a thin thumb in the plate's right margin shows
+    where the view sits in the list.
+]]
+function Panel:Layout()
+	local rows, count = self.rows, self.rowCount or 0
+	local content = 0
+	for index = 1, count do
+		content = content + rows[index].height
+	end
+	local room = MAX_HEIGHT - 2 * PANEL_INSET
+	local scrolls = content > room
+
+	-- The first row shown: never so far down that the view has room left at the bottom.
+	local first = 1
+	if scrolls then
+		local lastFirst, used = count, 0
+		for index = count, 1, -1 do
+			used = used + rows[index].height
+			if used > room then
+				break
+			end
+			lastFirst = index
+		end
+		first = math.max(1, math.min(self.scroll or 1, lastFirst))
+	end
+	self.scroll = first
+
+	local y, above, full = PANEL_INSET, 0, false
+	for index = 1, count do
+		local row = rows[index]
+		if index < first then
+			above = above + row.height
+		elseif not full and (not scrolls or y + row.height <= PANEL_INSET + room) then
+			row:ClearAllPoints()
+			row:SetPoint("TOPLEFT", self, "TOPLEFT", ROW_INSET, -y)
+			row:SetPoint("TOPRIGHT", self, "TOPRIGHT", -ROW_INSET, -y)
+			y = y + row.height
+		else
+			full = true
+		end
+		row:SetShown(index >= first and not full)
+	end
+	self:SetHeight(scrolls and MAX_HEIGHT or y + PANEL_INSET)
+	self:EnableMouseWheel(scrolls)
+
+	if scrolls and not self.thumb then
+		self.thumb = self:CreateTexture(nil, "ARTWORK")
+		self.thumb:SetWidth(THUMB_WIDTH)
+		local red, green, blue = RGB("SEPARATOR")
+		self.thumb:SetColorTexture(red, green, blue, THUMB_ALPHA)
+		self:SetScript("OnMouseWheel", function(panel, delta)
+			panel:Scroll(delta)
+		end)
+	end
+	if self.thumb then
+		self.thumb:SetShown(scrolls)
+		if scrolls then
+			self.thumb:ClearAllPoints()
+			local top = PANEL_INSET + room * above / content
+			self.thumb:SetPoint("TOPRIGHT", self, "TOPRIGHT", -(ROW_INSET - THUMB_WIDTH) / 2, -top)
+			self.thumb:SetHeight(math.max(room * (y - PANEL_INSET) / content, LINE_HEIGHT))
+		end
+	end
+end
+
+-- A notch of the wheel up (delta 1) or down (-1); a sub-menu off a row that moved closes.
+function Panel:Scroll(delta)
+	local before = self.scroll
+	self.scroll = (self.scroll or 1) - delta * SCROLL_STEP
+	self:Layout()
+	if self.scroll ~= before and self.menu then
+		self.menu:CloseFrom(self.depth + 1)
 	end
 end
 
@@ -967,12 +1049,12 @@ function Kit.CreateDropdownMenu(name)
 		end
 		shown.entries, shown.onClose = list, onClose
 		kitMenu:Show(anchor, "hover")
-		-- A dropdown's list hangs straight under its field, or over it, not off a corner.
+		-- A dropdown's list hangs straight under its field, or over it, MENU_GAP off it, not off a corner.
 		frame:ClearAllPoints()
 		if upward then
-			frame:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 0, 0)
+			frame:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 0, MENU_GAP)
 		else
-			frame:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, 0)
+			frame:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -MENU_GAP)
 		end
 	end
 
@@ -1114,6 +1196,10 @@ function Menu:Show(anchor, how, flyoutKey)
 	if not reopen then
 		state.closeDelay = HOVER_CLOSE_DELAY
 		state.open = {}
+		-- A long list opens at its top.
+		for _, panel in ipairs(self.panels) do
+			panel.scroll, panel.shownFor = 1, nil
+		end
 	end
 	state.anchor = anchor
 	state.idle = 0
@@ -1204,6 +1290,9 @@ function Menu:Render()
 			return
 		end
 		local panel = self:Panel(depth)
+		if panel.shownFor ~= key then
+			panel.scroll, panel.shownFor = 1, key
+		end
 		panel.tooltipAnchor = main.tooltipAnchor
 		panel:Render(entries, context)
 		PlaceFlyout(panel, row, self.state.openLeft)
