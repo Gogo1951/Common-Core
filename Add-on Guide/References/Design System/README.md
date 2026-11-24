@@ -39,13 +39,14 @@ The roles are `ns.PALETTE` (Style Guide → COLORS). In a menu:
 |---|---|---|
 | TITLE | `FFD100` | Every heading: the header, feature titles, sections. The row highlight, at 16%. |
 | INFO | `00BBFF` | Everything you click that isn't a setting: Toggle, Open, Erase, Clear, the Options row. |
-| BODY | `FFFFFF` | Descriptions, read-out labels. |
-| TEXT | `FFFFFF` | A toggle or choice that's on, values, counts. |
+| BODY | `FFFFFF` | Descriptions, setting names, read-out labels, choices not picked. |
+| TEXT | `FFFFFF` | A toggle that's on; the comma in More Features' count. |
+| VALUE | `FFFF99` | What a setting is set to: the value beside a picker's arrow, the picked choice inside it, counts, numbers and read-backs. |
 | ON | `33CC33` | On, Active, and a success line. |
-| MUTED | `808080` | Off, Paused, any state that isn't acting; a toggle or choice that's off; notes; the version; the button click named on an action row. |
+| MUTED | `808080` | Off, Paused, any state that isn't acting, even when it's a picked value; a toggle that's off; notes; the version. |
 | SEPARATOR | `AAAAAA` | The separator line, at 35%. Never a state word. |
 | OFF | `CC3333` | Not used in menus. Off is gray: an off feature sits back, it isn't an error. |
-| HELP | `CCCCCC` | Not used in menus; notes are MUTED. |
+| HELP | `CCCCCC` | Not in menu rows; notes are MUTED. A row tooltip's shortcut line. |
 
 Item names take their quality color; a class name its class color (Style Guide → COLORS).
 
@@ -88,12 +89,12 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus the two M
 | `section` | Label, TITLE | Optional state | A group's heading inside a flyout |
 | `description` | BODY, wraps at 320 | — | What a feature does. With `leftColor = "ON"`, a success line. |
 | `note` | MUTED, wraps at 256 | — | A reason, an empty list, *N more* |
-| `action` | Label, INFO | The button click that does the same job, MUTED | Toggle, Open, Erase, Clear, Options: one click, one job |
+| `action` | Label, INFO | Nothing, or what it touches in VALUE | Toggle, Open, Erase, Clear, Options: one click, one job |
 | `toggle` | Name; MUTED while off | On ON / Off MUTED | A setting's switch |
-| `choice` | Name; MUTED unless picked | Check when picked | One of a set |
+| `choice` | Name; VALUE when picked, BODY otherwise; an Off choice MUTED | Check when picked | One of a set |
 | `separator`, `spacer` | — | — | A line; a line's room |
 | `item` *(Menu-Kit v2)* | Icon, name in its quality color, `x4` count | A value, count, ratio or slot | An item the add-on acts on or lists. Hover shows the item. Option indent. |
-| `value` *(Menu-Kit v2)* | Label, BODY | Value, TEXT | A read-out with nothing to click: a total, a setting's read-back, a macro's click. Option indent. |
+| `value` *(Menu-Kit v2)* | Label, BODY | Value, VALUE (Off in MUTED); with a sub-menu, then the arrow | A setting that opens a picker, or a read-out with nothing to click: a total, a setting's read-back. Option indent. |
 
 ## Patterns
 
@@ -112,8 +113,8 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 - **Master switch.** An add-on-wide switch gets the first block. While it's off, the blocks it silences hide and a note says why (Control Freak's All Alerts).
 - **Reference flyout.** Notes about something else's clicks (Good to Go's macros) go in a flyout of value rows behind a class-colored title, each reading job first and click second in gray (`Conjure … Right-Click`), so the menu only holds rows you click here.
 - **More Features.** One `submenu` row, last before Options, its set-and-forget switches in a flyout. Its right side counts them, `4 On, 3 Off`: the On count green, the comma white, the Off count gray. Block features aren't counted.
-- **Options footer.** Spacer, separator, the `[Short Name] Options` action row naming `Shift + Middle-Click`. Last, always.
-- **Both ways.** Every action is a row a controller can click, and the button keeps every click it had. The row names its click on the right in gray: the old tooltip line `Right-Click … Clear Tracking` becomes `Clear Tracking … Right-Click`, the same two strings with the sides swapped. One table per add-on names each action's click and function; the row and the button's `OnClick` both read it, so they can't drift apart. Hover opens the menu. Left-Click opens and holds it, unless Left-Click has a job of its own (Magic Eraser erases), in which case hover alone opens it. Six clicks: Left, Right and Middle, plain or with Shift; Shift + Middle-Click is always Options. Style Guide → MINIMAP MENU → Button Clicks.
+- **Options footer.** Spacer, separator, the `[Short Name] Options` action row. Last, always.
+- **Clicks.** Every action is a row a controller can click, and no row names a button click. Hover opens the menu; Left-Click holds it open or closes it, in every add-on. A button keeps at most one other click, Right-Click, for one action repeated all session (Magic Eraser's Erase), named in that row's tooltip. A row answers any mouse button. Style Guide → MINIMAP MENU → Button Clicks.
 
 ## Wave 1: The Six Mini-map Buttons
 
@@ -172,7 +173,7 @@ With the two rules (Patterns → Short right, wrapping left), every row fits. Th
 
 All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 
-1. **Both ways.** Every action is a row, and the button keeps every click it had, named on that row in MUTED.
+1. **Left-Click toggles the menu; at most one Right-Click.** Every action is a row; the button keeps at most one other click, Right-Click, named in its row's tooltip, never on the row. Rows answer any mouse button. (This replaced "Both ways", where the button kept every click and each row named its click.)
 2. **State words** are On / Off everywhere (`MENU_ON` / `MENU_OFF`); a third state keeps its own word.
 3. **Third states** are MUTED while not acting, never SEPARATOR gray.
 4. **The menu's machinery moves into the kit** (Kit Change 1), in Common-Core; Tracking Eye moves onto it after.
@@ -183,15 +184,16 @@ All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 9. **Good to Go's macro notes** move to a class-colored reference flyout.
 
 10. **Every row fits every language:** short on the right, long on the left wraps, nothing past 320.
-11. **GogoLoot's Automated Master Looting is a More Features row**, and Shift + Right-Click is held for the Master Looting Window.
+11. **GogoLoot's Automated Master Looting is a More Features row**, and the Master Looting Window is a menu row (it was held for Shift + Right-Click before Decision 1 changed).
 12. **Control Freak's Tanking Tools lists its settings inline**, gray while it's off.
 
-13. **Control Freak's Shift + Right-Click toggles All Alerts.**
+13. **Control Freak's All Alerts is toggled from its row.** (It was Shift + Right-Click before Decision 1 changed.)
 14. **Good to Go's rows need no combat guard.**
 
 15. **More Features goes in a flyout**, behind one row that counts its switches On and Off.
 16. **An editable list's rows remove on click**, and its Clear asks first.
 17. **Every list edit prints a chat line**, the same sentence from the row, the button and the key binding.
+18. **A setting's value is VALUE light yellow**, both beside its picker's arrow and on the picked row inside, so the two match; choices not picked are white, and Off stays gray.
 
 ## Using the Mock Kit
 
@@ -207,9 +209,9 @@ A wireframe pass that draws a mini-map menu loads `menu-mock.css` and `menu-mock
     { kind: "spacer" },
     { kind: "status", left: "Dispense", right: "On", rightColor: "ON" },
     { kind: "description", left: "Automatically fills the trade window when a trade opens, based on your settings." },
-    { kind: "action", left: "Toggle", right: "Left-Click", onClick: () => {} },
+    { kind: "action", left: "Toggle", onClick: () => {} },
     { kind: "spacer" }, { kind: "separator" },
-    { kind: "action", left: "Water Dispenser Options", right: "Shift + Middle-Click", onClick: () => {} },
+    { kind: "action", left: "Water Dispenser Options", onClick: () => {} },
   ], { flyouts: {} });
 </script>
 ```
