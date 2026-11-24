@@ -19,7 +19,7 @@
   blue Options line with the arrow (Kit.AddOptionsLine).
   plus the two kinds the Design System proposes, `item` and `value`
   (README → Proposed Kit Changes). Colors are ns.PALETTE keys (TITLE, INFO,
-  BODY, HELP, TEXT, ON, OFF, SEPARATOR, MUTED), a quality (q:poor … q:epic),
+  BODY, HELP, TEXT, ON, OFF, SEPARATOR, MUTED, VALUE), a quality (q:poor … q:epic),
   or a six-digit hex such as a class color. `c` names the component a row
   belongs to, for the overlay; it never changes how the row looks.
 
@@ -40,6 +40,7 @@
 		OFF: "CC3333",
 		SEPARATOR: "AAAAAA",
 		MUTED: "808080",
+		VALUE: "FFFF99",
 	};
 	var QUALITY = { poor: "9D9D9D", common: "FFFFFF", uncommon: "1EFF00", rare: "0070DD", epic: "A335EE" };
 	var CLASS = {
@@ -186,12 +187,13 @@
 			lc = lc || (entry.on ? "TEXT" : "MUTED");
 			rc = rc || (entry.on ? "ON" : "MUTED");
 		} else if (kind === "choice") {
+			// The pick is VALUE, matching the value on the row that opened it; the rest are white; Off stays gray.
 			right = entry.selected ? '<span class="gg-check"></span>' : null;
-			lc = lc || (entry.selected ? "TEXT" : "MUTED");
+			lc = lc || (entry.left === toggleText.off ? "MUTED" : entry.selected ? "VALUE" : "BODY");
 		} else if (kind === "action") {
-			// Proposed: the button click that does the same job sits on the right, gray, like a menu's shortcut column.
+			// No button click on the row (Style Guide → Button Clicks): a right side is what it touches, VALUE.
 			lc = lc || "INFO";
-			rc = rc || "MUTED";
+			rc = rc || "VALUE";
 		} else if (kind === "hint") {
 			lc = lc || "INFO";
 			rc = rc || "INFO";
@@ -203,11 +205,11 @@
 			// Proposed: icon at line height, the name in its quality color, a count after it.
 			left = (entry.icon || "") + paint(entry.left, entry.quality ? "q:" + entry.quality : "TEXT");
 			if (entry.count > 1) left += " " + paint("x" + entry.count, "TEXT");
-			rc = rc || "TEXT";
+			rc = rc || "VALUE";
 		} else if (kind === "value") {
-			// Proposed: a read-out, nothing to click.
+			// A setting's value, or a read-out: VALUE, Off gray; with a sub-menu, a picker.
 			lc = lc || "BODY";
-			rc = rc || "TEXT";
+			rc = rc || (entry.right === toggleText.off ? "MUTED" : "VALUE");
 		}
 		if (entry.disabled) {
 			lc = "MUTED";
