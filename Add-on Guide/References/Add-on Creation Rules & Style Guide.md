@@ -785,7 +785,7 @@ Two output contexts: prints to the player carry no target marker and use branded
 
 ### Target Marker
 
-The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing a new one. Good to Go and Thanks for the Buff both sign with Star, by the maintainer's choice; no other two share one. **On WoW Forever, group chat and numbered channels (`/2`, `/4` and the rest) refuse marker tokens,** so there only whispers carry the marker; the kit handles it. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
+The target marker is one constant in `Data/Data.lua` (`ns.TARGET_MARKER = "{rtN}"`), used on every sent message that carries one. Assigned markers are tracked in the master list's Target marker column — check it before choosing a new one. Good to Go and Thanks for the Buff both sign with Star, by the maintainer's choice; no other two share one. **On WoW Forever, numbered channels (`/2`, `/4` and the rest) refuse marker tokens,** so a line sent to one carries none; the kit handles it. An add-on defines a marker only when something it sends carries one: player-only prints carry none, nor do mid-fight alerts, whose bodies already carry the mark that matters, and a line drafted into the player's own chat box for them to send is the player's words — no marker, no add-on name, no ` // `.
 
 ### Print Outs (Player Only)
 

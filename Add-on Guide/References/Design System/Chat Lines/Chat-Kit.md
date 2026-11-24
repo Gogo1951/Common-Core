@@ -75,7 +75,7 @@ Each colors its value and then reopens `TEXT`, so the rest of the body stays whi
 - `{ key = "L_KEY" }`: the same as the bare key.
 - `{ text = body }`: a body already filled (an editable whisper after `FillTokens`). It is signed off but **never formatted**, so the player's `%` is safe.
 - `marker = false`: no marker. **Combat alerts are sent this way**: their bodies already carry the mark that matters.
-- `channel = "WHISPER"`: `Build` and `BuildParts` only, which line to build (it matters on WoW Forever). `Send` takes its channel from its argument.
+- `channel`: `Build` and `BuildParts` only, which channel's line to build (on WoW Forever, `"CHANNEL"` builds a numbered channel's line). `Send` takes its channel from its argument.
 - `separator = ", "`: `BuildParts` and `SendParts` only, what joins the parts.
 
 `L[key]` always goes through `string.format`, arguments or not, so write a literal `%` in a locale string as `%%`.
@@ -113,7 +113,7 @@ Chat.Draft(announcement, "PARTY")
 **The rules the kit applies to every sent line:**
 
 - **The marker** is `ns.TARGET_MARKER`, followed by a space. An add-on without one (none defined, or an empty string) sends none.
-- **WoW Forever** (`ns.FLAVOR == "Camelot"`) blocks raid-marker tokens in group and channel chat, so there the marker goes on whispers only: `Send` and `SendParts` decide from their channel, and `Build` builds the group's line unless given `channel = "WHISPER"`.
+- **WoW Forever** (`ns.FLAVOR == "Camelot"`) blocks raid-marker tokens in numbered channels (`/2`, `/4` and the rest), so a line sent to one carries no marker; every other channel keeps it. `Send` and `SendParts` decide from their channel, and `Build` builds a numbered channel's line only when given `channel = "CHANNEL"`.
 - **Pipes are kept**: bodies carry item, spell and quest links, which survive sent chat; stripping would break them.
 - **Parts** (item links with counts, an enchant, money) pack greedily across as many lines as needed, each at most `ns.CHAT_MESSAGE_MAX_LENGTH` bytes (255 by default), split only between parts, each line the whole format so it reads complete. `formatArguments(joined)` returns the format's arguments in order, for a format whose list isn't its only one; by default the joined list is. A part too long alone still gets its own line from `BuildParts` (it can't be shortened without breaking its link), and `SendParts` skips that line.
 - **Over the limit, nothing goes.** `Send`, `SendParts` and `Whisper` never hand chat a line over `ns.CHAT_MESSAGE_MAX_LENGTH` bytes, which it would refuse. Swapping in an editable message's default text is the add-on's build function's job, before the kit sees the line.
@@ -161,7 +161,7 @@ And from `Data/Data.lua`: `ns.PALETTE` (`INFO`, `SEPARATOR`, `TEXT`, `OFF`, `TIT
 1. `/reload` with the welcome switch on: one line, `Full Name // Version ...`, name blue, `//` gray, body white. Turn the switch off in Options, `/reload`: nothing. Under Per-Character, switch profiles: the switch holds (it's account-wide).
 2. Trigger a print, a report with a total (every line branded, total first) and, in a fight, an alert (`Body // Full Name`).
 3. In a party, send something: `{rtN} Body // Short Name`, links clickable. Leave the party and trigger it again: nothing is sent. In a battleground, it goes to instance chat.
-4. On WoW Forever: the party line has no marker; a whisper does.
+4. On WoW Forever: the party line and a whisper both carry the marker; a line sent to a numbered channel has none.
 5. Hand out or trade a dozen items with long names: several lines, each complete, none rejected.
 6. Trigger three whispers at once: they arrive about a third of a second apart. In a newer client's boss fight, a whisper waits until the encounter ends (up to 30 seconds), else is dropped.
 7. Click something the add-on refuses: `Short Name // Message` in red, center screen.
