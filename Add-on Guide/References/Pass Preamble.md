@@ -131,7 +131,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 
 **Only a pass in the table's left column offers a prompt.** 05, 09, 10, 11 and 12 offer none: the pass that started them already offered what comes next.
 
-**Offer each next pass as a card with a play button, never as a copy box.** Just before the final reply, call `mcp__ccd_session__start_session` once per next pass (if it isn't loaded, load it with `ToolSearch`): initiation `user_asked`, title `Run {prompt file name}`, and the prompt exactly the line below. It waits as a card; Play starts a new session with the prompt running in it. Print the line as text only if calling the tool fails.
+**Offer each next pass as a card with a Start button, never as a copy box.** Just before the final reply, call `mcp__ccd_session__start_session` once per next pass (if it isn't loaded, load it with `ToolSearch`): initiation `own_initiative`, context `fresh`, use_worktree `false`, title `Run {prompt file name}`, a `background` of at least 80 characters saying which pass just finished in this folder and which pass this session runs next, and the prompt exactly the line below. `own_initiative` waits as a card and Start opens a new session with the prompt running in it. `user_asked` would start the session at once, so never use it here. Print the line as text only if calling the tool fails.
 
 ```
 Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
