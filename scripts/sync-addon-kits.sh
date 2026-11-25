@@ -37,5 +37,5 @@ for target in "$@"; do
     done <<< "$files"
     echo "== $target: $name"
   done
-  git -C "$target" status --short
+  git -C "$target" status --short 2>/dev/null || true # Not yet a clone on a first Session Prep
 done

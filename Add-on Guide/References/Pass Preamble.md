@@ -21,7 +21,7 @@ In Common-Core, change {file under addon-kits/ or Add-on Guide/}: {what to chang
 
 3. Leave the add-on's kit copy matching Common-Core, and build what the kit can already do.
 
-**A kit copy that differs from Common-Core is never overwritten silently.** If it holds a change Common-Core lacks, give the paste block for that change first, then copy Common-Core's file over it. Once the change is on Common-Core's `main`, copying Common-Core's file over the add-on's, unchanged, brings it in.
+**Session Prep step 0 copies Common-Core's kits over the add-on's at the start of every session** (`01 - Local Setup.md`), so a pass always works on the current kits and never asks the maintainer to sync one.
 
 ## Read first
 
