@@ -75,7 +75,7 @@ Each block, in this order:
 <img width="800" src="https://github.com/user-attachments/assets/fa63db86-8638-4483-9f18-f47765ba8a8f" />
 
 * **Pick Your Staples Once** // Every merchant and bank visit tops up your food, water, ammo, and reagents.
-* **Your List Levels With You** // Food, water, ammo, poisons, and reagents climb to the next tier as you level.
+* **Your List Levels with You** // Food, water, ammo, poisons, and reagents climb to the next tier as you level.
 ```
 
 Common bloat, cut on sight:
