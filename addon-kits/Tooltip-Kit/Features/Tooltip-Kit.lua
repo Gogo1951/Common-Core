@@ -55,11 +55,12 @@ local _, ns = ...
 
     Tooltips on the add-on's own widgets. No brand.
 
-      Tip.Help(owner, title, body, opts)   Gold title, white body, opts.helper silver,
+      Tip.Help(owner, title, body, opts)   Gold title, white body, opts.helper (Tip.Helper),
                                            opts.hints, opts.anchor
       Tip.Thing(owner, linkOrSpellID, footer)
                                            The game's item or spell tooltip, then the footer:
-                                           function(block) or { title, lines }
+                                           function(block), { title, lines } or a helper sentence
+      Tip.Helper(tooltip, text)            A spacer, then the sentence silver, wrapped
       Tip.Hints(tooltip, hints)            A spacer, then each { action, click }: blue, gray
       Tip.Anchor(owner) -> point, relative The tooltip's corner and the owner's opposite one,
                                            away from the nearer edges, side to side and up and down
@@ -737,10 +738,24 @@ function Tip.Hints(tooltip, hints)
 	return tooltip
 end
 
+-- A helper sentence is a new section: one spacer (unless the tooltip is empty), then the sentence silver, wrapped.
+function Tip.Helper(tooltip, text)
+	if not text or text == "" then
+		return tooltip
+	end
+	if tooltip:NumLines() > 0 then
+		AddLine(tooltip, SPACER, "TEXT")
+	end
+	AddLine(tooltip, Color("HELP", text), "HELP", true)
+	tooltip:Show()
+	return tooltip
+end
+
 --[[
     Help on a widget: the title gold, the body white right under it, then
-    opts.helper silver and opts.hints (Tip.Hints). opts.anchor (an ANCHOR_
-    name) overrides Tip.Anchor. Returns GameTooltip, shown.
+    opts.helper (Tip.Helper, after a spacer) and opts.hints (Tip.Hints).
+    opts.anchor (an ANCHOR_ name) overrides Tip.Anchor. Returns GameTooltip,
+    shown.
 ]]
 function Tip.Help(owner, title, body, opts)
 	opts = opts or {}
@@ -750,9 +765,7 @@ function Tip.Help(owner, title, body, opts)
 	if body then
 		AddLine(tooltip, Color("BODY", body), "BODY", true)
 	end
-	if opts.helper then
-		AddLine(tooltip, Color("HELP", opts.helper), "HELP", true)
-	end
+	Tip.Helper(tooltip, opts.helper)
 	Tip.Hints(tooltip, opts.hints)
 	tooltip:Show()
 	return tooltip
@@ -762,8 +775,8 @@ end
     The game's own tooltip for a thing, unchanged (a number is a spell ID, a
     string a link or "item:6948"), then the add-on's footer: a spacer, its
     title gold without the Short Name, its lines. footer is function(block),
-    or { title = , lines = { "a sentence", { label, value }, ... } }. Returns
-    GameTooltip, shown.
+    { title = , lines = { "a sentence", { label, value }, ... } }, or a string:
+    a helper sentence (Tip.Helper). Returns GameTooltip, shown.
 ]]
 function Tip.Thing(owner, thing, footer)
 	local tooltip = GameTooltip
@@ -787,6 +800,8 @@ function Tip.Thing(owner, thing, footer)
 			end
 		end
 		block:Done()
+	elseif type(footer) == "string" then
+		Tip.Helper(tooltip, footer)
 	end
 	tooltip:Show()
 	return tooltip

@@ -49,6 +49,7 @@ local ADDON_NAME, ns = ...
                               drawn the same and routing nothing
       disabled                true: gray, no highlight, no click, no sub-menu (its arrow gray); its tooltip still shows
       tooltip                 a function(GameTooltip), shown beside the row under the cursor
+      helper                  a gray sentence under the row's tooltip (or an item's), after a spacer
       submenu                 the key of the flyout its hover opens (flyouts[key]), or with
       flyout                  a function returning the flyout's entries in place of flyouts[key]
       rightOnHover            true: the right side shows only while the row is hovered
@@ -516,6 +517,16 @@ local function LooksKey(entries, looks, arrows)
 	return table.concat(parts, "\30")
 end
 
+-- A new section of a tooltip gets a spacer above it: the row's helper sits one blank line under the rest, gray.
+local function AddHelper(tooltip, helper)
+	if not helper or helper == "" then
+		return
+	end
+	tooltip:AddLine(" ")
+	local red, green, blue = RGB("HELP")
+	tooltip:AddLine(helper, red, green, blue, true)
+end
+
 local function HideOwnTooltip(owner)
 	if GameTooltip:GetOwner() == owner then
 		GameTooltip:Hide()
@@ -581,6 +592,7 @@ local function Row(panel, index)
 		if entry and entry.tooltip then
 			GameTooltip:SetOwner(self, panel.tooltipAnchor or "ANCHOR_RIGHT")
 			entry.tooltip(GameTooltip)
+			AddHelper(GameTooltip, entry.helper)
 			GameTooltip:Show()
 		elseif entry and entry.kind == "item" and (entry.itemID or entry.link) then
 			GameTooltip:SetOwner(self, panel.tooltipAnchor or "ANCHOR_RIGHT")
@@ -589,6 +601,7 @@ local function Row(panel, index)
 			else
 				GameTooltip:SetItemByID(entry.itemID)
 			end
+			AddHelper(GameTooltip, entry.helper)
 			GameTooltip:Show()
 		end
 		local menu = panel.menu

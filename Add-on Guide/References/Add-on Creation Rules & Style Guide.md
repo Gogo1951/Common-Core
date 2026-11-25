@@ -1201,6 +1201,7 @@ Lines an add-on adds to an item's, a player's or a spell's tooltip.
 ### Tooltips on the Add-on's Own Widgets
 
 - **Help is a title, then the body under it:** the title C_TITLE, the body C_BODY with no blank line between, and an optional C_HELP helper line. Every one has a title, even a one-sentence hint.
+- **A spacer above every new section.** A helper line, a footer or a block of click hints is a new section, so one blank line sits above it, never right under the lines before it. The kits add it (Tooltip-Kit's `Tip.Helper`, `Tip.Thing` and `Tip.Hints`, a Menu-Kit row's `helper`); never add one by hand.
 - **A game thing keeps its own tooltip.** An item or spell shows the game's tooltip unchanged, then a spacer, a C_TITLE section, then the add-on's lines (Good to Go's macro tiles).
 - **Click hints read `Action … Click`,** the action C_INFO, the click C_MUTED, after one spacer and with no blank lines between, the same as a menu's action row.
 - **It opens on the side away from the screen edge,** as a menu does.

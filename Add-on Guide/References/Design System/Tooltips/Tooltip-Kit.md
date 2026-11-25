@@ -110,14 +110,16 @@ For a block on a tooltip the add-on fills itself: an options panel's Example of 
 
 ```lua
 Tip.Help(owner, title, body, { helper = L["..."], hints = { { L["OPEN"], L["MENU_CLICK_LEFT"] } }, anchor = nil })
-Tip.Thing(owner, linkOrSpellID, footer) -- footer: function(block) or { title = , lines = { "a sentence", { label, value } } }
+Tip.Thing(owner, linkOrSpellID, footer) -- footer: function(block), { title = , lines = { "a sentence", { label, value } } } or a helper sentence
+Tip.Helper(tooltip, text)
 Tip.Hints(tooltip, { { action, click }, ... })
 Tip.Anchor(owner) -- the tooltip's corner and the owner's opposite one: "BOTTOMLEFT", "TOPRIGHT"
 Tip.Own(tooltip, owner, anchor) -- SetOwner, placed by Tip.Anchor unless an ANCHOR_ name is given
 ```
 
-- **`Tip.Help`** sets `GameTooltip` on the owner: the title gold, the body white right under it with no blank line, the `helper` silver, then the `hints`. Always a title; the body is optional. Returns the tooltip, shown.
-- **`Tip.Thing`** sets the game's own tooltip, unchanged (a number is a spell ID, a string an item or spell link, or `"item:6948"`), then the footer: a spacer, a gold section title (no brand), the add-on's lines. A footer with nothing to say adds nothing.
+- **`Tip.Help`** sets `GameTooltip` on the owner: the title gold, the body white right under it with no blank line, the `helper` (`Tip.Helper`), then the `hints`. Always a title; the body is optional. Returns the tooltip, shown.
+- **`Tip.Thing`** sets the game's own tooltip, unchanged (a number is a spell ID, a string an item or spell link, or `"item:6948"`), then the footer: a spacer, a gold section title (no brand), the add-on's lines. A footer that is a string is a helper sentence (`Tip.Helper`): a spacer, then the sentence silver, no title (Good to Go's Ignore List rows: `Click to take it off your Ignore List.`). A footer with nothing to say adds nothing.
+- **`Tip.Helper`**: a new section, so one spacer (unless the tooltip is empty), then the sentence `HELP` silver, wrapped. A helper never sits right under the lines above it.
 - **`Tip.Hints`**: one spacer (unless the tooltip is empty), then each hint on its own line, the action `INFO` blue on the left, the click `MUTED` gray on the right, no blank lines between them.
 - **`Tip.Anchor`**: away from the screen's nearer edges, side to side and up and down, as a menu opens (Style Guide → MINIMAP MENU → Placement). An owner left of the screen's middle opens its tooltip to the right, else to the left; one in the bottom half opens it upward, else downward. It returns the tooltip's corner and the owner's opposite one (`BOTTOMLEFT`, `TOPRIGHT` for an owner low on the left). `Tip.Own` sets the owner with `ANCHOR_NONE` and places it there; `Tip.Help` and `Tip.Thing` use it. `opts.anchor` on `Tip.Help` (an `ANCHOR_` name) overrides it.
 

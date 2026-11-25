@@ -205,9 +205,10 @@ end
 function GameTooltip:SetText(text)
 	self.lines = { text }
 end
-function GameTooltip:AddLine(text)
+function GameTooltip:AddLine(text, r, g, b)
 	self.lines = self.lines or {}
 	self.lines[#self.lines + 1] = text
+	self.lastColor = r and { r, g, b }
 end
 function GetCursorPosition()
 	return cursor.x, cursor.y
@@ -432,6 +433,25 @@ check(rows[2].left.text == "Loading ID: 12345" and requested[1] == 12345, "an un
 check(events.GET_ITEM_INFO_RECEIVED ~= nil, "and waits for it")
 check(rows[3].left.color[1] == 1 and rows[3].right.text == "12", "a value row reads BODY and TEXT")
 check(rows[4].left.text == "Pre-drawn v1 item row", "a v1 item row with its own left still draws")
+
+-- A row's helper is a new section of its tooltip: a spacer above it, gray
+panel:Render({
+	{ kind = "item", itemID = 4544, helper = "Click to take it off your Ignore List." },
+	{ kind = "action", left = "Plain", tooltip = Kit.OptionTooltip("Plain", "Does a thing."), helper = "Shift skips it." },
+	{ kind = "item", itemID = 6948 },
+})
+rows = ShownRows(panel)
+GameTooltip.lines = {}
+rows[1].scripts.OnEnter(rows[1])
+check(GameTooltip.item == 4544 and #GameTooltip.lines == 2, "an item row's helper follows the item's tooltip")
+check(GameTooltip.lines[1] == " ", "after a spacer")
+check(GameTooltip.lines[2] == "Click to take it off your Ignore List.", "then the helper")
+check(math.abs(GameTooltip.lastColor[1] - 0.8) < 0.01, "in HELP gray")
+rows[2].scripts.OnEnter(rows[2])
+check(#GameTooltip.lines == 4 and GameTooltip.lines[3] == " ", "a row's own tooltip gets the spacer too")
+GameTooltip.lines = {}
+rows[3].scripts.OnEnter(rows[3])
+check(#GameTooltip.lines == 0, "no helper, nothing added")
 
 -- A menu, its sub-menus and the public names
 local refreshed = 0
