@@ -298,8 +298,7 @@ end
 Kit.SetText({
 	on = "On",
 	off = "Off",
-	clicks = { RightButton = "Right-Click", ShiftMiddleButton = "Shift + Middle-Click" },
-	shortcut = "Shortcut: Right-Click the mini-map button.",
+	clicks = { RightButton = "Right-Click" },
 })
 
 -- Colors
@@ -332,7 +331,8 @@ check(#rows == 15, "a spacer goes in above each heading that doesn't follow one"
 check(rows[4].entry.kind == "spacer" and rows[5].entry.kind == "section", "the spacer sits before the section")
 check(rows[7].entry.kind == "spacer" and rows[8].entry.kind == "submenu", "and before the submenu")
 check(rows[5].right:IsShown() == false, "a section with no right side draws none")
-check(not rows[6].right:IsShown(), "an action row never names a button click")
+check(rows[6].right.text == "Right-Click", "an action row names the button's kept click on the right")
+check(rows[6].right.color[1] > 0.5 and rows[6].right.color[1] < 0.51, "in MUTED")
 check(rows[6].left.color[3] == 1 and rows[6].left.color[1] == 0, "an action row is INFO on the left")
 check(rows[10].right.text == "Drag", "a gesture is named on the right")
 check(rows[10].right.color[1] > 0.5 and rows[10].right.color[1] < 0.51, "in MUTED")
@@ -505,14 +505,11 @@ end
 check(byText.Feature.opensFlyout and byText.Feature.arrow:IsShown(), "a title whose flyout has rows gets the arrow")
 check(not byText.Quiet.opensFlyout and not byText.Quiet.arrow:IsShown(), "an empty flyout means no arrow")
 check(not byText.Quiet.highlight.shown, "and no highlight")
-check(not byText.Toggle.right:IsShown(), "the Toggle row names no click")
-check(not byText["Test Options"].right:IsShown(), "nor does the Options row")
+check(byText.Toggle.right.text == "Right-Click", "the Toggle row names the kept Right-Click")
+check(not byText["Test Options"].right:IsShown(), "the Options row names no click")
 GameTooltip.lines = {}
 byText.Toggle.scripts.OnEnter(byText.Toggle)
-check(
-	GameTooltip.lines[#GameTooltip.lines] == "Shortcut: Right-Click the mini-map button.",
-	"its tooltip names the kept Right-Click"
-)
+check(GameTooltip.lines[#GameTooltip.lines] == "Turns it on.", "its tooltip is the option's own text, no shortcut line")
 local more = byText["More Features"]
 check(more and more.opensFlyout, "More Features opens its flyout")
 check(more.right.text:find("2 On", 1, true) and more.right.text:find("1 Off", 1, true), "it counts: 2 On, 1 Off")

@@ -46,7 +46,7 @@ The roles are `ns.PALETTE` (Style Guide → COLORS). In a menu:
 | MUTED | `808080` | Off, Paused, any state that isn't acting, even when it's a picked value; a toggle that's off; notes; the version. |
 | SEPARATOR | `AAAAAA` | The separator line, at 35%. Never a state word. |
 | OFF | `CC3333` | Not used in menus. Off is gray: an off feature sits back, it isn't an error. |
-| HELP | `CCCCCC` | Not in menu rows; notes are MUTED. A row tooltip's shortcut line. |
+| HELP | `CCCCCC` | Not in menu rows; notes are MUTED. |
 
 Item names take their quality color; a class name its class color (Style Guide → COLORS).
 
@@ -89,7 +89,7 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus the two M
 | `section` | Label, TITLE | Optional state | A group's heading inside a flyout |
 | `description` | BODY, wraps at 320 | — | What a feature does. With `leftColor = "ON"`, a success line. |
 | `note` | MUTED, wraps at 256 | — | A reason, an empty list, *N more* |
-| `action` | Label, INFO | Nothing, or what it touches in VALUE | Toggle, Open, Erase, Clear, Options: one click, one job |
+| `action` | Label, INFO | Nothing, what it touches in VALUE, or the button's kept click in MUTED | Toggle, Open, Erase, Clear, Options: one click, one job |
 | `toggle` | Name; MUTED while off | On ON / Off MUTED | A setting's switch |
 | `choice` | Name; VALUE when picked, BODY otherwise; an Off choice MUTED | Check when picked | One of a set |
 | `separator`, `spacer` | — | — | A line; a line's room |
@@ -114,7 +114,7 @@ Built from the components, in the order a menu runs top to bottom. **See them li
 - **Reference flyout.** Notes about something else's clicks (Good to Go's macros) go in a flyout of value rows behind a class-colored title, each reading job first and click second in gray (`Conjure … Right-Click`), so the menu only holds rows you click here.
 - **More Features.** One `submenu` row, last before Options, its set-and-forget switches in a flyout. Its right side counts them, `4 On, 3 Off`: the On count green, the comma white, the Off count gray. Block features aren't counted.
 - **Options footer.** Spacer, separator, the `[Short Name] Options` action row. Last, always.
-- **Clicks.** Every action is a row a controller can click, and no row names a button click. Hover opens the menu; Left-Click holds it open or closes it, in every add-on. A button keeps at most one other click, Right-Click, for one action repeated all session (Magic Eraser's Erase), named in that row's tooltip. A row answers any mouse button. Style Guide → MINIMAP MENU → Button Clicks.
+- **Clicks.** Every action is a row a controller can click, and only the button's one kept click is named on a row. Hover opens the menu; Left-Click holds it open or closes it, in every add-on. A button keeps at most one other click, Right-Click, for one action repeated all session (Magic Eraser's Erase), named on that row's right in MUTED. A row answers any mouse button. Style Guide → MINIMAP MENU → Button Clicks.
 
 ## Wave 1: The Six Mini-map Buttons
 
@@ -150,7 +150,7 @@ Drawn row for row from each add-on's `main` in the board. Each has a spec in `Mi
 1. **The menu's machinery moves into the kit.** Opening from the button, placing away from the screen edge, the close timer, Escape, flyouts and the public `ns.ShowMenu` / `ns.HideMenu` / `ns.RefreshMenu` are about 250 lines of Tracking Eye's `Minimap-Menu.lua` that know nothing about tracking. They move into `Menu-Kit.lua` as `Kit.CreateMenu{ name, build, flyouts }`, and an add-on's `Minimap-Menu.lua` keeps only its rows.
 2. **`AddFeature` moves into the kit** as `Kit.FeatureBlock`, with the action's label as an argument (Toggle or Open).
 3. **Two row kinds:** `item` and `value` (Components). Colors take a raw six-digit hex as well as a palette key, for quality and class colors.
-4. **The click table moves into the kit.** *(Since changed: no row names a click; a kept Right-Click is named in its row's tooltip, and Left-Click always toggles the menu. Decision 1.)* An action entry names its click, and the kit draws that click's name on the row's right in MUTED and routes the button's `OnClick` to the same function. The API is `Mini-map Menus/Menu-Kit.md` → API. `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
+4. **The click table moves into the kit.** *(Since changed: only the button's one kept click, a Right-Click, is named on its row, and Left-Click always toggles the menu. Decision 1.)* An action entry names its click, and the kit draws that click's name on the row's right in MUTED and routes the button's `OnClick` to the same function. The API is `Mini-map Menus/Menu-Kit.md` → API. `action` rows default to INFO left and MUTED right, and the `hint` kind retires: the Options row is an action row.
 5. **One canonical copy, in Common-Core.** The kit and its plate move to `addon-kits/Menu-Kit/` here, are copied into each add-on with a mini-map button, and CI checks every copy matches, the way `addon-files/` works today. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, then copies it from Common-Core instead of Tracking Eye on GitHub.
 6. **Flyouts and hover-only right text.** Tracking Eye and Magic Eraser both build flyouts by hand; the kit takes them (Kit Change 1), with `Kit.MoreFeatures` drawing the More Features row, its count and its flyout, and a `rightOnHover` entry flag that shows a row's right side only on hover without changing the menu's width. The API is `Mini-map Menus/Menu-Kit.md` → API.
 
@@ -173,7 +173,7 @@ With the two rules (Patterns → Short right, wrapping left), every row fits. Th
 
 All decided by the maintainer; the Style Guide's MINIMAP MENU says each one now.
 
-1. **Left-Click toggles the menu; at most one Right-Click.** Every action is a row; the button keeps at most one other click, Right-Click, named in its row's tooltip, never on the row. Rows answer any mouse button. (This replaced "Both ways", where the button kept every click and each row named its click.)
+1. **Left-Click toggles the menu; at most one Right-Click.** Every action is a row; the button keeps at most one other click, Right-Click, named on its row's right in MUTED. Rows answer any mouse button. (This replaced "Both ways", where the button kept every click and each row named its click.)
 2. **State words** are On / Off everywhere (`MENU_ON` / `MENU_OFF`); a third state keeps its own word.
 3. **Third states** are MUTED while not acting, never SEPARATOR gray.
 4. **The menu's machinery moves into the kit** (Kit Change 1), in Common-Core; Tracking Eye moves onto it after.

@@ -32,7 +32,7 @@ local ADDON_NAME, ns = ...
       status       left, right            A gold label and where it stands
       submenu      left, right, submenu   A gold label that opens a flyout
       separator                           A thin line
-      action       left, click            A row to click: blue; on the right only what it touches, or a gesture
+      action       left, click            A row to click: blue; on the right what it touches, or its click gray
       toggle       left, on               A switch: On in green, or Off with its name gray
       choice       left, selected         One of a set: the pick light yellow with a check, the rest white
       item         itemID or link, count  An item: its icon, its name in its quality color, the count
@@ -44,9 +44,9 @@ local ADDON_NAME, ns = ...
       leftColor, rightColor   a palette key, a six-digit hex or { r, g, b }
       onClick                 what a click does; the menu's afterChange runs after it
       closes                  true for a pick that acts: the menu closes first
-      click                   the button's kept click that does the same ("RightButton"), never drawn on
-                              the row: a Right-Click is named in its tooltip (MENU_SHORTCUT); or a
-                              gesture's localized name ("Drag"), drawn gray on the right, routing nothing
+      click                   the button's kept click that does the same ("RightButton"), its name from
+                              clicks drawn gray on the right; or a gesture's localized name ("Drag"),
+                              drawn the same and routing nothing
       disabled                true: gray, no highlight, no click, no sub-menu (its arrow gray); its tooltip still shows
       tooltip                 a function(GameTooltip), shown beside the row under the cursor
       submenu                 the key of the flyout its hover opens (flyouts[key]), or with
@@ -142,9 +142,7 @@ Kit.FLYOUT_GAP = ROW_INSET - Kit.FLYOUT_OVERLAP
       count              L["ITEM_QUANTITY"]             "x%d"
       loading            L["LOADING_ITEM"]              "Loading ID: %d"
       shortName          L["ADDON_SHORT_NAME"]          a right-click menu's header
-      shortcut           L["MENU_SHORTCUT"]             "Shortcut: Right-Click the mini-map button."
-
-    A v1 add-on's clicks = { ... } is still accepted and no longer drawn.
+      clicks             { RightButton = L["MENU_CLICK_RIGHT"] }  "Right-Click"; only where the button keeps it
 ]]
 local TEXT = {
 	on = "On",
@@ -157,7 +155,6 @@ local TEXT = {
 	count = "x%d",
 	loading = "Loading ID: %d",
 	shortName = "",
-	shortcut = "",
 	clicks = {},
 }
 
@@ -419,9 +416,13 @@ local function Look(entry)
 		right = entry.selected and Kit.CHECK_MARK or nil
 		leftColor = leftColor or (left == TEXT.off and "MUTED") or (entry.selected and "VALUE") or "BODY"
 	elseif kind == "action" then
-		-- A button click is never named on the row (its tooltip says it); a gesture is, gray.
-		if not right and entry.click and not IsButtonClick(entry.click) then
-			right = entry.click
+		-- The button's kept click is named on its row, gray, as a gesture is ("Drag").
+		if not right and entry.click then
+			if IsButtonClick(entry.click) then
+				right = TEXT.clicks[entry.click]
+			else
+				right = entry.click
+			end
 			rightColor = rightColor or "MUTED"
 		end
 		leftColor, rightColor = leftColor or "INFO", rightColor or "VALUE"
@@ -577,18 +578,9 @@ local function Row(panel, index)
 		if self.look and (self.look.hover or self.look.rightOnHover) then
 			Dress(self, true)
 		end
-		local shortcut = entry and entry.click == "RightButton" and TEXT.shortcut ~= "" and TEXT.shortcut
-		if entry and (entry.tooltip or shortcut) then
+		if entry and entry.tooltip then
 			GameTooltip:SetOwner(self, panel.tooltipAnchor or "ANCHOR_RIGHT")
-			local helpRed, helpGreen, helpBlue = RGB("HELP")
-			if entry.tooltip then
-				entry.tooltip(GameTooltip)
-				if shortcut then
-					GameTooltip:AddLine(shortcut, helpRed, helpGreen, helpBlue, true)
-				end
-			else
-				GameTooltip:SetText(shortcut, helpRed, helpGreen, helpBlue, 1, true)
-			end
+			entry.tooltip(GameTooltip)
 			GameTooltip:Show()
 		elseif entry and entry.kind == "item" and (entry.itemID or entry.link) then
 			GameTooltip:SetOwner(self, panel.tooltipAnchor or "ANCHOR_RIGHT")
@@ -1567,7 +1559,7 @@ end
 
     toggle.name and desc are the feature's Enable option, its tooltip. label
     replaces Toggle (Open). click is the button's kept click that does the same
-    (RightButton), named in the row's tooltip, never on the row.
+    (RightButton), named gray on the row's right.
     With on and confirm, turning it off asks confirm first.
 ]]
 function Kit.FeatureBlock(entries, block)

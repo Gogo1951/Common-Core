@@ -191,8 +191,12 @@
 			right = entry.selected ? '<span class="gg-check"></span>' : null;
 			lc = lc || (entry.left === toggleText.off ? "MUTED" : entry.selected ? "VALUE" : "BODY");
 		} else if (kind === "action") {
-			// No button click on the row (Style Guide → Button Clicks): a right side is what it touches, VALUE.
+			// What it touches, VALUE; or the button's kept click (Style Guide → Button Clicks), MUTED.
 			lc = lc || "INFO";
+			if (!right && entry.click) {
+				right = entry.click;
+				rc = rc || "MUTED";
+			}
 			rc = rc || "VALUE";
 		} else if (kind === "hint") {
 			lc = lc || "INFO";
