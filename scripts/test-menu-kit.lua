@@ -687,12 +687,21 @@ rows[1].scripts.OnClick(rows[1])
 check(not (grayMenu.panels[2] and grayMenu.panels[2]:IsShown()), "nor on a click")
 rows[2].scripts.OnEnter(rows[2])
 check(grayMenu.panels[2] and grayMenu.panels[2]:IsShown(), "while a live one does")
--- A long list scrolls past 20 rows, its view a whole number of rows, the wheel moving it
+-- The main menu never scrolls: it grows to fit every row
 local longEntries = {}
 for index = 1, 50 do
 	longEntries[index] = { kind = "choice", left = "Bag " .. index, onClick = function() end }
 end
+local mainPanel = Kit.CreatePanel("TestLongMain")
+mainPanel:Show()
+mainPanel:Render(longEntries)
+check(#ShownRows(mainPanel) == 50 and mainPanel.height == 50 * 20 + 24, "a 50-row main menu shows every row")
+check(not mainPanel.wheel and not mainPanel.thumb, "with no wheel and no thumb")
+check(grayMenu.panels[2].scrollable, "while a sub-menu can scroll")
+
+-- A long flyout or dropdown list scrolls past 20 rows, its view a whole number of rows, the wheel moving it
 local longPanel = Kit.CreatePanel("TestLong")
+longPanel.scrollable = true
 longPanel:Show()
 longPanel:Render(longEntries)
 rows = ShownRows(longPanel)
@@ -724,6 +733,7 @@ local dropdown = Kit.CreateDropdownMenu("TestDropdown")
 local field = CreateFrame("Button", "TestField")
 field.cx, field.cy = 200, 600
 local dropFrame = named.TestDropdown
+check(dropFrame.scrollable, "and so can a dropdown's list")
 dropdown:Open(field, { { kind = "choice", left = "One", onClick = function() end } })
 local dropPoint = dropFrame.points[1]
 check(
