@@ -927,6 +927,20 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 Drawn: `References/Design System/Windows and Tooltips.html`. Built: Menu-Kit's `Kit.WindowTitle` and `Kit.AddWindowHeader` in Common-Core's [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit).
 
+### Tables
+
+A table of rows in a window (a list of characters, items or amounts in columns) reads the same in every add-on.
+
+- **Every line is a 28-point row:** the setting lines above the table, the column heads, each row and the Options line alike. No row is shorter or taller than the rest.
+- **A spacer after the title, and between a group of setting lines and the table.**
+- **Columns sit 32 points apart.**
+- **The name column opens with a check column:** 16 points for the check, then 4 points of room. The check marks the player's own row; every other row keeps the same room empty, so the names line up. The column's head starts where the names start, not at the check. The column is at least 208 points wide and grows to fit the longest name.
+- **Names are in class color, sorted A to Z,** with no row pinned to the top. A picker listing the same characters uses the same order.
+- **Number columns hold still.** Each is as wide as the widest value it can be expected to hold (Good to Go's Currency Replenish: `10,000g 99s 99c`), so the window never changes width as values change. Values sit at the column's right edge, and the head sits right-aligned over the values, not over any arrow after them.
+- **Money in a window or menu is written in full, with the coin icons:** `1g 00s 00c`. Under 1 gold, `28s 05c`; under 1 silver, `05c`. Silver and copper always take two digits.
+- **Hovering anywhere on a row opens its flyout,** not just its arrow, as a menu row's does.
+- **The button line:** the button at the right; any status at the left, where the names start, on the same line. A status is a sentence with a period in C_MUTED, except that one meaning all is done is C_ON (`Everyone is full.`) and one meaning it can't be done is C_OFF (`Not enough gold.`). The window gives the status no other line.
+
 -----
 
 ## MENUS
@@ -963,9 +977,12 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **The right side says a state or a value, never a button click.** On is C_ON. Off, Paused and any other word for not acting are C_MUTED. What a setting is set to is C_VALUE: a picked choice, a number, a count, a language or a ratio (`English`, `21 Seconds`, `12 Checked`, `68 / 255`). A number is C_VALUE even at 0; only the word Off is gray. Facts about the menu itself, such as the version or the Short Name, are C_MUTED. So gold is a heading, white a name, blue a button, light yellow a value, green On, and gray Off or meta.
 - **A row that opens a picker** has the setting's name in C_BODY and, on its right in C_VALUE, what it's set to (`Stop Attack`, `Character`), then the arrow. When the picked value is Off, it's C_MUTED. A row that opens a group of rows rather than one setting's choices (a feature title, More Features) is a heading, in C_TITLE. With nothing set inside, the right side is the arrow alone.
 - **In a picker, the pick matches its row.** The picked choice is C_VALUE with the check, the same color as the value on the row that opened it. The other choices are C_BODY, not gray: an option not yet picked isn't unavailable. An Off choice stays C_MUTED, picked or not.
+- **The check sits on the left, and every row keeps its room.** The picked row shows the check; every other row carries an empty texture the same size (`|T…Blank:0|t`) in its place, so no row is laid out differently from the rest. That holds whether the names are on the left (a character picker: the check, a space, then the class-colored name) or the values are on the right.
+- **A list of values lines up on the right,** most to least (`1,000g` at the top, `1g` at the bottom), then a spacer, then Other Amount, then Off, last.
 - **A switch with options of its own keeps its switch look:** name white, On in C_ON, then the arrow (gray name and Off in C_MUTED while it's off). A click flips it; hovering opens its sub-menu (Buff Duty's Your Target opens Include NPCs, Buff Food the buff food in your bags).
 - **The arrow has its own column.** In a menu where any row has an arrow, every row's right side ends where the arrow's room begins, so an On without an arrow lines up with an On beside one.
 - **An action row** is C_INFO and does one thing: opens a window or panel, or acts. What a player should know before clicking sits on its right in C_VALUE, never in brackets in the label: what it touches (`Delete … Used on 1 Bar`). Otherwise its right side is empty.
+- **A destructive action comes last, in C_OFF red,** under the menu's one separator (`Remove Character`, a Delete). It acts at once, with no confirm, and isn't offered on a row the add-on would only add back, such as the player's own. It's the one row that's red; Off stays C_MUTED, and clearing a whole list still asks first (MINIMAP MENU → Blocks Beyond Features).
 - **Icons at line height.** An item or spell row puts its icon before its name, one space, the icon, then the name (`|T…:0|t`).
 - **A row you can't use right now is gray, not hidden,** where the game's own menu would gray it (Share Quest on a quest that can't be shared): both sides C_MUTED, no highlight, no click, its tooltip still shown (`disabled`). A row this character can never use still hides (MINIMAP MENU → Two Homes for Every Setting).
 - **A gesture is named like a click.** An action done by dragging names it on the right in C_MUTED (`Move Quest Arrow … Drag`).
@@ -1112,7 +1129,7 @@ Live: Tracking Eye's `FLYOUTS.farm` (status first, then sections, then a separat
 | `description` | C_BODY, wraps at 320 | — | What a feature does |
 | `note` | C_MUTED, wraps at 256 | — | A short reason or helper line |
 | `toggle` | Name; C_MUTED while off | On in C_ON, Off in C_MUTED | A setting's switch |
-| `choice` | Name; C_VALUE when picked, C_BODY otherwise; an Off choice C_MUTED | Check mark when picked | One of a set |
+| `choice` | Check mark when picked, its empty room otherwise; then the name, C_VALUE when picked, C_BODY otherwise; an Off choice C_MUTED | Nothing, or the value in a list of values | One of a set |
 | `action` | Label, set `leftColor = "INFO"` | Nothing, or what it touches in C_VALUE | Toggle, Clear, Options, and other one-shot clicks |
 | `item` | Icon at line height, the name in its quality color without brackets, then the count (`x4`) | A value, count, have/wanted, or a slot in C_VALUE; money as coins | An item the add-on acts on or lists; hovering shows the item. Menu-Kit v2. |
 | `value` | Label, C_BODY | Value, C_VALUE (Off in C_MUTED); with a sub-menu, then the arrow | A setting that opens a picker, or a read-out with nothing to click: a total, a setting's read-back. Menu-Kit v2. |
