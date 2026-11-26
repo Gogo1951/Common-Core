@@ -85,7 +85,7 @@ local DESCRIPTION_MAX_WIDTH = 320 -- A description gets more room before it wrap
 local EDGE = SPACE.GROUP -- From the plate's edge to the text, on every side
 local ROW_INSET = SPACE.NEAR -- From the plate's edge to a row's highlight
 local TEXT_INSET = EDGE - ROW_INSET -- From a row's edge to its text
-local PANEL_INSET = EDGE - SPACE.LINE -- Above the first row and below the last: a row's own SPACE.LINE makes up EDGE
+local PANEL_INSET = EDGE - SPACE.NEAR -- Above the first row and below the last: a row's own SPACE.NEAR makes up EDGE
 local OPTION_INDENT = SPACE.LINE -- Options sit a little in from the text above them, so a list reads as one
 local RIGHT_GAP = SPACE.GROUP -- From a row's left text to its right side
 local ARROW_GAP = SPACE.LINE -- From a row's right side to the arrow's column
@@ -649,7 +649,7 @@ end
 
 --[[
     Lays the entries out and sizes the panel to them. Each row is a line plus
-    SPACE.LINE above and below, a spacer SPACE.GROUP, a separator SPACE.NEAR.
+    SPACE.NEAR above and below, a spacer SPACE.GROUP, a separator SPACE.NEAR.
 
     The panel is as wide as its widest row, between MIN_WIDTH and MAX_WIDTH. A
     row's left text wraps within what its right side leaves, and the row grows
@@ -788,17 +788,17 @@ function Panel:Render(source, context)
 				row.left:SetText(text)
 				local textHeight = math.max(lineHeight, math.ceil(row.left:GetStringHeight() or lineHeight))
 				row.left:SetHeight(textHeight)
-				row.height = textHeight + 2 * SPACE.LINE
+				row.height = textHeight + 2 * SPACE.NEAR
 			else
 				row.left:SetHeight(lineHeight)
-				row.height = lineHeight + 2 * SPACE.LINE
+				row.height = lineHeight + 2 * SPACE.NEAR
 			end
 			row.left:ClearAllPoints()
-			row.left:SetPoint("TOPLEFT", TEXT_INSET + size.indent, -SPACE.LINE)
+			row.left:SetPoint("TOPLEFT", TEXT_INSET + size.indent, -SPACE.NEAR)
 			row.arrow:ClearAllPoints()
-			row.arrow:SetPoint("TOPRIGHT", -TEXT_INSET, -SPACE.LINE)
+			row.arrow:SetPoint("TOPRIGHT", -TEXT_INSET, -SPACE.NEAR)
 			row.right:ClearAllPoints()
-			row.right:SetPoint("TOPRIGHT", -(TEXT_INSET + (anyArrow and arrowWidth or 0)), -SPACE.LINE)
+			row.right:SetPoint("TOPRIGHT", -(TEXT_INSET + (anyArrow and arrowWidth or 0)), -SPACE.NEAR)
 		end
 		row:SetHeight(row.height)
 	end
@@ -1445,7 +1445,7 @@ end
     separator SPACE.NEAR above the line; size the button to the window's inner
     width and the menu's row height (Kit.ROW_HEIGHT).
 ]]
-Kit.ROW_HEIGHT = LINE_HEIGHT + 2 * SPACE.LINE
+Kit.ROW_HEIGHT = LINE_HEIGHT + 2 * SPACE.NEAR
 function Kit.AddOptionsLine(frame, label, flyout, afterChange)
 	local separator = frame:CreateTexture(nil, "ARTWORK")
 	separator:SetHeight(1)
