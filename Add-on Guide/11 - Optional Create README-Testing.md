@@ -4,7 +4,7 @@
 
 **This prompt is the request.** Pasted on its own, it means: run the whole pass now and regenerate the launch folder's `README-Testing.md` by the rules below. Never ask whether to run it.
 
-The test plan for volunteer testers. They are players, not developers, and every minute they spend reading is a minute not spent testing. **Short beats complete.** The plan points them at what matters; the small bugs surface from players anyway.
+The test plan for volunteer testers. They are players, not developers, and every minute they spend reading is a minute not spent testing. **Short beats complete.** The plan points them at what matters; the small defects surface from players anyway.
 
 Run it before handing a build to testers. Their testing is what `08 - Prelaunch Review.md` presumes done.
 

@@ -418,7 +418,7 @@ end
 --[[
     Which registrations have drawn on each tooltip since it was last cleared:
     the game can fill one tooltip twice for one show (a recipe and what it
-    makes), and the second block is the bug this stops. Cleared with the
+    makes), and the second block is the defect this stops. Cleared with the
     tooltip's lines and when it hides.
 ]]
 local drawn = setmetatable({}, { __mode = "k" })

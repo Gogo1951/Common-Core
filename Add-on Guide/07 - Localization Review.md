@@ -35,7 +35,7 @@ Bring every other locale into line with `enUS.lua`, which `06 - Copy Review.md` 
 
 ## When a value may stay English
 
-- **Value-equals-English is authoritative.** A value that equals `enUS` in some locales but is translated in others is a bug in the English-left ones, loanwords included — a term stays English only if it stays English in *every* locale. Two cases legitimately equal English; anything else equal to English is a bug. Judge by the principle, not by matching the examples:
+- **Value-equals-English is authoritative.** A value that equals `enUS` in some locales but is translated in others is a defect in the English-left ones, loanwords included — a term stays English only if it stays English in *every* locale. Two cases legitimately equal English; anything else equal to English is a defect. Judge by the principle, not by matching the examples:
     - **Nothing translatable in it** — the add-on's Full Name and Short Name (Style Guide → ADD-ON NAMES), brand and site names, slash-command literals, a heading whose entire text is a slash command, feature product names pairing the brand with a feature word, true universal tokens (`PvP`), and format-only strings whose entire content is placeholders, digits, and punctuation (`"%dx %s"`).
     - **Native vocabulary in the target language** — verified per case by the pass itself. esES/esMX/frFR/ptBR "Local (/1)" is correct even though deDE renders "Lokal"; don't "fix" it.
 - **The "&" connector localizes** — it renders as each locale's idiomatic connector ("y", "et", "и", "与"); keep "&" only where the language conventionally uses it. "Feedback & Support" is translatable copy, not a proper noun (deDE "Feedback & Unterstützung").

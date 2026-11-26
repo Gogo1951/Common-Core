@@ -59,7 +59,7 @@ Exact skeleton. Include only sections that have items — an empty section is dr
 
 * One line per item.
 
-### Bug Fixes
+### Defect Fixes
 
 * One line per item.
 
@@ -73,7 +73,7 @@ Exact skeleton. Include only sections that have items — an empty section is dr
 * [Wago]({Wago URL})
 ```
 
-The version line is the tag the maintainer will push, in the house `YYYY.MM.DD.A` form (the letter advances for a second release on the same day) — confirm it in Phase 2. **Special Thanks is optional, but ask for it every time**: in Phase 2, ask who helped with this release (testers, idea sources, bug reporters) as a multiple-choice question: offer the GitHub handles of this release's issue reporters as options, plus `Nobody this time`, and the maintainer can type others. Drop the section only when the answer is nobody. Downloads always closes the notes, both links taken from the add-on's master-list entry.
+The version line is the tag the maintainer will push, in the house `YYYY.MM.DD.A` form (the letter advances for a second release on the same day) — confirm it in Phase 2. **Special Thanks is optional, but ask for it every time**: in Phase 2, ask who helped with this release (testers, idea sources, defect reporters) as a multiple-choice question: offer the GitHub handles of this release's issue reporters as options, plus `Nobody this time`, and the maintainer can type others. Drop the section only when the answer is nobody. Downloads always closes the notes, both links taken from the add-on's master-list entry.
 
 When the last tag is from the same day (the letter advances), start from that release's notes (`gh release view <tag>`) and fold this release's changes into them, so the notes cover the whole day; update any earlier bullet the new work changes.
 

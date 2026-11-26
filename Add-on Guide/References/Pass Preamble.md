@@ -10,7 +10,7 @@ Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edi
 
 ## Kits and the guide change only in Common-Core
 
-**A pass never edits the guide or a shared kit copy** (anything Common-Core's `addon-kits/` holds), not even to fix a bug in one, because the next sync puts Common-Core's version back and the fix is lost. When the add-on needs one changed:
+**A pass never edits the guide or a shared kit copy** (anything Common-Core's `addon-kits/` holds), not even to fix a defect in one, because the next sync puts Common-Core's version back and the fix is lost. When the add-on needs one changed:
 
 1. Say in one plain line what's wrong, e.g. *Two-line Examples run together; they need a blank line between them.*
 2. Give a block the maintainer pastes into a session launched in `~/Common-Core`, saying exactly what to change and why:
@@ -68,7 +68,7 @@ Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal
 
 **Every report that lists issues or feature prompts opens with a skim list**, right after its opening summary or verdict, whatever the pass's own report format says next: one line per item, its `Issue N` or `Feature N` and a few plain words, in up to three groups in this order, each left out when empty.
 
-1. **Bugs in Code** — something is broken, and the fix restores what was meant.
+1. **Defects in Code** — something is broken, and the fix restores what was meant.
 2. **Improvements to Code** — less memory, better performance or easier upkeep, with nothing a player sees.
 3. **UX Changes Needed** — anything a player would see or feel beyond fixing a break: chat, UI, defaults, timing. Said in player terms, naming the flavor where only one is affected. These need the maintainer's care, so one never hides in the other two groups.
 
@@ -83,7 +83,7 @@ Each issue's fix prompt is copy-and-run ready: a fenced code block (no language 
 - Every fix leaves the files it edits in StyLua-default formatting, and leaves every comment it touches true to the changed code — update or delete any comment the change makes stale, in the same edit.
 - Don't add explanatory comments the change doesn't require, and never edit a README (Standing scope); step 10 writes the durable *why* up from the code.
 
-**Write each description for a non-developer** — a short user story, not a bug label. In one or two plain sentences, say what the player sees or experiences (or what quietly breaks) and why it matters, so the reader can judge the fix without reading code. Gloss any unavoidable technical term. Prefer *"After a UI reload the mini-map button vanishes and only comes back if you toggle it off and on again. Annoying, not harmful"* over *"LibDBIcon `hide` flag not restored on `PLAYER_LOGIN`."*
+**Write each description for a non-developer** — a short user story, not a defect label. In one or two plain sentences, say what the player sees or experiences (or what quietly breaks) and why it matters, so the reader can judge the fix without reading code. Gloss any unavoidable technical term. Prefer *"After a UI reload the mini-map button vanishes and only comes back if you toggle it off and on again. Annoying, not harmful"* over *"LibDBIcon `hide` flag not restored on `PLAYER_LOGIN`."*
 
 ## Batch apply
 
@@ -124,7 +124,7 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 | `06 - Copy Review.md` | `07 - Localization Review.md` |
 | `07 - Localization Review.md` | `08 - Prelaunch Review.md`, with one line: start it once any Data Review session has finished too |
 | `08 - Prelaunch Review.md`, verdict **Not ready** | Nothing: once its chosen fixes have run, it checks again **in this same session** and gives its new verdict. Only a blocker another pass owns (stale data → `05 - Data Review.md`) gets that pass's prompt, with one line: then run 08 again |
-| `Optional - Fix a Bug.md` | the pass its report names to re-run, or `08 - Prelaunch Review.md` |
+| `Optional - Fix a Defect.md` | the pass its report names to re-run, or `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
 | `12 - Create Release Notes & PR.md` | `13 - Post Merge Sanity Check.md`, with one line: start it once the PR is merged |
 | `13 - Post Merge Sanity Check.md`, something left out | `12 - Create Release Notes & PR.md`, for a follow-up PR; otherwise nothing |

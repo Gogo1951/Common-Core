@@ -13,7 +13,7 @@ Every add-on is **Active** or **Retired**, shown in the Status column below. Che
 
 - **Active** add-ons are maintained. Passes, sweeps, issues and live references all draw from them.
 - **Retired** add-ons get **no work of any kind** unless the maintainer names that add-on and asks for it: no passes, no new issues, no Guide Feedback, and never a live reference or template. A task "for every add-on" means every Active add-on. Leave retired add-ons out and say so in one line.
-- **Work on a merged add-on's features goes to the add-on it merged into.** A request, bug or idea about Open Sesame's auto-opening is GogoLoot work, filed and built in GogoLoot.
+- **Work on a merged add-on's features goes to the add-on it merged into.** A request, defect or idea about Open Sesame's auto-opening is GogoLoot work, filed and built in GogoLoot.
 - **Retired rows stay in this file** so a session recognizes them on sight, and so their names, slash commands and target markers aren't reused while players still have them installed. A retired add-on that predates this guide carries only what its listing and TOC show, with `—` for the rest.
 - **The guide still points at a retired add-on?** Treat it as a finding: propose an Active add-on in its place, in Guide Feedback.
 

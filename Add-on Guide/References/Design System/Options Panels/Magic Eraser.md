@@ -42,7 +42,7 @@ Unchanged in shape: description, Enable Welcome Message, Enable Mini-map Button,
 
 Each record's `name` is the key the menu spec uses for that feature (`Mini-map Menus/Magic Eraser.md`); where the menu has no row for it, the panel or section heading key it sits under today.
 
-- **Fixes a live bug:** today the root copy of Bag-Space Warnings omits the `onSet` the panel copy passes (`Options-Bag-Warnings.lua:97-104`), so flipping it on the root page leaves Merchant & Bank stale. One `Kit.FeatureSwitch` for both copies ends that.
+- **Fixes a live defect:** today the root copy of Bag-Space Warnings omits the `onSet` the panel copy passes (`Options-Bag-Warnings.lua:97-104`), so flipping it on the root page leaves Merchant & Bank stale. One `Kit.FeatureSwitch` for both copies ends that.
 
 ## Panels
 

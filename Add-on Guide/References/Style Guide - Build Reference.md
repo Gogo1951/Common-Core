@@ -119,7 +119,7 @@ What a player on a non-English client pastes when a name, a line of chat or a ma
 
 ### Saved Variables Dump
 
-Dumps the add-on's saved tables as readable text so a player can paste their exact configuration into a bug report. Use a small recursive printer — no serializer library, nothing new in Includes. Cap recursion depth. Print every row the player can edit, since those rows explain the bug; only data the add-on fills in itself (caches, history, scan results) may be summarized by length.
+Dumps the add-on's saved tables as readable text so a player can paste their exact configuration into a defect report. Use a small recursive printer — no serializer library, nothing new in Includes. Cap recursion depth. Print every row the player can edit, since those rows explain the defect; only data the add-on fills in itself (caches, history, scan results) may be summarized by length.
 
 ### Taint Log
 

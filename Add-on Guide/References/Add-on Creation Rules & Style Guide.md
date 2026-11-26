@@ -497,8 +497,8 @@ The house style is **few, sharp comments**. Most code carries none. A comment is
 
 **Keep comments true.**
 
-- **The code is the source of truth.** When you change code, update or delete every comment describing it in the same edit; when a comment and the code disagree, the comment is the bug — fix or delete it, never the code.
-- **State current constraints and contracts, never history.** No "we used to", no "fixed a bug where", no references to code that no longer exists, no session narration. When a past bug must not recur, write the constraint that prevents it — lead with the trap, then the rule.
+- **The code is the source of truth.** When you change code, update or delete every comment describing it in the same edit; when a comment and the code disagree, the comment is the defect — fix or delete it, never the code.
+- **State current constraints and contracts, never history.** No "we used to", no "fixed a defect where", no references to code that no longer exists, no session narration. When a past defect must not recur, write the constraint that prevents it — lead with the trap, then the rule.
 
 -----
 
@@ -1437,7 +1437,7 @@ L["OPTIONS_LEVEL_UP_INTRO"] =
 	"This add-on was built by players who love this game and want to make it as fun as possible for everyone. We'll never ask for donations. The real satisfaction comes from knowing our work makes the game a little better for you. If it does, we'd love to hear about it!"
 L["OPTIONS_LEVEL_UP_WAYS"] = "Here are a few ways you can help us reach more players."
 L["OPTIONS_LEVEL_UP_FEEDBACK"] =
-	"• Share Feedback: Found a bug or have an idea? Let us know on Discord. Your feedback helps us improve the add-on, and pull requests are always welcome."
+	"• Share Feedback: Found a defect or have an idea? Let us know on Discord. Your feedback helps us improve the add-on, and pull requests are always welcome."
 L["OPTIONS_LEVEL_UP_FRIEND"] =
 	"• Tell a Friend: Know someone who might enjoy this add-on? Tell them about it. Word of mouth helps more players discover great add-ons."
 L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
@@ -1509,7 +1509,7 @@ A standard `Options > [Add-on Name] > Diagnostic Tools` panel **ships in every a
 - **Name lookups** — every game record the add-on names by ID (GAME NAMES) gets a row in `ns.DIAGNOSTIC_NAME_LOOKUPS`, so the Localization tab checks every name a player sees.
 - **Plus** whatever spells, CVars, and bespoke context the add-on actually depends on.
 
-These are environment probes and state capture for bug reports, not tests; logic tests live in `Tests/` (LUA 5.1 → Offline Tests).
+These are environment probes and state capture for defect reports, not tests; logic tests live in `Tests/` (LUA 5.1 → Offline Tests).
 
 Report sections, Event Log and Validate Data: `References/Style Guide - Build Reference.md` → DIAGNOSTIC TOOLS.
 
@@ -1580,7 +1580,7 @@ Reading CVars is unrestricted. Writing one changes a game-wide setting the user 
 
 **Anything else ships only with the capability that needs it**, appended after AceDBOptions-3.0 in this order: a mini-map button takes LibDataBroker-1.1 and LibDBIcon-1.0; a dropdown menu takes LibUIDropDownMenu; a font or sound picker takes LibSharedMedia-3.0. Without the capability, none of it ships: no external, no TOC line, no folder.
 
-- Never use `LibStub("LibName", true)` (the silent flag) for bundled libraries. If it's in Includes, it loads; the silent flag masks load-order bugs.
+- Never use `LibStub("LibName", true)` (the silent flag) for bundled libraries. If it's in Includes, it loads; the silent flag masks load-order defects.
 - `Includes/Libraries/` is vendored third-party code: never edited by hand, never linted, never reviewed. Passes check only its wiring — the TOC include lines, and at Prelaunch the `.pkgmeta` externals.
 - Never use WowAce URLs (`repos.wowace.com`, `svn.wowace.com`) — use CurseForge (`repos.curseforge.com`) or GitHub.
 

@@ -22,7 +22,7 @@ Run this when manual testing is **complete** and the add-on is believed to be wo
 
 ## Presumption of working code
 
-Manual testing is done. Never review feature logic or hunt behavioral bugs; no finding may come from it. **Reading code to establish a fact is allowed**, and beats spending a question round on it: ask in Phase 3 only what neither the code nor the record answers. Code is in scope for findings on exactly two things: **load-time integrity** and **ship cleanliness**, as defined in the checklist.
+Manual testing is done. Never review feature logic or hunt behavioral defects; no finding may come from it. **Reading code to establish a fact is allowed**, and beats spending a question round on it: ask in Phase 3 only what neither the code nor the record answers. Code is in scope for findings on exactly two things: **load-time integrity** and **ship cleanliness**, as defined in the checklist.
 
 ## Master list refresh
 
@@ -48,7 +48,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 - The TOCs differ only where Style Guide → TOC FILE FORMAT → Flavor TOCs allows — diff them against each other.
 
 **Load-time integrity:**
-- Every file each TOC lists exists; every Lua file in the repo is listed in at least one TOC, **except dev-only files that must not load in-game** (API/type stubs, `Tests/` — see Style Guide → REPOSITORY LAYOUT → Dev-only files) and the data folders of flavors the add-on ships no TOC for yet, which wait for their TOCs. Their absence from the TOCs is correct; adding them is the bug.
+- Every file each TOC lists exists; every Lua file in the repo is listed in at least one TOC, **except dev-only files that must not load in-game** (API/type stubs, `Tests/` — see Style Guide → REPOSITORY LAYOUT → Dev-only files) and the data folders of flavors the add-on ships no TOC for yet, which wait for their TOCs. Their absence from the TOCs is correct; adding them is the defect.
 - `Data/Flavor.lua` matches `References/Canonical Files/Flavor.lua` verbatim. Data files follow Style Guide → DATA → Flavor Folders: `Data/Flavor.lua` first and `Data/Default-Settings.lua` last in every TOC's Data block, each TOC listing its own flavor folder and no other (the Vanilla TOC lists `Data/Vanilla/` then `Data/Discovery/`), no game-data file outside the folders, all seven folders holding the same table names, and every file suffixed with its own folder's name (`Data/Mists/Collections-Mists.lua`) — run `ls Data/*/` and quote the output.
 - **Data freshness.** Every file in the folders the TOCs list follows Style Guide → DATA → Data File Layout. Run `for f in Data/*/*.lua; do grep -H -A1 '^Last Validated' "$f" || echo "$f: no Last Validated heading"; done` and quote the output for those folders. A file with no `Last Validated` heading, or one reading `Never.` or `Undated`, or dated more than six months before today, is a finding, **Polish** (step 5 is optional, so stale data never blocks a release): list each file with its date, and the fix is a `05 - Data Review.md` run.
 - Load order follows the Style Guide, including the AceConfig sub-library order.
