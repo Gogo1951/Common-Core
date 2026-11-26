@@ -306,7 +306,7 @@ Kit.SetText({
 check(Kit.Color("ON", "x") == "|cff33cc33x|r", "Color takes a palette key")
 check(Kit.Color("FF8000", "x") == "|cffff8000x|r", "Color takes a raw hex")
 check(Kit.Color({ 1, 0, 0 }, "x") == "|cffff0000x|r", "Color takes { r, g, b }")
-check(Kit.FLYOUT_OVERLAP == 8 and Kit.FLYOUT_RISE == 12, "sub-menus overlap by 8 and rise 12")
+check(Kit.FLYOUT_OVERLAP == 8 and Kit.FLYOUT_RISE == 8, "sub-menus overlap by 8 and rise 8")
 check(Kit.FLYOUT_GAP == 0, "v1's FLYOUT_GAP, from the row, now overlaps")
 
 -- v1: a panel made and filled by the add-on
@@ -355,15 +355,15 @@ check(rows[6].registeredClicks == "AnyUp", "a row answers any mouse button")
 check(rows[8].opensFlyout and rows[8].arrow:IsShown(), "v1: a submenu row carries the arrow")
 check(rows[9].left.color[1] == 0 and rows[9].right.color[1] == 0, "v1's hint still draws, blue both sides")
 check(panel.width >= 128 and panel.width <= 320, "the panel sits between MIN_WIDTH and MAX_WIDTH")
-check(rows[3].height == 20, "a row is a line plus 4 above and below")
+check(rows[3].height == 28, "a row is a line plus 8 above and below")
 check(rows[3].left.height == 12, "a one-line label is pinned to the line height")
-check(rows[1].points[1][4] == 8 and rows[1].points[1][5] == -12, "rows sit 8 in from the plate, the first 12 down")
-check(rows[1].left.points[1][2] == 8 and rows[1].left.points[1][3] == -4, "text sits 8 in from its row, 4 down")
+check(rows[1].points[1][4] == 8 and rows[1].points[1][5] == -8, "rows sit 8 in from the plate, the first 8 down")
+check(rows[1].left.points[1][2] == 8 and rows[1].left.points[1][3] == -8, "text sits 8 in from its row, 8 down")
 local rowsHeight = 0
 for _, row in ipairs(rows) do
 	rowsHeight = rowsHeight + row.height
 end
-check(panel.height == rowsHeight + 24, "the panel is its rows plus 12 above and below: 16 from the plate to the text")
+check(panel.height == rowsHeight + 16, "the panel is its rows plus 8 above and below: 16 from the plate to the text")
 check(rows[2].height == 16 and rows[2].left:IsShown() == false, "a spacer is 16 with nothing drawn")
 
 -- Wrapping
@@ -373,13 +373,13 @@ panel:Render({ { kind = "toggle", left = long, on = false }, { kind = "note", le
 rows = ShownRows(panel)
 check(panel.width == 320, "a long label caps the panel at 320")
 check(panel.sized == sizedBefore + 1, "and lays it out again")
-check(rows[1].left.wrap and rows[1].height > 20, "the label wraps and the row grows")
+check(rows[1].left.wrap and rows[1].height > 28, "the label wraps and the row grows")
 check(rows[1].right:IsShown() and rows[1].right.text == "Off", "the right side stays")
 check(rows[1].left.setWidth == 320 - 32 - 4 - 16 - 18, "the label wraps within what its right side leaves")
 check(rows[1].left.textSetAtWidth == rows[1].left.setWidth, "its text is set again after the width, so it re-wraps")
-check(rows[1].left.height == 36 and rows[1].height == 44, "the label is pinned to its measured height, the row to that")
+check(rows[1].left.height == 36 and rows[1].height == 52, "the label is pinned to its measured height, the row to that")
 check(rows[2].left.wrap and rows[2].left.setWidth == 288, "a note wraps to the panel")
-check(rows[2].left.height == 24 and rows[2].height == 32, "and its row grows to its two lines")
+check(rows[2].left.height == 24 and rows[2].height == 40, "and its row grows to its two lines")
 
 -- Laid out again only when what the rows show changes
 sizedBefore = panel.sized
@@ -543,7 +543,7 @@ local flyout = menu.panels[2]
 check(flyout and flyout:IsShown(), "hovering a title opens its flyout")
 check(byText.Feature.locked, "the title keeps its highlight while its flyout is open")
 local place = flyout.points[1]
-check(place[1] == "TOPRIGHT" and place[3] == "TOPLEFT" and place[4] == 0 and place[5] == 12, "it overlaps, rising 12")
+check(place[1] == "TOPRIGHT" and place[3] == "TOPLEFT" and place[4] == 0 and place[5] == 8, "it overlaps, rising 8")
 local deeper = ShownRows(flyout)[3] -- After the spacer the kit puts above a heading
 deeper.scripts.OnEnter(deeper)
 check(menu.panels[3] and menu.panels[3]:IsShown(), "a sub-menu opens a sub-menu")
@@ -711,8 +711,8 @@ for index = 1, 100 do
 end
 local mainPanel = Kit.CreatePanel("TestLongMain")
 mainPanel:Show()
-mainPanel:Render({ unpack(longEntries, 1, 40) })
-check(#ShownRows(mainPanel) == 40 and mainPanel.height == 40 * 20 + 24, "a 40-row menu shows every row")
+mainPanel:Render({ unpack(longEntries, 1, 30) })
+check(#ShownRows(mainPanel) == 30 and mainPanel.height == 30 * 28 + 16, "a 30-row menu shows every row")
 check(not mainPanel.wheel and not mainPanel.thumb, "with no wheel and no thumb")
 
 -- A panel that would run off the screen (1080 less 64) scrolls, its view a whole number of rows, the wheel moving it
@@ -720,19 +720,19 @@ local longPanel = Kit.CreatePanel("TestLong")
 longPanel:Show()
 longPanel:Render(longEntries)
 rows = ShownRows(longPanel)
-check(#rows == 49 and rows[1].entry.left == "Bag 1", "a 100-row list shows the first 49 that fit")
+check(#rows == 35 and rows[1].entry.left == "Bag 1", "a 100-row list shows the first 35 that fit")
 check(longPanel.height == 1080 - 64, "and stays as tall as the screen allows")
 check(longPanel.wheel and longPanel.thumb:IsShown(), "the wheel scrolls it, and a thumb shows where it sits")
 longPanel.scripts.OnMouseWheel(longPanel, -1)
 rows = ShownRows(longPanel)
-check(rows[1].entry.left == "Bag 4" and rows[1].points[1][5] == -12, "a notch down moves it 3 rows")
+check(rows[1].entry.left == "Bag 4" and rows[1].points[1][5] == -8, "a notch down moves it 3 rows")
 longPanel:Render(longEntries)
 check(ShownRows(longPanel)[1].entry.left == "Bag 4", "a redraw keeps the place")
 for _ = 1, 40 do
 	longPanel.scripts.OnMouseWheel(longPanel, -1)
 end
 rows = ShownRows(longPanel)
-check(#rows == 49 and rows[49].entry.left == "Bag 100", "it stops with the last row at the bottom")
+check(#rows == 35 and rows[35].entry.left == "Bag 100", "it stops with the last row at the bottom")
 for _ = 1, 40 do
 	longPanel.scripts.OnMouseWheel(longPanel, 1)
 end
