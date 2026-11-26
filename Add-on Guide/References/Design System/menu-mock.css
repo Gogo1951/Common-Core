@@ -129,7 +129,7 @@
 	box-sizing: border-box;
 	min-width: 128px; /* MIN_WIDTH */
 	max-width: 320px; /* MAX_WIDTH: no row widens the menu past this; a long label wraps instead */
-	padding: 12px 8px; /* PANEL_INSET top and bottom, ROW_INSET sides: 16 from the plate's edge to the text */
+	padding: 8px 8px; /* PANEL_INSET top and bottom, ROW_INSET sides: 16 from the plate's edge to the text */
 	font-size: 12px;
 	color: var(--gg-text);
 	vertical-align: top;
@@ -165,8 +165,8 @@
 	justify-content: space-between;
 	gap: 16px; /* SPACE.GROUP between the two sides */
 	box-sizing: border-box;
-	min-height: 20px; /* a 12-point line + SPACE.LINE above and below */
-	padding: 4px 8px; /* SPACE.LINE, TEXT_INSET */
+	min-height: 28px; /* a 12-point line + SPACE.NEAR above and below */
+	padding: 8px 8px; /* SPACE.NEAR, TEXT_INSET */
 	line-height: 12px;
 	white-space: nowrap;
 }

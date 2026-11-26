@@ -918,6 +918,7 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 - **Spacers, not lines.** Groups sit apart by a spacer; no divider under the title or between groups.
 - **One type size.** Title, headings, rows and notes are the same size; they differ by color only.
+- **Rows are 28 points tall,** as in every menu (MENUS → Rows).
 - **16 points in from the edge on all four sides.**
 - **Icons are 20 points, and a window is at least 200 wide.** These two are the maintainer's numbers (SPACING SCALE → A number the maintainer gives): never moved onto the scale.
 - **A list of consumables shows only what the player carries.**
@@ -958,6 +959,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Rows
 
+- **Every row is 28 points tall:** a 12-point line with 8 above and 8 below (`Kit.ROW_HEIGHT`), so rows read apart and a controller's cursor lands on the row it aims for. This covers menu rows, sub-menus, dropdown lists, and a window's own lines and table rows. 28 is the maintainer's number (SPACING SCALE → A number the maintainer gives); the 8s are on the scale.
 - **The right side says a state or a value, never a button click.** On is C_ON. Off, Paused and any other word for not acting are C_MUTED. What a setting is set to is C_VALUE: a picked choice, a number, a count, a language or a ratio (`English`, `21 Seconds`, `12 Checked`, `68 / 255`). A number is C_VALUE even at 0; only the word Off is gray. Facts about the menu itself, such as the version or the Short Name, are C_MUTED. So gold is a heading, white a name, blue a button, light yellow a value, green On, and gray Off or meta.
 - **A row that opens a picker** has the setting's name in C_BODY and, on its right in C_VALUE, what it's set to (`Stop Attack`, `Character`), then the arrow. When the picked value is Off, it's C_MUTED. A row that opens a group of rows rather than one setting's choices (a feature title, More Features) is a heading, in C_TITLE. With nothing set inside, the right side is the arrow alone.
 - **In a picker, the pick matches its row.** The picked choice is C_VALUE with the check, the same color as the value on the row that opened it. The other choices are C_BODY, not gray: an option not yet picked isn't unavailable. An Off choice stays C_MUTED, picked or not.
@@ -970,7 +972,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Sub-menus
 
-- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 8 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET`, where a row's highlight ends), drawn over it but never over the row's arrow, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 12). Never a gap and never flush: a sub-menu set apart reads as a second menu.
+- **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 8 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET`, where a row's highlight ends), drawn over it but never over the row's arrow, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 8). Never a gap and never flush: a sub-menu set apart reads as a second menu.
 - **Hovering the row opens it**, and a click does too, unless the row is a switch, whose click flips it. Hovering any other clickable row closes it. The row keeps its highlight while its sub-menu is open.
 - **The side away from the screen edge**, decided once when the menu opens; a sub-menu of a sub-menu goes the same way.
 - **Off a window's line** (Buff Duty's Options), the line is the row: the flyout overlaps the window by the same 8 points, measured from the window's edge, level with the line.

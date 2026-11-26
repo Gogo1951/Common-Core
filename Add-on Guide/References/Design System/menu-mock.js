@@ -63,7 +63,7 @@
 		MAX_WIDTH: 320, // no row widens the menu past this; a long left side wraps
 		INSETS: 2 * (8 + 8), // TEXT_INSET + ROW_INSET, both sides
 		FLYOUT_OVERLAP: 8, // ROW_INSET: the flyout's edge sits this far inside its menu's, clear of the arrow (Style Guide → MENUS)
-		FLYOUT_RISE: 12, // PANEL_INSET
+		FLYOUT_RISE: 8, // PANEL_INSET
 	};
 
 	function hex(key) {
