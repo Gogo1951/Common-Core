@@ -86,7 +86,7 @@ OnClick = function(self, button) menu:HandleClick(self, button) end,
 
 1. The kit and its art live in `addon-kits/Menu-Kit/` here, in folders that mirror an add-on's (`Features/Menu-Kit.lua`, `Includes/Images/Menu-Plate.tga`, `Includes/Images/Menu-Arrow.tga`), as Options-Kit's do.
 2. **Already built, for every kit:** `scripts/sync-addon-kits.sh` copies a kit into each add-on that holds any of its files and leaves the rest alone (`--adopt Menu-Kit` the first time), and the reusable `ci.yml`'s **Shared kits match Common-Core** check fails an add-on whose copy differs, plate included. Dropping the kit's files into `addon-kits/Menu-Kit/` is all Menu-Kit needs.
-3. **An add-on holding the kit's Lua file has adopted it**, and its next CI run fails until it's synced: Tracking Eye, GogoLoot, Magic Eraser and Good to Go, so each takes `scripts/sync-addon-kits.sh` on its next change. **Art alone doesn't adopt a kit:** the CI check and the sync script key adoption on a kit's `.lua` files, so Play It Forward, which carries only `Includes/Images/Menu-Plate.tga` for its reopen button, is left alone.
+3. **An add-on holding the kit's Lua file has adopted it**, and its next CI run fails until it's synced: Tracking Eye, GogoLoot, Magic Eraser, Good to Go and Play It Forward (for its mailbox tab's hover menu), so each takes `scripts/sync-addon-kits.sh` on its next change. **Art alone doesn't adopt a kit:** the CI check and the sync script key adoption on a kit's `.lua` files.
 4. Style Guide → MINIMAP MENU → Moving a Tooltip to a Menu, step 1, copies the kit from `addon-kits/Menu-Kit/` instead of Tracking Eye on GitHub.
 
 ## Done When

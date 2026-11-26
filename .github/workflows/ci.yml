@@ -61,8 +61,7 @@ jobs:
         run: |
           # A kit's folder mirrors the add-on's paths. An add-on that has any of a
           # kit's Lua files has adopted it, and then every file must match byte for
-          # byte, art included. Art alone doesn't adopt a kit: Play It Forward borrows
-          # Menu-Kit's plate for its reopen button without the kit. An add-on that
+          # byte, art included. Art alone doesn't adopt a kit. An add-on that
           # hasn't adopted a kit is left alone.
           status=0
           for kit in "$RUNNER_TEMP"/common-core/addon-kits/*/; do
