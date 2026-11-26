@@ -704,38 +704,36 @@ rows[1].scripts.OnClick(rows[1])
 check(not (grayMenu.panels[2] and grayMenu.panels[2]:IsShown()), "nor on a click")
 rows[2].scripts.OnEnter(rows[2])
 check(grayMenu.panels[2] and grayMenu.panels[2]:IsShown(), "while a live one does")
--- The main menu never scrolls: it grows to fit every row
+-- A panel grows to fit its rows: well past the old 20-row cap, it still shows every row
 local longEntries = {}
-for index = 1, 50 do
+for index = 1, 100 do
 	longEntries[index] = { kind = "choice", left = "Bag " .. index, onClick = function() end }
 end
 local mainPanel = Kit.CreatePanel("TestLongMain")
 mainPanel:Show()
-mainPanel:Render(longEntries)
-check(#ShownRows(mainPanel) == 50 and mainPanel.height == 50 * 20 + 24, "a 50-row main menu shows every row")
+mainPanel:Render({ unpack(longEntries, 1, 40) })
+check(#ShownRows(mainPanel) == 40 and mainPanel.height == 40 * 20 + 24, "a 40-row menu shows every row")
 check(not mainPanel.wheel and not mainPanel.thumb, "with no wheel and no thumb")
-check(grayMenu.panels[2].scrollable, "while a sub-menu can scroll")
 
--- A long flyout or dropdown list scrolls past 20 rows, its view a whole number of rows, the wheel moving it
+-- A panel that would run off the screen (1080 less 64) scrolls, its view a whole number of rows, the wheel moving it
 local longPanel = Kit.CreatePanel("TestLong")
-longPanel.scrollable = true
 longPanel:Show()
 longPanel:Render(longEntries)
 rows = ShownRows(longPanel)
-check(#rows == 20 and rows[1].entry.left == "Bag 1", "a 50-row list shows its first 20")
-check(longPanel.height == 20 * 20 + 24, "and stays 20 rows tall")
+check(#rows == 49 and rows[1].entry.left == "Bag 1", "a 100-row list shows the first 49 that fit")
+check(longPanel.height == 1080 - 64, "and stays as tall as the screen allows")
 check(longPanel.wheel and longPanel.thumb:IsShown(), "the wheel scrolls it, and a thumb shows where it sits")
 longPanel.scripts.OnMouseWheel(longPanel, -1)
 rows = ShownRows(longPanel)
 check(rows[1].entry.left == "Bag 4" and rows[1].points[1][5] == -12, "a notch down moves it 3 rows")
 longPanel:Render(longEntries)
 check(ShownRows(longPanel)[1].entry.left == "Bag 4", "a redraw keeps the place")
-for _ = 1, 20 do
+for _ = 1, 40 do
 	longPanel.scripts.OnMouseWheel(longPanel, -1)
 end
 rows = ShownRows(longPanel)
-check(#rows == 20 and rows[20].entry.left == "Bag 50", "it stops with the last row at the bottom")
-for _ = 1, 20 do
+check(#rows == 49 and rows[49].entry.left == "Bag 100", "it stops with the last row at the bottom")
+for _ = 1, 40 do
 	longPanel.scripts.OnMouseWheel(longPanel, 1)
 end
 check(ShownRows(longPanel)[1].entry.left == "Bag 1", "and with the first at the top")
@@ -750,7 +748,6 @@ local dropdown = Kit.CreateDropdownMenu("TestDropdown")
 local field = CreateFrame("Button", "TestField")
 field.cx, field.cy = 200, 600
 local dropFrame = named.TestDropdown
-check(dropFrame.scrollable, "and so can a dropdown's list")
 dropdown:Open(field, { { kind = "choice", left = "One", onClick = function() end } })
 local dropPoint = dropFrame.points[1]
 check(

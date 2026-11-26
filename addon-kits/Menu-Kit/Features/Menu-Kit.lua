@@ -97,8 +97,7 @@ local HOVER_CLOSE_DELAY = 0.5 -- Forgiving for a cursor that slips off the edge,
 local CLICK_CLOSE_DELAY = 1.0
 local MENU_GAP = 2 -- From the launcher's corner to the menu's
 local MAX_DEPTH = 4 -- The menu and three sub-menus deep
-local SCROLL_ROWS = 20 -- A flyout or dropdown list taller than this many plain rows scrolls with the mouse wheel
-local MAX_HEIGHT = 2 * PANEL_INSET + SCROLL_ROWS * (LINE_HEIGHT + 2 * SPACE.LINE)
+local SCREEN_MARGIN = 64 -- A panel is never taller than the screen less this; past it, it scrolls
 local SCROLL_STEP = 3 -- Rows per notch of the wheel
 local THUMB_WIDTH = 2
 local THUMB_ALPHA = 0.6
@@ -815,10 +814,10 @@ function Panel:Render(source, context)
 end
 
 --[[
-    Stacks the rows and sets the panel's height. The main menu always grows to
-    fit every row and never scrolls. A flyout or dropdown list (self.scrollable)
-    whose rows run past MAX_HEIGHT (SCROLL_ROWS plain rows, as a long bag list
-    would) stays that tall and shows whole rows from self.scroll on: the mouse
+    Stacks the rows and sets the panel's height. Every panel, the main menu
+    included, grows to fit its rows. Only one whose rows would run off the
+    screen (taller than the screen less SCREEN_MARGIN, as a very long bag list
+    can be) stays that tall and shows whole rows from self.scroll on: the mouse
     wheel moves them SCROLL_STEP at a time, and a thin thumb in the plate's
     right margin shows where the view sits in the list.
 ]]
@@ -828,8 +827,11 @@ function Panel:Layout()
 	for index = 1, count do
 		content = content + rows[index].height
 	end
-	local room = MAX_HEIGHT - 2 * PANEL_INSET
-	local scrolls = self.scrollable and content > room or false
+	-- The screen's height in this panel's own points, whatever the UI scale.
+	local screen = UIParent:GetHeight() * UIParent:GetEffectiveScale() / self:GetEffectiveScale()
+	local maxHeight = math.floor(screen - SCREEN_MARGIN)
+	local room = maxHeight - 2 * PANEL_INSET
+	local scrolls = content > room
 
 	-- The first row shown: never so far down that the view has room left at the bottom.
 	local first = 1
@@ -861,7 +863,7 @@ function Panel:Layout()
 		end
 		row:SetShown(index >= first and not full)
 	end
-	self:SetHeight(scrolls and MAX_HEIGHT or y + PANEL_INSET)
+	self:SetHeight(scrolls and maxHeight or y + PANEL_INSET)
 	self:EnableMouseWheel(scrolls)
 
 	if scrolls and not self.thumb then
@@ -1017,7 +1019,6 @@ function Kit.CreateDropdownMenu(name)
 	})
 	local frame = kitMenu.frame
 	frame:SetFrameStrata("FULLSCREEN_DIALOG") -- In front of the window it drops from
-	frame.scrollable = true -- A long list, as a bag list can be, scrolls past SCROLL_ROWS
 	frame:HookScript("OnHide", function()
 		local onClose = shown.onClose
 		shown.entries, shown.onClose = nil, nil
@@ -1096,7 +1097,6 @@ function Menu:Panel(depth)
 		panel:SetFrameLevel(self.frame:GetFrameLevel() + 20 * (depth - 1))
 		panel.menu = self
 		panel.depth = depth
-		panel.scrollable = true -- A sub-menu scrolls past SCROLL_ROWS; the menu itself never does
 		self.panels[depth] = panel
 	end
 	return panel

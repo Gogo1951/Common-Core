@@ -981,6 +981,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 - **A right-click menu** opens where the game opens its own, at the cursor. **A menu off a button or a line** opens beside it, on the side away from the screen edge (MINIMAP MENU → Placement for the mini-map button), clamped to the screen at strata `DIALOG`.
 - **It closes** 0.5 seconds after the cursor leaves it, its sub-menus and the frame that opened it (1.0 seconds when a Left-Click opened it), on Escape (its frame named and in `UISpecialFrames`), and on a pick that acts. Half a second forgives a cursor that slips off the edge, and a controller's slower one.
 - **Off a button, 2 points off its corner** (`MENU_GAP`), in every menu.
+- **It grows to fit its rows and scrolls only past the screen.** Every menu, sub-menu and dropdown list is as tall as its rows, with no scroll thumb and no mouse wheel. Only one that would run off the screen stops at the screen's height less a margin and scrolls, the wheel moving 3 rows at a time and a thin gray thumb showing where the view sits (Menu-Kit.md).
 
 ### Window-Menus
 
