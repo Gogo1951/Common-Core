@@ -750,6 +750,7 @@ When code compares a looked-up name with something the client shows, check that 
 
 - **EN-US, always.** Every English word we write is American English: in-game strings, READMEs, comments, reports and chat. Never British, Australian or Canadian spelling or usage: color, gray, center, favorite, organize, canceled, traveled, defense, armor, catalog, license. A non-American spelling is a typo. The glossary's house spellings still win, and so do words the maintainer writes themselves ("Hey mate" stays).
 - **Titles and headers are Title Case.** Window titles, panel and tab names, section headers, column headers, tooltip titles and README headings. Capitalize every word except a, an, the, and, but, or, nor, for, so, yet, as, at, by, from, in, of, off, on, per, to, up, via and with, which stay lowercase unless they open or close the title. Glossary spellings keep their own case (Add-on, Mini-map). Title Case is English-only: other locales follow their own language's convention for headers.
+- **A line that asks for something ends with "?",** never "!" or ".", "please" included ("Pretty please?", "Could someone give Aiek [Arcane Intellect], please?"). Sent messages too: the ` // Short Name` sign-off comes after the "?".
 
 ### In-Game Rendering Rules
 
