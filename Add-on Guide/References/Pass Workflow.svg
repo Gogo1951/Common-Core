@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1124" viewBox="0 0 680 1124" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1232" viewBox="0 0 680 1232" role="img">
 <title>Add-on pass workflow</title>
-<desc>Optional 00 GitHub Cleanup, then 01 Local Setup, 02 UX Review and 03 Code Review. Then two branches side by side: 04 Diagnostics Review then the optional 05 Data Review, beside 06 Copy Review then 07 Localization Review. They meet at an in-game test; a bug found there goes to the Fix a Bug prompt and the test runs again. Then the optional Code Comment Cleanup, then 08 Prelaunch Review. Not ready means fix and run 08 again; Ready to tag offers 09, 10 and 11, then 12 Release Notes and PR, then 13 Post Merge Sanity Check once the PR is merged.</desc>
+<desc>Optional 00 GitHub Cleanup, then 01 Local Setup, then three optional jobs side by side (Paste In GitHub Issues, Address Reported Defects, Create New Features), meeting at 02 UX Review, then 03 Code Review. Then two branches side by side: 04 Diagnostics Review then the optional 05 Data Review, beside 06 Copy Review then 07 Localization Review. They meet at an in-game test; a bug found there goes to the Fix a Bug prompt and the test runs again. Then the optional Code Comment Cleanup, then 08 Prelaunch Review. Not ready means fix and run 08 again; Ready to tag offers 09, 10 and 11, then 12 Release Notes and PR, then 13 Post Merge Sanity Check once the PR is merged.</desc>
 <style>
 text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;text-anchor:middle;dominant-baseline:central}
 .th{font-size:14px;font-weight:600}.ts{font-size:12px}
@@ -22,53 +22,61 @@ rect{stroke-width:1}
 <g class="g"><rect x="240" y="24" width="200" height="52" rx="8" class="d"/><text class="th" x="340" y="41">00 GitHub Cleanup</text><text class="ts" x="340" y="60">Optional</text></g>
 <line x1="340" y1="78" x2="340" y2="102" class="arr d" marker-end="url(#a)"/>
 <g class="g"><rect x="240" y="104" width="200" height="52" rx="8"/><text class="th" x="340" y="121">01 Local Setup</text><text class="ts" x="340" y="140">Session Prep</text></g>
-<line x1="340" y1="158" x2="340" y2="182" class="arr" marker-end="url(#a)"/>
-<g class="p"><rect x="240" y="184" width="200" height="52" rx="8"/><text class="th" x="340" y="201">02 UX Review</text><text class="ts" x="340" y="220">Wireframes</text></g>
-<line x1="340" y1="238" x2="340" y2="262" class="arr" marker-end="url(#a)"/>
-<g class="p"><rect x="240" y="264" width="200" height="52" rx="8"/><text class="th" x="340" y="281">03 Code Review</text><text class="ts" x="340" y="300">Offers 04 and 06</text></g>
+<path d="M340 158 L340 174 L120 174 L120 192" class="arr d" marker-end="url(#a)"/>
+<line x1="340" y1="174" x2="340" y2="192" class="arr d" marker-end="url(#a)"/>
+<path d="M340 174 L560 174 L560 192" class="arr d" marker-end="url(#a)"/>
+<g class="g"><rect x="25" y="194" width="190" height="52" rx="8" class="d"/><text class="th" x="120" y="211">Paste In GitHub Issues</text><text class="ts" x="120" y="230">Optional</text></g>
+<g class="g"><rect x="245" y="194" width="190" height="52" rx="8" class="d"/><text class="th" x="340" y="211">Address Reported Defects</text><text class="ts" x="340" y="230">Optional</text></g>
+<g class="g"><rect x="465" y="194" width="190" height="52" rx="8" class="d"/><text class="th" x="560" y="211">Create New Features</text><text class="ts" x="560" y="230">Optional</text></g>
+<path d="M120 248 L120 268 L340 268" class="arr d"/>
+<path d="M560 248 L560 268 L340 268" class="arr d"/>
+<line x1="340" y1="248" x2="340" y2="290" class="arr" marker-end="url(#a)"/>
+<g class="p"><rect x="240" y="292" width="200" height="52" rx="8"/><text class="th" x="340" y="309">02 UX Review</text><text class="ts" x="340" y="328">Wireframes</text></g>
+<line x1="340" y1="346" x2="340" y2="370" class="arr" marker-end="url(#a)"/>
+<g class="p"><rect x="240" y="372" width="200" height="52" rx="8"/><text class="th" x="340" y="389">03 Code Review</text><text class="ts" x="340" y="408">Offers 04 and 06</text></g>
 
-<path d="M340 318 L340 334 L190 334 L190 354" class="arr" marker-end="url(#a)"/>
-<path d="M340 334 L490 334 L490 354" class="arr" marker-end="url(#a)"/>
-<g class="p"><rect x="90" y="356" width="200" height="52" rx="8"/><text class="th" x="190" y="373">04 Diagnostics Review</text><text class="ts" x="190" y="392">Panel matches the code</text></g>
-<text class="ts note" x="340" y="382">side by side</text>
-<g class="p"><rect x="390" y="356" width="200" height="52" rx="8"/><text class="th" x="490" y="373">06 Copy Review</text><text class="ts" x="490" y="392">Polish enUS.lua</text></g>
-<line x1="190" y1="410" x2="190" y2="446" class="arr d" marker-end="url(#a)"/>
-<line x1="490" y1="410" x2="490" y2="446" class="arr" marker-end="url(#a)"/>
-<g class="p"><rect x="90" y="448" width="200" height="52" rx="8" class="d"/><text class="th" x="190" y="465">05 Data Review</text><text class="ts" x="190" y="484">Optional</text></g>
-<g class="p"><rect x="390" y="448" width="200" height="52" rx="8"/><text class="th" x="490" y="465">07 Localization Review</text><text class="ts" x="490" y="484">Translate the changes</text></g>
-<path d="M190 502 L190 524 L340 524" class="arr d"/>
-<path d="M490 502 L490 524 L340 524 L340 546" class="arr" marker-end="url(#a)"/>
+<path d="M340 426 L340 442 L190 442 L190 462" class="arr" marker-end="url(#a)"/>
+<path d="M340 442 L490 442 L490 462" class="arr" marker-end="url(#a)"/>
+<g class="p"><rect x="90" y="464" width="200" height="52" rx="8"/><text class="th" x="190" y="481">04 Diagnostics Review</text><text class="ts" x="190" y="500">Panel matches the code</text></g>
+<text class="ts note" x="340" y="490">side by side</text>
+<g class="p"><rect x="390" y="464" width="200" height="52" rx="8"/><text class="th" x="490" y="481">06 Copy Review</text><text class="ts" x="490" y="500">Polish enUS.lua</text></g>
+<line x1="190" y1="518" x2="190" y2="554" class="arr d" marker-end="url(#a)"/>
+<line x1="490" y1="518" x2="490" y2="554" class="arr" marker-end="url(#a)"/>
+<g class="p"><rect x="90" y="556" width="200" height="52" rx="8" class="d"/><text class="th" x="190" y="573">05 Data Review</text><text class="ts" x="190" y="592">Optional</text></g>
+<g class="p"><rect x="390" y="556" width="200" height="52" rx="8"/><text class="th" x="490" y="573">07 Localization Review</text><text class="ts" x="490" y="592">Translate the changes</text></g>
+<path d="M190 610 L190 632 L340 632" class="arr d"/>
+<path d="M490 610 L490 632 L340 632 L340 654" class="arr" marker-end="url(#a)"/>
 
-<g class="a"><rect x="240" y="548" width="200" height="52" rx="8"/><text class="th" x="340" y="565">In-game Test</text><text class="ts" x="340" y="584">After 07 and 05</text></g>
-<line x1="442" y1="562" x2="518" y2="562" class="arr" marker-end="url(#a)"/>
-<text class="ts note" x="480" y="549">Found a bug</text>
-<line x1="520" y1="586" x2="444" y2="586" class="arr" marker-end="url(#a)"/>
-<text class="ts note" x="480" y="600">re-run</text>
-<g class="g"><rect x="520" y="548" width="140" height="52" rx="8"/><text class="th" x="590" y="565">Fix a Bug</text><text class="ts" x="590" y="584">prompt</text></g>
-<line x1="340" y1="602" x2="340" y2="638" class="arr" marker-end="url(#a)"/>
-<g class="g"><rect x="240" y="640" width="200" height="52" rx="8" class="d"/><text class="th" x="340" y="657">Code Comment Cleanup</text><text class="ts" x="340" y="676">Optional</text></g>
-<line x1="340" y1="694" x2="340" y2="730" class="arr" marker-end="url(#a)"/>
+<g class="a"><rect x="240" y="656" width="200" height="52" rx="8"/><text class="th" x="340" y="673">In-game Test</text><text class="ts" x="340" y="692">After 07 and 05</text></g>
+<line x1="442" y1="670" x2="518" y2="670" class="arr" marker-end="url(#a)"/>
+<text class="ts note" x="480" y="657">Found a bug</text>
+<line x1="520" y1="694" x2="444" y2="694" class="arr" marker-end="url(#a)"/>
+<text class="ts note" x="480" y="708">re-run</text>
+<g class="g"><rect x="520" y="656" width="140" height="52" rx="8"/><text class="th" x="590" y="673">Fix a Bug</text><text class="ts" x="590" y="692">prompt</text></g>
+<line x1="340" y1="710" x2="340" y2="746" class="arr" marker-end="url(#a)"/>
+<g class="g"><rect x="240" y="748" width="200" height="52" rx="8" class="d"/><text class="th" x="340" y="765">Code Comment Cleanup</text><text class="ts" x="340" y="784">Optional</text></g>
+<line x1="340" y1="802" x2="340" y2="838" class="arr" marker-end="url(#a)"/>
 
-<g class="p"><rect x="240" y="732" width="200" height="52" rx="8"/><text class="th" x="340" y="749">08 Prelaunch Review</text><text class="ts" x="340" y="768">Ready to tag?</text></g>
-<line x1="238" y1="746" x2="162" y2="746" class="arr" marker-end="url(#a)"/>
-<text class="ts note" x="200" y="733">Not ready</text>
-<line x1="160" y1="770" x2="236" y2="770" class="arr" marker-end="url(#a)"/>
-<text class="ts note" x="200" y="784">re-run 08</text>
-<g class="g"><rect x="20" y="732" width="140" height="52" rx="8"/><text class="th" x="90" y="749">Fix</text><text class="ts" x="90" y="768">Run its fix prompts</text></g>
+<g class="p"><rect x="240" y="840" width="200" height="52" rx="8"/><text class="th" x="340" y="857">08 Prelaunch Review</text><text class="ts" x="340" y="876">Ready to tag?</text></g>
+<line x1="238" y1="854" x2="162" y2="854" class="arr" marker-end="url(#a)"/>
+<text class="ts note" x="200" y="841">Not ready</text>
+<line x1="160" y1="878" x2="236" y2="878" class="arr" marker-end="url(#a)"/>
+<text class="ts note" x="200" y="892">re-run 08</text>
+<g class="g"><rect x="20" y="840" width="140" height="52" rx="8"/><text class="th" x="90" y="857">Fix</text><text class="ts" x="90" y="876">Run its fix prompts</text></g>
 
-<path d="M340 786 L340 810 L145 810 L145 836" class="arr" marker-end="url(#a)"/>
-<line x1="340" y1="810" x2="340" y2="836" class="arr" marker-end="url(#a)"/>
-<path d="M340 810 L535 810 L535 836" class="arr" marker-end="url(#a)"/>
-<text class="ts note" x="390" y="798">Ready to tag</text>
-<g class="t"><rect x="60" y="838" width="170" height="52" rx="8"/><text class="th" x="145" y="855">09 README</text><text class="ts" x="145" y="874">Player README</text></g>
-<g class="t"><rect x="255" y="838" width="170" height="52" rx="8"/><text class="th" x="340" y="855">10 Technical</text><text class="ts" x="340" y="874">README-Technical</text></g>
-<g class="t"><rect x="450" y="838" width="170" height="52" rx="8"/><text class="th" x="535" y="855">11 Testing</text><text class="ts" x="535" y="874">README-Testing</text></g>
-<path d="M145 892 L145 914 L340 914" class="arr"/>
-<path d="M535 892 L535 914 L340 914" class="arr"/>
-<line x1="340" y1="892" x2="340" y2="938" class="arr" marker-end="url(#a)"/>
-<g class="t"><rect x="230" y="940" width="220" height="52" rx="8"/><text class="th" x="340" y="957">12 Release Notes &amp; PR</text><text class="ts" x="340" y="976">Once 09–11 finish</text></g>
-<line x1="340" y1="994" x2="340" y2="1018" class="arr" marker-end="url(#a)"/>
-<g class="t"><rect x="230" y="1020" width="220" height="52" rx="8"/><text class="th" x="340" y="1037">13 Post Merge Check</text><text class="ts" x="340" y="1056">Once the PR is merged</text></g>
+<path d="M340 894 L340 918 L145 918 L145 944" class="arr" marker-end="url(#a)"/>
+<line x1="340" y1="918" x2="340" y2="944" class="arr" marker-end="url(#a)"/>
+<path d="M340 918 L535 918 L535 944" class="arr" marker-end="url(#a)"/>
+<text class="ts note" x="390" y="906">Ready to tag</text>
+<g class="t"><rect x="60" y="946" width="170" height="52" rx="8"/><text class="th" x="145" y="963">09 README</text><text class="ts" x="145" y="982">Player README</text></g>
+<g class="t"><rect x="255" y="946" width="170" height="52" rx="8"/><text class="th" x="340" y="963">10 Technical</text><text class="ts" x="340" y="982">README-Technical</text></g>
+<g class="t"><rect x="450" y="946" width="170" height="52" rx="8"/><text class="th" x="535" y="963">11 Testing</text><text class="ts" x="535" y="982">README-Testing</text></g>
+<path d="M145 1000 L145 1022 L340 1022" class="arr"/>
+<path d="M535 1000 L535 1022 L340 1022" class="arr"/>
+<line x1="340" y1="1000" x2="340" y2="1046" class="arr" marker-end="url(#a)"/>
+<g class="t"><rect x="230" y="1048" width="220" height="52" rx="8"/><text class="th" x="340" y="1065">12 Release Notes &amp; PR</text><text class="ts" x="340" y="1084">Once 09–11 finish</text></g>
+<line x1="340" y1="1102" x2="340" y2="1126" class="arr" marker-end="url(#a)"/>
+<g class="t"><rect x="230" y="1128" width="220" height="52" rx="8"/><text class="th" x="340" y="1145">13 Post Merge Check</text><text class="ts" x="340" y="1164">Once the PR is merged</text></g>
 
-<text class="ts note" x="340" y="1102">Purple: reviews · Amber: you, in game · Teal: docs and release · Dashed: optional</text>
+<text class="ts note" x="340" y="1210">Purple: reviews · Amber: you, in game · Teal: docs and release · Dashed: optional</text>
 </svg>
