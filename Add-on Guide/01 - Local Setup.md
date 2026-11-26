@@ -55,7 +55,7 @@ The single source for the actual JSON is `References/Permission Template.json` �
 
 ## Session Prep — Claude runs this at the start of every code session
 
-**In a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in step 12, run only step 0.** The rest already ran in this folder this cycle, and step 1 would overwrite everything the cycle changed. Step 0 always runs.
+**In a session launched from another pass's Next Pass prompt (Pass Preamble → Next Pass) and in steps 12 and 13, run only step 0.** The rest already ran in this folder this cycle, and step 1 would overwrite everything the cycle changed. Step 0 always runs.
 
 0. **Render / heal the permission file and the session rules, and refresh the shared kits, from GitHub `main`.** From the add-on folder, run these exactly, as two separate calls:
 

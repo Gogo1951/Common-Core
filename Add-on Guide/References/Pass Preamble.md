@@ -126,10 +126,12 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 | `08 - Prelaunch Review.md`, verdict **Not ready** | Nothing: once its chosen fixes have run, it checks again **in this same session** and gives its new verdict. Only a blocker another pass owns (stale data → `05 - Data Review.md`) gets that pass's prompt, with one line: then run 08 again |
 | `Optional - Fix a Bug.md` | the pass its report names to re-run, or `08 - Prelaunch Review.md` |
 | `08 - Prelaunch Review.md`, verdict **Ready to tag** | `09 - Optional Create README.md`, `10 - Optional Create README-Technical.md` and `11 - Optional Create README-Testing.md`, then `12 - Create Release Notes & PR.md` with one line: run it once 9–11 have finished |
+| `12 - Create Release Notes & PR.md` | `13 - Post Merge Sanity Check.md`, with one line: start it once the PR is merged |
+| `13 - Post Merge Sanity Check.md`, something left out | `12 - Create Release Notes & PR.md`, for a follow-up PR; otherwise nothing |
 
 **After step 3 the work runs in two branches, side by side:** 4 then 5, and 6 then 7, meeting at 8. `05 - Data Review.md` reads each client's tables from wago.tools and QuestieDB, so it needs no in-game test first; step 4 says whether it is worth running (`04 - Diagnostics Review.md` → phase 4).
 
-**Only a pass in the table's left column offers a prompt.** 05, 09, 10, 11 and 12 offer none: the pass that started them already offered what comes next.
+**Only a pass in the table's left column offers a prompt.** 05, 09, 10 and 11 offer none: the pass that started them already offered what comes next.
 
 **Offer each next pass as a card with a Start button, never as a copy box.** Just before the final reply, call `mcp__ccd_session__start_session` once per next pass (if it isn't loaded, load it with `ToolSearch`): initiation `own_initiative`, context `fresh`, use_worktree `false`, title `Run {prompt file name}`, a `background` of at least 80 characters saying which pass just finished in this folder and which pass this session runs next, and the prompt exactly the line below. `own_initiative` waits as a card and Start opens a new session with the prompt running in it. `user_asked` would start the session at once, so never use it here. Print the line as text only if calling the tool fails.
 

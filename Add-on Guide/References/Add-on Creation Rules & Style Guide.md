@@ -1686,7 +1686,7 @@ The single definition of how a pass talks to the maintainer. **The maintainer is
 
 ## GUIDE FEEDBACK
 
-How a pass proposes a change to these documents.
+How a pass proposes a change to these documents. Step 13's Guide & Kit Changes is the cycle's full list, held to neither the bar nor the cap below (`13 - Post Merge Sanity Check.md`).
 
 **Leave the section out when there's nothing to propose.** That is the normal outcome, and it needs no heading or `No changes proposed.` line.
 

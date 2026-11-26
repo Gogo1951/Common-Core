@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1044" viewBox="0 0 680 1044" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="1124" viewBox="0 0 680 1124" role="img">
 <title>Add-on pass workflow</title>
-<desc>Optional 00 GitHub Cleanup, then 01 Local Setup, 02 UX Review and 03 Code Review. Then two branches side by side: 04 Diagnostics Review then the optional 05 Data Review, beside 06 Copy Review then 07 Localization Review. They meet at an in-game test; a bug found there goes to the Fix a Bug prompt and the test runs again. Then the optional Code Comment Cleanup, then 08 Prelaunch Review. Not ready means fix and run 08 again; Ready to tag offers 09, 10 and 11, then 12 Release Notes and PR.</desc>
+<desc>Optional 00 GitHub Cleanup, then 01 Local Setup, 02 UX Review and 03 Code Review. Then two branches side by side: 04 Diagnostics Review then the optional 05 Data Review, beside 06 Copy Review then 07 Localization Review. They meet at an in-game test; a bug found there goes to the Fix a Bug prompt and the test runs again. Then the optional Code Comment Cleanup, then 08 Prelaunch Review. Not ready means fix and run 08 again; Ready to tag offers 09, 10 and 11, then 12 Release Notes and PR, then 13 Post Merge Sanity Check once the PR is merged.</desc>
 <style>
 text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;text-anchor:middle;dominant-baseline:central}
 .th{font-size:14px;font-weight:600}.ts{font-size:12px}
@@ -67,6 +67,8 @@ rect{stroke-width:1}
 <path d="M535 892 L535 914 L340 914" class="arr"/>
 <line x1="340" y1="892" x2="340" y2="938" class="arr" marker-end="url(#a)"/>
 <g class="t"><rect x="230" y="940" width="220" height="52" rx="8"/><text class="th" x="340" y="957">12 Release Notes &amp; PR</text><text class="ts" x="340" y="976">Once 09–11 finish</text></g>
+<line x1="340" y1="994" x2="340" y2="1018" class="arr" marker-end="url(#a)"/>
+<g class="t"><rect x="230" y="1020" width="220" height="52" rx="8"/><text class="th" x="340" y="1037">13 Post Merge Check</text><text class="ts" x="340" y="1056">Once the PR is merged</text></g>
 
-<text class="ts note" x="340" y="1022">Purple: reviews · Amber: you, in game · Teal: docs and release · Dashed: optional</text>
+<text class="ts note" x="340" y="1102">Purple: reviews · Amber: you, in game · Teal: docs and release · Dashed: optional</text>
 </svg>

@@ -9,7 +9,7 @@ Fold Guide Feedback from completed passes back into the guide — with maintaine
 For everything else, drop what fails:
 
 - **Look for the simpler version.** Before approving an item, check whether the same item is better handled by rewriting a closed list as a principle, deleting a rule that keeps getting misread, or fixing the one add-on. Propose that version instead. An addition may grow the docs; never move or trim other text just to offset it.
-- **More than two doc-feedback items from one pass** means the pass ignored its own cap. Rank them, take the top two, and drop the rest.
+- **More than two doc-feedback items from one pass** (step 13's full list aside) means the pass ignored its own cap. Rank them, take the top two, and drop the rest.
 - **A recurring item is a signal about the doc, not the add-on.** When the same shape of item arrives from three passes, change the rule that generates it — surface that to the maintainer instead of landing another patch.
 
 **Four things never go into these docs, no matter how an item is worded.** Drop any item proposing one, and say so in one line:
@@ -30,7 +30,7 @@ For everything else, drop what fails:
 1. **Consolidate first.** Read every feedback item across all supplied blocks, then merge before asking:
     - Items making the same point from different passes become one proposed change.
     - Items that conflict get surfaced as a conflict, not silently resolved.
-    - Items below the bar (see Style Guide → GUIDE FEEDBACK) are dropped — say which, in one line each.
+    - Items below the bar (see Style Guide → GUIDE FEEDBACK) are dropped — say which, in one line each. Step 13's full list is exempt: each of its items is asked about.
 
 2. **Ask — one yes/no question per consolidated change, nothing applied without approval.** Follow the Style Guide → ASKING THE MAINTAINER format, batching up to 4 questions per round. Each question is a plain-language statement of what would change and where, with a Yes and a No option. (The recommendation-first, flag-the-weak, and modification-is-approval rules live in that canonical section.)
 
