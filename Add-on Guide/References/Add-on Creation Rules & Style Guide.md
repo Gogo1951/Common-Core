@@ -1437,7 +1437,7 @@ L["OPTIONS_LEVEL_UP_INTRO"] =
 	"This add-on was built by players who love this game and want to make it as fun as possible for everyone. We'll never ask for donations. The real satisfaction comes from knowing our work makes the game a little better for you. If it does, we'd love to hear about it!"
 L["OPTIONS_LEVEL_UP_WAYS"] = "Here are a few ways you can help us reach more players."
 L["OPTIONS_LEVEL_UP_FEEDBACK"] =
-	"• Share Feedback: Found a defect or have an idea? Let us know on Discord. Your feedback helps us improve the add-on, and pull requests are always welcome."
+	"• Share Feedback: Found a bug or have an idea? Let us know on Discord. Your feedback helps us improve the add-on, and pull requests are always welcome."
 L["OPTIONS_LEVEL_UP_FRIEND"] =
 	"• Tell a Friend: Know someone who might enjoy this add-on? Tell them about it. Word of mouth helps more players discover great add-ons."
 L["OPTIONS_LEVEL_UP_CURSEFORGE"] =
