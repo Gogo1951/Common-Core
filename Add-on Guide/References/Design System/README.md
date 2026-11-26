@@ -91,7 +91,7 @@ Menu-Kit's row kinds (Style Guide → MINIMAP MENU → Row Kinds) plus the two M
 | `note` | MUTED, wraps at 256 | — | A reason, an empty list, *N more* |
 | `action` | Label, INFO | Nothing, what it touches in VALUE, or the button's kept click in MUTED | Toggle, Open, Erase, Clear, Options: one click, one job |
 | `toggle` | Name; MUTED while off | On ON / Off MUTED | A setting's switch |
-| `choice` | Name; VALUE when picked, BODY otherwise; an Off choice MUTED | Check when picked | One of a set |
+| `choice` | Check when picked, its empty room otherwise; then the name, VALUE when picked, BODY otherwise; an Off choice MUTED | Nothing, or the value in a list of values (same colors) | One of a set |
 | `separator`, `spacer` | — | — | A line; a line's room |
 | `item` *(Menu-Kit v2)* | Icon, name in its quality color, `x4` count | A value, count, ratio or slot | An item the add-on acts on or lists. Hover shows the item. Option indent. |
 | `value` *(Menu-Kit v2)* | Label, BODY | Value, VALUE (Off in MUTED); with a sub-menu, then the arrow | A setting that opens a picker, or a read-out with nothing to click: a total, a setting's read-back. Option indent. |

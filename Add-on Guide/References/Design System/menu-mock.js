@@ -187,9 +187,13 @@
 			lc = lc || (entry.on ? "TEXT" : "MUTED");
 			rc = rc || (entry.on ? "ON" : "MUTED");
 		} else if (kind === "choice") {
+			// The check sits on the left and every row keeps its room, so names (or values on the right) line up.
 			// The pick is VALUE, matching the value on the row that opened it; the rest are white; Off stays gray.
-			right = entry.selected ? '<span class="gg-check"></span>' : null;
-			lc = lc || (entry.left === toggleText.off ? "MUTED" : entry.selected ? "VALUE" : "BODY");
+			var pick = entry.left === toggleText.off || entry.right === toggleText.off ? "MUTED" : entry.selected ? "VALUE" : "BODY";
+			var mark = entry.selected ? '<span class="gg-check"></span>' : '<span class="gg-check gg-room"></span>';
+			left = entry.left ? mark + " " + entry.left : mark;
+			lc = lc || pick;
+			rc = rc || pick;
 		} else if (kind === "action") {
 			// What it touches, VALUE; or the button's kept click (Style Guide → Button Clicks), MUTED.
 			lc = lc || "INFO";

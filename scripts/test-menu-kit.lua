@@ -349,6 +349,9 @@ end
 check(Is(rows[11].left.color, VALUE), "the picked choice is VALUE, even with no VALUE in ns.PALETTE")
 check(Is(rows[12].left.color, { 1, 1, 1 }), "a choice not picked is white")
 check(Is(rows[13].left.color, { 0x80 / 255, 0x80 / 255, 0x80 / 255 }), "an Off choice is gray")
+check(rows[11].left.text == Kit.CHECK_MARK .. " Picked", "the check sits on the left of the pick, then a space")
+check(rows[12].left.text == Kit.CHECK_BLANK .. " Other", "a choice not picked keeps the check's room empty")
+check(rows[11].right:IsShown() == false, "a picked choice draws nothing on the right")
 check(Is(rows[14].right.color, VALUE), "a value is VALUE, 0 included")
 check(Is(rows[15].right.color, { 0x80 / 255, 0x80 / 255, 0x80 / 255 }), "a value of Off is gray")
 check(rows[6].registeredClicks == "AnyUp", "a row answers any mouse button")
@@ -365,6 +368,21 @@ for _, row in ipairs(rows) do
 end
 check(panel.height == rowsHeight + 16, "the panel is its rows plus 8 above and below: 16 from the plate to the text")
 check(rows[2].height == 16 and rows[2].left:IsShown() == false, "a spacer is 16 with nothing drawn")
+
+-- A list of values: the check on the left, each value on the right, the pick VALUE, the rest white, Off gray
+panel:Render({
+	{ kind = "choice", right = "1,000g", selected = true },
+	{ kind = "choice", right = "1g" },
+	{ kind = "choice", right = "Off" },
+})
+rows = ShownRows(panel)
+check(
+	rows[1].left.text == Kit.CHECK_MARK and rows[2].left.text == Kit.CHECK_BLANK,
+	"a value's row carries only the check or its room on the left"
+)
+check(rows[1].right.text == "1,000g" and Is(rows[1].right.color, VALUE), "the picked value is VALUE on the right")
+check(Is(rows[2].right.color, { 1, 1, 1 }), "a value not picked is white")
+check(Is(rows[3].right.color, { 0x80 / 255, 0x80 / 255, 0x80 / 255 }), "an Off value is gray")
 
 -- Wrapping
 local long = string.rep("Silence Sounds ", 6) -- 90 characters, 540 points

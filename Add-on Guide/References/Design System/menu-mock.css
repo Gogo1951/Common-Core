@@ -322,6 +322,10 @@
 	transform: rotate(-48deg);
 	filter: drop-shadow(0 0 1px #000);
 }
+/* A choice not picked keeps the check's room, empty. */
+.gg-check.gg-room {
+	visibility: hidden;
+}
 
 /* An icon at the line's height, as |T...:0|t draws it. */
 .gg-icon {

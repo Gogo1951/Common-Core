@@ -34,7 +34,8 @@ local ADDON_NAME, ns = ...
       separator                           A thin line
       action       left, click            A row to click: blue; on the right what it touches, or its click gray
       toggle       left, on               A switch: On in green, or Off with its name gray
-      choice       left, selected         One of a set: the pick light yellow with a check, the rest white
+      choice       left, selected, right  One of a set: the check on the left (the rest keep its room empty),
+                                          the pick light yellow, the rest white; a list of values on the right
       item         itemID or link, count  An item: its icon, its name in its quality color, the count
       value        left, right            A setting's value: white label, light yellow value (Off gray)
       description  left                   What a feature does, white, wrapped at 320
@@ -110,9 +111,11 @@ local HEADINGS = { section = true, status = true, submenu = true }
 Kit.MAX_WIDTH = MAX_WIDTH
 Kit.LIST_MAX = LIST_MAX
 
--- The kit's own thin chevron on a row with a submenu (white, at line height), the game's check mark, and the loot window's Pass for a delete.
+-- The kit's own thin chevron on a row with a submenu (white, at line height), the game's check mark, an
+-- empty texture the check's size for a choice not picked, and the loot window's Pass for a delete.
 Kit.SUBMENU_ARROW = "|TInterface\\AddOns\\" .. ADDON_NAME .. "\\Includes\\Images\\Menu-Arrow:0|t"
 Kit.CHECK_MARK = "|TInterface\\Buttons\\UI-CheckBox-Check:0|t"
+Kit.CHECK_BLANK = "|TInterface\\Common\\spacer:0|t"
 Kit.REMOVE_ICON = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:0|t"
 
 --[[
@@ -412,9 +415,12 @@ local function Look(entry)
 		leftColor = leftColor or (not entry.on and "MUTED") or "TEXT"
 		rightColor = rightColor or (entry.on and "ON") or "MUTED"
 	elseif kind == "choice" then
+		-- The check sits on the left and every row keeps its room, so names (or values on the right) line up.
 		-- The pick matches the value on the row that opened it; the rest are options, not gray. Off stays gray.
-		right = entry.selected and Kit.CHECK_MARK or nil
-		leftColor = leftColor or (left == TEXT.off and "MUTED") or (entry.selected and "VALUE") or "BODY"
+		local color = ((left == TEXT.off or right == TEXT.off) and "MUTED") or (entry.selected and "VALUE") or "BODY"
+		local mark = entry.selected and Kit.CHECK_MARK or Kit.CHECK_BLANK
+		left = left and (mark .. " " .. left) or mark
+		leftColor, rightColor = leftColor or color, rightColor or color
 	elseif kind == "action" then
 		-- The button's kept click is named on its row, gray, as a gesture is ("Drag").
 		if not right and entry.click then
