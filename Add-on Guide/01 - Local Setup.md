@@ -10,7 +10,7 @@ This file is safe to paste whole into a session: the launcher setup is human-onl
 
 ## Which app runs what — read this first
 
-- **Claude Code** (Terminal, or the desktop app's Claude Code) is where **code sessions** run — every numbered step, the `Optional - …` passes, and the comment cleanup, each launched **in the add-on's installed folder** (e.g. `/Applications/World of Warcraft/_classic_era_/Interface/AddOns/MagicEraser`). Claude Code is the only app that reads the permission template. With the template loaded (either path below), these sessions never prompt for a read, and prompt for a write only outside the add-on folder.
+- **Claude Code** (Terminal, or the desktop app's Claude Code) is where **code sessions** run — every numbered step and the `Optional - …` passes, each launched **in the add-on's installed folder** (e.g. `/Applications/World of Warcraft/_classic_era_/Interface/AddOns/MagicEraser`). Claude Code is the only app that reads the permission template. With the template loaded (either path below), these sessions never prompt for a read, and prompt for a write only outside the add-on folder.
 - **Guide maintenance** — the Feedback Triage pass — runs in a session launched in `~/Common-Core`, the guide's local clone: Claude Code started there with no template, or Cowork with the folder connected. **Neither reads the permission template** (Cowork's Allow dialogs are the app's own layer, which no settings file suppresses), so never run permission setup there, and never judge the template by prompts seen there.
 
 ## How the template loads — two scoped paths

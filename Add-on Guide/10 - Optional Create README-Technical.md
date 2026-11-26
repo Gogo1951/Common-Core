@@ -1,12 +1,10 @@
-# WoW Add-on README-Technical Generation (Editing, `README-Technical.md`)
+# WoW Add-on README-Technical Generation (Editing, `README-Technical.md` and Lua Comments)
 
-**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `README-Technical generation`. Write scope: **`README-Technical.md` only.**
+**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `README-Technical generation`. Write scope: **`README-Technical.md`, plus the add-on's Lua comments outside `Includes/` and the `Data/{Game}/` folders: comments only, never code.**
 
-**This prompt is the request.** Pasted on its own, it means: run the whole pass now and bring the launch folder's `README-Technical.md` up to date by the rules below. Never ask whether to run it.
+**This prompt is the request.** Pasted on its own, it means: run the whole pass now and bring the launch folder's `README-Technical.md` up to date by the rules below, then clean up the code's comments (Comment Cleanup). Never ask whether to run it.
 
 **The reader is Claude.** Every pass reads this doc first as its map of the code (Pass Preamble → Read first), so write what saves the next session a cold read: where things live, how they connect, and what the code can't say for itself — the reasons behind a design and the traps a change would walk into. That *why* is the durable content Style Guide → COMMENTS reserves for this doc, lifted from the code's comments. Nothing here is for human contributors or players.
-
-Code-comment tightening is a **separate** pass — see `References/Code Comment Cleanup Prompt.md`.
 
 ## Read
 
@@ -81,3 +79,24 @@ Bullets. Each is a trap someone has hit, or plausibly could, in *this* codebase,
 - Rules the Style Guide already states, and generic Lua or WoW advice.
 - How the static data is chosen and sourced. That lives only in each `Data/{Game}/` file's `How We Got the Data` block, owned by `05 - Data Review.md`; the File Map just lists the folders.
 - Code blocks beyond a line or two of a payload's shape.
+
+## Comment Cleanup
+
+Once the doc is written, slim and sharpen the comments across every Lua file. The house standard is **few, sharp comments**, and this is what enforces it. The rules are canonical in Style Guide → COMMENTS; this applies them, not a second copy of them. **Comments only: behavior must stay identical, so never change code.**
+
+Go file by file through every Lua file. Skip `Includes/`, which is vendored and never touched, and the `Data/{Game}/` folders, whose comments belong to `05 - Data Review.md` (Style Guide → DATA → Data File Layout):
+
+- **Apply Style Guide → COMMENTS as written:** delete what doesn't earn its place (the default is *no* comment), keep only the non-obvious *why* that section defines, and shorten what stays: one line where one line does the job, multi-line preambles and ceremony cut to the essential point.
+- **Keep the durable *why*, short.** A comment explaining a whole subsystem or design rather than the line it sits on is cut to its essential point and left in place. Its full version belongs in this doc: write it up there first if the doc lacks it.
+- **Never touch functional markers.** Leave `MIGRATION` tags and sanctioned `TODO:` markers exactly as they are; other passes depend on them. Leave the dashed SECTION HEADERS dividers and the data-array column-header and row legends; they're structure, not commentary.
+
+Err toward trimming, but this isn't a scorched pass: a judgment-call comment that genuinely helps can stay. The aim is steady progress against over-commenting, not zero comments.
+
+**Verify, required:**
+
+- **Behavior unchanged.** Confirm each touched file still parses (`luac -p`) and lints clean (luacheck), and diff each file to confirm no non-comment bytes moved.
+- **Formatting preserved.** Run StyLua-default over every touched file (Style Guide → TABLE FORMATTING & STYLUA); a comment edit isn't done if it left non-StyLua whitespace behind.
+
+## Report
+
+Briefly: which doc sections changed (or that the doc was rebuilt), then how many Lua files the cleanup touched and roughly how many comments were cut versus kept.

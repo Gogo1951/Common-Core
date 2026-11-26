@@ -74,7 +74,7 @@ rect{stroke-width:1}
 <path d="M340 906 L535 906 L535 932" class="arr" marker-end="url(#a)"/>
 <text class="ts note" x="390" y="894">Ready to tag</text>
 <g class="t"><rect x="60" y="934" width="170" height="52" rx="8"/><text class="th" x="145" y="951">09 README</text><text class="ts" x="145" y="970">Player README</text></g>
-<g class="t"><rect x="255" y="934" width="170" height="52" rx="8"/><text class="th" x="340" y="951">10 Technical</text><text class="ts" x="340" y="970">README-Technical</text></g>
+<g class="t"><rect x="255" y="934" width="170" height="52" rx="8"/><text class="th" x="340" y="951">10 Technical</text><text class="ts" x="340" y="970">README + comments</text></g>
 <g class="t"><rect x="450" y="934" width="170" height="52" rx="8"/><text class="th" x="535" y="951">11 Testing</text><text class="ts" x="535" y="970">README-Testing</text></g>
 <path d="M145 988 L145 1010 L340 1010" class="arr"/>
 <path d="M535 988 L535 1010 L340 1010" class="arr"/>

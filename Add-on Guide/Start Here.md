@@ -3,9 +3,9 @@
 This folder is the guide for building and maintaining Gogo1951's WoW add-ons: the prompts Claude runs, and the rules they enforce. It lives in [Common-Core](https://github.com/Gogo1951/Common-Core) under `Add-on Guide/`, beside the shared CI and release logic every add-on is built on. Two kinds of files:
 
 - **Numbered and `Optional - …` prompts** (this folder) — the pipeline steps; run them in Claude, in the order below.
-- **`References/`** — what the steps consult or invoke: the **Pass Preamble** (the shared contract every pass prompt opens with), the Style Guide and its Build Reference (the rules), the master list (per-add-on facts), the permission template, the canonical files (`Data/Flavor.lua`, the other-client prune for `Features/Core.lua`, and a `LICENSE` template), `Add-on CLAUDE.md` (the rules every session in an add-on folder loads, which Session Prep copies in), and two utility prompts (Guide Feedback Triage, Code Comment Cleanup) run on demand rather than per release.
+- **`References/`** — what the steps consult or invoke: the **Pass Preamble** (the shared contract every pass prompt opens with), the Style Guide and its Build Reference (the rules), the master list (per-add-on facts), the permission template, the canonical files (`Data/Flavor.lua`, the other-client prune for `Features/Core.lua`, and a `LICENSE` template), `Add-on CLAUDE.md` (the rules every session in an add-on folder loads, which Session Prep copies in), and a utility prompt (Guide Feedback Triage) run on demand rather than per release.
 
-Every pass prompt — numbered, optional, and Code Comment Cleanup alike — starts by reading `References/Pass Preamble.md` and then states only what is specific to it. Feedback Triage, which maintains the guide, runs by its own rules. Rules shared by all passes live there or in the Style Guide, never restated in a prompt.
+Every pass prompt — numbered and optional alike — starts by reading `References/Pass Preamble.md` and then states only what is specific to it. Feedback Triage, which maintains the guide, runs by its own rules. Rules shared by all passes live there or in the Style Guide, never restated in a prompt.
 
 ## Setup
 
@@ -48,7 +48,7 @@ Each step is one laser-focused job. Run them as the diagram shows, and skip an o
 - **`07 - Localization Review.md`** — Translates every other language to match the current English, without asking. *Changes:* every locale file, `enUS.lua` only to fix a plain English mistake it finds.
 - **`08 - Prelaunch Review.md`** — The last gate before tagging a release, run once manual testing is done. Checks release metadata, packaging, translations and leftovers, and gives a Ready to tag or Not ready verdict. *Changes:* nothing; master-list updates are proposed in Guide Feedback.
 - **`09 - Optional Create README.md`** — Writes the marketing README players read before installing. A pitch change also rewrites the pitch in every TOC and every language. *Changes:* `README.md`, plus every copy of the pitch when it changes.
-- **`10 - Optional Create README-Technical.md`** — Writes the code map every later pass reads first: where things live, how they connect, the traps. *Changes:* `README-Technical.md`.
+- **`10 - Optional Create README-Technical.md`** — Writes the code map every later pass reads first: where things live, how they connect, the traps. Then cleans up the code's comments, never its behavior. *Changes:* `README-Technical.md`, plus Lua comments outside `Includes/` and `Data/{Game}/`.
 - **`11 - Optional Create README-Testing.md`** — Writes a short, plain-English test plan for volunteer testers. A Ready-to-tag step 8 gives its prompt; run it again whenever testers need one. *Changes:* `README-Testing.md`.
 - **`12 - Create Release Notes & PR.md`** — Drafts player-facing notes for everything since the last release, plus the PR title, for one approval. Then checks the GitHub identity, branches from the freshest upstream `main`, commits, pushes and opens the PR with the notes as its body. Tagging stays manual. *Changes:* git and GitHub only, as `Gogo1951`, and nothing is pushed before you approve.
 - **`13 - Post Merge Sanity Check.md`** — Run once step 12's PR is merged. Checks that the folder and `main` now match, so nothing was left out of the release, and closes the release's Fixed issues. Offers whatever is still open (unsettled defects and questions, skipped data work, anything for the next run) as GitHub issues, then lists every change the cycle suggests for the guide and the kits, as one block for Feedback Triage. *Changes:* GitHub issues only, as `Gogo1951`, and none is created before you approve.
@@ -60,7 +60,6 @@ Each step is one laser-focused job. Run them as the diagram shows, and skip an o
 
 **In `References/`, run on demand:**
 
-- **`Code Comment Cleanup Prompt.md`** — Slims the code's comments, never its behavior. Because it edits source, run it **before** step 8. *Changes:* Lua comments outside `Data/{Game}/`.
 - **`Guide Feedback Triage Prompt.md`** — Folds approved Guide Feedback into these docs, in a session launched in `~/Common-Core`. *Changes:* the guide docs, approved changes only, committed and pushed to Common-Core `main`.
 
 **Steps 2–8 end with a copy-to-other-flavors Run button once the work is done** (Pass Preamble → Copy to Other Flavors): you mirror the working folder into the add-on's other installed clients, then test.

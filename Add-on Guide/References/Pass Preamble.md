@@ -1,6 +1,6 @@
 # Pass Preamble — Read This First
 
-Governs every pass prompt in this guide — numbered, optional, and Code Comment Cleanup alike. Feedback Triage, which maintains the guide, runs by its own rules. Each prompt opens by pointing here and then states only what is specific to it: its Pass Name, its write scope, and its own work.
+Governs every pass prompt in this guide — numbered and optional alike. Feedback Triage, which maintains the guide, runs by its own rules. Each prompt opens by pointing here and then states only what is specific to it: its Pass Name, its write scope, and its own work.
 
 **Guide paths.** The guide is the Common-Core repo's `Add-on Guide/` folder on GitHub `main`. Every guide file a prompt names (`References/…`, `01 - Local Setup.md`) is relative to it, fetched with `curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/{path}"` (spaces as `%20`), never read from a local copy; every other path is relative to the add-on folder.
 

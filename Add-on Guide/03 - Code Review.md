@@ -42,7 +42,7 @@ Its fix prompt copies the reference code word for word, adds both tests where th
 
 Always run **luacheck** over the add-on in Phase 1 (`Includes/` excluded, per the repo's `.luacheckrc` — Style Guide → LINTING). Its warnings are ordinary findings; a missing `.luacheckrc` is one too.
 
-Always run one explicit **comment-accuracy sweep**. Every comment must describe what the code actually does now; a comment that contradicts current behavior is a finding. The fix corrects or deletes the comment, never the code (Style Guide → COMMENTS). Also flag commented-out code and decorative banners, per Style Guide → COMMENTS. Sanctioned `TODO:` markers are exempt; leave them. The `Data/{Game}/` files' comments belong to the Data Review, so this sweep skips them. The volume trim is its own pass (`References/Code Comment Cleanup Prompt.md`), so flag only what's wrong or clearly noise.
+Always run one explicit **comment-accuracy sweep**. Every comment must describe what the code actually does now; a comment that contradicts current behavior is a finding. The fix corrects or deletes the comment, never the code (Style Guide → COMMENTS). Also flag commented-out code and decorative banners, per Style Guide → COMMENTS. Sanctioned `TODO:` markers are exempt; leave them. The `Data/{Game}/` files' comments belong to the Data Review, so this sweep skips them. The volume trim is step 10's Comment Cleanup (`10 - Optional Create README-Technical.md`), so flag only what's wrong or clearly noise.
 
 Always run one explicit **game-name sweep** against Style Guide → GAME NAMES, which is the full specification. Two parts:
 
