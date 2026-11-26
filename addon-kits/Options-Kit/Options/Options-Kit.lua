@@ -556,6 +556,7 @@ end
       block            true for a feature players flip mid-session
       apply(value)     optional: writes the value and its side effects; default writes it
       confirm          optional: a key asked before switching off
+      disabled()       optional: true grays the Enable switch out (another feature it needs is off)
       click            optional: the button click its Toggle row names (MINIMAP MENU)
       gate()           optional: true when this character can use it (menu only)
       opensOptions     optional: an OPTIONS_REGISTRY key its More Features row opens
@@ -581,6 +582,7 @@ function Kit.FeatureSwitch(setting, order, width)
 		confirm = feature.confirm and function(_, value)
 			return not value and L[feature.confirm] or false
 		end or nil,
+		disabled = feature.disabled,
 		get = function()
 			local node, key = Resolve(feature.store, feature.setting)
 			return node and node[key]

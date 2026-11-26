@@ -125,6 +125,7 @@ ns.FEATURES = {
 		block = true, -- flipped mid-session: a menu block, not a More Features row
 		apply = function(value) ns.SetAutoVend(value) end, -- optional; default writes the value
 		confirm = "OPTIONS_AUTO_VEND_CONFIRM_OFF", -- optional; asked before switching off
+		disabled = function() return not ns.db.profile.junkListEnabled end, -- optional; true grays the Enable switch out (a feature it needs is off)
 		click = "ShiftRightButton", -- optional; the button click its Toggle row names
 		gate = function() return true end, -- optional; menu only: can this character use it
 		opensOptions = "AutoVend", -- optional; its More Features row opens this panel
@@ -132,7 +133,7 @@ ns.FEATURES = {
 }
 ```
 
-- `Kit.FeatureSwitch(setting, order, width)`: the feature's Enable switch. The root panel's Features section and the feature's own panel both draw this one, so they share caption, tooltip, confirm and setter.
+- `Kit.FeatureSwitch(setting, order, width)`: the feature's Enable switch. The root panel's Features section and the feature's own panel both draw this one, so they share caption, tooltip, confirm, disabled and setter.
 - `Kit.FeatureSwitches(order)`: the root panel's Features switches, two to a line, in `ns.FEATURES` order.
 - Menu-Kit v2's `Kit.MoreFeatures` and `Kit.FeatureBlock` read the same records.
 
