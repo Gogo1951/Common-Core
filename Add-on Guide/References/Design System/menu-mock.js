@@ -96,19 +96,21 @@
 		);
 	}
 
-	// Copper as money in a window or menu (Style Guide → WINDOWS → Tables): white digits, a colored g / s / c after each.
-	// Written in full, "1g 00s 00c"; under 1 gold "28s 05c"; under 1 silver "05c". Silver and copper always take two digits.
+	// Copper as money in a window or menu: white digits, a colored g / s / c after each.
+	// 1 gold or more "1g 00s 00c"; 1 silver or more "1s 00c"; under 1 silver "1c".
+	// The first coin takes no leading zero; every coin after it takes two digits.
 	function money(copper) {
 		var g = Math.floor(copper / 10000);
 		var s = Math.floor((copper % 10000) / 100);
 		var c = copper % 100;
-		var two = function (n) {
-			return (n < 10 ? "0" : "") + n;
-		};
 		var parts = [];
-		if (g) parts.push("<b>" + g.toLocaleString("en-US") + '</b><span class="g">g</span>');
-		if (g || s) parts.push("<b>" + two(s) + '</b><span class="s">s</span>');
-		parts.push("<b>" + two(c) + '</b><span class="c">c</span>');
+		var coin = function (n, cls) {
+			var d = parts.length && n < 10 ? "0" + n : n.toLocaleString("en-US");
+			parts.push("<b>" + d + '</b><span class="' + cls + '">' + cls + "</span>");
+		};
+		if (g) coin(g, "g");
+		if (g || s) coin(s, "s");
+		coin(c, "c");
 		return '<span class="gg-money">' + parts.join(" ") + "</span>";
 	}
 
