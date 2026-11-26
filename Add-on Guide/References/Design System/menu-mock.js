@@ -96,15 +96,19 @@
 		);
 	}
 
-	// Copper as Blizzard draws money: white digits, a colored g / s / c after each.
+	// Copper as money in a window or menu (Style Guide → WINDOWS → Tables): white digits, a colored g / s / c after each.
+	// Written in full, "1g 00s 00c"; under 1 gold "28s 05c"; under 1 silver "05c". Silver and copper always take two digits.
 	function money(copper) {
 		var g = Math.floor(copper / 10000);
 		var s = Math.floor((copper % 10000) / 100);
 		var c = copper % 100;
+		var two = function (n) {
+			return (n < 10 ? "0" : "") + n;
+		};
 		var parts = [];
 		if (g) parts.push("<b>" + g.toLocaleString("en-US") + '</b><span class="g">g</span>');
-		if (s) parts.push("<b>" + s + '</b><span class="s">s</span>');
-		if (c || !parts.length) parts.push("<b>" + c + '</b><span class="c">c</span>');
+		if (g || s) parts.push("<b>" + two(s) + '</b><span class="s">s</span>');
+		parts.push("<b>" + two(c) + '</b><span class="c">c</span>');
 		return '<span class="gg-money">' + parts.join(" ") + "</span>";
 	}
 

@@ -18,6 +18,9 @@
     alone is a real choice. Each option holds its own example in a <template>,
     drawn as the player would see it. The page shows the example beside the
     options: hovering an option shows its example, clicking picks it.
+    A <template> is copied, so a script inside it never runs: when an example
+    draws a mock with GG.menu(), define window.renderMocks(ex), which draws the
+    mock placeholders inside ex; the page calls it after each copy.
   - Create UX Wireframes: Current only. Delete every Proposed pane, the change
     cards and the choices bar.
 
@@ -378,6 +381,8 @@ cards.forEach(function (card) {
 		ex.innerHTML = "";
 		var t = pick.querySelector("template");
 		if (t) ex.appendChild(t.content.cloneNode(true));
+		// A menu drawn by GG.menu() inside a template never runs on its own: let the page draw its mock placeholders here.
+		if (typeof window.renderMocks === "function") window.renderMocks(ex);
 	}
 	function resting() {
 		var rec = state.choices[id] || {};
