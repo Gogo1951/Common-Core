@@ -25,7 +25,8 @@ No pass before this one updates this doc (Pass Preamble → Standing scope), so 
 ## How to Write It
 
 - **Terse notes, not prose.** Short bullets and fragments; file paths and symbols in backticks.
-- **Point at the code, never copy it.** Name the constant or function that holds a value, threshold or list (`ns.MAX_VALUE` in `Data/Data.lua`) instead of writing the value, so the doc can't go stale when it changes.
+- **Point at the code, never copy it.** Name the constant or function that holds a value, threshold or list (`ns.MAX_VALUE` in `Data/Data.lua`) instead of writing the value, so the doc can't go stale when it changes. Locate code by file and symbol, never by line number.
+- **Keep it under about 200 lines.** Every pass reads it first, so its length is paid on every pass; when it runs over, cut what the code already says.
 - **Point at the Style Guide, never restate it.** Record only what this add-on does on top of the rules, or where it is unusual.
 - **Only what exists.** No plans, no TODOs, and no section for something the add-on doesn't have.
 
@@ -33,13 +34,13 @@ No pass before this one updates this doc (Pass Preamble → Standing scope), so 
 
 ### 1. Title and Cross-link
 
-H1 `# Add-on Name // Technical Reference`, then this line verbatim (substitute the add-on and repo names):
+H1 `# Add-on Name // Technical Reference`, then this line verbatim (substitute the add-on name):
 
-> Code map for working on Add-on Name: where things live, how they connect, and the traps. Where this and the code disagree, the code wins. For players, see [README.md](https://github.com/Gogo1951/Repo-Name/blob/main/README.md).
+> Code map for working on Add-on Name: where things live, how they connect, and the traps. Where this and the code disagree, the code wins.
 
 ### 2. `## File Map`
 
-A code-fenced ASCII tree of the repo, one short annotation per non-obvious file saying what it owns — enough to know which file to open. Standard files (`.toc`, `Locales/`) get a two-word label or none, and `Diagnostics/` gets one line naming `Manifests.lua` as this add-on's part. Call out any deprecated or dead file, so no change reintroduces it. Annotations attach with spaces only, aligned into one column two spaces past the longest path in the tree — never an em dash or other separator character — and each begins with a capital letter. Changing the tree re-flows that column to the current longest path.
+A code-fenced ASCII tree of the repo, one short annotation per non-obvious file saying what it owns — enough to know which file to open. Standard files (`.toc`, `Locales/`) get a two-word label or none, and `Diagnostics/` gets one line naming `Manifests.lua` as this add-on's part. Call out any deprecated or dead file, so no change reintroduces it. Each annotation follows its path after two spaces.
 
 The tree is `git ls-files` plus `git ls-files --others --exclude-standard`: Session Prep points the index at `main`, so this lists the repo's files, including any the packager strips from the installed folder, plus files this session added, and leaves out local artifacts. List `.github/workflows/ci.yml` and `package.yml` as `Calls Common-Core: ...` (Style Guide → COMMON-CORE), and when `Tests/` is present, state that it runs on Lua 5.1.
 
@@ -87,10 +88,10 @@ Once the doc is written, slim and sharpen the comments across every Lua file. Th
 Go file by file through every Lua file. Skip `Includes/`, which is vendored and never touched, and the `Data/{Game}/` folders, whose comments belong to `05 - Data Review.md` (Style Guide → DATA → Data File Layout):
 
 - **Apply Style Guide → COMMENTS as written:** delete what doesn't earn its place (the default is *no* comment), keep only the non-obvious *why* that section defines, and shorten what stays: one line where one line does the job, multi-line preambles and ceremony cut to the essential point.
-- **Keep the durable *why*, short.** A comment explaining a whole subsystem or design rather than the line it sits on is cut to its essential point and left in place. Its full version belongs in this doc: write it up there first if the doc lacks it.
-- **Never touch functional markers.** Leave `MIGRATION` tags and sanctioned `TODO:` markers exactly as they are; other passes depend on them. Leave the dashed SECTION HEADERS dividers and the data-array column-header and row legends; they're structure, not commentary.
+- **Keep the durable *why*, short.** A comment explaining a whole subsystem or design rather than the line it sits on is cut to the constraint or consequence it protects (what breaks, and when) and left in place. Its full version belongs in this doc: write it up there first if the doc lacks it.
+- **Never touch functional markers.** Leave `MIGRATION` tags and sanctioned `TODO:` markers exactly as they are; other passes depend on them. Leave the dashed SECTION HEADERS dividers and the data-array column-header and row legends; they're structure, not commentary. A comment recording a maintainer's choice about its code (Style Guide → README-NOTES) may be shortened, never deleted: it is the only record of that choice.
 
-Err toward trimming, but this isn't a scorched pass: a judgment-call comment that genuinely helps can stay. The aim is steady progress against over-commenting, not zero comments.
+Err toward trimming restatement and ceremony, never traps, hidden couplings or choices. This isn't a scorched pass: a judgment-call comment that genuinely helps can stay. The aim is steady progress against over-commenting, not zero comments.
 
 **Verify, required:**
 

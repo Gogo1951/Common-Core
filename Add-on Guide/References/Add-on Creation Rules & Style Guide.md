@@ -485,13 +485,13 @@ local EVENT_LOG_SIZE = 500
 
 ## COMMENTS
 
-The house style is **few, sharp comments**. Most code carries none. A comment is a liability — it rots out of sync — so every one has to earn its maintenance cost. When in doubt, delete.
+The house style is **few, sharp comments**. Most code carries none. A comment is a liability — it rots out of sync — so every one has to earn its maintenance cost. When in doubt about one that restates the code, delete it; when in doubt about a trap, a coupling or a maintainer's choice, keep it.
 
-**What earns a comment:** something the code cannot say for itself — a constraint (combat lockdown, the 255-byte chat limit, a `C_Item.GetItemInfo` cold-call nil), a trap that would otherwise be reintroduced, the reason a surprising line is correct, or a maintainer's choice about that code that a review would otherwise undo.
+**What earns a comment:** something the code cannot say for itself — a constraint (combat lockdown, the 255-byte chat limit, a `C_Item.GetItemInfo` cold-call nil), a trap that would otherwise be reintroduced, a hidden coupling (a value, key or string another file depends on that a search for its name won't find; name the other file), the reason a surprising line is correct, or a maintainer's choice about that code that a review would otherwise undo.
 
 - **Never restate the code.** `-- increment i`, `-- loop over items` — cut them.
 - **Never leave commented-out code** or decorative banners. (The dashed dividers under SECTION HEADERS are a sanctioned structural format.)
-- **The durable *why*** — a comment explaining the system rather than the line (architecture, data flow, subsystem pitfalls) — stays where it is as one short comment. Step 10 writes it up in full in `README-Technical.md`, from the code; no earlier pass moves it (Pass Preamble → Standing scope). The one exception is a data file's `How We Got the Data` block (DATA → Data File Layout), which explains its table in place.
+- **The durable *why*** — a comment explaining the system rather than the line (architecture, data flow, subsystem pitfalls) — stays where it is as one short comment that keeps the constraint or consequence (what breaks, and when) and drops the explanation around it. Step 10 writes it up in full in `README-Technical.md`, from the code; no earlier pass moves it (Pass Preamble → Standing scope). The one exception is a data file's `How We Got the Data` block (DATA → Data File Layout), which explains its table in place.
 
 **Multi-line comments use `--[[ ... ]]`, never a `--` prefix on each line** (it breaks copy/paste, SQL especially). One-liners keep `--`, row legends and trailing notes included.
 
