@@ -696,6 +696,31 @@ line.box = { 100, 420, 432, 412 }
 line.menu:Hide()
 line.scripts.OnEnter(line)
 check(line.menu.frame.points[1][4] == -8, "measured from where the line really ends")
+line.menu:Hide()
+
+-- A flyout with its own afterChange still redraws after a click
+local skip, afterRan = false, 0
+local skipLine = Kit.AddOptionsLine(window, "Options", function()
+	return {
+		{
+			kind = "toggle",
+			left = "Skip",
+			on = skip,
+			onClick = function()
+				skip = not skip
+			end,
+		},
+	}
+end, function()
+	afterRan = afterRan + 1
+end)
+skipLine.box, skipLine.cx, skipLine.cy = line.box, line.cx, line.cy
+skipLine.scripts.OnEnter(skipLine)
+local skipRow = ShownRows(skipLine.menu.frame)[1]
+skipRow.scripts.OnClick(skipRow)
+check(afterRan == 1, "a flyout's own afterChange runs")
+check(ShownRows(skipLine.menu.frame)[1].entry.on == true, "and the kit still redraws it, showing the new state")
+skipLine.menu:Hide()
 
 -- A gray row with a sub-menu: its arrow gray, and it opens nothing
 local grayMenu = Kit.CreateMenu({

@@ -1315,13 +1315,12 @@ function Menu:Render()
 	end
 end
 
--- Every row click and button click ends here: the add-on's afterChange, or a redraw.
+-- Every row click and button click ends here: the add-on's afterChange, then a redraw.
 function Menu:AfterChange()
 	if self.spec.afterChange then
 		self.spec.afterChange()
-	else
-		self:Refresh()
 	end
+	self:Refresh()
 end
 
 function Menu:IsCursorOver()
