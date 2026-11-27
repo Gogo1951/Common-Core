@@ -94,7 +94,7 @@ Err toward trimming, but this isn't a scorched pass: a judgment-call comment tha
 
 **Verify, required:**
 
-- **Behavior unchanged.** Confirm each touched file still parses (`luac -p`) and lints clean (luacheck), and confirm each file's `luac5.1 -s` output is byte-identical before and after (stripped, so moved line numbers don't count).
+- **Behavior unchanged.** Confirm each touched file still parses (`luac -p`) and lints clean (luacheck), and confirm each file's code is unchanged: the `luac5.1 -l -l -p` listing of its `luac5.1 -s` output is identical before and after once the `<?:N,M>` line pairs and `0x…` addresses are masked (`sed -E 's/<\?:[0-9]+,[0-9]+>/<?>/; s/0x[0-9a-f]+/0x/g'`).
 - **Formatting preserved.** Run StyLua-default over every touched file (Style Guide → TABLE FORMATTING & STYLUA); a comment edit isn't done if it left non-StyLua whitespace behind.
 
 ## Report
