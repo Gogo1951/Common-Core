@@ -1507,9 +1507,9 @@ end
     flyout is a function returning the entries, on a menu of the row's own
     (row.menu, afterChange after every click there), or a kit menu several
     rows share. Without one, it's a plain line: no arrow, no highlight, and
-    the mouse passes through to the window. Place it with Kit.PlaceWindowRow;
-    anything the window lays over it (Buff Duty's icons) sits at a higher
-    frame level, between its two sides.
+    the mouse passes through to the window. Place it with Kit.PlaceWindowRow.
+    Nothing clickable sits on a row with a flyout: a button that belongs to it
+    goes on a plain row under it (Style Guide → MENUS → Sub-menus).
 ]]
 function Kit.AddWindowRow(frame, flyout, afterChange)
 	local row = CreateFrame("Button", nil, frame)

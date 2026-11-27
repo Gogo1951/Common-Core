@@ -923,7 +923,7 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 - **Spacers, not lines.** Groups sit apart by a spacer (16); no divider under the title or between groups.
 - **One line closes:** the foot is a menu's (MENUS → Groups), a spacer, the separator, then the Options line.
 - **One type size.** Title, headings, rows and notes are the same size; they differ by color only.
-- **Every line is a 28-point row,** as in every menu (MENUS → Rows). A line that opens a flyout lights across the whole window, 8 in from each side, never only behind its arrow or its name, and hovering anywhere on it opens the flyout. A line with icons on it (Buff Duty's) is the same row, its icons centered on it.
+- **Every line is a 28-point row,** as in every menu (MENUS → Rows). A line that opens a flyout lights across the whole window, 8 in from each side, never only behind its arrow or its name, and hovering anywhere on it opens the flyout. A line with icons on it (Buff Duty's party rows) is the same row, its icons centered on it. A line that opens a flyout keeps its icons on a plain row under it, starting where its name starts (MENUS → Sub-menus).
 - **Height is never rounded; width is a multiple of 16** (SPACING SCALE).
 - **Icons are 20 points, and a window is at least 200 wide.** These two are the maintainer's numbers (SPACING SCALE → A number the maintainer gives): never moved onto the scale.
 - **A list of consumables shows only what the player carries.**
@@ -994,6 +994,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Sub-menus
 
+- **A row that opens a sub-menu holds nothing else to click.** A button that belongs to it (Buff Duty's icons) goes on a row of its own under it, where hovering opens nothing, so reaching for the button never opens the sub-menu over it.
 - **They overlap their menu, as the game's own sub-menus do.** A sub-menu's edge sits 8 points inside its menu's (`Kit.FLYOUT_OVERLAP`, `ROW_INSET`, where a row's highlight ends), drawn over it but never over the row's arrow, its first row level with the row that opened it (`Kit.FLYOUT_RISE`, 8). Never a gap and never flush: a sub-menu set apart reads as a second menu.
 - **Hovering the row opens it**, and a click does too, unless the row is a switch, whose click flips it. Hovering any other clickable row closes it. The row keeps its highlight while its sub-menu is open.
 - **The side away from the screen edge**, decided once when the menu opens; a sub-menu of a sub-menu goes the same way.
