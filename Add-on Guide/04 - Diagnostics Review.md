@@ -21,10 +21,10 @@ The Diagnostic Tools panel is what a player pastes into a defect report, so it s
 **Every manifest covers the whole surface.** Find the surface with:
 
 ```
-grep -rn "RegisterEvent\|RegisterUnitEvent\|GetCVar\|C_CVar\|IsPlayerSpell\|IsSpellKnown\|C_Spell\.\|C_Item\.\|C_Map\.\|C_TradeSkillUI\." --include="*.lua" . | grep -v "Includes/\|Diagnostics/"
+grep -rn "RegisterEvent\|RegisterUnitEvent\|GetCVar\|C_CVar\|IsPlayerSpell\|IsSpellKnown\|C_Spell\.\|C_Item\.\|C_Map\.\|C_TradeSkillUI\." --include="*.lua" . | grep -v "Includes/\|Diagnostics/\|-Kit\.lua"
 ```
 
-- **Events** — every registered event is in `ns.EVENT_NAMES` and routes through the dispatcher.
+- **Events** — every registered event is in `ns.EVENT_NAMES` and routes through the dispatcher. Events a shared kit registers on its own frame are the kit's and stay out of it.
 - **API checks** — every API COMPATIBILITY routes, and every load-bearing API the core loop depends on, has a row in `ns.DIAGNOSTIC_API_CHECKS`.
 - **Data sources** — every file in every flavor folder has a row in `ns.DIAGNOSTIC_DATA_SOURCES`.
 - **Name lookups** — every game record the add-on names by ID has a row in `ns.DIAGNOSTIC_NAME_LOOKUPS`.

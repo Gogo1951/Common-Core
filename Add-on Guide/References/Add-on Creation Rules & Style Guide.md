@@ -99,7 +99,7 @@ Live reference: **Tracking Eye** — the folder layout, end to end, mini-map men
 |`Data/Data.lua`|Locale initialization (`ns.L`), constants, enums, color tables, target marker, AceConfig registry names, URLs. No logic beyond `GetLocale`.|
 |`Data/Default-Settings.lua`|`ns.DATABASE_DEFAULTS`, the AceDB-3.0 defaults table.|
 |`Data/{Game}/{Table-Name}-{Game}.lua`|Static game data, one complete set per flavor — see DATA → Flavor Folders.|
-|`Features/Core.lua`|Add-on identity, saved-variable lifecycle, central event dispatcher — every registered event routes through it (feature files never call `RegisterEvent` or create an event frame), with the event list exported as `ns.EVENT_NAMES` so the dispatcher and Diagnostics can't drift. No shared utilities.|
+|`Features/Core.lua`|Add-on identity, saved-variable lifecycle, central event dispatcher — every registered event routes through it (feature files never call `RegisterEvent` or create an event frame; a shared kit's own frame is the kit's), with the event list exported as `ns.EVENT_NAMES` so the dispatcher and Diagnostics can't drift. No shared utilities.|
 |`Features/Utilities.lua`|Stateless functions used by multiple files: API shims, color accessors, tooltip helpers, parsing, small game-state predicates.|
 |`Features/Chat-Kit.lua`|Every print and sent message, copied unchanged from Common-Core's `addon-kits/Chat-Kit/`; CI checks it byte for byte (MESSAGES).|
 |`Features/Tooltip-Kit.lua`|With tooltip lines of its own. The tooltip hooks and blocks, copied unchanged from Common-Core's `addon-kits/Tooltip-Kit/`; CI checks it byte for byte (TOOLTIPS).|
@@ -1506,7 +1506,7 @@ The stock table already carries the profile picker, **Copy From**, **Delete a Pr
 
 A standard `Options > [Add-on Name] > Diagnostic Tools` panel **ships in every add-on**. The framework — the runner, the panel, the event buffer, every builder — is copied from Magic Eraser, re-authoring only what Live Reference below lists. What changes per add-on is the *contents* of the manifests the framework reads, scoped strictly to the add-on's real surface:
 
-- **Events** — driven off `ns.EVENT_NAMES`, so the diagnostic set can never drift from what the add-on registers.
+- **Events** — driven off `ns.EVENT_NAMES`, so the diagnostic set can never drift from what the add-on registers. Events a shared kit registers on its own frame are the kit's and stay out of it.
 - **API calls** — every API COMPATIBILITY routes — called directly as a namespaced API, or reached through a guard or an `ns` accessor — gets a row in `ns.DIAGNOSTIC_API_CHECKS`, plus the load-bearing APIs the core loop depends on. Incidental globals (`print`, `UnitClass`) don't get rows, and an add-on never probes an API it doesn't use. Tests are existence or shape checks only.
 - **Saved variables** — the dump targets the add-on's own tables by name and nothing else.
 - **Data sources** — every file in the flavor folders gets a row in `ns.DIAGNOSTIC_DATA_SOURCES`, and the Data tab builds one report row per file. The folders share their table names, and each manifest row is labeled by table name, so one manifest serves every flavor, and adding a file to the folders adds its row — the validator can never drift from what the add-on ships.
