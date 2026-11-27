@@ -94,7 +94,7 @@ Err toward trimming, but this isn't a scorched pass: a judgment-call comment tha
 
 **Verify, required:**
 
-- **Behavior unchanged.** Confirm each touched file still parses (`luac -p`) and lints clean (luacheck), and diff each file to confirm no non-comment bytes moved.
+- **Behavior unchanged.** Confirm each touched file still parses (`luac -p`) and lints clean (luacheck), and confirm each file's `luac5.1 -s` output is byte-identical before and after (stripped, so moved line numbers don't count).
 - **Formatting preserved.** Run StyLua-default over every touched file (Style Guide → TABLE FORMATTING & STYLUA); a comment edit isn't done if it left non-StyLua whitespace behind.
 
 ## Report

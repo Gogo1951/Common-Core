@@ -83,7 +83,7 @@ Always run one **mandated-copy sweep**, so the strings are in place before Copy 
 ## Report format
 
 Open with a 2–3 sentence summary, then the skim list (Pass Preamble → Report format — skim list). Then list the issues, most worth fixing first — no severity labels except **Blocker** where the Pass Preamble names one (a missing target TOC), listed first. Keep the report tight: the description and the fix prompt are the whole issue; no padding, no restating the obvious.
-**At most 10 issues.** Rank by what a player would feel, defects first; when there are more, report the top 10 and say in one line how many smaller ones were left for the next run. Skip trivial style observations.
+**At most 10 issues.** Rank by what a player would feel, defects first; when there are more, report the top 10 and close with one line naming each one left for the next run, a few words apiece. Skip trivial style observations.
 
 **Trim `README-Notes.md` first.** Before Phase 2, delete every entry in it that doesn't matter (Style Guide → README-NOTES → Only what matters), in `## Exceptions` and `## Decisions` alike, without asking. What they covered becomes ordinary findings, and the report says in one line which labels went.
 

@@ -11,7 +11,7 @@ Run once step 12's PR is merged into `main`: the cycle's close-out. It checks th
 0. **Identity check** above, plus permissions per the preamble.
 1. **Confirm the merge.** `git fetch -q origin --tags` (`upstream` for someone else's add-on, per step 12 → Always Start From the Latest `main`). Find the release PR: the one the maintainer names, else the newest merged `release/…` PR (`gh pr list --repo {Owner}/{Repo} --state merged --limit 5 --json number,title,headRefName,mergedAt,mergeCommit`). Not merged yet: stop and say so in one line.
 2. **Compare the folder with `main`.** Run `git status --porcelain` and `git diff --ignore-cr-at-eol --stat origin/main` from the add-on folder, plus `git ls-files --others --exclude-standard` for new files never committed. Every difference is one of:
-    - **Expected, never reported:** anything under `Includes/Libraries/` (Session Prep refreshes it, CI commits it at tagging), `.claude/`, and kit copies that match Common-Core's current `addon-kits/` (the kits moved after the merge; the next release carries them).
+    - **Expected, never reported:** anything under `Includes/Libraries/` (Session Prep refreshes it, CI commits it at tagging), `.claude/`, and kit and shared-file copies that match Common-Core's current `addon-kits/` and `addon-files/` (they moved after the merge; the next release carries them).
     - **Left out:** a change in the folder that `main` doesn't have — an edit made after the PR, or a file never staged. Each is a **Blocker**, said in player words. This pass never commits it; it offers step 12 for a follow-up PR (Next Pass, below).
     - **Only on `main`:** a change made on GitHub or by a review commit. Not a problem; say it in one line. The next Session Prep brings it down.
 

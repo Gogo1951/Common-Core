@@ -57,7 +57,7 @@ The single source for the actual JSON is `References/Permission Template.json` â
 
 **In a session launched from another pass's Next Pass prompt (Pass Preamble â†’ Next Pass) and in steps 12 and 13, run only step 0.** The rest already ran in this folder this cycle, and step 1 would overwrite everything the cycle changed. Step 0 always runs.
 
-0. **Render / heal the permission file and the session rules, and refresh the shared kits, from GitHub `main`.** From the add-on folder, run these exactly, as two separate calls:
+0. **Render / heal the permission file and the session rules, and refresh the shared kits and files, from GitHub `main`.** From the add-on folder, run these exactly, as two separate calls:
 
    ```
    [ -f .claude/settings.local.json ] && echo "Permissions present" || echo "Permissions need rendering"
@@ -69,13 +69,13 @@ The single source for the actual JSON is `References/Permission Template.json` â
 
    On `Permissions present` or `Rules current`, move on: a folder that already has its permission file keeps it, even after the template changes, so a template edit never asks for an approval in every folder (to pick one up, the maintainer deletes that folder's `.claude/settings.local.json`). On `Rules need copying`, write `.claude/CLAUDE.md` with the Write tool as an exact copy of `References/Add-on CLAUDE.md` (fetched from the same URL): the rules every session in this folder loads, plain requests included. Like the permission file, it lives in `.claude/`, which git ignores. On `Permissions need rendering`, write `.claude/settings.local.json` with the Write tool: the template's exact text (fetched from `https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/References/Permission%20Template.json`) with every `{{ADDON}}` replaced by this folder's name, nothing else changed. Never ask to write a file that wouldn't change. If a fetch fails, say so in one line and move on; never write a file from a failed fetch. The commands run inside the sandbox; the sandbox can't write `.claude/` and strict mode ignores `dangerouslyDisableSandbox`, so the Write tool is the only way to write the file. That write is the one approval a session can ask for, and only in a folder without the file (plain **Yes**). Under `wowclaude` it also seeds the folder for future desktop-app sessions. If the file shows `{{ADDON}}` literally, the session wasn't launched from the add-on folder. **These are the guide's only sanctioned writes to `.claude/`** â€” never any other settings edit, never in `~/Common-Core`, never machine-wide.
 
-   Then bring the add-on's copies of Common-Core's shared kits (`addon-kits/`) up to `main`, so every pass, the UX Review and Code Review included, works on the current kits. From the add-on folder, run exactly:
+   Then bring the add-on's copies of Common-Core's shared kits (`addon-kits/`) and shared files (`addon-files/`: the issue forms, workflow callers, `.gitignore` and `.gitattributes`) up to `main`, so every pass, the UX Review and Code Review included, works on the current kits. From the add-on folder, run exactly:
 
    ```
-   t="${TMPDIR:-/tmp}/common-core"; rm -rf "$t"; git clone -q --depth 1 https://github.com/Gogo1951/Common-Core.git "$t" && "$t/scripts/sync-addon-kits.sh" . > /dev/null || echo "Kits not refreshed"
+   t="${TMPDIR:-/tmp}/common-core"; rm -rf "$t"; git clone -q --depth 1 https://github.com/Gogo1951/Common-Core.git "$t" && "$t/scripts/sync-addon-kits.sh" . > /dev/null && "$t/scripts/sync-addon-files.sh" . > /dev/null || echo "Kits not refreshed"
    ```
 
-   It copies every kit the add-on has adopted over its copy, unchanged, and adopts none it hasn't: no diffing, no asking, no report. The copies may then differ from `main`; that's expected, and step 12 commits them with the release, as CI's **Shared kits match Common-Core** check needs. If it prints `Kits not refreshed`, say so in one line and move on.
+   It copies every kit the add-on has adopted over its copy, unchanged, and adopts none it hasn't, then every shared file over the add-on's: no diffing, no asking, no report. The copies may then differ from `main`; that's expected, and step 12 commits them with the release, as CI's **Shared files match Common-Core** and **Shared kits match Common-Core** checks need. If it prints `Kits not refreshed`, say so in one line and move on.
 
 1. **Make the folder an exact copy of the latest `main`, merged PRs included.** The first line wires the folder as a clone of the repo and moves it onto the newest `main`. The second overwrites every file with `main`'s version and deletes files `main` doesn't have, local edits included: no diffing, no comparing, no asking, no report, no Guide Feedback. The one file it leaves alone is `README-Notes.md`, which carries this folder's rulings until step 12 commits it with the release (Pass Preamble â†’ Permissions); if it's missing from disk, it comes back from `main`. Files git ignores, like `.claude/`, are untouched. From the add-on folder, run exactly (the repo URL is in the TOC footer, and only a folder without `.git` needs it):
 
@@ -85,7 +85,7 @@ The single source for the actual JSON is `References/Permission Template.json` â
    rm -f CHANGELOG.md
    ```
 
-   A folder without `.git` first runs `git init -q -b main && git remote add origin https://github.com/Gogo1951/Repo-Name.git` as its own call. The first two lines stay all `git`, with no loop, `if`, `cd` or redirect, because only an all-`git` call runs outside the sandbox, and git must write `.git/`. `git checkout-index -a -q` writes back only the files missing from disk, never overwriting one. **No commits here, ever**: authorship is configured and verified only inside step 12's identity gate (`12 - Create Release Notes & PR.md`). The checkout puts `main`'s kit copies back, so run step 0's kit line again after it.
+   A folder without `.git` first runs `git init -q -b main && git remote add origin https://github.com/Gogo1951/Repo-Name.git` as its own call. The first two lines stay all `git`, with no loop, `if`, `cd` or redirect, because only an all-`git` call runs outside the sandbox, and git must write `.git/`. `git checkout-index -a -q` writes back only the files missing from disk, never overwriting one. **No commits here, ever**: authorship is configured and verified only inside step 12's identity gate (`12 - Create Release Notes & PR.md`). The checkout puts `main`'s kit and shared-file copies back, so run step 0's kit line again after it.
 
 2. **Normalize the add-on's TOCs** in this working copy â€” every `.toc` in the folder â€” directly and without asking for confirmation:
 
