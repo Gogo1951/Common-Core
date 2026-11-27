@@ -72,10 +72,10 @@ The single source for the actual JSON is `References/Permission Template.json` â
    Then bring the add-on's copies of Common-Core's shared kits (`addon-kits/`) and shared files (`addon-files/`: the issue forms, workflow callers, `.gitignore` and `.gitattributes`) up to `main`, so every pass, the UX Review and Code Review included, works on the current kits. From the add-on folder, run exactly:
 
    ```
-   t="${TMPDIR:-/tmp}/common-core"; rm -rf "$t"; git clone -q --depth 1 https://github.com/Gogo1951/Common-Core.git "$t" && "$t/scripts/sync-addon-kits.sh" . > /dev/null && "$t/scripts/sync-addon-files.sh" . > /dev/null || echo "Kits not refreshed"
+   t=$(mktemp -d "${TMPDIR:-/tmp}/common-core.XXXXXX"); git clone -q --depth 1 https://github.com/Gogo1951/Common-Core.git "$t" && "$t/scripts/sync-addon-kits.sh" . > /dev/null && "$t/scripts/sync-addon-files.sh" . > /dev/null || echo "Kits not refreshed"
    ```
 
-   It copies every kit the add-on has adopted over its copy, unchanged, and adopts none it hasn't, then every shared file over the add-on's: no diffing, no asking, no report. The copies may then differ from `main`; that's expected, and step 12 commits them with the release, as CI's **Shared files match Common-Core** and **Shared kits match Common-Core** checks need. If it prints `Kits not refreshed`, say so in one line and move on.
+   It copies every kit the add-on has adopted over its copy, unchanged, and adopts none it hasn't, then every shared file over the add-on's: no diffing, no asking, no report. The copies may then differ from `main`; that's expected, and step 12 commits them with the release, as CI's **Shared files match Common-Core** and **Shared kits match Common-Core** checks need. If it prints `Kits not refreshed`, fails or is blocked, say so in one line and move on.
 
 1. **Make the folder an exact copy of the latest `main`, merged PRs included.** The first line wires the folder as a clone of the repo and moves it onto the newest `main`. The second overwrites every file with `main`'s version and deletes files `main` doesn't have, local edits included: no diffing, no comparing, no asking, no report, no Guide Feedback. The one file it leaves alone is `README-Notes.md`, which carries this folder's rulings until step 12 commits it with the release (Pass Preamble â†’ Permissions); if it's missing from disk, it comes back from `main`. Files git ignores, like `.claude/`, are untouched. From the add-on folder, run exactly (the repo URL is in the TOC footer, and only a folder without `.git` needs it):
 

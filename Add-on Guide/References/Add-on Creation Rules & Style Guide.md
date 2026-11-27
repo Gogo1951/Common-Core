@@ -942,7 +942,7 @@ A table of rows in a window (a list of characters, items or amounts in columns) 
 - **The name column opens with a check column:** 16 points for the check, then 4 points of room. The check marks the player's own row; every other row keeps the same room empty, so the names line up. The column's head starts where the names start, not at the check. The column is at least 208 points wide and grows to fit the longest name.
 - **Names are in class color, sorted A to Z,** with no row pinned to the top. A picker listing the same characters uses the same order.
 - **Number columns hold still.** Each is as wide as the widest value it can be expected to hold (Good to Go's Currency Replenish: `10,000g 99s 99c`), so the window never changes width as values change. Values sit at the column's right edge, and the head sits right-aligned over the values, not over any arrow after them.
-- **Money in a window or menu is written in full, with the coin icons:** `1g 00s 00c`. Under 1 gold, `28s 05c`; under 1 silver, `05c`. Silver and copper always take two digits.
+- **Money in a window or menu is written in full, with the coin icons:** `1g 00s 00c`. Under 1 gold, `28s 05c`; under 1 silver, `5c`. The first coin shown takes no leading zero; every coin after it takes two digits.
 - **Hovering anywhere on a row opens its flyout,** not just its arrow, and the whole row lights, as a menu row's does.
 - **The button line:** the button at the right; any status at the left, where the names start, on the same line. A status is a sentence with a period in C_MUTED, except that one meaning all is done is C_ON (`Everyone is full.`) and one meaning it can't be done is C_OFF (`Not enough gold.`). The window gives the status no other line.
 
