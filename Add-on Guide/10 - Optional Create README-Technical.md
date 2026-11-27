@@ -20,7 +20,7 @@ No pass before this one updates this doc (Pass Preamble → Standing scope), so 
 2. `git diff --stat <that commit> -- . ':!README*'` plus `git ls-files --others --exclude-standard` give every code file changed or added since: the diff compares the working tree, so this release's uncommitted work is included.
 3. Read the changed files, and rewrite only the sections they touch: the File Map for added, removed or renamed paths; any section describing a changed system; Pitfalls & Why when a change creates or removes a trap. Every other section stays as written. Add any section below the doc lacks, and drop any section it has that isn't below.
 
-**Rebuild in full from a whole code read** only when the doc has nothing past the title and cross-link (the step-00 stub), the diff touches more than about a third of the code files, or the maintainer asks.
+**Rebuild in full from a whole code read** only when the doc has nothing past the title and cross-link (the step-00 stub), the diff touches more than about a third of the code files (not counting files under `Data/` or `Locales/`), or the maintainer asks.
 
 ## How to Write It
 

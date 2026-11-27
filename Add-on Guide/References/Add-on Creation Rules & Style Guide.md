@@ -1040,7 +1040,7 @@ Drawn: `References/Design System/Mini-map Menus.html`, every row kind and patter
 
 **Left-Click toggles the menu, and a button has at most one other click.** The six clicks the old tooltips listed were kept only for habit.
 
-- **Left-Click opens and holds the menu, in every add-on,** and a Left-Click while it's open closes it. No add-on gives Left-Click another job: Magic Eraser's Erase moves to Right-Click.
+- **Left-Click opens the menu and keeps it open a little longer, in every add-on,** and a Left-Click while it's open closes it. No add-on gives Left-Click another job: Magic Eraser's Erase moves to Right-Click.
 - **At most one other click: Right-Click,** for one action a player repeats many times a session, where opening the menu each time would slow them down (Magic Eraser's Erase). Most add-ons keep none. No Middle-Click, no Shift, no Ctrl or Alt. Options is the menu's last row and the slash command, with no click of its own.
 - **The kept click is named on its row.** If it does it, the menu says so: the row that does the same job names the click on its right in C_MUTED (`Clear Tracking … Right-Click`, `MENU_CLICK_RIGHT`). No other row names a click.
 - **A row answers any mouse button.** Right-clicking a row does what left-clicking it does, so an old habit can't miss.
@@ -1162,7 +1162,7 @@ When picking from a set is the feature's main job, the list lives in the block, 
 
 ### Behavior
 
-- **Hover opens it; Left-Click holds it or closes it.** Hovering the button opens the menu the way the tooltip did. It closes 0.5 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A Left-Click while it's open closes it (Button Clicks).
+- **Hover opens it; Left-Click keeps it open a little longer or closes it.** Hovering the button opens the menu the way the tooltip did. It closes 0.5 seconds after the cursor leaves the button, the menu and the flyout; after a Left-Click, 1.0 seconds. A Left-Click while it's open closes it (Button Clicks).
 - **Escape, flyouts and picks work as in every menu** (MENUS → Sub-menus, Opening and Closing): Escape closes it; hovering or clicking a title opens its flyout and hovering any other clickable row closes it; a pick that acts closes the menu, while a switch or a setting's choice keeps it open and redraws in place (One Refresh).
 - **Read the cursor from `GetCursorPosition`**, not `IsMouseOver`, so a controller's virtual cursor counts (`Kit.IsCursorOver`).
 - **Tooltips reuse the option's strings.** A switch's tooltip is its option's name and description; a spell row's is the spell.
