@@ -644,7 +644,7 @@ Add later classes only if a supported flavor includes them. Item-quality colors 
 
 ## SPACING SCALE
 
-**Every size and gap the add-on sets in game points is a step on one scale: 2, 4, 8, 16, 32, 64, 128.** Padding, margins, the space between controls, `SetPoint` offsets, row heights, icon and texture sizes, and border insets all take a value from it. A dimension past 128, such as a window's width or height, is a multiple of 16. Each choice is then a step up or down the scale, never a number tuned by eye, and every window spaces the same way.
+**Every size and gap the add-on sets in game points is a step on one scale: 2, 4, 8, 16, 32, 64, 128.** Padding, margins, the space between controls, `SetPoint` offsets, row heights, icon and texture sizes, and border insets all take a value from it. A width past 128, such as a window's, is a multiple of 16. A window's height is never rounded: it is what its rows and gaps add up to, and rounding it would only put filler between them (WINDOWS). Each choice is then a step up or down the scale, never a number tuned by eye, and every window spaces the same way.
 
 Four things sit outside it:
 
@@ -917,29 +917,33 @@ Never call `SetButtonIcon` here: its `ResetButtonIcon` calls `icon:UpdateCoord()
 
 **Every window's title reads `Title // Short Name`:** the title in C_TEXT white, the slashes C_SEPARATOR, the Short Name C_INFO blue, at the left of the title bar, with the game's close button at its right end. It holds for the add-on's own windows (the Restock List, the quest log, the Distribution window) and for a window drawn on the menu plate (Buff Duty: MENUS → Window-Menus). The title is Title Case, and its key holds the title part only (ADD-ON NAMES). Menu-Kit's `Kit.WindowTitle(title)` builds the string.
 
-- **Spacers, not lines.** Groups sit apart by a spacer; no divider under the title or between groups.
+- **Laid out by the menus' numbers,** so every window spaces alike. Menu-Kit lays it out (below); a window never picks its own row height, gaps or margins.
+- **16 points from the plate's edge to the text on all four sides,** as in a menu. The title's text starts 16 down and 16 in, with the close button 16 from the right, centered on the title's line. A row holds 8 above and below its text, so rows sit 8 in from the plate, and the window ends 8 under its last row: 16 under that row's text, or 16 under bare text when that comes last. The bottom margin never changes with what the window shows.
+- **The body starts 64 points down:** the title's room, then two spacers' room.
+- **Spacers, not lines.** Groups sit apart by a spacer (16); no divider under the title or between groups.
+- **One line closes:** the foot is a menu's (MENUS → Groups), a spacer, the separator, then the Options line.
 - **One type size.** Title, headings, rows and notes are the same size; they differ by color only.
-- **Rows are 28 points tall,** as in every menu (MENUS → Rows).
-- **16 points in from the edge on all four sides.**
+- **Every line is a 28-point row,** as in every menu (MENUS → Rows). A line that opens a flyout lights across the whole window, 8 in from each side, never only behind its arrow or its name, and hovering anywhere on it opens the flyout. A line with icons on it (Buff Duty's) is the same row, its icons centered on it.
+- **Height is never rounded; width is a multiple of 16** (SPACING SCALE).
 - **Icons are 20 points, and a window is at least 200 wide.** These two are the maintainer's numbers (SPACING SCALE → A number the maintainer gives): never moved onto the scale.
 - **A list of consumables shows only what the player carries.**
 - **It moves by its title bar only,** clamped to the screen, and reopens where the player left it: its position saved in the save model's presentation scope (SAVED VARIABLES → The Two Models), as the mini-map button's is, with a Reset Position that puts it back in the center.
 - **The close button and Escape close it** (its frame named and in `UISpecialFrames`). A window with buttons the game blocks in combat closes when combat starts and stays closed; any other window stays open.
 
-Drawn: `References/Design System/Windows and Tooltips.html`. Built: Menu-Kit's `Kit.WindowTitle` and `Kit.AddWindowHeader` in Common-Core's [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit).
+Drawn: `References/Design System/Windows and Tooltips.html`. Built: Menu-Kit's `Kit.WindowTitle`, `Kit.AddWindowHeader`, `Kit.AddWindowRow`, `Kit.PlaceWindowRow`, `Kit.AddOptionsLine`, `Kit.PlaceOptionsLine`, `Kit.WindowHeight` and `Kit.WindowWidth` in Common-Core's [`addon-kits/Menu-Kit/`](https://github.com/Gogo1951/Common-Core/tree/main/addon-kits/Menu-Kit).
 
 ### Tables
 
 A table of rows in a window (a list of characters, items or amounts in columns) reads the same in every add-on.
 
 - **Every line is a 28-point row:** the setting lines above the table, the column heads, each row and the Options line alike. No row is shorter or taller than the rest.
-- **A spacer after the title, and between a group of setting lines and the table.**
+- **The table follows the window's body rules:** it starts 64 down when it opens the body, and a spacer sits between a group of setting lines and the table.
 - **Columns sit 32 points apart.**
 - **The name column opens with a check column:** 16 points for the check, then 4 points of room. The check marks the player's own row; every other row keeps the same room empty, so the names line up. The column's head starts where the names start, not at the check. The column is at least 208 points wide and grows to fit the longest name.
 - **Names are in class color, sorted A to Z,** with no row pinned to the top. A picker listing the same characters uses the same order.
 - **Number columns hold still.** Each is as wide as the widest value it can be expected to hold (Good to Go's Currency Replenish: `10,000g 99s 99c`), so the window never changes width as values change. Values sit at the column's right edge, and the head sits right-aligned over the values, not over any arrow after them.
 - **Money in a window or menu is written in full, with the coin icons:** `1g 00s 00c`. Under 1 gold, `28s 05c`; under 1 silver, `05c`. Silver and copper always take two digits.
-- **Hovering anywhere on a row opens its flyout,** not just its arrow, as a menu row's does.
+- **Hovering anywhere on a row opens its flyout,** not just its arrow, and the whole row lights, as a menu row's does.
 - **The button line:** the button at the right; any status at the left, where the names start, on the same line. A status is a sentence with a period in C_MUTED, except that one meaning all is done is C_ON (`Everyone is full.`) and one meaning it can't be done is C_OFF (`Not enough gold.`). The window gives the status no other line.
 
 -----
@@ -1005,7 +1009,7 @@ Live reference: **Pretty Wide Quest Log's Quest Arrow menu** for the plate and r
 
 ### Window-Menus
 
-A small window drawn on the plate that stays open (Good to Go's Buff Duty) is one of the menus. Its header is the window title with the close button (WINDOWS, `Kit.AddWindowHeader`), then its body, then a separator and a blue Options line in the rows' own font with the sub-menu arrow (`Kit.AddOptionsLine`). Hovering or clicking the line opens its flyout, overlapping the window by 8 points as any sub-menu does. Nothing on it is in a smaller font.
+A small window drawn on the plate that stays open (Good to Go's Buff Duty) is one of the menus. Its header is the window title with the close button (WINDOWS, `Kit.AddWindowHeader`), then its body of window rows (`Kit.AddWindowRow`), then a spacer, a separator and a blue Options line in the rows' own font with the sub-menu arrow (`Kit.AddOptionsLine`, placed by `Kit.PlaceOptionsLine`), laid out as WINDOWS sets out. Hovering or clicking the line opens its flyout, overlapping the window by 8 points as any sub-menu does. Nothing on it is in a smaller font.
 
 **Menu-Kit v2 draws all of these**; its calls are in `References/Design System/Mini-map Menus/Menu-Kit.md` → API.
 

@@ -277,11 +277,14 @@
 .gg-arrow.muted {
 	border-color: var(--gg-muted);
 }
-/* A window-menu's header (Kit.AddWindowHeader): the title on the left, the game's close button, 16 points, on the right. */
+/* A window-menu's header (Kit.AddWindowHeader): the title on the left, the game's close button, 16 points, on the right,
+   centered on the title's line. */
 .gg-row.window {
-	min-height: 16px; /* WINDOW_HEADER_HEIGHT */
+	min-height: 12px; /* The title's line */
 	padding-top: 0;
 	padding-bottom: 0;
+	margin-top: 8px; /* With the panel's 8: the title's text 16 from the plate's top, as on every side */
+	margin-bottom: 36px; /* The body starts 64 from the top (Kit.WINDOW_BODY_TOP) */
 	align-items: center;
 }
 .gg-close {

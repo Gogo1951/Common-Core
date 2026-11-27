@@ -56,6 +56,15 @@ end
 function Frame:GetScript(name)
 	return self.scripts[name]
 end
+function Frame:HookScript(name, fn)
+	local before = self.scripts[name]
+	self.scripts[name] = function(...)
+		if before then
+			before(...)
+		end
+		fn(...)
+	end
+end
 function Frame:RegisterForClicks(...)
 	self.registeredClicks = table.concat({ ... }, ",")
 end
@@ -721,6 +730,68 @@ skipRow.scripts.OnClick(skipRow)
 check(afterRan == 1, "a flyout's own afterChange runs")
 check(ShownRows(skipLine.menu.frame)[1].entry.on == true, "and the kit still redraws it, showing the new state")
 skipLine.menu:Hide()
+
+-- A window laid out as a menu is: 28-point rows lit across the window, the foot a menu's, 16 under the last text
+check(Kit.ROW_HEIGHT == 28 and Kit.WINDOW_SPACER == 16, "a window's rows are 28 and its spacer 16")
+local titled = CreateFrame("Frame", "TestTitled", UIParent)
+local titleText, closeButton = Kit.AddWindowHeader(titled, "Buff Duty")
+local tp, cp = titleText.points[1], closeButton.points[1]
+check(tp[1] == "TOPLEFT" and tp[4] == 16 and tp[5] == -16, "the title's text sits 16 from the top and left")
+check(cp[1] == "RIGHT" and cp[4] == -16 and cp[5] == -22, "the close button sits 16 from the right, on the title's line")
+check(Kit.WINDOW_BODY_TOP == 64, "the body starts under the title bar and two spacers' room")
+local body = CreateFrame("Frame", "TestBody", UIParent)
+local amounts = Kit.AddWindowRow(body, function()
+	return { { kind = "choice", left = "1g", selected = true, onClick = function() end } }
+end)
+check(amounts.highlight.shown and amounts.arrow.shown, "a row with a flyout lights and carries the arrow")
+check(amounts.left.points[1][1] == "LEFT" and amounts.left.points[1][2] == 8, "its text sits 8 in from the row")
+check(amounts.right.points[1][2] == amounts.arrow, "its right side ends where the arrow's column begins")
+local under = Kit.PlaceWindowRow(amounts, -Kit.WINDOW_BODY_TOP)
+local p1, p2 = amounts.points[1], amounts.points[2]
+check(
+	p1[1] == "TOPLEFT" and p1[4] == 8 and p1[5] == -64 and p2[1] == "TOPRIGHT" and p2[4] == -8,
+	"a row spans the window 8 in from each side, so its highlight covers the whole line"
+)
+check(under == -92, "placing a row returns the y under it")
+amounts.scripts.OnEnter(amounts)
+check(amounts.menu:IsShown() and amounts.locked, "hovering anywhere on the row opens its flyout and keeps it lit")
+amounts.menu:Hide()
+check(not amounts.locked, "the row goes dark when its flyout closes")
+
+local shared = Kit.CreateMenu({
+	publish = false,
+	build = function()
+		return { { kind = "choice", left = "Off" } }
+	end,
+})
+local rowA, rowB = Kit.AddWindowRow(body, shared), Kit.AddWindowRow(body, shared)
+check(rowA.menu == shared and rowB.menu == shared, "rows can share one menu")
+rowA.scripts.OnEnter(rowA)
+rowB.scripts.OnEnter(rowB)
+check(not rowA.locked and rowB.locked, "only the row the shared menu is open off stays lit")
+shared:Hide()
+check(not rowB.locked, "and it goes dark when the menu closes")
+
+local heads = Kit.AddWindowRow(body)
+check(
+	not heads.arrow.shown and not heads.highlight.shown and heads.mouse == false,
+	"a row with no flyout is a plain line: no arrow, no highlight, no mouse"
+)
+check(heads.right.points[1][1] == "RIGHT" and heads.right.points[1][2] == -8, "its right side ends 8 in from the row")
+
+local foot, footLine = Kit.AddOptionsLine(body, "Options", function()
+	return { { kind = "toggle", left = "Lock", on = false, onClick = function() end } }
+end)
+check(foot.left.text == "|cff00bbffOptions|r" and foot.arrow.shown, "the Options line is blue with the arrow")
+local last = Kit.PlaceOptionsLine(foot, footLine, under)
+check(
+	footLine.points[1][4] == 16 and footLine.points[1][5] == -112 and footLine.points[2][4] == -16,
+	"the separator sits a spacer and 4 under the body, across the text's width"
+)
+check(foot.points[1][5] == -116 and last == -144, "the Options line follows the separator's 8")
+check(Kit.WindowHeight(last) == 152, "a window ending on a row ends 16 under its text")
+check(Kit.WindowHeight(-200, true) == 216, "one ending on bare text ends 16 under it too")
+check(Kit.WindowWidth(100) == 208 and Kit.WindowWidth(250) == 288, "a window's width is a multiple of 16, at least 200")
 
 -- A gray row with a sub-menu: its arrow gray, and it opens nothing
 local grayMenu = Kit.CreateMenu({

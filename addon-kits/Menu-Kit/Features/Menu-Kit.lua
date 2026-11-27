@@ -1419,21 +1419,49 @@ function Kit.WindowTitle(title)
 end
 
 --[[
-    The header of a window drawn on the plate (Buff Duty): the title on the
-    left and the game's close button on the right, both EDGE in from the
-    plate's edge. onClose replaces the button's own click, which would hide a
-    protected parent. Returns the title's font string and the button; the
-    window lays out its own body under them, HEADER_HEIGHT down.
+    A window drawn on the plate (Style Guide → WINDOWS) is laid out as a menu
+    is, by the same numbers, so every window spaces alike. Its y runs down from
+    the window's top, negative, as SetPoint takes it.
+
+      the title          its text WINDOW_EDGE in from the top and left, the close button
+                         (WINDOW_HEADER_HEIGHT square) WINDOW_EDGE in from the right, on its line
+      the body           from WINDOW_BODY_TOP: the title's room, then two spacers' room
+      every line         a ROW_HEIGHT row (Kit.AddWindowRow), its highlight across the
+                         window ROW_INSET in from each side, its text TEXT_INSET in from that
+      between groups     a spacer, WINDOW_SPACER
+      the foot           a spacer, the separator in its own SPACE.NEAR, and the Options line
+                         (Kit.PlaceOptionsLine), as a menu's Options row sits
+      the bottom         WINDOW_EDGE under the last text (Kit.WindowHeight), as on every side
+
+    Its height is what it holds, never rounded up, so no filler lands between
+    its rows; its width is a multiple of 16 (Kit.WindowWidth).
 ]]
 Kit.WINDOW_EDGE = EDGE
 Kit.WINDOW_HEADER_HEIGHT = SPACE.GROUP
+Kit.WINDOW_BODY_TOP = EDGE + Kit.WINDOW_HEADER_HEIGHT + 2 * SPACE.GROUP
+Kit.WINDOW_SPACER = SPACE.GROUP
+Kit.WINDOW_ROW_INSET = ROW_INSET
+Kit.WINDOW_TEXT_INSET = TEXT_INSET
+Kit.ROW_HEIGHT = LINE_HEIGHT + 2 * SPACE.NEAR
+local WINDOW_STEP = 16
+local WINDOW_MIN_WIDTH = 200 -- The maintainer's number (Style Guide → WINDOWS)
+
+--[[
+    The header of a window drawn on the plate (Buff Duty): the title's text
+    EDGE in from the top and left, as every other side's text is, and the
+    game's close button EDGE in from the right, centered on the title's line.
+    onClose replaces the button's own click, which would hide a protected
+    parent. Returns the title's font string and the button; the body starts
+    WINDOW_BODY_TOP down.
+]]
 function Kit.AddWindowHeader(frame, title, onClose)
 	local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	text:SetPoint("LEFT", frame, "TOPLEFT", EDGE, -(EDGE + Kit.WINDOW_HEADER_HEIGHT / 2))
+	text:SetPoint("TOPLEFT", frame, "TOPLEFT", EDGE, -EDGE)
+	text:SetHeight(LINE_HEIGHT)
 	text:SetText(Kit.WindowTitle(title))
 	local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 	close:SetSize(Kit.WINDOW_HEADER_HEIGHT, Kit.WINDOW_HEADER_HEIGHT)
-	close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -EDGE, -EDGE)
+	close:SetPoint("RIGHT", frame, "TOPRIGHT", -EDGE, -(EDGE + LINE_HEIGHT / 2))
 	if onClose then
 		close:SetScript("OnClick", onClose)
 	end
@@ -1441,45 +1469,144 @@ function Kit.AddWindowHeader(frame, title, onClose)
 end
 
 --[[
-    A window's Options line (Buff Duty's footer): a separator, then a row in
-    the menu's own font, blue, with the sub-menu arrow. Hovering it or a click
-    opens the flyout beside it, overlapping the window as any sub-menu
-    overlaps its menu (Kit.CreateMenu's "line"). flyout() returns the
-    entries; afterChange runs after every row click there. Returns the line's
-    button and its separator, for the window to place under its body, the
-    separator SPACE.NEAR above the line; size the button to the window's inner
-    width and the menu's row height (Kit.ROW_HEIGHT).
+    Opens a kit menu off a window's row as a "line" flyout, overlapping the
+    window's edge by FLYOUT_OVERLAP, and keeps the row lit while it's open, as
+    a menu row keeps its highlight while its sub-menu is open. For a window
+    whose rows share one menu (Currency Replenish's amounts): set what the
+    menu shows, then call this from the row's OnEnter and OnClick.
 ]]
-Kit.ROW_HEIGHT = LINE_HEIGHT + 2 * SPACE.NEAR
+function Kit.OpenRowMenu(row, menu)
+	local held = menu.heldRow
+	if held and held ~= row then
+		held:UnlockHighlight()
+	end
+	menu.heldRow = nil
+	menu:Show(row, "line")
+	if not menu:IsShown() then
+		return
+	end
+	menu.heldRow = row
+	row:LockHighlight()
+	if not menu.unlocksRow then
+		menu.unlocksRow = true
+		menu.frame:HookScript("OnHide", function()
+			if menu.heldRow then
+				menu.heldRow:UnlockHighlight()
+				menu.heldRow = nil
+			end
+		end)
+	end
+end
+
+--[[
+    A line of a window's body (Style Guide → WINDOWS): a ROW_HEIGHT row in the
+    menus' font, row.left at its left and row.right at its right. With a
+    flyout, the row carries the sub-menu arrow in its own column (row.right
+    ends where it begins), lights across its whole width under the cursor,
+    and hovering anywhere on it or a click opens the flyout (Kit.OpenRowMenu).
+    flyout is a function returning the entries, on a menu of the row's own
+    (row.menu, afterChange after every click there), or a kit menu several
+    rows share. Without one, it's a plain line: no arrow, no highlight, and
+    the mouse passes through to the window. Place it with Kit.PlaceWindowRow;
+    anything the window lays over it (Buff Duty's icons) sits at a higher
+    frame level, between its two sides.
+]]
+function Kit.AddWindowRow(frame, flyout, afterChange)
+	local row = CreateFrame("Button", nil, frame)
+	row:SetHeight(Kit.ROW_HEIGHT)
+	row.window = frame
+	row.left = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	row.left:SetPoint("LEFT", TEXT_INSET, 0)
+	row.left:SetJustifyH("LEFT")
+	row.left:SetWordWrap(false)
+	row.arrow = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	row.arrow:SetPoint("RIGHT", -TEXT_INSET, 0)
+	row.arrow:SetText(Kit.SUBMENU_ARROW)
+	row.right = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	row.right:SetJustifyH("RIGHT")
+	row.right:SetWordWrap(false)
+	row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
+	row.highlight:SetAllPoints()
+	local red, green, blue = RGB("TITLE")
+	row.highlight:SetColorTexture(red, green, blue, HIGHLIGHT_ALPHA)
+
+	if not flyout then
+		row.arrow:Hide()
+		row.highlight:Hide()
+		row.right:SetPoint("RIGHT", -TEXT_INSET, 0)
+		row:EnableMouse(false)
+		return row
+	end
+	row.right:SetPoint("RIGHT", row.arrow, "LEFT", -ARROW_GAP, 0)
+	row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	if type(flyout) == "function" then
+		row.menu = Kit.CreateMenu({ publish = false, build = flyout, afterChange = afterChange })
+	else
+		row.menu = flyout
+	end
+	local function Open(self)
+		Kit.OpenRowMenu(self, self.menu)
+	end
+	row:SetScript("OnEnter", Open)
+	row:SetScript("OnClick", Open)
+	return row
+end
+
+-- Sets a window's row across the window, its top at y. Returns the y under it.
+function Kit.PlaceWindowRow(row, y)
+	row:ClearAllPoints()
+	row:SetPoint("TOPLEFT", row.window, "TOPLEFT", ROW_INSET, y)
+	row:SetPoint("TOPRIGHT", row.window, "TOPRIGHT", -ROW_INSET, y)
+	return y - row:GetHeight()
+end
+
+--[[
+    A window's Options line (Buff Duty's footer): a window row with the label
+    blue and the arrow, its flyout opening beside the window (Kit.AddWindowRow),
+    and the separator that sits above it. Returns the line and its separator;
+    Kit.PlaceOptionsLine places both under the body.
+]]
 function Kit.AddOptionsLine(frame, label, flyout, afterChange)
 	local separator = frame:CreateTexture(nil, "ARTWORK")
 	separator:SetHeight(1)
 	local red, green, blue = RGB("SEPARATOR")
 	separator:SetColorTexture(red, green, blue, SEPARATOR_ALPHA)
 
-	local line = CreateFrame("Button", nil, frame)
-	line:SetHeight(Kit.ROW_HEIGHT)
-	line:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-	local text = line:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	text:SetPoint("LEFT", TEXT_INSET, 0)
-	text:SetText(Kit.Color("INFO", label))
-	local arrow = line:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	arrow:SetPoint("RIGHT", -TEXT_INSET, 0)
-	arrow:SetText(Kit.SUBMENU_ARROW)
-	local highlight = line:CreateTexture(nil, "HIGHLIGHT")
-	highlight:SetAllPoints()
-	red, green, blue = RGB("TITLE")
-	highlight:SetColorTexture(red, green, blue, HIGHLIGHT_ALPHA)
-
-	local menu = Kit.CreateMenu({ publish = false, build = flyout, afterChange = afterChange })
-	local function Open(self)
-		menu:Show(self, "line")
-	end
-	line:SetScript("OnEnter", Open)
-	line:SetScript("OnClick", Open)
-	line.menu = menu
-	line.window = frame
+	local line = Kit.AddWindowRow(frame, flyout, afterChange)
+	line.left:SetText(Kit.Color("INFO", label))
 	return line, separator
+end
+
+--[[
+    The window's foot under y, the bottom of its body (a row's bottom edge, or
+    a button's): a spacer, the separator in a SPACE.NEAR of its own across the
+    text's width, then the Options line, as a menu's Options row sits
+    (Kit.OptionsRow). Returns the y under the line, for Kit.WindowHeight.
+]]
+function Kit.PlaceOptionsLine(line, separator, y)
+	local window = line.window
+	y = y - SPACE.GROUP
+	separator:ClearAllPoints()
+	separator:SetPoint("TOPLEFT", window, "TOPLEFT", EDGE, y - SPACE.LINE)
+	separator:SetPoint("TOPRIGHT", window, "TOPRIGHT", -EDGE, y - SPACE.LINE)
+	return Kit.PlaceWindowRow(line, y - SPACE.NEAR)
+end
+
+--[[
+    A window's height from y, the bottom of the last thing it shows: EDGE
+    under the last text, as on every side. A row already holds SPACE.NEAR
+    under its text, so a window ending on a row (the Options line) adds
+    PANEL_INSET; one ending on bare text (Buff Duty's key hint) adds EDGE.
+    Never rounded: rounding would put filler between its rows.
+]]
+function Kit.WindowHeight(y, endsOnText)
+	return -y + (endsOnText and EDGE or PANEL_INSET)
+end
+
+-- A window's width around the widest thing its body holds: EDGE each side, a multiple of 16, at least 200.
+function Kit.WindowWidth(inner)
+	local width = math.max(inner + 2 * EDGE, WINDOW_MIN_WIDTH)
+	return math.ceil(width / WINDOW_STEP) * WINDOW_STEP
 end
 
 --------------------------------------------------------------------------------

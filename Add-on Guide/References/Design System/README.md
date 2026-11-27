@@ -8,7 +8,7 @@ It grows in waves, one surface at a time:
 |---|---|---|
 | 1 | Mini-map menus | **This folder.** Six add-ons drawn and specced, decisions made, issues filed. |
 | 2 | Options panels | **This folder** (Wave 2: Options Panels, below). Nine add-ons surveyed, drawn and specced; Options-Kit built in `addon-kits/Options-Kit/`; decisions made; issues not filed yet. |
-| 3 | The add-ons' own windows | The title decided (Style Guide → WINDOWS); the rest later. |
+| 3 | The add-ons' own windows | The title, rows and margins decided (Style Guide → WINDOWS); Menu-Kit lays a window on the plate out; the rest later. |
 | 4 | Lines added to the game's tooltips | **`Tooltips/`.** Surveyed across nine add-ons; rules in Style Guide → TOOLTIPS; Tooltip-Kit built in `addon-kits/Tooltip-Kit/`. |
 | 5 | Chat prints and sent messages | **`Chat Lines/`.** Surveyed across nine add-ons; rules in Style Guide → MESSAGES; Chat-Kit built in `addon-kits/Chat-Kit/`. |
 
@@ -60,14 +60,15 @@ On the Spacing Scale (Style Guide → SPACING SCALE). Menu-Kit's constants:
 
 | Constant | Points | |
 |---|---|---|
-| Row | 20 | A 12-point line plus `SPACE.LINE` (4) above and below |
+| Row | 28 | `Kit.ROW_HEIGHT`: a 12-point line plus `SPACE.NEAR` (8) above and below, in menus and windows alike |
 | Spacer | 16 | `SPACE.GROUP`. The kit adds one above every heading. |
 | Separator | 8 | `SPACE.NEAR`, a 1-point line across it |
 | `TEXT_INSET` | 8 | A row's edge to its text |
 | `EDGE` | 16 | The plate's edge to the text, on every side |
 | `ROW_INSET` | 8 | The plate's edge to a row |
 | `OPTION_INDENT` | 4 | Choice, toggle, item and value rows sit this much further in |
-| `FLYOUT_OVERLAP` | 8 | `ROW_INSET`: the flyout's edge sits this far inside its menu's, where a row's highlight ends, clear of the arrow, as the game's own sub-menus do (Style Guide → MENUS); it rises 12 (`FLYOUT_RISE`) so its first row meets the row that opened it |
+| `FLYOUT_OVERLAP` | 8 | `ROW_INSET`: the flyout's edge sits this far inside its menu's, where a row's highlight ends, clear of the arrow, as the game's own sub-menus do (Style Guide → MENUS); it rises 8 (`FLYOUT_RISE`) so its first row meets the row that opened it |
+| `WINDOW_BODY_TOP` | 64 | A window's body starts here: the title's room, then two spacers' room. A window's text sits `EDGE` in on all four sides, the title's included (Style Guide → WINDOWS) |
 | `MIN_WIDTH` | 128 | |
 | Wrap caps | 320 / 256 | A description / a note, before it would widen the menu |
 

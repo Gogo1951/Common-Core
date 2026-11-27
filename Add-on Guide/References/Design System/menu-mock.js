@@ -15,8 +15,10 @@
   A window drawn on the plate (Style Guide → MENUS → Window-Menus) opens with
     { kind: "window", left: "Buff Duty", shortName: "GtG", onClose }
   (Kit.AddWindowHeader: "Title // Short Name" and the game's close button),
-  and ends with GG.optionsLine("Options", "flyoutKey"), a separator and the
-  blue Options line with the arrow (Kit.AddOptionsLine).
+  and ends with GG.optionsLine("Options", "flyoutKey"), a spacer, a separator
+  and the blue Options line with the arrow (Kit.AddOptionsLine). Laid out as
+  Menu-Kit lays out a window (Style Guide → WINDOWS): the title bar 16 down,
+  the body 64 down, 16 from the plate's edge to the text on every side.
   plus the two kinds the Design System proposes, `item` and `value`
   (README → Proposed Kit Changes). Colors are ns.PALETTE keys (TITLE, INFO,
   BODY, HELP, TEXT, ON, OFF, SEPARATOR, MUTED, VALUE), a quality (q:poor … q:epic),
@@ -277,10 +279,11 @@
 
 	function draw(source, host, toggleText, onEnterRow) {
 		// Menu-Kit adds a spacer above every heading, unless it opens the panel or one is already there.
+		// A window's title bar keeps its own room below it (Kit.WINDOW_BODY_TOP), so nothing is added after it.
 		var entries = [];
 		source.forEach(function (entry) {
 			var previous = entries[entries.length - 1];
-			if (HEADINGS[entry.kind] && previous && previous.kind !== "spacer") {
+			if (HEADINGS[entry.kind] && previous && previous.kind !== "spacer" && previous.kind !== "window") {
 				entries.push({ kind: "spacer", c: previous.c });
 			}
 			entries.push(entry);
@@ -385,9 +388,10 @@
 		tip = null;
 	}
 
-	// A window's Options line (Kit.AddOptionsLine): a separator, then the blue line with the arrow, opening flyouts[key].
+	// A window's foot (Kit.AddOptionsLine, Kit.PlaceOptionsLine): a spacer, the separator, then the blue line with
+	// the arrow, opening flyouts[key], as a menu's Options row sits.
 	function optionsLine(label, key) {
-		return [{ kind: "separator" }, { kind: "action", left: label, submenu: key }];
+		return [{ kind: "spacer" }, { kind: "separator" }, { kind: "action", left: label, submenu: key }];
 	}
 
 	window.GG = {
