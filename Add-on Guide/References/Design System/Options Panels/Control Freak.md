@@ -20,11 +20,11 @@ Description, Enable Welcome Message, Enable Mini-map Button, Master Switch (READ
 
 `ns.FEATURES` is new, built from `ns.FEATURE_GROUPS` and `ns.TANKING_TOOLS` so neither is restated:
 
-| setting | name | block | click (menu spec) | apply |
-|---|---|---|---|---|
-| `featureGroups.monitoring` | `OPTIONS_MONITORING_LABEL` | yes | Left-Click | `ns:ApplyProfile()` today; becomes the side effect, then `ns.RefreshSettings()` |
-| `featureGroups.naughtyList` | `OPTIONS_NAUGHTY_LIST_LABEL` | yes | Right-Click | same |
-| Tanking Tools' enable | `TAB_TANKING_TOOLS` | yes | Shift + Left-Click | same |
+| setting | name | block | apply |
+|---|---|---|---|
+| `featureGroups.monitoring` | `OPTIONS_MONITORING_LABEL` | yes | `ns:ApplyProfile()` today; becomes the side effect, then `ns.RefreshSettings()` |
+| `featureGroups.naughtyList` | `OPTIONS_NAUGHTY_LIST_LABEL` | yes | same |
+| Tanking Tools' enable | `TAB_TANKING_TOOLS` | yes | same |
 
 The menu's spec reads these records for its blocks; its master switch reads the root panel's Enable Control Freak (Blocks Beyond Features).
 
