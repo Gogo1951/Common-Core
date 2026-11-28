@@ -1,6 +1,6 @@
 # WoW Add-on README Generation (Editing, `README.md`)
 
-**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `README generation`. Write scope: **`README.md` only** — plus `.claude/README-Infographic-{Feature-Name}.svg` (Infographic), and the pitch-sync surfaces (every TOC's `## Notes` and `OPTIONS_DESCRIPTION` in every locale) when the pitch changes.
+**Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `README generation`. Write scope: **`README.md` only** — plus `README-Infographic-{Feature-Name}.svg` in the session scratchpad (Infographic), and the pitch-sync surfaces (every TOC's `## Notes` and `OPTIONS_DESCRIPTION` in every locale) when the pitch changes.
 
 **This prompt is the request.** Pasted on its own, it means: run the whole pass now and regenerate the launch folder's `README.md` by the rules below. Never ask whether to run it or how much of it; the only questions are Phase 2's.
 
@@ -120,7 +120,7 @@ Every README has at least one feature block; a README without one is broken.
 - **Words** — a dozen or so per card, all in the titles and captions. The picture carries the rest.
 - **Captions** — lay out every caption the template's way: one centered `<text>` per line, a literal space wherever two colored pieces meet on a line (SVG draws adjacent `<tspan>`s with no gap, so `[Taunt]on` and `Aeroused` happen), and the words exactly as the game prints them. Break lines at phrase boundaries with lengths roughly even: the add-on name keeps its ` // `, and a link, a name and its verb, or a short phrase like "was resisted" never splits across lines. Before showing it, measure each caption line in the browser pane (`getBBox().width`, under the box width minus 40) and zoom in to check every space.
 - **Pictures** — flat, simple shapes built from the template's pieces (bag slots, mini-map button, cursor, sparkles). Never Blizzard art, icons, or screenshots pasted in.
-- **Output** — write each to `.claude/README-Infographic-{Feature-Name}.svg` (gitignored, so it never ships or commits), open it in the browser pane to check it renders, and show it to the maintainer. The maintainer converts it to PNG and uploads it; this pass never fabricates the URL. Until the maintainer pastes back the `<img width="800" src="..." />` tag, that block goes without an image.
+- **Output** — write each to `README-Infographic-{Feature-Name}.svg` in the session scratchpad (`/tmp/claude-*`, outside the repo, so it never ships or commits, and the template already allows the write; `.claude/` always prompts), open it in the browser pane to check it renders, and show it to the maintainer. The maintainer converts it to PNG and uploads it; this pass never fabricates the URL. Until the maintainer pastes back the `<img width="800" src="..." />` tag, that block goes without an image.
 
 ### 4. `## Setup`
 
