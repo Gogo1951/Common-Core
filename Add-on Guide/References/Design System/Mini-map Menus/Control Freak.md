@@ -49,6 +49,8 @@ With All Alerts off, the three blocks give way to a red `All Alerts is off, so n
 
 All Alerts is the **master switch** pattern: first block, no description (its title says it), and while it's off the blocks it silences hide behind a gray note. Each Toggle's tooltip is that switch's own name and description from the options.
 
+**WoW Forever** builds its menu from the same `ns.FEATURES`, which there holds only Taunts and Interrupts (`profile.forever`): the header, All Alerts and its note, then a Taunts block and an Interrupts block, each a status row with its `FOREVER_TAUNTS_MINIMAP_SUMMARY` / `FOREVER_INTERRUPTS_MINIMAP_SUMMARY` description and a Toggle, no flyouts, then Options.
+
 ## Button Clicks
 
 Left-Click opens the menu; no other click is kept (Style Guide → MINIMAP MENU → Button Clicks), so no row names a click.
