@@ -6,7 +6,7 @@ Run this whenever testing turns up something broken, at any point in the pipelin
 
 ## Workflow
 
-0. **Permissions** — per the preamble. If this session didn't come from a Next Pass card, run `01 - Local Setup.md` → Session Prep first.
+0. **Permissions** — per the preamble. Run only `01 - Local Setup.md` → Session Prep's Prep 0: the full prep would overwrite the cycle's changes.
 
 1. **Understand the defect.** Read what the maintainer gave you, then the code it points at. Reproduce it in your head from what a player does. **If you aren't sure of the cause, don't change code yet:** say so, and give the maintainer one thing to check in game (what to click, or one `/run` line to paste) that tells the causes apart. Never change something that works to chase a guess. If you truly can't tell what's wrong, ask one multiple-choice question (Style Guide → ASKING THE MAINTAINER), e.g. *When does it break?* `Right after login (Recommended)` — *the error pops up as the game loads* / `When I open the options` / `Only in a group`.
 

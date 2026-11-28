@@ -1,12 +1,12 @@
 # Pass Preamble — Read This First
 
-Governs every pass prompt in this guide — numbered and optional alike. Feedback Triage, which maintains the guide, runs by its own rules. Each prompt opens by pointing here and then states only what is specific to it: its Pass Name, its write scope, and its own work.
+Governs every pass prompt in this guide — numbered and optional alike. Feedback Triage, which maintains the guide, runs by its own rules. Each prompt opens by pointing here and then states only what is specific to it: its Pass Name, its write scope, and its own work. It sits on top of `CLAUDE.local.md`, the add-on rules (`References/Add-on CLAUDE.md`) every session in the folder already loads; what those say isn't repeated here.
 
-**Guide paths.** The guide is the Common-Core repo's `Add-on Guide/` folder on GitHub `main`. Every guide file a prompt names (`References/…`, `01 - Local Setup.md`) is relative to it, fetched with `curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/{path}"` (spaces as `%20`), never read from a local copy; every other path is relative to the add-on folder.
+**Guide paths.** The guide is the Common-Core repo's `Add-on Guide/` folder on GitHub `main`. Every guide file a prompt names (`References/…`, `01 - Local Setup.md`) is relative to it, fetched as `CLAUDE.local.md` says, never read from a local copy; every other path is relative to the add-on folder.
 
 ## Permissions
 
-Beyond Session Prep step 0's render (`01 - Local Setup.md`), never create or edit any settings file, and never write anything to `~/Common-Core`. Whatever its write scope, a pass may write the add-on's `README-Notes.md` as Style Guide → README-NOTES directs: to record an exception the maintainer keeps, or to trim or drain entries; whatever writes it then says in one line what it added or changed, and never prints the file. The local copy keeps it across sessions (Session Prep leaves `README-Notes.md` alone), and step 12 commits it with the release like any other change. Never set the Bash tool's `dangerouslyDisableSandbox`: the template runs the sandbox in strict mode, which ignores it. Reads and `git diff`/`status`/`log` work inside the sandbox, and a call made only of `git` or `gh` commands runs outside it on its own — but a `cd`, a pipe, a redirect, or a `$(...)` or heredoc anywhere in the call keeps all of it sandboxed, where `git config` can't write and `gh` fails TLS. Run those as bare calls. A command the sandbox blocks gets reported, never worked around. If an approval prompt appears mid-pass, stop and follow `01 - Local Setup.md` → What a prompt means now. A pass whose write scope is "nothing" denies any write prompt outright.
+Beyond Prep 0's render (`01 - Local Setup.md`), never create or edit any settings file, and never write anything to `~/Common-Core`. Whatever its write scope, a pass may write the add-on's `README-Notes.md` as Style Guide → README-NOTES directs: to record an exception the maintainer keeps, or to trim or drain entries; whatever writes it then says in one line what it added or changed, and never prints the file. The local copy keeps it across sessions (Session Prep leaves `README-Notes.md` alone), and step 12 commits it with the release like any other change. Never set the Bash tool's `dangerouslyDisableSandbox`: the template runs the sandbox in strict mode, which ignores it. Reads and `git diff`/`status`/`log` work inside the sandbox, and a call made only of `git`, `gh` or `open` commands runs outside it on its own — but a `cd`, a pipe, a redirect, or a `$(...)` or heredoc anywhere in the call keeps all of it sandboxed, where `git config` can't write and `gh` fails TLS. Run those as bare calls. A command the sandbox blocks gets reported, never worked around. If an approval prompt appears mid-pass, stop and follow `01 - Local Setup.md` → What a prompt means now. A pass whose write scope is "nothing" denies any write prompt outright.
 
 ## Kits and the guide change only in Common-Core
 
@@ -21,7 +21,7 @@ In Common-Core, change {file under addon-kits/ or Add-on Guide/}: {what to chang
 
 3. Leave the add-on's kit copy matching Common-Core, and build what the kit can already do.
 
-**Session Prep step 0 copies Common-Core's kits over the add-on's at the start of every session** (`01 - Local Setup.md`), so a pass always works on the current kits and never asks the maintainer to sync one.
+**Session Prep's Prep 0 copies Common-Core's kits over the add-on's at the start of every session** (`01 - Local Setup.md`), so a pass always works on the current kits and never asks the maintainer to sync one.
 
 ## Read first
 
@@ -35,9 +35,7 @@ In Common-Core, change {file under addon-kits/ or Add-on Guide/}: {what to chang
 
 ## The maintainer's word wins
 
-**What the maintainer says in this session beats every rule in this guide.** A size, a number, a word, a name, where a setting lives: use it exactly as given, even off the Spacing Scale or against a copy rule, and don't argue or round it. Do exactly what was asked, nothing dropped and nothing added. **Never undo something the maintainer changed**, in this session or a recent one (the working tree and recent commits show it), and never bundle an undo into a larger change. If it breaks something, say what in one line and leave it.
-
-**Don't guess.** When you aren't sure why something happens, say so and give one thing to check in game before changing code. Never change working code to chase a guess, and never state a guess or a code comment as fact.
+**What the maintainer says in this session beats every rule in this guide**, as `CLAUDE.local.md` says. A size, a number, a word, a name, where a setting lives: use it exactly as given, even off the Spacing Scale or against a copy rule, and don't argue or round it.
 
 ## Workflow contract
 
@@ -45,7 +43,7 @@ Run the prompt's phases in order. Don't skip one, and don't begin the report unt
 
 ## Every reply — plain words
 
-**Every reply to the maintainer is written for a non-developer,** not only a report's issue descriptions. Keep it to a few short lines in player words: say what happens in game — what a player sees, or what now works — not how the code does it. No function, file or variable names unless the maintainer asks for them. When something needs deciding, end with a short multiple-choice question, best option first, each option with an example of what a player would see (Asking questions, below). A report keeps its own format, its prose in the same plain words; the text inside fix and feature prompts and command blocks is written for Claude or for running, and keeps its own rules.
+**Every reply to the maintainer is in plain words, as `CLAUDE.local.md` says,** not only a report's issue descriptions. When something needs deciding, end with a short multiple-choice question (Asking questions, below). A report keeps its own format, its prose in the same plain words; the text inside fix and feature prompts and command blocks is written for Claude or for running, and keeps its own rules.
 
 ## Asking questions
 
@@ -59,7 +57,7 @@ Follow Style Guide → ASKING THE MAINTAINER. An empty clarify phase is a normal
 
 - **Only the launch folder exists.** A pass works in the add-on folder Claude Code was launched in (the scaffold: the folder it creates), reading only this guide and the web beside it. Every other folder on disk — this add-on's copies in the other game clients, every `WTF` folder, every other add-on — doesn't exist for it: never list, read, compare, sync, or mention one, and never spend a thought, finding, question, or fix prompt on one. The Copy to Other Flavors block below is the one exception, and the maintainer runs it. Whether those copies are current is the maintainer's business. The other exception is what the maintainer hands over or asks for in so many words, in this session (an uploaded report, a look at saved variables): the template can read the other copies and `WTF` for exactly that, so do what was asked, nothing more.
 - **READMEs are frozen until steps 9–11.** Until those steps run, the code is the only record of what the add-on does. No pass or fix prompt writes `README.md`, `README-Technical.md` or `README-Testing.md` except the step that owns it, and none flags, asks about, or reconciles anything because a README says otherwise: one that disagrees with the code is out of date, and its own step rewrites it from the code. A pass that reads `README.md` reads it for what players are told, never as a record of how the code works. Every pass reads `README-Technical.md` as its map (Read first), and a stale line in it is ignored, never reported. `README-Notes.md` is the exceptions record, not a README here.
-- **Every current target has its own flavor TOC, declaring the number `01 - Local Setup.md` Session Prep step 2 gives it.** Every pass that reads the TOCs checks this. A missing TOC is a **Blocker**, since that client never sees the add-on, and so is an unsuffixed one, since the rule is one TOC per flavor (Style Guide → TOC FILE FORMAT → Flavor TOCs). Never look the numbers up externally.
+- **Every current target has its own flavor TOC, declaring the number `01 - Local Setup.md` Session Prep's Prep 2 gives it.** Every pass that reads the TOCs checks this. A missing TOC is a **Blocker**, since that client never sees the add-on, and so is an unsuffixed one, since the rule is one TOC per flavor (Style Guide → TOC FILE FORMAT → Flavor TOCs). Never look the numbers up externally.
 - **The flavor set is every current target** (Classic Era with Season of Discovery, WoW Forever, TBC Anniversary) **plus any other flavor the add-on ships a TOC for.** Fewer TOCs is the Blocker above, not a narrower scope. When a finding is client-specific, say which flavor.
 - **Line endings are a closed subject** — never inspected, measured, restored, or reported, in any form. Common-Core's CI owns them (Style Guide → COMMON-CORE → Line Endings).
 - **Optional passes (steps 0, 5, 9, 10, 11 and the `Optional - …` prompts) are never launch gates.**
@@ -95,11 +93,11 @@ Each issue's fix prompt is copy-and-run ready: a fenced code block (no language 
 
 Drop `(Recommended)` from Apply all, and recommend Pick which ones, when any item is flagged as weak or as a UX change you'd rather the maintainer choose. Pasting prompts back, edited or not, works the same as picking them.
 
-**How chosen prompts run.** Apply them in dependency order, one at a time; after each, run `stylua --syntax lua51` + `luac` + luacheck, plus `lua5.1 Tests/Run.lua` when the add-on has it, and stop and report if anything fails. A prompt that adds or changes English also translates it into every other locale in the same edit, so no later pass has to come back for it. Give a one-line status per item, then say they're done, say plainly that none of it has been tried in game, and give the Copy to Other Flavors command.
+**How chosen prompts run.** Apply them in dependency order, one at a time; after each, run the checks `CLAUDE.local.md` lists, and stop and report if anything fails. Give a one-line status per item, then say they're done, say plainly that none of it has been tried in game, and give the Copy to Other Flavors command.
 
 ## Copy to Other Flavors
 
-In steps 2–8 this command means "the work is done, go test." It comes once the edits are finished, never beside prompts still to run:
+In steps 2–8 and `Optional - Fix a Defect.md` this command means "the work is done, go test." It comes once the edits are finished, never beside prompts still to run:
 
 - **A report with fix or feature prompts carries no copy command.** Once the prompts the maintainer chose have run, the reply gives the one-line statuses, says the prompts are done, and ends with the command.
 - **A report with none** ends with the command, just before Guide Feedback, when the pass itself edited files (Diagnostics, Data, Copy and Localization Reviews), and leaves it out when nothing changed.
@@ -133,13 +131,11 @@ When a pass's work is done, it offers the next pass's prompt, which the maintain
 
 **Only a pass in the table's left column offers a prompt.** 05, 09, 10 and 11 offer none: the pass that started them already offered what comes next.
 
-**Offer each next pass as a card with a Start button, never as a copy box.** Just before the final reply, call `mcp__ccd_session__start_session` once per next pass (if it isn't loaded, load it with `ToolSearch`): initiation `own_initiative`, context `fresh`, use_worktree `false`, title `Step {NN} - {Pass Name}` from the prompt file's name without `.md` (`06 - Copy Review.md` → `Step 06 - Copy Review`), a `background` of at least 80 characters saying which pass just finished in this folder and which pass this session runs next, and the prompt exactly the line below. `own_initiative` waits as a card and Start opens a new session with the prompt running in it. `user_asked` would start the session at once, so never use it here. Print the line as text only if calling the tool fails.
+**Offer each next pass as a card with a Start button, never as a copy box.** Just before the final reply, call `mcp__ccd_session__start_session` once per next pass (if it isn't loaded, load it with `ToolSearch`): initiation `own_initiative`, context `fresh`, use_worktree `false`, title `Step {NN} - {Prompt Name}` from the prompt file's name without `.md` (`06 - Copy Review.md` → `Step 06 - Copy Review`), a `background` of at least 80 characters saying which pass just finished in this folder and which pass this session runs next, and the prompt exactly the line below. `own_initiative` waits as a card and Start opens a new session with the prompt running in it. `user_asked` would start the session at once, so never use it here. Print the line as text only if calling the tool fails.
 
 ```
-Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its step 0.
+Run the pass in Common-Core's Add-on Guide/{Prompt file} on GitHub main: fetch it and treat it as the request. Session Prep already ran in this folder; run only its Prep 0.
 ```
-
-**Sessions can share a folder** (04–07 and 09–11 run side by side). A change to a file this session isn't editing, `.claude/` included, is another session's work: ignore it, never stop or ask about it. Re-read a file before editing it.
 
 ## Guide Feedback
 

@@ -39,7 +39,7 @@ Before tagging, reconcile this add-on's entry in `References/Gogo Add-ons Comple
 
 **Release metadata (every TOC):**
 - `## Version:` is `@project-version@` — never a hardcoded string.
-- **Blocker: one flavor TOC per current target, each declaring its own number.** Run `grep -n '^## Interface:\|^## X-Flavor:' *.toc`, compare the output to `01 - Local Setup.md` Session Prep step 2, and quote the output in the report whether it passes or fails. `## X-Flavor:` always equals the TOC's own suffix; a missing target TOC, an unsuffixed TOC, or any other `## X-Flavor:` value fails it (Style Guide → TOC FILE FORMAT → Flavor TOCs).
+- **Blocker: one flavor TOC per current target, each declaring its own number.** Run `grep -n '^## Interface:\|^## X-Flavor:' *.toc`, compare the output to `01 - Local Setup.md` Session Prep's Prep 2, and quote the output in the report whether it passes or fails. `## X-Flavor:` always equals the TOC's own suffix; a missing target TOC, an unsuffixed TOC, or any other `## X-Flavor:` value fails it (Style Guide → TOC FILE FORMAT → Flavor TOCs).
 - `## X-Curse-Project-ID:` and `## X-Wago-ID:` are real IDs, not placeholders, and match the master list (`References/Gogo Add-ons Complete List.md`, Quick reference table) for this add-on.
 - Single `## SavedVariables: AddonNameDB` line present (one AceDB-managed table — see the Style Guide's SAVED VARIABLES); any extra global or `SavedVariablesPerCharacter` line is a finding unless a migration still inside its remove-after window declares it (Style Guide → SAVED VARIABLES → Migration Windows); the declared global matches what the code actually uses.
 - `## IconTexture:` path resolves to a file that exists.

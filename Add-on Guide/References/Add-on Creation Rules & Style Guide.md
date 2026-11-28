@@ -366,7 +366,7 @@ Live reference: **GogoLoot** — `Features/Core.lua`.
 ## Category-enUS: Category Name
 # ...one ## Category-* line per supported locale.
 
-## Interface: 20506
+## Interface: #####
 ## X-Flavor: TBC
 ## Version: @project-version@
 ## X-Curse-Project-ID: ######
@@ -463,7 +463,7 @@ Every TOC ends with the feedback block, same format and link order. CurseForge a
 
 ### Interface Versions
 
-**Each TOC declares its own client's current number, and the numbers live in `01 - Local Setup.md` (Session Prep step 2).** One number per TOC: the packager fails the build when a TOC's number doesn't belong to its suffix's client. Numbers in this guide's examples are illustrative snapshots. No pass looks the numbers up externally or asks whether they're stale, and automated interface-version tooling is never added.
+**Each TOC declares its own client's current number, and the numbers live in `01 - Local Setup.md` (Session Prep's Prep 2).** One number per TOC: the packager fails the build when a TOC's number doesn't belong to its suffix's client. Numbers in this guide's examples are illustrative snapshots. No pass looks the numbers up externally or asks whether they're stale, and automated interface-version tooling is never added.
 
 -----
 
@@ -1691,7 +1691,7 @@ The single definition of how a pass talks to the maintainer. **The maintainer is
 
 ## GUIDE FEEDBACK
 
-How a pass proposes a change to these documents. Step 13's Guide & Kit Changes is the cycle's full list, held to neither the bar nor the cap below (`13 - Post Merge Sanity Check.md`).
+How a pass proposes a change to these documents. Step 13's Guide & Kit Changes gathers the cycle's items into one list under the same bar; the cap counts only the items step 13 adds itself (`13 - Post Merge Sanity Check.md`).
 
 **Leave the section out when there's nothing to propose.** That is the normal outcome, and it needs no heading or `No changes proposed.` line.
 
