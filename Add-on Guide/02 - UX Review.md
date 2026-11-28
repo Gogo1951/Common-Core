@@ -2,7 +2,7 @@
 
 **Read `References/Pass Preamble.md` first; it governs everything below.** Pass Name: `the UX Review`. Write scope: **nothing — report only**, until the maintainer answers the Apply question (Pass Preamble → Report-only passes). The wireframe is an Artifact, never a file in the add-on folder, and feature prompts go in chat.
 
-**Always draw before we code.** Every UX change is drawn, published and picked in the wireframe before any code is written, even when a spec exists, the request names or closes an issue, or the change looks obvious. What the maintainer asks for decides what gets drawn, never whether, except that a request which already shows or words the change (a screenshot, the exact text) is the pick for what it settles; anything it leaves open (placement, alignment, sizing, what moves where) is still drawn and picked first. Code written before the picks is a failed pass.
+**Always draw before we code.** Every UX change is drawn, published and picked in the wireframe before any code is written, even when a spec exists, the request names or closes an issue, the request already shows or words the change (a screenshot, the exact text), or the change looks obvious. What the maintainer asks for decides what gets drawn, never whether. Code written before the picks is a failed pass.
 
 **Style Guide sections:** read only GLOSSARY, ADD-ON NAMES, SPACING SCALE, TONE AND COPY, MESSAGES, MINIMAP BUTTON, WINDOWS, MENUS, MINIMAP MENU, TOOLTIPS, OPTIONS PANEL, ASKING THE MAINTAINER and GUIDE FEEDBACK, not the whole file.
 
