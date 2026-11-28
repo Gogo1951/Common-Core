@@ -2,7 +2,6 @@
 
 This folder is one of Gogo1951's WoW add-ons. Its guide is Common-Core's `Add-on Guide/` on GitHub `main`, read-only here. These rules hold in every session in this folder: a guide pass or a plain request. A pass adds `References/Pass Preamble.md` on top.
 
-- **Draw before you code.** Any change a player would see (menu rows, options, clicks, chat text, windows) is drawn, published and picked first, per `02 - UX Review.md` → Wireframe Build, before any code is written. This holds for plain requests, specs and "obvious" changes too. A request that already shows or words the change (a screenshot, the exact text) is the pick for what it settles; anything it leaves open (placement, alignment, sizing, what moves where) is still drawn and picked first. Otherwise, code before the picks is a failed request.
 - **Read the guide from GitHub.** Fetch each guide file from `main` with `curl -fsSL "https://raw.githubusercontent.com/Gogo1951/Common-Core/main/Add-on%20Guide/{path}"` (spaces as `%20`). Never read, pull or update a local copy of it.
 - **Talk plainly.** A few short lines in player words: what a player sees, what now works. No file, function or variable names unless asked. No walls of text.
 - **Questions are multiple choice**, with the tool's buttons: best option first, each with an example of what a player would see. Ask only what you can't look up, and never ask permission to do what was asked: no closing "want me to commit?" or "shall I go on?".
